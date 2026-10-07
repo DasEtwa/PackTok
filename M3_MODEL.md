@@ -44,6 +44,15 @@ same target/toolchain, but bit-identical updates across different CPUs or Rust
 versions are not promised. Softmax normalization accumulates in `f64`; stored
 parameters and gradients use `f32`.
 
+Cross-entropy computes maximum-minus-target before adding log normalization,
+preserving loss at large common finite logit offsets. Evaluation uses scalar
+loss without probability/gradient buffers; training still forms gradients.
+Adam preflights every proposed weight and moment before committing state or
+step, preserving the entire model on an error. Greedy inference rejects
+non-finite logits before argmax. Numerical regressions, finite differences,
+performance effects, and compatibility evidence are in
+[the current audit](PERFORMANCE_MATH_AUDIT.md).
+
 The M3 run uses hidden size 16 and context length 16. Adam uses learning rate
 0.01, beta1 0.9, beta2 0.999, epsilon 1e-8, and global gradient clipping at
 L2 norm 1.0. Weight decay, warmup, dropout, and mixed precision are disabled.
@@ -195,6 +204,11 @@ pack count to 1,024, each local vocabulary and total local rows to 1,000,000,
 parameters to 16,777,216, and a serialized model to 64 MiB. These safety limits
 are enforced before allocation. Greedy generation limits the returned
 prompt-plus-continuation sequence to 4,096 tokens.
+
+Loading verifies that the shared dimension-derived parameter layout matches
+the body before allocating parameter vectors. Valid weights are read directly;
+loading does not generate seeded weights only to overwrite them. Loaded Adam
+moments remain zero; model files still do not provide optimizer resume.
 
 `greedy_generate` accepts an already tokenized non-empty prompt, predicts a pack
 then local token for factorized M2 (or one flat token for M1), and returns the

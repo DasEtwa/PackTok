@@ -12,6 +12,9 @@ does not establish general quality or presuppose that factorization wins.
 
 M3 model architecture and experiment results: [M3_MODEL.md](M3_MODEL.md) and
 [M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
+The [current performance and mathematics audit](PERFORMANCE_MATH_AUDIT.md)
+records prioritized fixes, numerical gradient checks, and preserved before/after
+measurements. Run its focused probes with `cargo run --release -p packtok-bench -- audit`.
 
 ```text
 cargo run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/m1.packtok

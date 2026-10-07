@@ -1,0 +1,7 @@
+The audit ran with uncommitted changes based on c6a4667da35d45a7f41a25b6b31e6e3551171a15.
+source.patch preserves tracked implementation/documentation edits relative to that commit.
+New audit.rs and PERFORMANCE_MATH_AUDIT.md are preserved in the repository and identified in source-sha256.txt.
+The M3 run environment reports the base source_commit; use this note, source patch and hashes for the actual implementation.
+Before measurements use base production code plus the same audit.rs harness. before-source-sha256.txt also includes pending regression tests, not executed in release benchmarks.
+The initial mutability correction only changed test code after that before-source snapshot.
+No historical result directory was overwritten. before/after/intermediate logs remain distinct.

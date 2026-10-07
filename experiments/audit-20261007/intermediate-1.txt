@@ -1,0 +1,53 @@
+   Compiling packtok-model v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-model)
+   Compiling packtok-tokenizer v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-tokenizer)
+error[E0425]: cannot find value `rng` in this scope
+   --> crates\packtok-model\src\lib.rs:404:26
+    |
+404 |                     &mut rng,
+    |                          ^^^
+    |
+help: the binding `rng` is available in a different scope in the same function
+   --> crates\packtok-model\src\lib.rs:381:21
+    |
+381 |             let mut rng = SeededRng::new(seed);
+    |                     ^^^
+
+error[E0425]: cannot find value `scale` in this scope
+   --> crates\packtok-model\src\lib.rs:405:21
+    |
+405 |                     scale,
+    |                     ^^^^^
+    |
+help: the binding `scale` is available in a different scope in the same function
+   --> crates\packtok-model\src\lib.rs:382:17
+    |
+382 |             let scale = 0.15_f32 / (hidden as f32).sqrt();
+    |                 ^^^^^
+
+error[E0425]: cannot find value `rng` in this scope
+   --> crates\packtok-model\src\lib.rs:411:26
+    |
+411 |                     &mut rng,
+    |                          ^^^ not found in this scope
+
+error[E0425]: cannot find value `scale` in this scope
+   --> crates\packtok-model\src\lib.rs:412:21
+    |
+412 |                     scale,
+    |                     ^^^^^ not found in this scope
+
+error[E0425]: cannot find value `rng` in this scope
+   --> crates\packtok-model\src\lib.rs:416:26
+    |
+416 |                     &mut rng,
+    |                          ^^^ not found in this scope
+
+error[E0425]: cannot find value `scale` in this scope
+   --> crates\packtok-model\src\lib.rs:417:21
+    |
+417 |                     scale,
+    |                     ^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `packtok-model` (lib) due to 6 previous errors
+warning: build failed, waiting for other jobs to finish...

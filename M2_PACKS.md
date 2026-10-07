@@ -72,6 +72,12 @@ sequence and concatenates bytes in order. Thus decode is independent of span
 decisions after IDs have been produced, and decode_bytes(encode(text)) equals
 the original UTF-8 bytes exactly.
 
+The runtime reuses one symbol vector sized to the longest validated routed
+span, since rank-ordered merges only shrink the current sequence. The output
+token vector reserves the input-byte upper bound; router spans remain
+materialized. The change from whole-input symbol reservation and its capacity
+and timing measurements are recorded in [the current audit](PERFORMANCE_MATH_AUDIT.md).
+
 ## Training and deterministic allocation
 
 Training consumes the supplied corpus bytes as valid UTF-8, routes the corpus,

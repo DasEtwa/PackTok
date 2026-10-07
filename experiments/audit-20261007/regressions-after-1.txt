@@ -1,0 +1,66 @@
+   Compiling packtok-model v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-model)
+   Compiling packtok-tokenizer v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-tokenizer)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.88s
+     Running unittests src\lib.rs (target\debug\deps\packtok_model-e1294f8a2b33fdae.exe)
+
+running 21 tests
+test tests::cross_entropy_is_invariant_to_large_common_offsets ... ok
+test tests::changing_future_inputs_does_not_change_prior_hidden_states ... ok
+test tests::factorized_accuracy_reports_pack_and_gold_pack_local_heads ... ok
+test tests::failed_adam_update_preserves_weights_moments_and_step ... ok
+test tests::inference_rejects_overflowing_logits_in_both_heads ... ok
+test tests::byte_fallback_rows_are_valid_factorized_targets ... ok
+test tests::greedy_generation_is_bounded_and_keeps_prompt ... ok
+test tests::adam_update_changes_parameters ... ok
+test tests::invalid_pack_and_local_targets_are_rejected ... ok
+test tests::mac_estimate_validates_input_ids_and_reports_example_index ... ok
+test tests::flat_and_factorized_cross_entropy_are_finite_and_teacher_forced ... ok
+test tests::same_local_id_in_different_packs_uses_distinct_embedding_rows ... ok
+test tests::parameter_partitions_sum_to_total_for_both_heads ... ok
+test tests::output_shapes_follow_flat_and_factorized_vocabularies ... ok
+test tests::overflowing_adam_moment_is_rejected_without_changing_state ... ok
+test tests::malformed_model_bytes_and_nonfinite_parameters_are_rejected ... ok
+test tests::same_seed_initializes_identical_parameters ... ok
+test tests::training_mac_estimate_is_positive_and_changes_with_active_head ... ok
+test tests::model_serialization_round_trip_preserves_greedy_ids ... ok
+test tests::factorized_model_overfits_the_same_raw_sequence_and_learns_packs ... ok
+test tests::flat_model_overfits_a_small_repeated_sequence ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.33s
+
+     Running unittests src\lib.rs (target\debug\deps\packtok_tokenizer-69857ec66a40a4df.exe)
+
+running 18 tests
+test bpe::tests::uniform_detection_checks_block_boundaries_and_remainder ... ok
+test factorized::tests::decoder_rejects_unknown_pack_and_local_id_gap ... ok
+test factorized::tests::artifact_runtime_records_temporary_and_pack_metrics ... ok
+test factorized::tests::identical_bytes_in_distinct_pack_tokens_decode_without_ambiguity ... ok
+test factorized::tests::mixed_pack_unicode_and_raw_byte_round_trips_are_exact ... ok
+test bpe::tests::measured_paths_preserve_results_and_count_owned_buffers ... ok
+test factorized::tests::runtime_encoder_does_not_merge_across_pack_boundaries ... ok
+test factorized::tests::shared_byte_and_overlapping_local_ids_are_distinct_tokens ... ok
+test tests::byte_fallback_round_trips_required_text_classes ... ok
+test tests::decoder_rejects_unknown_packs_and_out_of_range_local_ids ... ok
+test tests::deterministic_token_ids_are_byte_values_in_one_pack ... ok
+test tests::every_ascii_byte_and_nul_round_trip ... ok
+test tests::raw_byte_decode_preserves_invalid_utf8_while_text_decode_rejects_it ... ok
+test tests::tokenizer_uses_registry_fallback_id ... ok
+test bpe::tests::event_decoder_rejects_invalid_ids_and_handles_deep_merge_chains ... ok
+test bpe::tests::dense_repetition_detection_handles_periods_and_exception_positions ... ok
+test factorized::tests::symbol_workspace_is_bounded_by_longest_routed_span ... ok
+test tests::deterministic_generated_unicode_round_trips ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests packtok_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_tokenizer
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -402,6 +402,13 @@ does not imply that factorization improves tokenization.
 
 ## M3 model boundary
 
+The additive `packtok-bench audit` mode owns focused model loading, evaluation,
+training, and M2 workspace probes inside the existing benchmark crate. Numerical
+guards and direct model parameter loading remain in `packtok-model`; workspace
+sizing remains in `packtok-tokenizer`. No crate responsibility or dependency
+direction changed. Details and reproducible evidence are in
+[PERFORMANCE_MATH_AUDIT.md](PERFORMANCE_MATH_AUDIT.md).
+
 M3 adds `packtok-model` as the CPU-only owner of the causal recurrent reference
 model, flat and pack-factorized heads, model parameter serialization, and
 deterministic training/evaluation contracts. It depends on `packtok-core` for

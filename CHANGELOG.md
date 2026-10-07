@@ -1,5 +1,19 @@
 # Milestone history
 
+## Performance and mathematics audit (2026-10-07)
+
+- Addressed seven prioritized findings in model numerical failures, model
+  loading/evaluation overhead, M2 workspace sizing, and batch/MAC validation.
+- Added transactional Adam failure handling, offset-stable loss, finite inference
+  score checks, pre-allocation body validation, direct weight loading,
+  scalar evaluation loss, and span-sized M2 symbol buffers.
+- Added nine tests, including finite differences across every parameter of small
+  flat/factorized models, and additive `packtok-bench audit` probes.
+- Preserved three before/after performance repetitions, failed regressions,
+  intermediate failures, and a full M3 rerun. All twelve M3 model hashes match
+  the historical run; quality conclusions are unchanged. See
+  [PERFORMANCE_MATH_AUDIT.md](PERFORMANCE_MATH_AUDIT.md).
+
 ## M3 — Tiny autoregressive model comparison (2026-10-07)
 
 - Adds a small CPU-only recurrent model boundary with a flat M1 head and a

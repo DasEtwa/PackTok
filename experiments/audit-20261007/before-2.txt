@@ -1,0 +1,13 @@
+audit-v1: release; warmup=25ms measurement>=200ms per workload; seed=20261007; model hidden=16 context=16; untrained weights; timings include returned buffer destruction
+flat: targets=63 loss=6.238320160285 parameter_count=17424 artifact_bytes=69742
+flat-evaluate-63-targets: iterations=123 elapsed_ms=201.200 us_per_iteration=1635.772
+flat-train-64-targets-including-clone: iterations=92 elapsed_ms=200.303 us_per_iteration=2177.212
+flat-load: iterations=931 elapsed_ms=200.233 us_per_iteration=215.073
+factorized: targets=63 loss=5.159167829569 parameter_count=17475 artifact_bytes=69958
+factorized-evaluate-63-targets: iterations=216 elapsed_ms=200.643 us_per_iteration=928.905
+factorized-train-64-targets-including-clone: iterations=179 elapsed_ms=200.229 us_per_iteration=1118.597
+factorized-load: iterations=1475 elapsed_ms=200.042 us_per_iteration=135.622
+m2-short-spans: input_bytes=49152 tokens=49152 output_capacity_bytes=393216 temporary_peak_bytes=1966080
+m2-short-spans-encode: iterations=122 elapsed_ms=200.148 us_per_iteration=1640.559
+m2-long-span: input_bytes=49152 tokens=49152 output_capacity_bytes=393216 temporary_peak_bytes=393312
+m2-long-span-encode: iterations=338 elapsed_ms=200.029 us_per_iteration=591.802

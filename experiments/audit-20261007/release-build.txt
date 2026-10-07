@@ -1,0 +1,2 @@
+   Compiling packtok-cli v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-cli)
+    Finished `release` profile [optimized] target(s) in 2.50s

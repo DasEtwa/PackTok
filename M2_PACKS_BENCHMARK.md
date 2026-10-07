@@ -49,6 +49,10 @@ representative corpus.
 
 ## Artifacts and training allocation
 
+These historical measurements precede the span-sized workspace fix. The
+[current audit](PERFORMANCE_MATH_AUDIT.md) records its capacity and timing
+effects separately; the tokenizer IDs and artifact formats remain unchanged.
+
 M2 release training was run twice and complete serialized byte arrays were
 compared. They were identical, 4,492 bytes, SHA-256
 `debc3f36e3a8baff1f7599a3dddad498250620bda7b1230d663f9668e3e6d065`.

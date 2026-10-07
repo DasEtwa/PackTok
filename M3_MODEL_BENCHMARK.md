@@ -6,6 +6,11 @@ flat-BPE control; M2 artifacts and routing were consumed without changes.
 
 ## Protocol and provenance
 
+The following tables preserve the original M3 observations. The later
+[performance/mathematics audit](PERFORMANCE_MATH_AUDIT.md) records numerical
+fixes and separate timings; its full rerun produced identical hashes for all
+twelve model artifacts and retained the reported quality conclusions.
+
 - Branch: `m3-tiny-model`, based on M2 commit
   `bb018b9e01bcae47bdc982533822fd5d86001054`. The implementation tested by the
   final run is commit `2603f9613b947e7933c11daba5fa168eeda1905c`.
