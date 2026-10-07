@@ -3,6 +3,7 @@
 use std::collections::BTreeMap;
 use std::fmt;
 use std::fs;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 
 use packtok_core::{
@@ -133,14 +134,29 @@ pub fn load_corpus(path: &Path) -> Result<CorpusData, CorpusError> {
         .try_reserve_exact(files.len())
         .map_err(|_| CorpusError::AllocationFailed)?;
     for (name, file_path) in files {
-        let contents = fs::read(&file_path).map_err(|source| CorpusError::Io {
-            path: file_path,
+        let mut file = fs::File::open(&file_path).map_err(|source| CorpusError::Io {
+            path: file_path.clone(),
             source,
         })?;
-        bytes
-            .try_reserve(contents.len())
-            .map_err(|_| CorpusError::AllocationFailed)?;
-        bytes.extend_from_slice(&contents);
+        // Avoid keeping a second whole-file buffer alongside the corpus.
+        let mut buffer = [0_u8; 64 * 1024];
+        loop {
+            let count = match file.read(&mut buffer) {
+                Ok(0) => break,
+                Ok(count) => count,
+                Err(error) if error.kind() == std::io::ErrorKind::Interrupted => continue,
+                Err(source) => {
+                    return Err(CorpusError::Io {
+                        path: file_path,
+                        source,
+                    });
+                }
+            };
+            bytes
+                .try_reserve(count)
+                .map_err(|_| CorpusError::AllocationFailed)?;
+            bytes.extend_from_slice(&buffer[..count]);
+        }
         names.push(name);
     }
     let total_bytes = u64::try_from(bytes.len()).map_err(|_| CorpusError::LengthOverflow)?;
@@ -186,6 +202,11 @@ pub fn train_bpe_with_provenance(
     provenance: &CorpusProvenance,
 ) -> Result<Artifact, TrainingError> {
     let config = config.validate()?;
+    if provenance.files.len() > MAX_CORPUS_FILES {
+        return Err(TrainingError::TooManyProvenanceFiles(
+            provenance.files.len(),
+        ));
+    }
     let expected_bytes = u64::try_from(corpus.len()).map_err(|_| TrainingError::LengthOverflow)?;
     if provenance.total_bytes != expected_bytes || provenance.fnv1a64 != fnv1a64(corpus) {
         return Err(TrainingError::InvalidProvenance);
@@ -213,6 +234,9 @@ pub fn train_model(
     config: BpeTrainingConfig,
 ) -> Result<FlatBpeModel, TrainingError> {
     let config = config.validate()?;
+    if config.max_merges == 0 || corpus.len() < 2 {
+        return Ok(FlatBpeModel::new(Vec::new())?);
+    }
     let mut symbols = Vec::new();
     symbols
         .try_reserve_exact(corpus.len())
@@ -260,27 +284,25 @@ pub fn train_model(
             right,
             result,
         });
-        symbols = merge_pair(&symbols, (left, right), result)?;
+        merge_pair(&mut symbols, (left, right), result);
     }
     Ok(FlatBpeModel::new(merges)?)
 }
 
-fn merge_pair(symbols: &[u32], pair: (u32, u32), result: u32) -> Result<Vec<u32>, TrainingError> {
-    let mut merged = Vec::new();
-    merged
-        .try_reserve_exact(symbols.len())
-        .map_err(|_| TrainingError::AllocationFailed)?;
+fn merge_pair(symbols: &mut Vec<u32>, pair: (u32, u32), result: u32) {
     let mut index = 0;
+    let mut written = 0;
     while index < symbols.len() {
         if index + 1 < symbols.len() && (symbols[index], symbols[index + 1]) == pair {
-            merged.push(result);
+            symbols[written] = result;
             index += 2;
         } else {
-            merged.push(symbols[index]);
+            symbols[written] = symbols[index];
             index += 1;
         }
+        written += 1;
     }
-    Ok(merged)
+    symbols.truncate(written);
 }
 
 fn artifact_metadata(
@@ -359,33 +381,53 @@ fn collect_directory_files(
     directory: &Path,
     files: &mut Vec<(String, PathBuf)>,
 ) -> Result<(), CorpusError> {
-    for entry in fs::read_dir(directory).map_err(|source| CorpusError::Io {
-        path: directory.to_path_buf(),
-        source,
-    })? {
-        let entry = entry.map_err(|source| CorpusError::Io {
+    let mut pending = vec![directory.to_path_buf()];
+    while let Some(directory) = pending.pop() {
+        for entry in fs::read_dir(&directory).map_err(|source| CorpusError::Io {
             path: directory.to_path_buf(),
             source,
-        })?;
-        let path = entry.path();
-        let file_type = entry.file_type().map_err(|source| CorpusError::Io {
-            path: path.clone(),
-            source,
-        })?;
-        if file_type.is_symlink() {
-            return Err(CorpusError::SymlinkNotSupported(path));
-        }
-        if file_type.is_dir() {
-            collect_directory_files(root, &path, files)?;
-        } else if file_type.is_file() {
-            let relative = path
-                .strip_prefix(root)
-                .map_err(|_| CorpusError::InvalidRelativePath(path.clone()))?;
-            let relative = relative
-                .to_str()
-                .ok_or_else(|| CorpusError::NonUnicodePath(relative.to_path_buf()))?
-                .replace('\\', "/");
-            files.push((relative, path));
+        })? {
+            let entry = entry.map_err(|source| CorpusError::Io {
+                path: directory.to_path_buf(),
+                source,
+            })?;
+            let path = entry.path();
+            let file_type = entry.file_type().map_err(|source| CorpusError::Io {
+                path: path.clone(),
+                source,
+            })?;
+            if file_type.is_symlink() {
+                return Err(CorpusError::SymlinkNotSupported(path));
+            }
+            if path.to_str().is_none() {
+                return Err(CorpusError::NonUnicodePath(path));
+            }
+            if file_type.is_dir() {
+                pending.push(path);
+            } else if file_type.is_file() {
+                let relative = path
+                    .strip_prefix(root)
+                    .map_err(|_| CorpusError::InvalidRelativePath(path.clone()))?;
+                let relative = relative
+                    .components()
+                    .map(|component| {
+                        component
+                            .as_os_str()
+                            .to_str()
+                            .ok_or_else(|| CorpusError::NonUnicodePath(path.clone()))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?
+                    .join("/");
+                if files.len() == MAX_CORPUS_FILES {
+                    return Err(CorpusError::TooManyFiles {
+                        count: files.len() + 1,
+                        maximum: MAX_CORPUS_FILES,
+                    });
+                }
+                files.push((relative, path));
+            } else {
+                return Err(CorpusError::NotFileOrDirectory(path));
+            }
         }
     }
     Ok(())
@@ -882,5 +924,148 @@ mod tests {
             original_runtime.encode("the the").expect("encode"),
             loaded_runtime.encode("the the").expect("encode loaded")
         );
+    }
+
+    #[test]
+    fn event_encoder_matches_reference_across_models_and_all_short_inputs() {
+        for corpus in [
+            b"aaaaababbcbcbabcabcabcabc".as_slice(),
+            b"abababccccccccabccabcbaababa",
+            b"aaabaaabaaabbbcccabc",
+        ] {
+            let model = train_model(
+                corpus,
+                BpeTrainingConfig {
+                    target_vocab_size: 280,
+                    max_merges: 24,
+                    min_pair_frequency: 1,
+                },
+            )
+            .expect("train event model");
+            assert!(model.merges().len() > 8, "exercise event path");
+            let runtime = BpeTokenizer::new(model.clone());
+            for length in 0..=7_u32 {
+                for mut value in 0..3_usize.pow(length) {
+                    let input: Vec<u8> = (0..length)
+                        .map(|_| {
+                            let byte = b'a' + (value % 3) as u8;
+                            value /= 3;
+                            byte
+                        })
+                        .collect();
+                    let tokens = runtime.encode_bytes(&input).expect("encode short input");
+                    let ids: Vec<_> = tokens.iter().map(|token| token.local).collect();
+                    assert_eq!(ids, reference::encode(&input, &model), "input {input:?}");
+                    assert_eq!(
+                        runtime.decode_bytes(&tokens).expect("decode short input"),
+                        input
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn event_encoder_matches_reference_on_fixture_prefixes_and_arbitrary_bytes() {
+        let corpus = include_bytes!("../../../fixtures/m1_bpe_corpus.txt");
+        let model = train_model(corpus, BpeTrainingConfig::default()).expect("train fixture");
+        let runtime = BpeTokenizer::new(model.clone());
+        for length in 0..=corpus.len() {
+            let tokens = runtime
+                .encode_bytes(&corpus[..length])
+                .expect("encode prefix");
+            assert_eq!(
+                tokens.iter().map(|token| token.local).collect::<Vec<_>>(),
+                reference::encode(&corpus[..length], &model)
+            );
+            assert_eq!(
+                runtime.decode_bytes(&tokens).expect("decode prefix"),
+                &corpus[..length]
+            );
+        }
+        let all_bytes: Vec<_> = (0..=255_u8).collect();
+        let input = all_bytes.repeat(16);
+        let tokens = runtime
+            .encode_bytes(&input)
+            .expect("encode all byte values");
+        assert_eq!(
+            tokens.iter().map(|token| token.local).collect::<Vec<_>>(),
+            reference::encode(&input, &model)
+        );
+        assert_eq!(
+            runtime.decode_bytes(&tokens).expect("decode all bytes"),
+            input
+        );
+        assert!(matches!(
+            runtime.decode(&tokens),
+            Err(packtok_tokenizer::DecodeError::InvalidUtf8 { .. })
+        ));
+    }
+
+    #[test]
+    fn zero_merge_training_and_empty_inputs_keep_all_byte_ids() {
+        for corpus in [b"".as_slice(), b"a", b"aaaaaa", &[0xff, 0, 0xfe]] {
+            let model = train_model(
+                corpus,
+                BpeTrainingConfig {
+                    target_vocab_size: 256,
+                    max_merges: 0,
+                    min_pair_frequency: 1,
+                },
+            )
+            .expect("byte model");
+            assert!(model.merges().is_empty());
+            let runtime = BpeTokenizer::new(model);
+            let tokens = runtime.encode_bytes(corpus).expect("encode bytes");
+            assert_eq!(tokens.len(), corpus.len());
+            assert_eq!(runtime.decode_bytes(&tokens).expect("decode bytes"), corpus);
+        }
+    }
+
+    #[test]
+    fn corpus_reads_multiple_chunks_and_preserves_raw_bytes() {
+        let root =
+            std::env::temp_dir().join(format!("packtok-chunked-corpus-{}", std::process::id()));
+        fs::create_dir(&root).expect("create corpus directory");
+        let input: Vec<_> = (0..=255_u8).cycle().take(150_001).collect();
+        fs::write(root.join("bytes.bin"), &input).expect("write input");
+        fs::write(root.join("empty.bin"), b"").expect("write empty file");
+        let corpus = load_corpus(&root).expect("read corpus");
+        assert_eq!(corpus.bytes(), input);
+        assert_eq!(corpus.provenance().fnv1a64, fnv1a64(&input));
+        assert_eq!(corpus.provenance().files, ["bytes.bin", "empty.bin"]);
+        fs::remove_dir_all(root).expect("remove corpus directory");
+    }
+
+    #[test]
+    fn empty_directory_and_missing_corpus_are_explicit() {
+        let root =
+            std::env::temp_dir().join(format!("packtok-empty-corpus-{}", std::process::id()));
+        fs::create_dir(&root).expect("create empty directory");
+        let corpus = load_corpus(&root).expect("load empty directory");
+        assert!(corpus.bytes().is_empty());
+        assert!(corpus.provenance().files.is_empty());
+        assert!(matches!(
+            load_corpus(&root.join("missing")),
+            Err(CorpusError::Io { .. })
+        ));
+        fs::remove_dir(root).expect("remove empty directory");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn literal_backslash_and_nested_paths_remain_distinct_and_deterministic() {
+        let root =
+            std::env::temp_dir().join(format!("packtok-path-collision-{}", std::process::id()));
+        fs::create_dir(&root).expect("create root");
+        fs::create_dir(root.join("a")).expect("create nested directory");
+        fs::write(root.join("a\\b"), b"literal").expect("write literal backslash name");
+        fs::write(root.join("a/b"), b"nested").expect("write nested path");
+        let first = load_corpus(&root).expect("first load");
+        let second = load_corpus(&root).expect("second load");
+        assert_eq!(first.provenance().files, ["a/b", "a\\b"]);
+        assert_eq!(first.bytes(), b"nestedliteral");
+        assert_eq!(first, second);
+        fs::remove_dir_all(root).expect("remove test corpus");
     }
 }

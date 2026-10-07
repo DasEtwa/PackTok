@@ -25,11 +25,16 @@ cargo run --release -p packtok-bench
 - `packtok-tokenizer` — M0 byte fallback and M1 BPE runtime.
 - `packtok-train` — deterministic BPE training, corpus handling, and reference oracle.
 - `packtok-cli` — training, encoding, decoding, validation, and inspection commands.
-- `packtok-bench` — same-input M0/M1 throughput and token-count measurements.
+- `packtok-bench` — held-out M0/M1 throughput, token counts, memory and sequence lengths.
 
 Details: [M1 BPE design](M1_BPE.md) · [artifact format](FORMAT.md) ·
 [benchmark results](M1_BPE_BENCHMARK.md) · [milestone history](CHANGELOG.md) ·
 [M0 historical benchmark](M0_BENCHMARK_BASELINE.md).
+The [performance and correctness audit](M1_PERFORMANCE_AUDIT.md) records fixes,
+repeated throughput measurements, and the encoder's temporary-memory trade-off.
+The [PR #1 review fixes and current results](M1_REVIEW_FIXES.md) cover all seven
+Codex findings and the separate synthetic training/evaluation split. Older
+benchmark reports retain their original training-like observations.
 
 Verify with `cargo fmt --all --check`,
 `cargo clippy --workspace --all-targets --all-features -- -D warnings`,

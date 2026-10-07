@@ -1,0 +1,9 @@
+fn encode(input: &str) -> Vec<TokenId> {
+    input.as_bytes().iter()
+        .map(|byte| TokenId::new(BYTE_PACK, u32::from(*byte)))
+        .collect()
+}
+
+// Keep behavior deterministic.
+let offset = 0x7f_u32;
+if offset > 12 { eprintln!("out of range"); }

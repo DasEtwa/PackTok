@@ -4,7 +4,7 @@ mod bpe;
 
 use std::fmt;
 
-pub use bpe::{BpeTokenizer, TokenizerModelError};
+pub use bpe::{BpeBufferStats, BpeTokenizer, TokenizerModelError};
 pub use packtok_core::{
     ByteFallback, DEFAULT_BYTE_FALLBACK_PACK_ID, LocalTokenId, PackId, PackRegistry, TokenId,
 };
@@ -164,7 +164,7 @@ impl fmt::Display for DecodeError {
                 actual,
             } => write!(
                 formatter,
-                "token {index} references pack {actual}; expected byte-fallback pack {expected}"
+                "token {index} references pack {actual}; expected pack {expected}"
             ),
             Self::LocalIdOutsideByteRange { index, actual } => write!(
                 formatter,

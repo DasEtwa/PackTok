@@ -1,5 +1,9 @@
 # PackTok 📦
 
+> Snapshot of the canonical BRAIN project map from the idea/architecture stage.
+> The current standalone M1 implementation is described in [README.md](README.md);
+> subsequent fixes and measurements are in [M1_PERFORMANCE_AUDIT.md](M1_PERFORMANCE_AUDIT.md).
+
 > Experimental factorized tokenization and vocabulary architecture for language models.
 
 **Canonical BRAIN space:** [`DasEtwa/BRAIN/PackTok`](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)

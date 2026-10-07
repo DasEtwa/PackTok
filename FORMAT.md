@@ -45,6 +45,10 @@ The 256 base byte tokens have local IDs `0..=255`. Rank `r` must create result I
 `256 + r`. Both parents must be lower than the result ID, so references are
 backward-only and cannot form cycles. A pair may appear only once. The parser
 checks all IDs, merge order, expanded byte lengths, and the artifact-size limit.
+Each token may expand to at most 1 MiB (`MAX_BPE_TOKEN_BYTES`), including tokens
+constructed directly through the Rust API. Lengths are checked from the merge
+parents before allocating decoded output. This rejects compact self-doubling
+merge tables that would otherwise demand enormous allocations.
 No textual display form is stored: each token's bytes are defined by the base
 byte or its ordered parent merges.
 
@@ -71,5 +75,12 @@ semantics, or any factorized-pack behavior.
 Both versions are limited to 16 MiB. Pack, special-token, and metadata collections
 are bounded to 65,536 entries. Version 1 serialization remains byte-for-byte
 unchanged. The reader supports versions 1 and 2; it does not migrate between them.
+Constructors and writers enforce the reader's collection and total-size limits
+in both versions, so accepted artifacts cannot serialize into an oversized or
+over-counted file that this reader would reject. The CLI also bounds bytes read
+before parsing, including files that grow while being read.
+The 1 MiB per-token bound tightens acceptance of previously loadable oversized
+tokens; such artifacts now fail validation. It does not change wire records,
+normalization, ID assignment, or the bytes of artifacts within the bound.
 Future incompatible model sections require a new version or an explicitly
 specified feature extension.

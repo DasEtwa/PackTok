@@ -1,5 +1,10 @@
 # M1 flat byte-level BPE benchmark
 
+**Historical protocol:** this run uses training-like samples, with training and
+evaluation passages overlapping. Preserve these observations as recorded; they
+do not establish held-out compression. The current separated split and results
+are documented in [M1_REVIEW_FIXES.md](M1_REVIEW_FIXES.md).
+
 Captured 2026-10-07. These are single-machine baseline observations, not a
 cross-machine comparison and not a claim that PackTok's future factorized design
 is better. M0's historical run remains untouched in

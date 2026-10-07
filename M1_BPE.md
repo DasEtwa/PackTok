@@ -65,16 +65,30 @@ as base tokens wherever no learned merge applies. Decoding walks merge parents
 iteratively and appends bytes in order; it does not need to allocate a textual
 string or recursively call the stack.
 
+The optimized encoder indexes pairs by their left ID and queues matching
+adjacencies by `(merge rank, original byte position)`. It checks stale events and
+updates only the two neighbors of a merged pair. New adjacencies include the new
+result ID and can therefore only reference a later merge rank. This preserves the
+reference ordering, including left-to-right replacement of overlapping pairs.
+Models with at most eight merges and uniform byte runs use contiguous in-place
+rank scans to avoid queue overhead. Inputs with no matching initial byte pair
+take a direct byte-token path.
+
 ## Corpus inputs and provenance
 
 The checked-in fixture is [`fixtures/m1_bpe_corpus.txt`](fixtures/m1_bpe_corpus.txt).
 The CLI accepts one local file or a directory tree; it does not download data.
-For a directory, regular files are collected recursively, then sorted by
+For a directory, regular files are collected with an iterative tree traversal, then sorted by
 root-relative Unicode path using `/` separators. Symlinks and non-Unicode paths
 are rejected. Single-file training records the supplied path. Files are read as
 raw bytes with no UTF-8 validation and concatenated in recorded order **without
 inserted separators**. A file boundary may therefore form a pair across the two
 adjacent byte sequences. No corpus transformation is applied.
+Non-regular entries are rejected rather than silently omitted. Paths are built
+from their components, preserving literal backslashes in Unix filenames. File
+contents are appended through a 64 KiB read buffer; the complete concatenated
+corpus is still retained in memory. The file-count limit is enforced during
+traversal.
 
 Each trained artifact records the config, byte and merge counts, ordering rules,
 input path, ordered file list, concatenated byte count, and an FNV-1a 64-bit
@@ -94,10 +108,14 @@ cargo run --release -p packtok-cli -- inspect-merges target/m1.packtok 20
 ```
 
 `decode --artifact <path> <local IDs...>` accepts space-separated flat local IDs.
+Both M0 and M1 CLI decoding write the exact raw bytes to stdout, including invalid
+UTF-8, with no added newline. Use `inspect-token` for escaped textual inspection.
 `inspect-token` prints decimal bytes, an escaped byte form, UTF-8 display when
 valid, and merge rank/parents for learned IDs. `inspect-merges` shows the first
 50 ranks by default; pass a limit to change that. The training CLI creates a new
-artifact and refuses to overwrite an existing output path.
+artifact and refuses to overwrite an existing output path. It synchronizes a
+completed write and removes its newly created file if writing or synchronization
+fails, so a retry is possible. Cleanup failures are reported explicitly.
 
 ## Artifact and crate boundaries
 
@@ -105,7 +123,8 @@ M1 uses artifact format version 2; see [FORMAT.md](FORMAT.md) for the exact wire
 records and version-1 compatibility. Merge records and the 256-byte base
 vocabulary are normative. Provenance metadata is descriptive. Artifact validation
 rejects malformed merge ranks, forward or missing parent IDs, duplicate pairs,
-invalid expansion lengths, unexpected pack layouts, and trailing bytes.
+invalid expansion lengths, tokens expanding beyond 1 MiB, unexpected pack layouts,
+and trailing bytes. The expansion bound also applies to directly constructed models.
 
 - `packtok-core`: existing pack and token contracts; unchanged for M1.
 - `packtok-format`: version-2 merge data and validation; no training dependency.
@@ -114,7 +133,10 @@ invalid expansion lengths, unexpected pack layouts, and trailing bytes.
 - `packtok-train`: corpus loader, BPE trainer, provenance, and test oracle.
 - `packtok-cli`: thin orchestration and inspection commands.
 - `packtok-bench`: compares the unchanged M0 byte-only path with M1 on the same
-  four fixed samples.
+  four held-out evaluation documents after training only on
+  `fixtures/benchmark/train.txt`. It retains the previous scan encoder for matched
+  comparisons and reports separate stress cases, vector capacity counters,
+  sequence-length distributions, and OS process peak memory.
 
 ## Complexity and known limitations
 
@@ -124,20 +146,26 @@ trainer is intentionally slow: linear-search pair counting can take
 `O(N * U)` per merge. Production training rebuilds a `BTreeMap` of pair counts and
 rewrites the current sequence on every merge, so its upper-bound work is
 `O(M * (N log U + N))` and pair-count storage is `O(U)`. It retains the current
-symbol sequence plus a replacement sequence (`O(N)`) and the merge table
+symbol sequence, compacted in place (`O(N)`), and the merge table
 (`O(M)`). The implementation has not been optimized for large corpora.
 
-Runtime applies one ordered scan per merge, with up to `O(M * N)` token comparisons
-per input and `O(N)` working token storage. A merge pass allocates a replacement
-vector only if that pair is present. The validated model also stores one expanded
+Runtime initialization sorts the pair index in `O(M log M)` time and stores
+`O(V + M)` index data. The event encoder does `O(N log V + N log N)` upper-bound
+work per input, with `O(N)` linked symbols, pending events and output storage.
+There are at most `N - 1` successful merges and two neighbor lookups per merge.
+This uses more temporary capacity per input byte than the previous scan encoder;
+the measured trade-off is recorded in [M1_PERFORMANCE_AUDIT.md](M1_PERFORMANCE_AUDIT.md).
+The contiguous path retains the `O(M * N)` bound but avoids a replacement buffer
+per rank. Inputs with no initial match require `O(N log V)` lookup work and one
+output allocation. The validated model also stores one expanded
 byte length per vocabulary ID for safe decoder reservation (`O(V)`, where `V` is
 vocabulary size). Decoding uses an explicit parent stack bounded by merge depth
 plus the caller's output buffer.
 
 The trainer keeps the full corpus symbol sequence in memory. The benchmark reports
 a small-fixture training observation, not a large-corpus capacity claim. No
-incremental pair-frequency structure, priority queue, pretokens, streaming corpus
-training, BPE dropout, special tokens, normalization, or POS/language/morphology
+incremental training pair-frequency structure, training priority queue, pretokens,
+streaming training, BPE dropout, special tokens, normalization, or POS/language/morphology
 packs are implemented. Any optimization should first be justified by profiling
 and must continue to match the reference oracle.
 
@@ -156,9 +184,22 @@ reference path and assert byte-exact decoding. Fixed runtime cases cover ASCII,
 German characters, emoji, combining Unicode, CJK, source-like code, whitespace,
 empty and one-byte input, repeated bytes, NUL, and invalid UTF-8 bytes.
 
-The complete M1 verification results are recorded in
+The original M1 verification results are recorded in
 [M1_BPE_BENCHMARK.md](M1_BPE_BENCHMARK.md). M0's historical byte-only run remains
 unchanged in [M0_BENCHMARK_BASELINE.md](M0_BENCHMARK_BASELINE.md).
+The subsequent correctness/performance audit and repeated measurements are in
+[M1_PERFORMANCE_AUDIT.md](M1_PERFORMANCE_AUDIT.md). The current harness warms each
+operation for 25 ms, then measures it for 200 ms. Optional runtime measurement
+methods count vector allocation/reallocation requests and simultaneous vector
+capacity; these exclude model/input storage, allocator overhead and process RSS.
+Current held-out results and PR review regressions are recorded in
+[M1_REVIEW_FIXES.md](M1_REVIEW_FIXES.md). Corpus source, split and record boundaries
+are defined in [fixtures/benchmark/README.md](fixtures/benchmark/README.md).
+The OS high-water counter covers the whole benchmark process, including training
+and all tokenizers, and cannot attribute memory to an individual operation.
+Windows uses a hidden PowerShell helper to read `PeakWorkingSet64`; Linux reads
+`VmHWM` from `/proc/self/status`. Other platforms report the counter unavailable.
+This helper is confined to measurement; tokenizer runtime and training do not use it.
 
 ## Next milestone
 

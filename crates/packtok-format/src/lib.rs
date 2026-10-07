@@ -20,6 +20,9 @@ pub const FLAT_BPE_PACK_ID: u16 = 0;
 /// Maximum accepted or emitted artifact size.
 pub const MAX_ARTIFACT_BYTES: usize = 16 * 1024 * 1024;
 
+/// Practical expansion bound for a single BPE token, independent of pointer width.
+pub const MAX_BPE_TOKEN_BYTES: usize = 1024 * 1024;
+
 /// Number of fixed byte symbols at the start of every flat BPE vocabulary.
 pub const BYTE_TOKEN_COUNT: u32 = 256;
 
@@ -110,6 +113,9 @@ impl FlatBpeModel {
             let length = byte_lengths[left_index]
                 .checked_add(byte_lengths[right_index])
                 .ok_or(BpeModelError::ExpandedTokenTooLarge { token_id: expected })?;
+            if length > MAX_BPE_TOKEN_BYTES {
+                return Err(BpeModelError::ExpandedTokenTooLarge { token_id: expected });
+            }
             byte_lengths.push(length);
         }
 
@@ -161,7 +167,7 @@ pub enum BpeModelError {
     },
     /// A previously selected pair occurs again in the merge table.
     DuplicatePair { left: u32, right: u32 },
-    /// Expanding this token would overflow the host's byte-length type.
+    /// Expanding this token exceeds [`MAX_BPE_TOKEN_BYTES`] or the host byte-length type.
     ExpandedTokenTooLarge { token_id: u32 },
     /// Validation could not reserve its bounded lookup table.
     AllocationFailed,
@@ -193,7 +199,7 @@ impl fmt::Display for BpeModelError {
             }
             Self::ExpandedTokenTooLarge { token_id } => write!(
                 f,
-                "expanded BPE token {token_id} exceeds the host byte-length range"
+                "expanded BPE token {token_id} exceeds the {MAX_BPE_TOKEN_BYTES}-byte token limit or host byte-length range"
             ),
             Self::AllocationFailed => f.write_str("could not allocate BPE validation storage"),
         }
@@ -208,18 +214,15 @@ impl Artifact {
         registry: PackRegistry,
         metadata: BTreeMap<String, String>,
     ) -> Result<Self, FormatError> {
-        for (index, key) in metadata.keys().enumerate() {
-            if key.is_empty() {
-                return Err(FormatError::EmptyMetadataKey { index });
-            }
-        }
-
-        Ok(Self {
+        validate_metadata(&metadata)?;
+        let artifact = Self {
             registry,
             metadata,
             format_version: FORMAT_VERSION,
             flat_bpe: None,
-        })
+        };
+        artifact.serialized_size()?;
+        Ok(artifact)
     }
 
     /// Creates a version-2 flat BPE artifact and checks that its registry matches
@@ -452,6 +455,16 @@ impl Artifact {
     }
 
     fn serialized_size(&self) -> Result<usize, FormatError> {
+        validate_collection_size(
+            "special tokens",
+            self.registry.special_tokens().len(),
+            MAX_COLLECTION_ITEMS,
+        )?;
+        validate_collection_size(
+            "metadata entries",
+            self.metadata.len(),
+            MAX_COLLECTION_ITEMS,
+        )?;
         let mut size = HEADER_BYTES
             .checked_add(4) // special-token count
             .and_then(|value| value.checked_add(4)) // metadata count
@@ -496,10 +509,26 @@ impl Artifact {
 }
 
 fn validate_metadata(metadata: &BTreeMap<String, String>) -> Result<(), FormatError> {
+    validate_collection_size("metadata entries", metadata.len(), MAX_COLLECTION_ITEMS)?;
     for (index, key) in metadata.keys().enumerate() {
         if key.is_empty() {
             return Err(FormatError::EmptyMetadataKey { index });
         }
+    }
+    Ok(())
+}
+
+fn validate_collection_size(
+    collection: &'static str,
+    count: usize,
+    maximum: usize,
+) -> Result<(), FormatError> {
+    if count > maximum {
+        return Err(FormatError::CollectionTooLarge {
+            collection,
+            count,
+            maximum,
+        });
     }
     Ok(())
 }
@@ -1129,5 +1158,128 @@ mod tests {
             FlatBpeModel::new(exponential),
             Err(BpeModelError::ExpandedTokenTooLarge { .. })
         ));
+    }
+
+    #[test]
+    fn token_expansion_limit_accepts_boundary_and_rejects_compact_bombs() {
+        let mut merges = Vec::new();
+        let mut parent = u32::from(b'a');
+        for rank in 0..20 {
+            let result = BYTE_TOKEN_COUNT + rank;
+            merges.push(FlatBpeMerge {
+                left: parent,
+                right: parent,
+                result,
+            });
+            parent = result;
+        }
+        let boundary = FlatBpeModel::new(merges.clone()).expect("one MiB token allowed");
+        assert_eq!(boundary.byte_length(parent), Some(MAX_BPE_TOKEN_BYTES));
+        let bomb = FlatBpeMerge {
+            left: parent,
+            right: parent,
+            result: parent + 1,
+        };
+        merges.push(bomb);
+        assert_eq!(
+            FlatBpeModel::new(merges),
+            Err(BpeModelError::ExpandedTokenTooLarge {
+                token_id: parent + 1
+            })
+        );
+
+        // Forge an untrusted wire record rather than relying on constructors.
+        let mut wire = flat_bpe_artifact().to_bytes().expect("small artifact");
+        wire.truncate(wire.len() - 16); // previous merge count and single merge
+        wire.extend_from_slice(&21_u32.to_le_bytes());
+        for merge in boundary.merges().iter().chain(std::iter::once(&bomb)) {
+            wire.extend_from_slice(&merge.left.to_le_bytes());
+            wire.extend_from_slice(&merge.right.to_le_bytes());
+            wire.extend_from_slice(&merge.result.to_le_bytes());
+        }
+        assert!(wire.len() < 512);
+        assert_eq!(
+            Artifact::from_bytes(&wire),
+            Err(FormatError::InvalidBpeModel(
+                BpeModelError::ExpandedTokenTooLarge {
+                    token_id: parent + 1
+                }
+            ))
+        );
+    }
+
+    #[test]
+    fn constructors_reject_metadata_beyond_reader_limit_in_both_versions() {
+        let metadata: BTreeMap<_, _> = (0..=MAX_COLLECTION_ITEMS)
+            .map(|index| (format!("key-{index:06}"), String::new()))
+            .collect();
+        let expected = FormatError::CollectionTooLarge {
+            collection: "metadata entries",
+            count: MAX_COLLECTION_ITEMS + 1,
+            maximum: MAX_COLLECTION_ITEMS,
+        };
+        assert_eq!(
+            Artifact::new(PackRegistry::default(), metadata.clone()).map(|_| ()),
+            Err(expected.clone())
+        );
+        let bpe = flat_bpe_artifact();
+        assert_eq!(
+            Artifact::with_flat_bpe(bpe.registry.clone(), metadata, bpe.flat_bpe.unwrap())
+                .map(|_| ()),
+            Err(expected)
+        );
+    }
+
+    #[test]
+    fn constructor_rejects_special_tokens_beyond_reader_limit() {
+        let count = MAX_COLLECTION_ITEMS + 1;
+        let registry = PackRegistry::new(
+            vec![
+                PackDescriptor::new(0, "specials", count as u32),
+                PackDescriptor::new(1, "bytes", BYTE_TOKEN_COUNT),
+            ],
+            ByteFallback::new(1),
+            (0..count)
+                .map(|index| {
+                    SpecialToken::new(TokenId::new(0, index as u32), format!("special-{index}"))
+                })
+                .collect(),
+        )
+        .expect("valid core address space");
+        assert_eq!(
+            Artifact::new(registry, BTreeMap::new()).map(|_| ()),
+            Err(FormatError::CollectionTooLarge {
+                collection: "special tokens",
+                count,
+                maximum: MAX_COLLECTION_ITEMS,
+            })
+        );
+    }
+
+    #[test]
+    fn version_one_constructor_rejects_oversized_artifact() {
+        let metadata = BTreeMap::from([("large".to_owned(), "x".repeat(MAX_ARTIFACT_BYTES))]);
+        assert!(matches!(
+            Artifact::new(PackRegistry::default(), metadata),
+            Err(FormatError::ArtifactTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn metadata_at_reader_limit_round_trips_in_both_versions() {
+        let metadata: BTreeMap<_, _> = (0..MAX_COLLECTION_ITEMS)
+            .map(|index| (format!("key-{index:06}"), String::new()))
+            .collect();
+        let legacy =
+            Artifact::new(PackRegistry::default(), metadata.clone()).expect("limit allowed");
+        let bpe = flat_bpe_artifact();
+        let current = Artifact::with_flat_bpe(bpe.registry, metadata, bpe.flat_bpe.unwrap())
+            .expect("limit allowed");
+        for artifact in [legacy, current] {
+            assert_eq!(
+                Artifact::from_bytes(&artifact.to_bytes().expect("serialize")),
+                Ok(artifact)
+            );
+        }
     }
 }

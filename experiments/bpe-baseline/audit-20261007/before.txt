@@ -1,0 +1,9 @@
+    Finished `release` profile [optimized] target(s) in 0.04s
+     Running `target\release\packtok-bench.exe`
+PackTok M0 byte fallback and M1 flat byte-level BPE benchmark
+measurement: fixed input; 200ms per direction; release profile recommended
+M1 model: 256 byte tokens + 84 learned merges = 340 vocabulary IDs; artifact=1881 B; fixture=712 B; train-once=5.083 ms (0.13 MiB/s; excludes file loading)
+English prose: input=4160 B; M0 tokens/input=4160 encode=880.04 MiB/s (44365 iters, 184558400 tokens) decode=470.25 MiB/s (23707 iters); M1 tokens/input=3264 encode=14.17 MiB/s (715 iters, 2333760 tokens) decode=217.47 MiB/s (10964 iters) bytes/token=1.275 reduction_vs_M0=21.54%
+German prose: input=4736 B; M0 tokens/input=4736 encode=1346.33 MiB/s (59617 iters, 282346112 tokens) decode=473.47 MiB/s (20966 iters); M1 tokens/input=3136 encode=15.90 MiB/s (704 iters, 2207744 tokens) decode=216.80 MiB/s (9601 iters) bytes/token=1.510 reduction_vs_M0=33.78%
+Unicode-heavy text: input=4320 B; M0 tokens/input=4320 encode=1326.04 MiB/s (64373 iters, 278091360 tokens) decode=469.35 MiB/s (22785 iters); M1 tokens/input=3488 encode=16.61 MiB/s (807 iters, 2814816 tokens) decode=218.26 MiB/s (10596 iters) bytes/token=1.239 reduction_vs_M0=19.26%
+Source-like text: input=5952 B; M0 tokens/input=5952 encode=1418.68 MiB/s (49987 iters, 297522624 tokens) decode=473.17 MiB/s (16672 iters); M1 tokens/input=4288 encode=14.34 MiB/s (506 iters, 2169728 tokens) decode=215.29 MiB/s (7586 iters) bytes/token=1.388 reduction_vs_M0=27.96%

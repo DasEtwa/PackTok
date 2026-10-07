@@ -258,6 +258,11 @@ baseline. `packtok-train` depends on `packtok-core` and `packtok-format`; it use
 training dependency. The CLI and benchmark are orchestration surfaces that may
 depend on those library crates. The M1 benchmark and experiment details are in
 [M1_BPE.md](M1_BPE.md) and [M1_BPE_BENCHMARK.md](M1_BPE_BENCHMARK.md).
+Current held-out evaluation and review verification are in
+[M1_REVIEW_FIXES.md](M1_REVIEW_FIXES.md). OS memory measurement and the retained
+scan comparison live inside `packtok-bench`; production crates do not depend on
+either measurement helper. Synthetic training/evaluation files live in
+`fixtures/benchmark/`, and raw observations are retained in `experiments/bpe-baseline/`.
 
 ## Artifact boundary
 
