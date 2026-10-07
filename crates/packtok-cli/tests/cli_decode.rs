@@ -1,5 +1,33 @@
 use std::process::Command;
 
+#[cfg(any(unix, windows))]
+#[test]
+fn non_unicode_arguments_return_a_clear_error_instead_of_panicking() {
+    #[cfg(unix)]
+    let invalid = {
+        use std::os::unix::ffi::OsStringExt;
+        std::ffi::OsString::from_vec(vec![0xff])
+    };
+    #[cfg(windows)]
+    let invalid = {
+        use std::os::windows::ffi::OsStringExt;
+        std::ffi::OsString::from_wide(&[0xd800])
+    };
+    let output = Command::new(env!("CARGO_BIN_EXE_packtok"))
+        .arg("validate")
+        .arg(invalid)
+        .output()
+        .expect("invoke CLI");
+    assert_eq!(
+        output.status.code(),
+        Some(1),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stderr).contains("not valid Unicode"));
+    assert!(output.stdout.is_empty());
+}
+
 fn decode(arguments: &[String]) -> Vec<u8> {
     let output = Command::new(env!("CARGO_BIN_EXE_packtok"))
         .arg("decode")

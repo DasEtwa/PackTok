@@ -34,9 +34,13 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<(), String> {
-    let mut args = env::args().skip(1);
-    let command = args.next().ok_or_else(|| USAGE.to_owned())?;
-    let arguments: Vec<String> = args.collect();
+    let mut args = env::args_os().skip(1).map(|argument| {
+        argument
+            .into_string()
+            .map_err(|argument| format!("argument {argument:?} is not valid Unicode"))
+    });
+    let command = args.next().transpose()?.ok_or_else(|| USAGE.to_owned())?;
+    let arguments = args.collect::<Result<Vec<_>, _>>()?;
 
     match command.as_str() {
         "encode" => encode_command(&arguments),

@@ -32,8 +32,10 @@ when those bytes are not valid text. There is no `<unk>` token.
 | `min_pair_frequency` | 2 | Minimum adjacent-pair count before selection |
 
 The target must be at least 256. `max_merges` cannot exceed the target minus 256.
-Minimum pair frequency must be positive. The trainer may stop before reaching the
-target if the corpus has no eligible pair. The CLI uses these same defaults and
+Minimum pair frequency must be positive. A pair is eligible only if its combined
+expanded length is at most 1 MiB. Oversized candidates are skipped while other
+eligible pairs remain available; the trainer may stop before reaching the target
+if the corpus has no eligible pair. The CLI uses these same defaults and
 accepts `--target-vocab`, `--max-merges`, and `--min-frequency` overrides.
 
 The production trainer begins with one local token per corpus byte. At each step it
@@ -70,8 +72,13 @@ adjacencies by `(merge rank, original byte position)`. It checks stale events an
 updates only the two neighbors of a merged pair. New adjacencies include the new
 result ID and can therefore only reference a later merge rank. This preserves the
 reference ordering, including left-to-right replacement of overlapping pairs.
-Models with at most eight merges and uniform byte runs use contiguous in-place
-rank scans to avoid queue overhead. Inputs with no matching initial byte pair
+Models with at most eight merges, uniform byte runs and detected dense repetitions
+use contiguous in-place rank scans to avoid queue overhead. The repetition detector
+checks periods of 1–16 bytes on inputs of at least 96 bytes, using three aligned
+samples to select a candidate and checking it across the full input with a bounded
+number of exceptional blocks. It compares batches aligned to each period. This
+heuristic selects the implementation path, never the encoded IDs.
+Inputs with no matching initial byte pair
 take a direct byte-token path.
 
 ## Corpus inputs and provenance
@@ -110,6 +117,8 @@ cargo run --release -p packtok-cli -- inspect-merges target/m1.packtok 20
 `decode --artifact <path> <local IDs...>` accepts space-separated flat local IDs.
 Both M0 and M1 CLI decoding write the exact raw bytes to stdout, including invalid
 UTF-8, with no added newline. Use `inspect-token` for escaped textual inspection.
+CLI arguments must be Unicode; malformed native arguments return a clear error
+and exit code 1 rather than panicking. Raw bytes inside corpus files remain valid.
 `inspect-token` prints decimal bytes, an escaped byte form, UTF-8 display when
 valid, and merge rank/parents for learned IDs. `inspect-merges` shows the first
 50 ranks by default; pass a limit to change that. The training CLI creates a new
@@ -146,8 +155,9 @@ trainer is intentionally slow: linear-search pair counting can take
 `O(N * U)` per merge. Production training rebuilds a `BTreeMap` of pair counts and
 rewrites the current sequence on every merge, so its upper-bound work is
 `O(M * (N log U + N))` and pair-count storage is `O(U)`. It retains the current
-symbol sequence, compacted in place (`O(N)`), and the merge table
-(`O(M)`). The implementation has not been optimized for large corpora.
+symbol sequence, compacted in place (`O(N)`), the merge table
+(`O(M)`), and per-ID lengths to exclude oversized candidates (`O(V)`). The
+implementation has not been optimized for large corpora.
 
 Runtime initialization sorts the pair index in `O(M log M)` time and stores
 `O(V + M)` index data. The event encoder does `O(N log V + N log N)` upper-bound
@@ -200,6 +210,8 @@ and all tokenizers, and cannot attribute memory to an individual operation.
 Windows uses a hidden PowerShell helper to read `PeakWorkingSet64`; Linux reads
 `VmHWM` from `/proc/self/status`. Other platforms report the counter unavailable.
 This helper is confined to measurement; tokenizer runtime and training do not use it.
+The subsequent audit of that fixed branch, including newly discovered regressions,
+is recorded in [POST_FIX_AUDIT.md](POST_FIX_AUDIT.md).
 
 ## Next milestone
 

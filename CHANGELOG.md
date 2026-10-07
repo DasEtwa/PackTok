@@ -1,5 +1,16 @@
 # Milestone history
 
+## Post-fix branch audit (2026-10-07)
+
+- Fixed valid repetitive corpora failing training after the per-token size limit:
+  both trainers now skip oversized merge candidates and continue with valid pairs.
+- Fixed heap-path throughput cliffs on near-uniform and alternating inputs using
+  a bounded dense-repetition detector; canonical IDs remain identical to the oracle.
+- Replaced panicking Unicode argument iteration with explicit native-argument
+  validation and clear CLI errors on Unix and Windows.
+- Added adversarial tests and extended stress benchmarks; preserved the slower
+  intermediate detector measurements. See [POST_FIX_AUDIT.md](POST_FIX_AUDIT.md).
+
 ## PR #1 review fixes (2026-10-07)
 
 - Addressed all seven Codex review findings. The corpus-path and bounded-read fixes

@@ -1,0 +1,36 @@
+PackTok M0 byte fallback and M1 flat byte-level BPE benchmark
+measurement: fixed input; 25ms warm-up, 200ms per direction; release profile recommended
+split: train=fixtures/benchmark/train.txt; train_fnv1a64=4d0cc0a94cc66e49; eval=fixtures/benchmark/eval/*.txt; no normalization
+M1 model: 256 byte tokens + 256 learned merges = 512 vocabulary IDs; artifact=3951 B; fixture=1640 B; train-once=20.456 ms (0.08 MiB/s; excludes file loading)
+Evaluation English prose: path=fixtures/benchmark/eval/english.txt; raw_bytes=229; fnv1a64=b00b21654654d1bc
+English prose: input=7328 B; M0 tokens/input=7328 encode=1110.70 MiB/s (31787 iters, 232935136 tokens) decode=471.31 MiB/s (13489 iters); M1 tokens/input=5088 encode=19.78 MiB/s (567 iters, 2884896 tokens) decode=243.39 MiB/s (6966 iters) bytes/token=1.440 reduction_vs_M0=30.57%
+  matched pre-audit rank scans: encode=5.24 MiB/s; current/scan=3.78x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=333824/7344 B (excludes model, input, allocator overhead and RSS)
+  M0 evaluation record lengths: n=3 min=6 p50=92 p95=131 max=131 mean=76.33 tokens (original lines with newline bytes)
+  M1 evaluation record lengths: n=3 min=4 p50=57 p95=98 max=98 mean=53.00 tokens (original lines with newline bytes)
+Evaluation German prose: path=fixtures/benchmark/eval/german.txt; raw_bytes=247; fnv1a64=7767115b6b9b4e70
+German prose: input=7904 B; M0 tokens/input=7904 encode=1408.74 MiB/s (37378 iters, 295435712 tokens) decode=475.63 MiB/s (12620 iters); M1 tokens/input=5312 encode=17.72 MiB/s (471 iters, 2501952 tokens) decode=243.35 MiB/s (6457 iters) bytes/token=1.488 reduction_vs_M0=32.79%
+  matched pre-audit rank scans: encode=6.16 MiB/s; current/scan=2.88x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=358656/7920 B (excludes model, input, allocator overhead and RSS)
+  M0 evaluation record lengths: n=3 min=7 p50=91 p95=149 max=149 mean=82.33 tokens (original lines with newline bytes)
+  M1 evaluation record lengths: n=3 min=5 p50=61 p95=100 max=100 mean=55.33 tokens (original lines with newline bytes)
+Evaluation Unicode-heavy text: path=fixtures/benchmark/eval/unicode.txt; raw_bytes=223; fnv1a64=97f4d1f3d4c1a47f
+Unicode-heavy text: input=7136 B; M0 tokens/input=7136 encode=1440.65 MiB/s (42339 iters, 302131104 tokens) decode=470.17 MiB/s (13818 iters); M1 tokens/input=6720 encode=58.25 MiB/s (1712 iters, 11504640 tokens) decode=298.93 MiB/s (8786 iters) bytes/token=1.062 reduction_vs_M0=5.83%
+  matched pre-audit rank scans: encode=5.74 MiB/s; current/scan=10.15x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=339200/7152 B (excludes model, input, allocator overhead and RSS)
+  M0 evaluation record lengths: n=3 min=5 p50=82 p95=136 max=136 mean=74.33 tokens (original lines with newline bytes)
+  M1 evaluation record lengths: n=3 min=5 p50=81 p95=124 max=124 mean=70.00 tokens (original lines with newline bytes)
+Evaluation Source-like text: path=fixtures/benchmark/eval/code.txt; raw_bytes=255; fnv1a64=a3e31d9692c8cd3f
+Source-like text: input=8160 B; M0 tokens/input=8160 encode=1442.41 MiB/s (37072 iters, 302507520 tokens) decode=476.21 MiB/s (12239 iters); M1 tokens/input=6048 encode=23.25 MiB/s (598 iters, 3616704 tokens) decode=245.63 MiB/s (6313 iters) bytes/token=1.349 reduction_vs_M0=25.88%
+  matched pre-audit rank scans: encode=5.02 MiB/s; current/scan=4.63x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=374784/8176 B (excludes model, input, allocator overhead and RSS)
+  M0 evaluation record lengths: n=9 min=1 p50=28 p95=63 max=63 mean=28.33 tokens (original lines with newline bytes)
+  M1 evaluation record lengths: n=9 min=1 p50=20 p95=53 max=53 mean=21.44 tokens (original lines with newline bytes)
+Stress Dense repeated bytes: input=16384 B; merges=8; tokens=64; current=515.38 MiB/s; scan=414.70 MiB/s; current/scan=1.24x
+Stress Dense repetitions, larger model: input=16384 B; merges=72; tokens=64; current=470.25 MiB/s; scan=403.27 MiB/s; current/scan=1.17x
+Stress Dense repetitions with one exceptional byte: input=16384 B; merges=72; tokens=72; current=417.89 MiB/s; scan=391.08 MiB/s; current/scan=1.07x
+Stress Dense alternating bytes: input=16384 B; merges=9; tokens=32; current=495.18 MiB/s; scan=431.96 MiB/s; current/scan=1.15x
+Stress Dense three-byte repetitions: input=16383 B; merges=10; tokens=25; current=220.11 MiB/s; scan=332.47 MiB/s; current/scan=0.66x
+Stress Unmatched repeated bytes: input=16384 B; merges=256; tokens=16384; current=253.04 MiB/s; scan=6.56 MiB/s; current/scan=38.59x
+Stress Training corpus repeated (stress only, excluded from held-out metrics): input=52480 B; merges=256; tokens=20800; current=8.44 MiB/s; scan=3.29 MiB/s; current/scan=2.57x
+OS process peak resident/working-set memory=7122944 B (entire run, includes training/models/M0/M1/reference; not per operation)

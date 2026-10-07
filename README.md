@@ -35,6 +35,8 @@ repeated throughput measurements, and the encoder's temporary-memory trade-off.
 The [PR #1 review fixes and current results](M1_REVIEW_FIXES.md) cover all seven
 Codex findings and the separate synthetic training/evaluation split. Older
 benchmark reports retain their original training-like observations.
+The [post-fix audit](POST_FIX_AUDIT.md) records three additional fixes, verification
+of the previous findings, and extended repetition benchmarks.
 
 Verify with `cargo fmt --all --check`,
 `cargo clippy --workspace --all-targets --all-features -- -D warnings`,

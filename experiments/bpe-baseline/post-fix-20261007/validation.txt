@@ -1,0 +1,28 @@
+Post-fix audit validation, 2026-10-07
+Audited commit: 613f21e48d0337adeea9043ac292391ecfa29807
+Final source/input state before commit: source-sha256.txt
+
+Windows 10 Pro 10.0.19045, Intel Core i7-2600 @ 3.40 GHz, 4 cores / 8 logical CPUs
+Rust 1.98.1 (48a229cea 2026-09-01), LLVM 22.1.8, x86_64-pc-windows-msvc
+cargo fmt --all --check: passed
+cargo clippy --workspace --all-targets --all-features -- -D warnings: passed
+cargo test --workspace: 64 passed, 0 failed; windows-tests.txt
+cargo build --release --workspace: passed
+
+Ubuntu 26.04.1 LTS, WSL kernel 6.18.40.1-microsoft-standard-WSL2
+Rust 1.85.0 (4d91de4e4 2025-02-17), declared MSRV
+cargo +1.85.0 test --workspace: 65 passed, 0 failed; linux-tests-final.txt
+
+before.txt: audited runtime/training, extended harness, one release run
+after-1.txt to after-4.txt: intermediate detector; unfavorable three-byte results preserved
+final-1.txt to final-3.txt: final period-aligned batched detector, release executable
+25 ms warm-up, 200 ms measurements; allocation included; instrumentation separate
+Synthetic held-out split and checksums unchanged; dense stress cases excluded from compression claims
+
+Original fixture release CLI train/validate: 84 merges, 340 IDs, 1881 bytes
+SHA-256: CEF973A354422C88E6FEF54D0B6EEE09495980DF4E5BD0B7E5ADC37896E7D907
+3 new issues fixed; 0 old findings still unresolved
+No observed ID, artifact-byte, normalization or round-trip regression
+M0 English timing variation remains an unconfirmed measurement signal; see POST_FIX_AUDIT.md
+
+This file summarizes observed commands; benchmark/test .txt files preserve output.

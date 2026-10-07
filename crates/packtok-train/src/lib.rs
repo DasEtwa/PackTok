@@ -12,6 +12,7 @@ use packtok_core::{
 };
 use packtok_format::{
     Artifact, BpeModelError, FLAT_BPE_PACK_ID, FlatBpeMerge, FlatBpeModel, FormatError,
+    MAX_BPE_TOKEN_BYTES,
 };
 
 /// M1's documented default training configuration.
@@ -253,6 +254,14 @@ pub fn train_model(
     merges
         .try_reserve(reserve_count)
         .map_err(|_| TrainingError::AllocationFailed)?;
+    let mut token_lengths = Vec::new();
+    token_lengths
+        .try_reserve_exact(BYTE_FALLBACK_TOKEN_COUNT as usize + reserve_count)
+        .map_err(|_| TrainingError::AllocationFailed)?;
+    token_lengths.extend(std::iter::repeat_n(
+        1_usize,
+        BYTE_FALLBACK_TOKEN_COUNT as usize,
+    ));
 
     for _ in 0..merge_limit {
         let mut frequencies = BTreeMap::<(u32, u32), u64>::new();
@@ -264,7 +273,8 @@ pub fn train_model(
         }
         let mut selected: Option<((u32, u32), u64)> = None;
         for (pair, frequency) in frequencies {
-            if frequency < config.min_pair_frequency {
+            let length = token_lengths[pair.0 as usize] + token_lengths[pair.1 as usize];
+            if frequency < config.min_pair_frequency || length > MAX_BPE_TOKEN_BYTES {
                 continue;
             }
             if selected.is_none_or(|(best_pair, best_frequency)| {
@@ -284,6 +294,7 @@ pub fn train_model(
             right,
             result,
         });
+        token_lengths.push(token_lengths[left as usize] + token_lengths[right as usize]);
         merge_pair(&mut symbols, (left, right), result);
     }
     Ok(FlatBpeModel::new(merges)?)
@@ -583,6 +594,7 @@ pub mod reference {
         let config = config.validate()?;
         let mut symbols: Vec<u32> = corpus.iter().map(|byte| u32::from(*byte)).collect();
         let mut merges = Vec::new();
+        let mut lengths = vec![1_usize; BYTE_FALLBACK_TOKEN_COUNT as usize];
         let merge_limit = config
             .max_merges
             .min(config.target_vocab_size - BYTE_FALLBACK_TOKEN_COUNT);
@@ -602,6 +614,9 @@ pub mod reference {
             let selected = counts
                 .into_iter()
                 .filter(|(_, count)| *count >= config.min_pair_frequency)
+                .filter(|((left, right), _)| {
+                    lengths[*left as usize] + lengths[*right as usize] <= MAX_BPE_TOKEN_BYTES
+                })
                 .min_by(|(pair_a, count_a), (pair_b, count_b)| {
                     count_b.cmp(count_a).then_with(|| pair_a.cmp(pair_b))
                 });
@@ -618,6 +633,7 @@ pub mod reference {
                 right,
                 result,
             });
+            lengths.push(lengths[left as usize] + lengths[right as usize]);
 
             let mut next = Vec::with_capacity(symbols.len());
             let mut index = 0;
@@ -678,6 +694,86 @@ mod tests {
         max_merges: 4,
         min_pair_frequency: 2,
     };
+
+    #[test]
+    fn training_skips_merges_above_the_token_expansion_bound() {
+        let corpus = vec![b'a'; 3 * packtok_format::MAX_BPE_TOKEN_BYTES];
+        let config = BpeTrainingConfig::default();
+        let model = train_model(&corpus, config).expect("valid corpus must still train");
+        assert_eq!(model.merges().len(), 20);
+        assert_eq!(
+            model.byte_length(275),
+            Some(packtok_format::MAX_BPE_TOKEN_BYTES)
+        );
+        assert_eq!(
+            reference::train_model(&corpus, config).expect("oracle"),
+            model
+        );
+        let runtime = BpeTokenizer::new(model);
+        let tokens = runtime.encode_bytes(&corpus).expect("encode full corpus");
+        assert_eq!(tokens.len(), 3);
+        assert_eq!(runtime.decode_bytes(&tokens).expect("decode"), corpus);
+    }
+
+    #[test]
+    fn training_considers_other_pairs_after_a_dominant_pair_reaches_the_bound() {
+        let mut corpus = vec![b'a'; 4 * MAX_BPE_TOKEN_BYTES];
+        corpus.extend_from_slice(b"xyzxyz");
+        let config = BpeTrainingConfig::default();
+        let model = train_model(&corpus, config).expect("skip oversized pair, keep training");
+        assert_eq!(model.merges().len(), 22);
+        assert_eq!(
+            model.merges()[20],
+            FlatBpeMerge {
+                left: 120,
+                right: 121,
+                result: 276
+            }
+        );
+        assert_eq!(
+            reference::train_model(&corpus, config).expect("oracle"),
+            model
+        );
+        let runtime = BpeTokenizer::new(model);
+        let tokens = runtime.encode_bytes(&corpus).expect("encode corpus");
+        assert_eq!(tokens.len(), 6);
+        assert_eq!(runtime.decode_bytes(&tokens).expect("decode"), corpus);
+    }
+
+    #[test]
+    fn dense_nonuniform_runtime_paths_match_reference_and_round_trip() {
+        for pattern in [b"a".as_slice(), b"ab", b"abc", b"01234567"] {
+            let mut merges = train_model(&pattern.repeat(512), BpeTrainingConfig::default())
+                .expect("repetitive model")
+                .merges()
+                .to_vec();
+            for right in 0..64 {
+                merges.push(FlatBpeMerge {
+                    left: 0,
+                    right,
+                    result: 256 + merges.len() as u32,
+                });
+            }
+            let model = FlatBpeModel::new(merges).expect("extended model");
+            let runtime = BpeTokenizer::new(model.clone());
+            let mut input = pattern.repeat(16_384_usize.div_ceil(pattern.len()));
+            input.truncate(16_384);
+            for index in [0, 1, 31, 8191, 8192, 16383] {
+                let mut mixed = input.clone();
+                mixed[index] = 0xff;
+                let (tokens, stats) = runtime.encode_bytes_with_stats(&mixed).expect("encode");
+                assert_eq!(
+                    tokens.iter().map(|token| token.local).collect::<Vec<_>>(),
+                    reference::encode(&mixed, &model)
+                );
+                assert_eq!(runtime.decode_bytes(&tokens).expect("decode"), mixed);
+                assert_eq!(
+                    stats.allocation_requests, 2,
+                    "dense input must avoid heap storage"
+                );
+            }
+        }
+    }
 
     #[test]
     fn default_configuration_and_ranges_are_explicit() {

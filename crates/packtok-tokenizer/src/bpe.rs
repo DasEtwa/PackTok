@@ -34,6 +34,48 @@ fn is_uniform(input: &[u8]) -> bool {
     chunks.all(|chunk| chunk == block) && chunks.remainder().iter().all(|byte| *byte == block[0])
 }
 
+// Dense short-period inputs are expensive heap workloads even when an occasional
+// byte differs. Choose a repeated pattern from three spaced, aligned samples,
+// then verify it over the complete input. This only selects an execution path;
+// both paths apply exactly the same rank-ordered merges.
+fn has_dense_repetitions(input: &[u8]) -> bool {
+    if input.len() < 96 {
+        return false;
+    }
+    'periods: for period in 1..=16 {
+        let count = input.len() / period;
+        let first = &input[..period];
+        let middle = &input[(count / 2) * period..(count / 2 + 1) * period];
+        let last = &input[(count - 1) * period..count * period];
+        let pattern = if first == middle || first == last {
+            first
+        } else if middle == last {
+            middle
+        } else {
+            continue;
+        };
+        // Compare whole batches aligned to the period, including periods such as
+        // three bytes. A comparison per tiny pattern adds substantial overhead.
+        let block_len = (32 / period) * period;
+        let mut block = [0_u8; 32];
+        for (index, byte) in block[..block_len].iter_mut().enumerate() {
+            *byte = pattern[index % period];
+        }
+        let allowance = input.len().div_ceil(block_len).div_ceil(32);
+        let mut mismatches = 0;
+        for chunk in input.chunks(block_len) {
+            if chunk != &block[..chunk.len()] {
+                mismatches += 1;
+                if mismatches > allowance {
+                    continue 'periods;
+                }
+            }
+        }
+        return true;
+    }
+    false
+}
+
 /// Capacity-based buffer measurements for one successful runtime call.
 /// Excludes the immutable model, caller input, allocator overhead and process RSS.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -129,7 +171,7 @@ impl BpeTokenizer {
         }
         // For tiny models, contiguous passes cost less than event bookkeeping,
         // especially when an early merge compresses a dense run of repetitions.
-        if self.model.merges().len() <= 8 || is_uniform(input) {
+        if self.model.merges().len() <= 8 || is_uniform(input) || has_dense_repetitions(input) {
             return self.encode_small_model::<TRACK>(input, stats);
         }
         let allocation_error = || EncodeError::AllocationFailed {
@@ -522,6 +564,29 @@ mod tests {
                 assert!(!is_uniform(&mixed), "length={length}, index={index}");
             }
         }
+    }
+
+    #[test]
+    fn dense_repetition_detection_handles_periods_and_exception_positions() {
+        for period in 1..=16 {
+            let pattern: Vec<_> = (0..period).map(|index| b'a' + index as u8).collect();
+            let mut input = pattern.repeat(4096_usize.div_ceil(period));
+            input.truncate(4096);
+            assert!(has_dense_repetitions(&input), "period={period}");
+            for index in [0, 1, 31, 2047, 2048, 4095] {
+                let mut mixed = input.clone();
+                mixed[index] = 0xff;
+                assert!(
+                    has_dense_repetitions(&mixed),
+                    "period={period}, index={index}"
+                );
+            }
+        }
+        let sparse: Vec<_> = (0..4096).map(|index| (index % 251) as u8).collect();
+        assert!(!has_dense_repetitions(&sparse));
+        let mut prefix = vec![b'a'; 1024];
+        prefix.extend_from_slice(&sparse);
+        assert!(!has_dense_repetitions(&prefix));
     }
 
     #[test]

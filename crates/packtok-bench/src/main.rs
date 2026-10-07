@@ -169,7 +169,22 @@ fn main() -> Result<(), Box<dyn Error>> {
         (
             "Dense repetitions, larger model",
             "a".repeat(16_384),
+            packtok_format::FlatBpeModel::new(larger_merges.clone())?,
+        ),
+        (
+            "Dense repetitions with one exceptional byte",
+            format!("{}b{}", "a".repeat(8_191), "a".repeat(8_192)),
             packtok_format::FlatBpeModel::new(larger_merges)?,
+        ),
+        (
+            "Dense alternating bytes",
+            "ab".repeat(8_192),
+            packtok_train::train_model("ab".repeat(512).as_bytes(), config)?,
+        ),
+        (
+            "Dense three-byte repetitions",
+            "abc".repeat(5_461),
+            packtok_train::train_model("abc".repeat(512).as_bytes(), config)?,
         ),
         (
             "Unmatched repeated bytes",
