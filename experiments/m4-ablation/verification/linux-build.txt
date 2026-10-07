@@ -1,0 +1,9 @@
+   Compiling packtok-core v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-core)
+   Compiling packtok-packs v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-packs)
+   Compiling packtok-model v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-model)
+   Compiling packtok-format v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-format)
+   Compiling packtok-tokenizer v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-tokenizer)
+   Compiling packtok-train v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-train)
+   Compiling packtok-bench v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-bench)
+   Compiling packtok-cli v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-cli)
+    Finished `release` profile [optimized] target(s) in 6.57s

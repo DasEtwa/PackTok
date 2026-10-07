@@ -66,3 +66,11 @@ Raw corpus sources retain original CRLF and trailing whitespace deliberately;
 Git whitespace checks exclude those data files via -diff, not normalization.
 The initial inline WSL launch failed on inherited PATH quoting, before Cargo.
 Its cause and the corrected explicit script are preserved under experiments.
+
+Pre-final Windows verification (Rust/Cargo 1.98.1) passed strict Clippy,
+workspace build and all 124 tests; Linux WSL Ubuntu 26.04.1 on declared MSRV
+Rust/Cargo 1.85.0 passed fmt, strict Clippy, release build and all 125 tests.
+The extra Linux test covers literal-backslash corpus paths. Logs are retained.
+No model settings changed after these checks. Frozen implementation is commit
+9928c15; a233b85 adds only raw-data/verification metadata. Final experiment
+environment files record the exact checkout commit used by each run.
