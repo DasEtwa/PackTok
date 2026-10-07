@@ -1,0 +1,189 @@
+PackTok M3 model comparison
+run_label=final-20261007
+run_directory=experiments/m3-model/runs\final-20261007
+
+source_commit=2603f9613b947e7933c11daba5fa168eeda1905c os=windows os_version=Microsoft Windows 10 Pro 19045 arch=x86_64 cpu=Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz logical_cpus=8 build_profile=release debug_assertions=false
+rustc_verbose=
+rustc 1.98.1 (48a229cea 2026-09-01)
+binary: rustc
+commit-hash: 48a229ceaefd4985c50990b14116b6d856af0985
+commit-date: 2026-09-01
+host: x86_64-pc-windows-msvc
+release: 1.98.1
+LLVM version: 22.1.8
+cargo_verbose=
+cargo 1.98.1 (797e8a9bc 2026-08-05)
+release: 1.98.1
+commit-hash: 797e8a9bca276c1c9f9f738d2a20f484fa4eea9d
+commit-date: 2026-08-05
+host: x86_64-pc-windows-msvc
+libgit2: 1.9.4 (sys:0.21.0 vendored)
+libcurl: 8.21.0-DEV (sys:0.4.90+curl-8.21.0 vendored ssl:Schannel)
+os: Windows 10.0.19045 (Windows 10 Pro) [64-bit]
+thread_policy=one explicit training/evaluation thread
+run_directory=experiments/m3-model/runs\final-20261007
+
+model_config=causal_tanh_rnn hidden=16 context=16 optimizer=Adam lr=0.01 beta1=0.9 beta2=0.999 epsilon=0.00000001 gradient_clip=1 batch_size=4 same_backbone_steps=120 repetitions=3 seed_base=20261007 precision=f32 device=CPU thread_count=1 weight_decay=0 warmup=0
+tokenizer_config=M1 target_vocab=512 max_merges=256 min_pair_frequency=2; M2 router=lexical-v1 target_vocab=512 max_learned_tokens=256 min_pair_frequency=2
+tokenizer_determinism=each tokenizer trained twice from identical M3 train bytes; serialized artifact bytes matched
+tokenizer_artifact=M1 bytes=3949 path=experiments/m3-model/artifacts\m1-flat-v2.packtok; M2 bytes=4464 path=experiments/m3-model/artifacts\m2-factorized-v3.packtok
+dataset_train path=fixtures/m3-model/train.txt bytes=2605 fnv1a64=3f798b46cf56da56; validation path=fixtures/m3-model/validation.txt bytes=604 fnv1a64=8ff9ab99c0ad00fc; test path=fixtures/m3-model/test.txt bytes=614 fnv1a64=67290820225e3faa; normalization=none separators=none
+token_counts train M1=872 M2=1213; validation M1=375 M2=418; test M1=397 M2=425
+m2_train_pack_allocation=[FactorizedPackTrainingStats { pack_id: 65535, spans: 0, routed_bytes: 0, learned_merges: 0, local_vocab_size: 0 }, FactorizedPackTrainingStats { pack_id: 0, spans: 473, routed_bytes: 2032, learned_merges: 253, local_vocab_size: 253 }, FactorizedPackTrainingStats { pack_id: 1, spans: 4, routed_bytes: 8, learned_merges: 0, local_vocab_size: 0 }, FactorizedPackTrainingStats { pack_id: 2, spans: 477, routed_bytes: 565, learned_merges: 3, local_vocab_size: 3 }]
+
+repeat_results_begin
+rep=1 regime=A-same-backbone tokenizer=M1-flat seed=20261007 params=17424 embedding_params=8192 backbone_params=528 output_params=8704 train_steps=120 train_tokens=7680 train_target_bytes=23098 estimated_macs=194519040 train_ms=307.000 final_train_loss_token=5.12394968
+  validation raw_bytes=604 scored_bytes=600 tokens=375 bytes_per_token=1.610667 loss_token=6.74683180 bits_per_byte=6.06729029 nll_per_byte=4.20552516 perplexity_token_specific=851.35721785 eval_ms=10.465
+  test raw_bytes=614 scored_bytes=612 tokens=397 bytes_per_token=1.546599 loss_token=7.18901178 bits_per_byte=6.71100401 nll_per_byte=4.65171351 perplexity_token_specific=1324.79337726 token_accuracy=0.012626 eval_ms=11.263 model_artifact_bytes=69742 parameter_adam_and_gradient_bytes=278784 generated_bytes_hex=41742074686520686172626f7273207320732073207320732073207320
+  validation_curve step=1 loss_token=6.23550607 bits_per_byte=5.60746533
+  validation_curve step=20 loss_token=6.39339313 bits_per_byte=5.74944999
+  validation_curve step=40 loss_token=6.82420715 bits_per_byte=6.13687238
+  validation_curve step=60 loss_token=6.98964141 bits_per_byte=6.28564409
+  validation_curve step=80 loss_token=6.94461281 bits_per_byte=6.24515077
+  validation_curve step=100 loss_token=6.85092944 bits_per_byte=6.16090321
+  validation_curve step=120 loss_token=6.74683180 bits_per_byte=6.06729029
+rep=1 regime=A-same-backbone tokenizer=M2-factorized seed=20261007 params=17475 embedding_params=8192 backbone_params=528 output_params=8755 train_steps=120 train_tokens=7680 train_target_bytes=16303 estimated_macs=93874368 train_ms=210.968 final_train_loss_token=3.90600308
+  validation raw_bytes=604 scored_bytes=601 tokens=418 bytes_per_token=1.444976 loss_token=5.94977699 bits_per_byte=5.95575480 nll_per_byte=4.12821465 perplexity_token_specific=383.66776686 eval_ms=9.351
+  test raw_bytes=614 scored_bytes=612 tokens=425 bytes_per_token=1.444706 loss_token=5.95188778 bits_per_byte=5.94899642 nll_per_byte=4.12353010 perplexity_token_specific=384.47846633 token_accuracy=0.212264 eval_ms=9.088 model_artifact_bytes=69958 parameter_adam_and_gradient_bytes=279600 generated_bytes_hex=41742074686520686172626f7220746865207468652074686520746865
+  M2_test_head_stats pack_accuracy=0.582547 local_accuracy_given_gold_pack=0.238208 active_local_head_size_mean=246.683962 pack_head_logit_fraction=0.012015 local_head_logit_fraction=0.987985 pack_transitions=225 byte_fallback_targets=274/424 byte_fallback_fraction=0.646226 pack[0]={targets:136,accuracy:0.316176,local_count:253} pack[2]={targets:14,accuracy:0.000000,local_count:3} pack[65535]={targets:274,accuracy:0.744526,local_count:256}
+  validation_curve step=1 loss_token=6.49466156 bits_per_byte=6.50118683
+  validation_curve step=20 loss_token=5.30067830 bits_per_byte=5.30600395
+  validation_curve step=40 loss_token=5.93576909 bits_per_byte=5.94173283
+  validation_curve step=60 loss_token=5.97889463 bits_per_byte=5.98490170
+  validation_curve step=80 loss_token=5.94937794 bits_per_byte=5.95535536
+  validation_curve step=100 loss_token=5.80016849 bits_per_byte=5.80599599
+  validation_curve step=120 loss_token=5.94977699 bits_per_byte=5.95575480
+rep=1 regime=B-matched-MAC tokenizer=M1-flat seed=20261007 params=17424 embedding_params=8192 backbone_params=528 output_params=8704 train_steps=120 train_tokens=7680 train_target_bytes=23098 estimated_macs=194519040 train_ms=329.952 final_train_loss_token=5.12394968
+  validation raw_bytes=604 scored_bytes=600 tokens=375 bytes_per_token=1.610667 loss_token=6.74683180 bits_per_byte=6.06729029 nll_per_byte=4.20552516 perplexity_token_specific=851.35721785 eval_ms=10.678
+  test raw_bytes=614 scored_bytes=612 tokens=397 bytes_per_token=1.546599 loss_token=7.18901178 bits_per_byte=6.71100401 nll_per_byte=4.65171351 perplexity_token_specific=1324.79337726 token_accuracy=0.012626 eval_ms=11.607 model_artifact_bytes=69742 parameter_adam_and_gradient_bytes=278784 generated_bytes_hex=41742074686520686172626f7273207320732073207320732073207320
+  validation_curve step=1 loss_token=6.23550607 bits_per_byte=5.60746533
+  validation_curve step=20 loss_token=6.39339313 bits_per_byte=5.74944999
+  validation_curve step=40 loss_token=6.82420715 bits_per_byte=6.13687238
+  validation_curve step=60 loss_token=6.98964141 bits_per_byte=6.28564409
+  validation_curve step=80 loss_token=6.94461281 bits_per_byte=6.24515077
+  validation_curve step=100 loss_token=6.85092944 bits_per_byte=6.16090321
+  validation_curve step=120 loss_token=6.74683180 bits_per_byte=6.06729029
+rep=1 regime=B-matched-MAC tokenizer=M2-factorized seed=20261007 params=17475 embedding_params=8192 backbone_params=528 output_params=8755 train_steps=249 train_tokens=15936 train_target_bytes=34129 estimated_macs=194691360 train_ms=401.908 final_train_loss_token=2.99705490
+  validation raw_bytes=604 scored_bytes=601 tokens=418 bytes_per_token=1.444976 loss_token=6.29965481 bits_per_byte=6.30598415 nll_per_byte=4.37097513 perplexity_token_specific=544.38396187 eval_ms=12.744
+  test raw_bytes=614 scored_bytes=612 tokens=425 bytes_per_token=1.444706 loss_token=6.36332242 bits_per_byte=6.36023119 nll_per_byte=4.40857631 perplexity_token_specific=580.17072578 token_accuracy=0.214623 eval_ms=11.786 model_artifact_bytes=69958 parameter_adam_and_gradient_bytes=279600 generated_bytes_hex=41742074686520686172626f7220746865207468652074686520746865
+  M2_test_head_stats pack_accuracy=0.589623 local_accuracy_given_gold_pack=0.266509 active_local_head_size_mean=246.683962 pack_head_logit_fraction=0.012015 local_head_logit_fraction=0.987985 pack_transitions=225 byte_fallback_targets=274/424 byte_fallback_fraction=0.646226 pack[0]={targets:136,accuracy:0.367647,local_count:253} pack[2]={targets:14,accuracy:0.000000,local_count:3} pack[65535]={targets:274,accuracy:0.729927,local_count:256}
+  validation_curve step=1 loss_token=6.49466156 bits_per_byte=6.50118683
+  validation_curve step=20 loss_token=5.30067830 bits_per_byte=5.30600395
+  validation_curve step=40 loss_token=5.93576909 bits_per_byte=5.94173283
+  validation_curve step=60 loss_token=5.97889463 bits_per_byte=5.98490170
+  validation_curve step=80 loss_token=5.94937794 bits_per_byte=5.95535536
+  validation_curve step=100 loss_token=5.80016849 bits_per_byte=5.80599599
+  validation_curve step=120 loss_token=5.94977699 bits_per_byte=5.95575480
+  validation_curve step=140 loss_token=5.87563833 bits_per_byte=5.88154165
+  validation_curve step=160 loss_token=5.96067501 bits_per_byte=5.96666377
+  validation_curve step=180 loss_token=6.19306163 bits_per_byte=6.19928388
+  validation_curve step=200 loss_token=6.20535479 bits_per_byte=6.21158938
+  validation_curve step=220 loss_token=6.33146909 bits_per_byte=6.33783040
+  validation_curve step=240 loss_token=6.33205138 bits_per_byte=6.33841327
+  validation_curve step=249 loss_token=6.29965481 bits_per_byte=6.30598415
+rep=2 regime=A-same-backbone tokenizer=M1-flat seed=20261008 params=17424 embedding_params=8192 backbone_params=528 output_params=8704 train_steps=120 train_tokens=7680 train_target_bytes=23272 estimated_macs=194519040 train_ms=350.038 final_train_loss_token=4.97707356
+  validation raw_bytes=604 scored_bytes=600 tokens=375 bytes_per_token=1.610667 loss_token=7.08414003 bits_per_byte=6.37062480 nll_per_byte=4.41578062 perplexity_token_specific=1192.89693322 eval_ms=10.951
+  test raw_bytes=614 scored_bytes=612 tokens=397 bytes_per_token=1.546599 loss_token=7.56949663 bits_per_byte=7.06618987 nll_per_byte=4.89790958 perplexity_token_specific=1938.16441841 token_accuracy=0.042929 eval_ms=11.831 model_artifact_bytes=69742 parameter_adam_and_gradient_bytes=278784 generated_bytes_hex=41742074686520686172626f7272657265726572657265726572657265
+  validation_curve step=1 loss_token=6.23690062 bits_per_byte=5.60871942
+  validation_curve step=20 loss_token=6.49052634 bits_per_byte=5.83679993
+  validation_curve step=40 loss_token=6.76331824 bits_per_byte=6.08211621
+  validation_curve step=60 loss_token=6.77790313 bits_per_byte=6.09523211
+  validation_curve step=80 loss_token=7.10566123 bits_per_byte=6.38997838
+  validation_curve step=100 loss_token=7.00455143 bits_per_byte=6.29905237
+  validation_curve step=120 loss_token=7.08414003 bits_per_byte=6.37062480
+rep=2 regime=A-same-backbone tokenizer=M2-factorized seed=20261008 params=17475 embedding_params=8192 backbone_params=528 output_params=8755 train_steps=120 train_tokens=7680 train_target_bytes=16413 estimated_macs=93930336 train_ms=191.561 final_train_loss_token=4.00300288
+  validation raw_bytes=604 scored_bytes=601 tokens=418 bytes_per_token=1.444976 loss_token=6.02859296 bits_per_byte=6.03464997 nll_per_byte=4.18290061 perplexity_token_specific=415.13051493 eval_ms=8.927
+  test raw_bytes=614 scored_bytes=612 tokens=425 bytes_per_token=1.444706 loss_token=5.99577584 bits_per_byte=5.99286316 nll_per_byte=4.15393620 perplexity_token_specific=401.72824053 token_accuracy=0.209906 eval_ms=8.814 model_artifact_bytes=69958 parameter_adam_and_gradient_bytes=279600 generated_bytes_hex=41742074686520686172626f722020202020202020
+  M2_test_head_stats pack_accuracy=0.646226 local_accuracy_given_gold_pack=0.238208 active_local_head_size_mean=246.683962 pack_head_logit_fraction=0.012015 local_head_logit_fraction=0.987985 pack_transitions=225 byte_fallback_targets=274/424 byte_fallback_fraction=0.646226 pack[0]={targets:136,accuracy:0.007353,local_count:253} pack[2]={targets:14,accuracy:0.000000,local_count:3} pack[65535]={targets:274,accuracy:0.996350,local_count:256}
+  validation_curve step=1 loss_token=6.48477567 bits_per_byte=6.49129101
+  validation_curve step=20 loss_token=5.29266025 bits_per_byte=5.29797785
+  validation_curve step=40 loss_token=5.87719892 bits_per_byte=5.88310381
+  validation_curve step=60 loss_token=5.96353542 bits_per_byte=5.96952706
+  validation_curve step=80 loss_token=6.06285986 bits_per_byte=6.06895129
+  validation_curve step=100 loss_token=6.06095318 bits_per_byte=6.06704270
+  validation_curve step=120 loss_token=6.02859296 bits_per_byte=6.03464997
+rep=2 regime=B-matched-MAC tokenizer=M1-flat seed=20261008 params=17424 embedding_params=8192 backbone_params=528 output_params=8704 train_steps=120 train_tokens=7680 train_target_bytes=23272 estimated_macs=194519040 train_ms=299.462 final_train_loss_token=4.97707356
+  validation raw_bytes=604 scored_bytes=600 tokens=375 bytes_per_token=1.610667 loss_token=7.08414003 bits_per_byte=6.37062480 nll_per_byte=4.41578062 perplexity_token_specific=1192.89693322 eval_ms=10.803
+  test raw_bytes=614 scored_bytes=612 tokens=397 bytes_per_token=1.546599 loss_token=7.56949663 bits_per_byte=7.06618987 nll_per_byte=4.89790958 perplexity_token_specific=1938.16441841 token_accuracy=0.042929 eval_ms=11.189 model_artifact_bytes=69742 parameter_adam_and_gradient_bytes=278784 generated_bytes_hex=41742074686520686172626f7272657265726572657265726572657265
+  validation_curve step=1 loss_token=6.23690062 bits_per_byte=5.60871942
+  validation_curve step=20 loss_token=6.49052634 bits_per_byte=5.83679993
+  validation_curve step=40 loss_token=6.76331824 bits_per_byte=6.08211621
+  validation_curve step=60 loss_token=6.77790313 bits_per_byte=6.09523211
+  validation_curve step=80 loss_token=7.10566123 bits_per_byte=6.38997838
+  validation_curve step=100 loss_token=7.00455143 bits_per_byte=6.29905237
+  validation_curve step=120 loss_token=7.08414003 bits_per_byte=6.37062480
+rep=2 regime=B-matched-MAC tokenizer=M2-factorized seed=20261008 params=17475 embedding_params=8192 backbone_params=528 output_params=8755 train_steps=249 train_tokens=15936 train_target_bytes=34112 estimated_macs=195058848 train_ms=402.505 final_train_loss_token=3.40359578
+  validation raw_bytes=604 scored_bytes=601 tokens=418 bytes_per_token=1.444976 loss_token=5.94275774 bits_per_byte=5.94872850 nll_per_byte=4.12334439 perplexity_token_specific=380.98413662 eval_ms=8.984
+  test raw_bytes=614 scored_bytes=612 tokens=425 bytes_per_token=1.444706 loss_token=5.98156101 bits_per_byte=5.97865524 nll_per_byte=4.14408802 perplexity_token_specific=396.05813702 token_accuracy=0.214623 eval_ms=8.713 model_artifact_bytes=69958 parameter_adam_and_gradient_bytes=279600 generated_bytes_hex=41742074686520686172626f7220746865207468652074686520746865
+  M2_test_head_stats pack_accuracy=0.591981 local_accuracy_given_gold_pack=0.271226 active_local_head_size_mean=246.683962 pack_head_logit_fraction=0.012015 local_head_logit_fraction=0.987985 pack_transitions=225 byte_fallback_targets=274/424 byte_fallback_fraction=0.646226 pack[0]={targets:136,accuracy:0.375000,local_count:253} pack[2]={targets:14,accuracy:0.000000,local_count:3} pack[65535]={targets:274,accuracy:0.729927,local_count:256}
+  validation_curve step=1 loss_token=6.48477567 bits_per_byte=6.49129101
+  validation_curve step=20 loss_token=5.29266025 bits_per_byte=5.29797785
+  validation_curve step=40 loss_token=5.87719892 bits_per_byte=5.88310381
+  validation_curve step=60 loss_token=5.96353542 bits_per_byte=5.96952706
+  validation_curve step=80 loss_token=6.06285986 bits_per_byte=6.06895129
+  validation_curve step=100 loss_token=6.06095318 bits_per_byte=6.06704270
+  validation_curve step=120 loss_token=6.02859296 bits_per_byte=6.03464997
+  validation_curve step=140 loss_token=5.84564063 bits_per_byte=5.85151382
+  validation_curve step=160 loss_token=5.90552673 bits_per_byte=5.91146008
+  validation_curve step=180 loss_token=6.01324844 bits_per_byte=6.01929002
+  validation_curve step=200 loss_token=6.01044466 bits_per_byte=6.01648343
+  validation_curve step=220 loss_token=5.75661285 bits_per_byte=5.76239659
+  validation_curve step=240 loss_token=5.92023612 bits_per_byte=5.92618426
+  validation_curve step=249 loss_token=5.94275774 bits_per_byte=5.94872850
+rep=3 regime=A-same-backbone tokenizer=M1-flat seed=20261009 params=17424 embedding_params=8192 backbone_params=528 output_params=8704 train_steps=120 train_tokens=7680 train_target_bytes=22968 estimated_macs=194519040 train_ms=298.270 final_train_loss_token=5.10123811
+  validation raw_bytes=604 scored_bytes=600 tokens=375 bytes_per_token=1.610667 loss_token=6.87486706 bits_per_byte=6.18242982 nll_per_byte=4.28533380 perplexity_token_specific=967.64671778 eval_ms=10.433
+  test raw_bytes=614 scored_bytes=612 tokens=397 bytes_per_token=1.546599 loss_token=7.33620633 bits_per_byte=6.84841138 nll_per_byte=4.74695704 perplexity_token_specific=1534.87823309 token_accuracy=0.012626 eval_ms=11.155 model_artifact_bytes=69742 parameter_adam_and_gradient_bytes=278784 generated_bytes_hex=41742074686520686172626f727070707070707070
+  validation_curve step=1 loss_token=6.23424132 bits_per_byte=5.60632797
+  validation_curve step=20 loss_token=6.50934330 bits_per_byte=5.85372165
+  validation_curve step=40 loss_token=7.00249018 bits_per_byte=6.29719873
+  validation_curve step=60 loss_token=7.03558533 bits_per_byte=6.32696053
+  validation_curve step=80 loss_token=6.78728147 bits_per_byte=6.10366586
+  validation_curve step=100 loss_token=6.99399504 bits_per_byte=6.28955922
+  validation_curve step=120 loss_token=6.87486706 bits_per_byte=6.18242982
+rep=3 regime=A-same-backbone tokenizer=M2-factorized seed=20261009 params=17475 embedding_params=8192 backbone_params=528 output_params=8755 train_steps=120 train_tokens=7680 train_target_bytes=16587 estimated_macs=93959712 train_ms=199.432 final_train_loss_token=4.03396466
+  validation raw_bytes=604 scored_bytes=601 tokens=418 bytes_per_token=1.444976 loss_token=6.13804773 bits_per_byte=6.14421470 nll_per_byte=4.25884510 perplexity_token_specific=463.14849651 eval_ms=8.816
+  test raw_bytes=614 scored_bytes=612 tokens=425 bytes_per_token=1.444706 loss_token=6.08416384 bits_per_byte=6.08120823 nll_per_byte=4.21517234 perplexity_token_specific=438.85270981 token_accuracy=0.011792 eval_ms=9.118 model_artifact_bytes=69958 parameter_adam_and_gradient_bytes=279600 generated_bytes_hex=41742074686520686172626f72746865746865746865746865746865746865746865746865
+  M2_test_head_stats pack_accuracy=0.320755 local_accuracy_given_gold_pack=0.238208 active_local_head_size_mean=246.683962 pack_head_logit_fraction=0.012015 local_head_logit_fraction=0.987985 pack_transitions=225 byte_fallback_targets=274/424 byte_fallback_fraction=0.646226 pack[0]={targets:136,accuracy:1.000000,local_count:253} pack[2]={targets:14,accuracy:0.000000,local_count:3} pack[65535]={targets:274,accuracy:0.000000,local_count:256}
+  validation_curve step=1 loss_token=6.49936803 bits_per_byte=6.50589803
+  validation_curve step=20 loss_token=5.33596140 bits_per_byte=5.34132250
+  validation_curve step=40 loss_token=5.98987391 bits_per_byte=5.99589200
+  validation_curve step=60 loss_token=6.01545107 bits_per_byte=6.02149487
+  validation_curve step=80 loss_token=6.00148236 bits_per_byte=6.00751212
+  validation_curve step=100 loss_token=6.11618857 bits_per_byte=6.12233358
+  validation_curve step=120 loss_token=6.13804773 bits_per_byte=6.14421470
+rep=3 regime=B-matched-MAC tokenizer=M1-flat seed=20261009 params=17424 embedding_params=8192 backbone_params=528 output_params=8704 train_steps=120 train_tokens=7680 train_target_bytes=22968 estimated_macs=194519040 train_ms=296.993 final_train_loss_token=5.10123811
+  validation raw_bytes=604 scored_bytes=600 tokens=375 bytes_per_token=1.610667 loss_token=6.87486706 bits_per_byte=6.18242982 nll_per_byte=4.28533380 perplexity_token_specific=967.64671778 eval_ms=10.427
+  test raw_bytes=614 scored_bytes=612 tokens=397 bytes_per_token=1.546599 loss_token=7.33620633 bits_per_byte=6.84841138 nll_per_byte=4.74695704 perplexity_token_specific=1534.87823309 token_accuracy=0.012626 eval_ms=11.130 model_artifact_bytes=69742 parameter_adam_and_gradient_bytes=278784 generated_bytes_hex=41742074686520686172626f727070707070707070
+  validation_curve step=1 loss_token=6.23424132 bits_per_byte=5.60632797
+  validation_curve step=20 loss_token=6.50934330 bits_per_byte=5.85372165
+  validation_curve step=40 loss_token=7.00249018 bits_per_byte=6.29719873
+  validation_curve step=60 loss_token=7.03558533 bits_per_byte=6.32696053
+  validation_curve step=80 loss_token=6.78728147 bits_per_byte=6.10366586
+  validation_curve step=100 loss_token=6.99399504 bits_per_byte=6.28955922
+  validation_curve step=120 loss_token=6.87486706 bits_per_byte=6.18242982
+rep=3 regime=B-matched-MAC tokenizer=M2-factorized seed=20261009 params=17475 embedding_params=8192 backbone_params=528 output_params=8755 train_steps=249 train_tokens=15936 train_target_bytes=34357 estimated_macs=194758752 train_ms=390.245 final_train_loss_token=3.27860051
+  validation raw_bytes=604 scored_bytes=601 tokens=418 bytes_per_token=1.444976 loss_token=5.94794505 bits_per_byte=5.95392103 nll_per_byte=4.12694357 perplexity_token_specific=382.96555574 eval_ms=8.439
+  test raw_bytes=614 scored_bytes=612 tokens=425 bytes_per_token=1.444706 loss_token=5.95001714 bits_per_byte=5.94712669 nll_per_byte=4.12223410 perplexity_token_specific=383.75991568 token_accuracy=0.214623 eval_ms=8.605 model_artifact_bytes=69958 parameter_adam_and_gradient_bytes=279600 generated_bytes_hex=41742074686520686172626f7220746865207468652074686520746865
+  M2_test_head_stats pack_accuracy=0.589623 local_accuracy_given_gold_pack=0.252358 active_local_head_size_mean=246.683962 pack_head_logit_fraction=0.012015 local_head_logit_fraction=0.987985 pack_transitions=225 byte_fallback_targets=274/424 byte_fallback_fraction=0.646226 pack[0]={targets:136,accuracy:0.382353,local_count:253} pack[2]={targets:14,accuracy:0.000000,local_count:3} pack[65535]={targets:274,accuracy:0.722628,local_count:256}
+  validation_curve step=1 loss_token=6.49936803 bits_per_byte=6.50589803
+  validation_curve step=20 loss_token=5.33596140 bits_per_byte=5.34132250
+  validation_curve step=40 loss_token=5.98987391 bits_per_byte=5.99589200
+  validation_curve step=60 loss_token=6.01545107 bits_per_byte=6.02149487
+  validation_curve step=80 loss_token=6.00148236 bits_per_byte=6.00751212
+  validation_curve step=100 loss_token=6.11618857 bits_per_byte=6.12233358
+  validation_curve step=120 loss_token=6.13804773 bits_per_byte=6.14421470
+  validation_curve step=140 loss_token=6.09386718 bits_per_byte=6.09998976
+  validation_curve step=160 loss_token=6.25714027 bits_per_byte=6.26342689
+  validation_curve step=180 loss_token=5.97803359 bits_per_byte=5.98403979
+  validation_curve step=200 loss_token=5.98883021 bits_per_byte=5.99484726
+  validation_curve step=220 loss_token=5.97838676 bits_per_byte=5.98439332
+  validation_curve step=240 loss_token=6.06980454 bits_per_byte=6.07590295
+  validation_curve step=249 loss_token=5.94794505 bits_per_byte=5.95392103
+
+summary_begin
+summary regime=A-same-backbone tokenizer=M1-flat repetitions=3 validation_bits_per_byte_mean_sd_variance=6.20678164+/-0.12502723;variance=0.015631809314 test_bits_per_byte_mean_sd_variance=6.87520175+/-0.14623620;variance=0.021385027546 train_ms_mean_sd_variance=318.43626667+/-22.62844883;variance=512.046696402224 test_eval_ms_mean_sd_variance=11.41640000+/-0.29636323;variance=0.087831166667
+summary regime=A-same-backbone tokenizer=M2-factorized repetitions=3 validation_bits_per_byte_mean_sd_variance=6.04487316+/-0.07727729;variance=0.005971779113 test_bits_per_byte_mean_sd_variance=6.00768927+/-0.05498394;variance=0.003023233542 train_ms_mean_sd_variance=200.65370000+/-7.96995343;variance=63.520157660000 test_eval_ms_mean_sd_variance=9.00690000+/-0.13666428;variance=0.018677126667
+summary regime=B-matched-MAC tokenizer=M1-flat repetitions=3 validation_bits_per_byte_mean_sd_variance=6.20678164+/-0.12502723;variance=0.015631809314 test_bits_per_byte_mean_sd_variance=6.87520175+/-0.14623620;variance=0.021385027546 train_ms_mean_sd_variance=308.80236667+/-14.98889737;variance=224.667044435556 test_eval_ms_mean_sd_variance=11.30866667+/-0.21266161;variance=0.045224962222
+summary regime=B-matched-MAC tokenizer=M2-factorized repetitions=3 validation_bits_per_byte_mean_sd_variance=6.06954456+/-0.16720148;variance=0.027956334041 test_bits_per_byte_mean_sd_variance=6.09533770+/-0.18774971;variance=0.035249953409 train_ms_mean_sd_variance=398.21953333+/-5.64404595;variance=31.855254708889 test_eval_ms_mean_sd_variance=9.70166667+/-1.47479075;variance=2.175007742222
+process_peak_memory_bytes=6021120
+repeat_results_end

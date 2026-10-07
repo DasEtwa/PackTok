@@ -1,15 +1,23 @@
 # Milestone history
 
-## M3 — Tiny autoregressive model comparison (in progress)
+## M3 — Tiny autoregressive model comparison (2026-10-07)
 
 - Adds a small CPU-only recurrent model boundary with a flat M1 head and a
   genuinely factorized M2 pack/local head.
 - Adds a new manually authored train/validation/test split that is separate from
   the frozen M1/M2 tokenizer evaluation samples.
-- M3 model architecture, byte-normalized metrics, and benchmark protocol are
-  recorded in [M3_MODEL.md](M3_MODEL.md) and [M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
-  Final results and verification are pending; no model-quality conclusion is
-  claimed here.
+- Added a small CPU-only causal RNN with an M1 flat head and a teacher-forced
+  M2 pack/local factorized head, Adam training, serialization, and greedy
+  generation smoke tests.
+- Added a fixed synthetic train/validation/test split and two comparison
+  regimes, including a documented analytical-MAC budget.
+- Ran three seeds per regime on the same Windows host; final byte-normalized
+  results, raw logs, model artifacts, hashes, limitations, and Windows/Linux
+  MSRV verification are in [M3_MODEL.md](M3_MODEL.md) and
+  [M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
+- M2 had lower mean bits/byte on this small held-out synthetic split while
+  emitting more tokens. This is a narrow observation, not a general-quality
+  claim or evidence that PackTok is better.
 
 ## M2 — First factorized pack architecture (2026-10-07)
 

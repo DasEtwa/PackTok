@@ -1,9 +1,10 @@
 # PackTok
 
 Rust-first tokenizer research implementation. **Current milestone: M3, the tiny
-autoregressive model comparison (in progress).** M1 remains the frozen flat
+autoregressive model comparison (completed).** M1 remains the frozen flat
 byte-level BPE control group; M2 is the first factorized pack architecture. M3
-compares their model-facing trade-offs without presuming that factorization wins.
+records a first model-level comparison on a small synthetic corpus; the result
+does not establish general quality or presuppose that factorization wins.
 
 **Canonical project map:** [DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)
 
