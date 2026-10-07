@@ -4,3 +4,6 @@ fixtures/m3-model/** -text
 experiments/m4-ablation/sources/** -text
 experiments/m4-ablation/corpus/** -text
 experiments/m4-ablation/** -text
+experiments/m4-ablation/sources/** -diff
+experiments/m4-ablation/corpus/** -diff
+experiments/m4-ablation/corpus-v2/** -diff

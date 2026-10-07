@@ -62,3 +62,7 @@ are in corpus-v2/composition.txt and input-SHA256SUMS.txt. Primary data total is
 Encoder timers include a single full encode and output allocation, exclude byte-
 length lookup, differential encode, decoding and mapping; no throughput median
 or warm-up claim is made. Timings are one observation per split/tokenizer.
+Raw corpus sources retain original CRLF and trailing whitespace deliberately;
+Git whitespace checks exclude those data files via -diff, not normalization.
+The initial inline WSL launch failed on inherited PATH quoting, before Cargo.
+Its cause and the corrected explicit script are preserved under experiments.

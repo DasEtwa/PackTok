@@ -1,0 +1,5 @@
+The initial inline bash verification command failed before running Cargo:
+an unquoted inherited PATH containing Windows directory names with parentheses
+was expanded while passing the command through WSL. No verification result was
+produced. The replacement checked-in Bash script quotes PATH and records each
+command in separate logs; it uses the existing installed Rust 1.85.0 toolchain.
