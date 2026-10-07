@@ -4,15 +4,19 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use packtok_core::{
-    ByteFallback, MAX_PACK_COUNT, PackDescriptor, PackRegistry, SpecialToken, TokenId,
-    ValidationError,
+    ByteFallback, DEFAULT_BYTE_FALLBACK_PACK_ID, MAX_PACK_COUNT, PackDescriptor, PackRegistry,
+    SpecialToken, TokenId, ValidationError,
 };
+use packtok_packs::{LEXICAL_V1_ROUTER_ID, lexical_pack_name};
 
 /// Historical M0 format version retained for source compatibility.
 pub const FORMAT_VERSION: u16 = 1;
 
 /// Version that adds the flat byte-level BPE model section.
 pub const FLAT_BPE_FORMAT_VERSION: u16 = 2;
+
+/// Version that adds independent pack-local BPE vocabularies and shared byte symbols.
+pub const FACTORIZED_PACK_FORMAT_VERSION: u16 = 3;
 
 /// Single-pack address used for the flat M1 vocabulary.
 pub const FLAT_BPE_PACK_ID: u16 = 0;
@@ -29,6 +33,8 @@ pub const BYTE_TOKEN_COUNT: u32 = 256;
 const MAGIC: &[u8; 8] = b"PACKTOK\0";
 const HEADER_BYTES: usize = 20;
 const MAX_COLLECTION_ITEMS: usize = 65_536;
+const MAX_FACTORIZED_PACKS: usize = 3;
+const FACTORIZED_MERGE_BYTES: usize = 10;
 
 /// A minimal, validated tokenizer artifact.
 ///
@@ -40,6 +46,320 @@ pub struct Artifact {
     metadata: BTreeMap<String, String>,
     format_version: u16,
     flat_bpe: Option<FlatBpeModel>,
+    factorized_bpe: Option<FactorizedBpeModel>,
+}
+
+/// A parent in a pack-local merge graph. Byte references use the one shared
+/// fallback namespace; local references always resolve within their own pack.
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub enum SymbolRef {
+    /// One of the 256 shared raw byte symbols.
+    Byte(u8),
+    /// A token created by an earlier merge in the same pack.
+    Local(u32),
+}
+
+/// One pack-local BPE merge. Its result local ID is its zero-based rank.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PackBpeMerge {
+    /// Earlier byte or same-pack local token on the left.
+    pub left: SymbolRef,
+    /// Earlier byte or same-pack local token on the right.
+    pub right: SymbolRef,
+}
+
+/// Validated merge graph for one specialized pack.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PackBpeModel {
+    pack_id: u16,
+    merges: Vec<PackBpeMerge>,
+    byte_lengths: Vec<usize>,
+}
+
+impl PackBpeModel {
+    /// Validates backward local references, unique pairs, and token expansion sizes.
+    pub fn new(pack_id: u16, merges: Vec<PackBpeMerge>) -> Result<Self, FactorizedBpeModelError> {
+        if merges.is_empty() {
+            return Err(FactorizedBpeModelError::EmptyPackModel { pack_id });
+        }
+        if merges.len() > (MAX_ARTIFACT_BYTES - HEADER_BYTES) / FACTORIZED_MERGE_BYTES {
+            return Err(FactorizedBpeModelError::TooManyMerges { pack_id });
+        }
+        u32::try_from(merges.len())
+            .map_err(|_| FactorizedBpeModelError::TooManyMerges { pack_id })?;
+        let mut byte_lengths = Vec::new();
+        byte_lengths
+            .try_reserve_exact(merges.len())
+            .map_err(|_| FactorizedBpeModelError::AllocationFailed)?;
+        let mut seen_pairs = BTreeSet::new();
+
+        for (rank, merge) in merges.iter().enumerate() {
+            let rank_u32 = u32::try_from(rank)
+                .map_err(|_| FactorizedBpeModelError::TooManyMerges { pack_id })?;
+            for parent in [merge.left, merge.right] {
+                if let SymbolRef::Local(local) = parent {
+                    if local >= rank_u32 {
+                        return Err(FactorizedBpeModelError::InvalidParent {
+                            pack_id,
+                            rank: rank_u32,
+                            parent: local,
+                        });
+                    }
+                }
+            }
+            if !seen_pairs.insert((merge.left, merge.right)) {
+                return Err(FactorizedBpeModelError::DuplicatePair {
+                    pack_id,
+                    left: merge.left,
+                    right: merge.right,
+                });
+            }
+            let left_length = symbol_byte_length(pack_id, merge.left, &byte_lengths, rank_u32)?;
+            let right_length = symbol_byte_length(pack_id, merge.right, &byte_lengths, rank_u32)?;
+            let length = left_length.checked_add(right_length).ok_or(
+                FactorizedBpeModelError::ExpandedTokenTooLarge {
+                    pack_id,
+                    local_id: rank_u32,
+                },
+            )?;
+            if length > MAX_BPE_TOKEN_BYTES {
+                return Err(FactorizedBpeModelError::ExpandedTokenTooLarge {
+                    pack_id,
+                    local_id: rank_u32,
+                });
+            }
+            byte_lengths.push(length);
+        }
+
+        Ok(Self {
+            pack_id,
+            merges,
+            byte_lengths,
+        })
+    }
+
+    /// Stable pack identifier for this local namespace.
+    #[must_use]
+    pub const fn pack_id(&self) -> u16 {
+        self.pack_id
+    }
+
+    /// Pack-local merges in rank order; rank `r` creates local ID `r`.
+    #[must_use]
+    pub fn merges(&self) -> &[PackBpeMerge] {
+        &self.merges
+    }
+
+    /// Number of learned tokens in this pack.
+    #[must_use]
+    pub fn local_token_count(&self) -> u32 {
+        u32::try_from(self.merges.len()).expect("validated local token count fits u32")
+    }
+
+    /// Byte length of a valid learned token, or `None` for an invalid local ID.
+    #[must_use]
+    pub fn byte_length(&self, local_id: u32) -> Option<usize> {
+        self.byte_lengths
+            .get(usize::try_from(local_id).ok()?)
+            .copied()
+    }
+}
+
+/// Normative runtime section for an M2 factorized tokenizer artifact.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FactorizedBpeModel {
+    router_policy_id: String,
+    packs: Vec<PackBpeModel>,
+}
+
+impl FactorizedBpeModel {
+    /// Validates the router and canonically orders the non-empty pack models.
+    pub fn new(
+        router_policy_id: impl Into<String>,
+        mut packs: Vec<PackBpeModel>,
+    ) -> Result<Self, FactorizedBpeModelError> {
+        let router_policy_id = router_policy_id.into();
+        if router_policy_id != LEXICAL_V1_ROUTER_ID {
+            return Err(FactorizedBpeModelError::UnknownRouterPolicy { router_policy_id });
+        }
+        if packs.len() > MAX_FACTORIZED_PACKS {
+            return Err(FactorizedBpeModelError::TooManyPacks { count: packs.len() });
+        }
+        packs.sort_unstable_by_key(PackBpeModel::pack_id);
+        for adjacent in packs.windows(2) {
+            if adjacent[0].pack_id == adjacent[1].pack_id {
+                return Err(FactorizedBpeModelError::DuplicatePackId {
+                    pack_id: adjacent[0].pack_id,
+                });
+            }
+        }
+        for pack in &packs {
+            if pack.pack_id == DEFAULT_BYTE_FALLBACK_PACK_ID
+                || lexical_pack_name(pack.pack_id).is_none()
+            {
+                return Err(FactorizedBpeModelError::InvalidPackId {
+                    pack_id: pack.pack_id,
+                });
+            }
+        }
+        Ok(Self {
+            router_policy_id,
+            packs,
+        })
+    }
+
+    /// Exact versioned router identifier required by runtime loading.
+    #[must_use]
+    pub fn router_policy_id(&self) -> &str {
+        &self.router_policy_id
+    }
+
+    /// Non-empty pack models in ascending pack-ID order.
+    #[must_use]
+    pub fn packs(&self) -> &[PackBpeModel] {
+        &self.packs
+    }
+
+    /// Looks up a pack-local merge graph by stable pack ID.
+    #[must_use]
+    pub fn pack(&self, pack_id: u16) -> Option<&PackBpeModel> {
+        self.packs
+            .binary_search_by_key(&pack_id, PackBpeModel::pack_id)
+            .ok()
+            .map(|index| &self.packs[index])
+    }
+
+    /// Total number of learned tokens across all specialized packs.
+    #[must_use]
+    pub fn learned_token_count(&self) -> u64 {
+        self.packs
+            .iter()
+            .map(|pack| u64::from(pack.local_token_count()))
+            .sum()
+    }
+}
+
+/// Structural failures in a factorized pack-local merge model.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum FactorizedBpeModelError {
+    /// The artifact names a router this runtime cannot implement.
+    UnknownRouterPolicy { router_policy_id: String },
+    /// More packs were declared than `lexical-v1` has specialized categories.
+    TooManyPacks { count: usize },
+    /// A local pack model has no learned IDs and must not be serialized.
+    EmptyPackModel { pack_id: u16 },
+    /// Two model sections declare the same pack ID.
+    DuplicatePackId { pack_id: u16 },
+    /// A pack ID does not belong to the specialized namespace for this router.
+    InvalidPackId { pack_id: u16 },
+    /// A local-token count cannot fit the local-ID representation.
+    TooManyMerges { pack_id: u16 },
+    /// A local parent does not point to an earlier token in the same pack.
+    InvalidParent {
+        pack_id: u16,
+        rank: u32,
+        parent: u32,
+    },
+    /// The same ordered symbol pair appears more than once in one pack.
+    DuplicatePair {
+        pack_id: u16,
+        left: SymbolRef,
+        right: SymbolRef,
+    },
+    /// A merged token exceeds the documented expansion limit.
+    ExpandedTokenTooLarge { pack_id: u16, local_id: u32 },
+    /// Validation could not reserve bounded model storage.
+    AllocationFailed,
+}
+
+impl fmt::Display for FactorizedBpeModelError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnknownRouterPolicy { router_policy_id } => {
+                write!(
+                    formatter,
+                    "unknown factorized router policy {router_policy_id:?}"
+                )
+            }
+            Self::TooManyPacks { count } => write!(
+                formatter,
+                "factorized artifact declares {count} packs; `lexical-v1` supports at most {MAX_FACTORIZED_PACKS}"
+            ),
+            Self::EmptyPackModel { pack_id } => {
+                write!(formatter, "factorized pack {pack_id} has no learned tokens")
+            }
+            Self::DuplicatePackId { pack_id } => {
+                write!(
+                    formatter,
+                    "factorized pack {pack_id} is declared more than once"
+                )
+            }
+            Self::InvalidPackId { pack_id } => {
+                write!(
+                    formatter,
+                    "pack ID {pack_id} is not a specialized `lexical-v1` pack"
+                )
+            }
+            Self::TooManyMerges { pack_id } => {
+                write!(
+                    formatter,
+                    "factorized pack {pack_id} exceeds its local ID range"
+                )
+            }
+            Self::InvalidParent {
+                pack_id,
+                rank,
+                parent,
+            } => write!(
+                formatter,
+                "factorized pack {pack_id} merge rank {rank} references non-prior local parent {parent}"
+            ),
+            Self::DuplicatePair {
+                pack_id,
+                left,
+                right,
+            } => write!(
+                formatter,
+                "factorized pack {pack_id} merges pair ({left:?}, {right:?}) more than once"
+            ),
+            Self::ExpandedTokenTooLarge { pack_id, local_id } => write!(
+                formatter,
+                "factorized token {pack_id}:{local_id} exceeds the {MAX_BPE_TOKEN_BYTES}-byte expansion limit"
+            ),
+            Self::AllocationFailed => {
+                formatter.write_str("could not allocate factorized model validation storage")
+            }
+        }
+    }
+}
+
+impl std::error::Error for FactorizedBpeModelError {}
+
+fn symbol_byte_length(
+    pack_id: u16,
+    symbol: SymbolRef,
+    lengths: &[usize],
+    rank: u32,
+) -> Result<usize, FactorizedBpeModelError> {
+    match symbol {
+        SymbolRef::Byte(_) => Ok(1),
+        SymbolRef::Local(local) if local < rank => lengths
+            .get(
+                usize::try_from(local)
+                    .map_err(|_| FactorizedBpeModelError::TooManyMerges { pack_id })?,
+            )
+            .copied()
+            .ok_or(FactorizedBpeModelError::InvalidParent {
+                pack_id,
+                rank,
+                parent: local,
+            }),
+        SymbolRef::Local(local) => Err(FactorizedBpeModelError::InvalidParent {
+            pack_id,
+            rank,
+            parent: local,
+        }),
+    }
 }
 
 /// One normative flat BPE merge. `result` is assigned sequentially from 256 in
@@ -220,6 +540,7 @@ impl Artifact {
             metadata,
             format_version: FORMAT_VERSION,
             flat_bpe: None,
+            factorized_bpe: None,
         };
         artifact.serialized_size()?;
         Ok(artifact)
@@ -239,6 +560,27 @@ impl Artifact {
             metadata,
             format_version: FLAT_BPE_FORMAT_VERSION,
             flat_bpe: Some(flat_bpe),
+            factorized_bpe: None,
+        };
+        artifact.serialized_size()?;
+        Ok(artifact)
+    }
+
+    /// Creates a version-3 factorized artifact with one shared byte pack and
+    /// pack-local learned-token graphs.
+    pub fn with_factorized_bpe(
+        registry: PackRegistry,
+        metadata: BTreeMap<String, String>,
+        factorized_bpe: FactorizedBpeModel,
+    ) -> Result<Self, FormatError> {
+        validate_metadata(&metadata)?;
+        validate_factorized_bpe_registry(&registry, &factorized_bpe)?;
+        let artifact = Self {
+            registry,
+            metadata,
+            format_version: FACTORIZED_PACK_FORMAT_VERSION,
+            flat_bpe: None,
+            factorized_bpe: Some(factorized_bpe),
         };
         artifact.serialized_size()?;
         Ok(artifact)
@@ -252,6 +594,7 @@ impl Artifact {
             metadata: BTreeMap::new(),
             format_version: FORMAT_VERSION,
             flat_bpe: None,
+            factorized_bpe: None,
         }
     }
 
@@ -273,6 +616,12 @@ impl Artifact {
         self.flat_bpe.as_ref()
     }
 
+    /// Returns the factorized pack-local BPE model for a version-3 artifact.
+    #[must_use]
+    pub fn factorized_bpe(&self) -> Option<&FactorizedBpeModel> {
+        self.factorized_bpe.as_ref()
+    }
+
     /// Returns the version used when this artifact is serialized.
     #[must_use]
     pub const fn format_version(&self) -> u16 {
@@ -289,7 +638,7 @@ impl Artifact {
 
         output.extend_from_slice(MAGIC);
         write_u16(&mut output, self.format_version);
-        write_u16(&mut output, 0); // flags reserved in versions 1 and 2
+        write_u16(&mut output, 0); // flags reserved in all currently supported versions
         write_u16(&mut output, self.registry.byte_fallback().pack_id());
         write_u16(&mut output, 0); // reserved
         write_count(&mut output, self.registry.packs().len())?;
@@ -322,6 +671,19 @@ impl Artifact {
             }
         }
 
+        if let Some(model) = &self.factorized_bpe {
+            write_string(&mut output, model.router_policy_id())?;
+            write_count(&mut output, model.packs().len())?;
+            for pack in model.packs() {
+                write_u16(&mut output, pack.pack_id());
+                write_count(&mut output, pack.merges().len())?;
+                for merge in pack.merges() {
+                    write_symbol_ref(&mut output, merge.left);
+                    write_symbol_ref(&mut output, merge.right);
+                }
+            }
+        }
+
         debug_assert_eq!(output.len(), size);
         Ok(output)
     }
@@ -341,7 +703,10 @@ impl Artifact {
         }
 
         let version = reader.read_u16()?;
-        if version != FORMAT_VERSION && version != FLAT_BPE_FORMAT_VERSION {
+        if version != FORMAT_VERSION
+            && version != FLAT_BPE_FORMAT_VERSION
+            && version != FACTORIZED_PACK_FORMAT_VERSION
+        {
             return Err(FormatError::UnsupportedVersion { version });
         }
 
@@ -442,15 +807,68 @@ impl Artifact {
             None
         };
 
+        let factorized_bpe = if version == FACTORIZED_PACK_FORMAT_VERSION {
+            let router_policy_id = reader.read_string("router policy", 0)?;
+            if router_policy_id != LEXICAL_V1_ROUTER_ID {
+                return Err(FormatError::InvalidFactorizedBpeModel(
+                    FactorizedBpeModelError::UnknownRouterPolicy { router_policy_id },
+                ));
+            }
+            let pack_count = reader.read_count("factorized packs", 6, MAX_FACTORIZED_PACKS)?;
+            let mut pack_models = Vec::new();
+            pack_models
+                .try_reserve_exact(pack_count)
+                .map_err(|_| FormatError::AllocationFailed)?;
+            let mut previous_pack_id = None;
+            for pack_index in 0..pack_count {
+                let pack_id = reader.read_u16()?;
+                if previous_pack_id.is_some_and(|previous| pack_id <= previous) {
+                    return Err(FormatError::NonCanonicalOrder {
+                        collection: "factorized packs",
+                        index: pack_index,
+                    });
+                }
+                previous_pack_id = Some(pack_id);
+                let maximum_merges = (MAX_ARTIFACT_BYTES - HEADER_BYTES) / FACTORIZED_MERGE_BYTES;
+                let merge_count = reader.read_count(
+                    "factorized pack merges",
+                    FACTORIZED_MERGE_BYTES,
+                    maximum_merges,
+                )?;
+                let mut merges = Vec::new();
+                merges
+                    .try_reserve_exact(merge_count)
+                    .map_err(|_| FormatError::AllocationFailed)?;
+                for _ in 0..merge_count {
+                    merges.push(PackBpeMerge {
+                        left: reader.read_symbol_ref(pack_id)?,
+                        right: reader.read_symbol_ref(pack_id)?,
+                    });
+                }
+                pack_models.push(
+                    PackBpeModel::new(pack_id, merges)
+                        .map_err(FormatError::InvalidFactorizedBpeModel)?,
+                );
+            }
+            Some(
+                FactorizedBpeModel::new(router_policy_id, pack_models)
+                    .map_err(FormatError::InvalidFactorizedBpeModel)?,
+            )
+        } else {
+            None
+        };
+
         if reader.remaining() != 0 {
             return Err(FormatError::TrailingBytes {
                 count: reader.remaining(),
             });
         }
 
-        match flat_bpe {
-            Some(model) => Self::with_flat_bpe(registry, metadata, model),
-            None => Self::new(registry, metadata),
+        match (flat_bpe, factorized_bpe) {
+            (Some(model), None) => Self::with_flat_bpe(registry, metadata, model),
+            (None, Some(model)) => Self::with_factorized_bpe(registry, metadata, model),
+            (None, None) => Self::new(registry, metadata),
+            (Some(_), Some(_)) => Err(FormatError::InvalidFactorizedBpeRegistry),
         }
     }
 
@@ -496,6 +914,22 @@ impl Artifact {
                     .checked_mul(12)
                     .ok_or(FormatError::LengthOverflow)?,
             )?;
+        }
+
+        if let Some(model) = &self.factorized_bpe {
+            size = checked_add(size, 4)?; // router-policy string length
+            size = checked_add(size, checked_string_len(model.router_policy_id())?)?;
+            size = checked_add(size, 4)?; // factorized pack count
+            for pack in model.packs() {
+                size = checked_add(size, 6)?; // pack ID and merge count
+                size = checked_add(
+                    size,
+                    pack.merges()
+                        .len()
+                        .checked_mul(FACTORIZED_MERGE_BYTES)
+                        .ok_or(FormatError::LengthOverflow)?,
+                )?;
+            }
         }
 
         if size > MAX_ARTIFACT_BYTES {
@@ -556,6 +990,43 @@ fn validate_flat_bpe_registry(
     Ok(())
 }
 
+fn validate_factorized_bpe_registry(
+    registry: &PackRegistry,
+    model: &FactorizedBpeModel,
+) -> Result<(), FormatError> {
+    let fallback_id = registry.byte_fallback().pack_id();
+    if fallback_id != DEFAULT_BYTE_FALLBACK_PACK_ID
+        || registry.packs().len() != model.packs().len() + 1
+        || !registry.special_tokens().is_empty()
+    {
+        return Err(FormatError::InvalidFactorizedBpeRegistry);
+    }
+    let fallback = registry
+        .pack(fallback_id)
+        .ok_or(FormatError::InvalidFactorizedBpeRegistry)?;
+    if fallback.name() != packtok_core::BYTE_FALLBACK_PACK_NAME {
+        return Err(FormatError::InvalidFactorizedBpeRegistry);
+    }
+    for pack_model in model.packs() {
+        let descriptor = registry
+            .pack(pack_model.pack_id())
+            .ok_or(FormatError::InvalidFactorizedBpeRegistry)?;
+        let expected_name = lexical_pack_name(pack_model.pack_id())
+            .ok_or(FormatError::InvalidFactorizedBpeRegistry)?;
+        if descriptor.name() != expected_name {
+            return Err(FormatError::InvalidFactorizedBpeRegistry);
+        }
+        if descriptor.local_token_count() != pack_model.local_token_count() {
+            return Err(FormatError::FactorizedPackVocabularySizeMismatch {
+                pack_id: pack_model.pack_id(),
+                declared: descriptor.local_token_count(),
+                actual: pack_model.local_token_count(),
+            });
+        }
+    }
+    Ok(())
+}
+
 fn checked_add(left: usize, right: usize) -> Result<usize, FormatError> {
     left.checked_add(right).ok_or(FormatError::LengthOverflow)
 }
@@ -584,6 +1055,19 @@ fn write_u16(output: &mut Vec<u8>, value: u16) {
 
 fn write_u32(output: &mut Vec<u8>, value: u32) {
     output.extend_from_slice(&value.to_le_bytes());
+}
+
+fn write_symbol_ref(output: &mut Vec<u8>, symbol: SymbolRef) {
+    match symbol {
+        SymbolRef::Byte(byte) => {
+            output.push(0);
+            write_u32(output, u32::from(byte));
+        }
+        SymbolRef::Local(local) => {
+            output.push(1);
+            write_u32(output, local);
+        }
+    }
 }
 
 struct Reader<'a> {
@@ -618,9 +1102,33 @@ impl<'a> Reader<'a> {
         Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
     }
 
+    fn read_u8(&mut self) -> Result<u8, FormatError> {
+        Ok(self.read_bytes(1)?[0])
+    }
+
     fn read_u32(&mut self) -> Result<u32, FormatError> {
         let bytes = self.read_bytes(4)?;
         Ok(u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]))
+    }
+
+    fn read_symbol_ref(&mut self, pack_id: u16) -> Result<SymbolRef, FormatError> {
+        let tag = self.read_u8()?;
+        let value = self.read_u32()?;
+        match tag {
+            0 => u8::try_from(value).map(SymbolRef::Byte).map_err(|_| {
+                FormatError::InvalidSymbolReference {
+                    pack_id,
+                    tag,
+                    value,
+                }
+            }),
+            1 => Ok(SymbolRef::Local(value)),
+            _ => Err(FormatError::InvalidSymbolReference {
+                pack_id,
+                tag,
+                value,
+            }),
+        }
     }
 
     fn read_count(
@@ -718,10 +1226,22 @@ pub enum FormatError {
     InvalidRegistry(ValidationError),
     /// The flat BPE model violates a rank, reference, or expansion-size invariant.
     InvalidBpeModel(BpeModelError),
+    /// A factorized pack-local BPE graph violates its reference or size invariants.
+    InvalidFactorizedBpeModel(FactorizedBpeModelError),
     /// A version-2 flat BPE artifact has an unsupported registry shape.
     InvalidFlatBpeRegistry,
     /// The declared flat vocabulary size differs from its merge table.
     FlatBpeVocabularySizeMismatch { declared: u32, actual: u32 },
+    /// A version-3 artifact has an unsupported fallback, pack, or special-token layout.
+    InvalidFactorizedBpeRegistry,
+    /// One v3 pack descriptor's local count disagrees with its merge graph.
+    FactorizedPackVocabularySizeMismatch {
+        pack_id: u16,
+        declared: u32,
+        actual: u32,
+    },
+    /// A v3 symbol reference has an unknown tag or an out-of-range byte value.
+    InvalidSymbolReference { pack_id: u16, tag: u8, value: u32 },
     /// An integer or total-size calculation overflowed.
     LengthOverflow,
     /// The allocator could not reserve output or parse storage.
@@ -793,8 +1313,14 @@ impl fmt::Display for FormatError {
             }
             Self::InvalidRegistry(error) => write!(formatter, "invalid pack registry: {error}"),
             Self::InvalidBpeModel(error) => write!(formatter, "invalid flat BPE model: {error}"),
+            Self::InvalidFactorizedBpeModel(error) => {
+                write!(formatter, "invalid factorized BPE model: {error}")
+            }
             Self::InvalidFlatBpeRegistry => formatter.write_str("flat BPE artifact must declare one pack 0 vocabulary, one separate byte fallback pack, and no special tokens"),
             Self::FlatBpeVocabularySizeMismatch { declared, actual } => write!(formatter, "flat BPE pack declares {declared} tokens but its merge table defines {actual}"),
+            Self::InvalidFactorizedBpeRegistry => formatter.write_str("factorized BPE artifact must declare the shared byte fallback, its non-empty lexical-v1 pack graphs, and no special tokens"),
+            Self::FactorizedPackVocabularySizeMismatch { pack_id, declared, actual } => write!(formatter, "factorized pack {pack_id} declares {declared} local tokens but its merge graph defines {actual}"),
+            Self::InvalidSymbolReference { pack_id, tag, value } => write!(formatter, "factorized pack {pack_id} has invalid symbol reference tag {tag} with value {value}"),
             Self::LengthOverflow => formatter.write_str("artifact length exceeds supported limits"),
             Self::AllocationFailed => formatter.write_str("could not allocate artifact storage"),
         }
@@ -806,6 +1332,7 @@ impl std::error::Error for FormatError {
         match self {
             Self::InvalidRegistry(error) => Some(error),
             Self::InvalidBpeModel(error) => Some(error),
+            Self::InvalidFactorizedBpeModel(error) => Some(error),
             _ => None,
         }
     }
@@ -896,10 +1423,10 @@ mod tests {
         );
 
         let mut unknown_version = valid.clone();
-        unknown_version[8..10].copy_from_slice(&3_u16.to_le_bytes());
+        unknown_version[8..10].copy_from_slice(&4_u16.to_le_bytes());
         assert_eq!(
             Artifact::from_bytes(&unknown_version),
-            Err(FormatError::UnsupportedVersion { version: 3 })
+            Err(FormatError::UnsupportedVersion { version: 4 })
         );
 
         let mut nonzero_flags = valid.clone();
@@ -1067,6 +1594,56 @@ mod tests {
         Artifact::with_flat_bpe(registry, BTreeMap::new(), model).expect("valid v2 artifact")
     }
 
+    fn factorized_bpe_artifact(reverse: bool) -> Artifact {
+        let text = PackBpeModel::new(
+            packtok_packs::TEXT_PACK_ID,
+            vec![PackBpeMerge {
+                left: SymbolRef::Byte(b'a'),
+                right: SymbolRef::Byte(b'b'),
+            }],
+        )
+        .expect("valid text graph");
+        let number = PackBpeModel::new(
+            packtok_packs::NUMBER_PACK_ID,
+            vec![PackBpeMerge {
+                left: SymbolRef::Byte(b'1'),
+                right: SymbolRef::Byte(b'2'),
+            }],
+        )
+        .expect("valid number graph");
+        let mut models = vec![text, number];
+        let mut packs = vec![
+            PackDescriptor::new(
+                packtok_packs::TEXT_PACK_ID,
+                packtok_packs::TEXT_PACK_NAME,
+                1,
+            ),
+            PackDescriptor::new(
+                packtok_packs::NUMBER_PACK_ID,
+                packtok_packs::NUMBER_PACK_NAME,
+                1,
+            ),
+            PackDescriptor::new(
+                packtok_core::DEFAULT_BYTE_FALLBACK_PACK_ID,
+                packtok_core::BYTE_FALLBACK_PACK_NAME,
+                BYTE_FALLBACK_TOKEN_COUNT,
+            ),
+        ];
+        if reverse {
+            models.reverse();
+            packs.reverse();
+        }
+        let model = FactorizedBpeModel::new(packtok_packs::LEXICAL_V1_ROUTER_ID, models)
+            .expect("valid factorized graph");
+        let registry = PackRegistry::new(
+            packs,
+            ByteFallback::new(packtok_core::DEFAULT_BYTE_FALLBACK_PACK_ID),
+            Vec::new(),
+        )
+        .expect("valid factorized registry");
+        Artifact::with_factorized_bpe(registry, BTreeMap::new(), model).expect("valid v3 artifact")
+    }
+
     #[test]
     fn version_two_round_trip_is_deterministic_and_version_one_is_preserved() {
         let legacy = Artifact::byte_fallback_only()
@@ -1120,6 +1697,210 @@ mod tests {
                 collection: "BPE merges",
                 count: 1,
             })
+        ));
+    }
+
+    #[test]
+    fn version_three_round_trip_is_deterministic_and_keeps_v1_v2_paths() {
+        let v1 = Artifact::byte_fallback_only().to_bytes().expect("v1 bytes");
+        let v2 = flat_bpe_artifact().to_bytes().expect("v2 bytes");
+        let v3a = factorized_bpe_artifact(false);
+        let v3b = factorized_bpe_artifact(true);
+        let first = v3a.to_bytes().expect("serialize v3");
+        let second = v3b.to_bytes().expect("serialize equivalent v3");
+        assert_eq!(
+            u16::from_le_bytes([first[8], first[9]]),
+            FACTORIZED_PACK_FORMAT_VERSION
+        );
+        assert_eq!(first, second);
+        assert_eq!(Artifact::from_bytes(&first).expect("parse v3"), v3a);
+        assert_eq!(
+            Artifact::from_bytes(&v1)
+                .expect("parse v1")
+                .to_bytes()
+                .expect("rewrite v1"),
+            v1
+        );
+        assert_eq!(
+            Artifact::from_bytes(&v2)
+                .expect("parse v2")
+                .to_bytes()
+                .expect("rewrite v2"),
+            v2
+        );
+    }
+
+    #[test]
+    fn factorized_model_rejects_unknown_router_pack_parent_pair_and_expansion_errors() {
+        assert!(matches!(
+            FactorizedBpeModel::new("unknown-router", vec![]),
+            Err(FactorizedBpeModelError::UnknownRouterPolicy { .. })
+        ));
+        assert!(matches!(
+            FactorizedBpeModel::new(
+                packtok_packs::LEXICAL_V1_ROUTER_ID,
+                vec![
+                    PackBpeModel::new(
+                        42,
+                        vec![PackBpeMerge {
+                            left: SymbolRef::Byte(b'a'),
+                            right: SymbolRef::Byte(b'b'),
+                        }]
+                    )
+                    .expect("locally valid graph")
+                ]
+            ),
+            Err(FactorizedBpeModelError::InvalidPackId { pack_id: 42 })
+        ));
+        assert!(matches!(
+            PackBpeModel::new(
+                packtok_packs::TEXT_PACK_ID,
+                vec![PackBpeMerge {
+                    left: SymbolRef::Local(0),
+                    right: SymbolRef::Byte(b'x'),
+                }]
+            ),
+            Err(FactorizedBpeModelError::InvalidParent { rank: 0, .. })
+        ));
+        assert!(matches!(
+            PackBpeModel::new(
+                packtok_packs::TEXT_PACK_ID,
+                vec![
+                    PackBpeMerge {
+                        left: SymbolRef::Byte(b'a'),
+                        right: SymbolRef::Byte(b'b'),
+                    },
+                    PackBpeMerge {
+                        left: SymbolRef::Byte(b'a'),
+                        right: SymbolRef::Byte(b'b'),
+                    },
+                ]
+            ),
+            Err(FactorizedBpeModelError::DuplicatePair { .. })
+        ));
+
+        let mut merges = vec![PackBpeMerge {
+            left: SymbolRef::Byte(b'a'),
+            right: SymbolRef::Byte(b'a'),
+        }];
+        for local in 0..20 {
+            merges.push(PackBpeMerge {
+                left: SymbolRef::Local(local),
+                right: SymbolRef::Local(local),
+            });
+        }
+        assert_eq!(
+            PackBpeModel::new(packtok_packs::TEXT_PACK_ID, merges),
+            Err(FactorizedBpeModelError::ExpandedTokenTooLarge {
+                pack_id: packtok_packs::TEXT_PACK_ID,
+                local_id: 20,
+            })
+        );
+    }
+
+    #[test]
+    fn version_three_parser_rejects_unknown_router_symbol_tags_and_noncanonical_pack_order() {
+        let valid = factorized_bpe_artifact(false).to_bytes().expect("v3 bytes");
+        let router_range = valid
+            .windows(packtok_packs::LEXICAL_V1_ROUTER_ID.len())
+            .position(|window| window == packtok_packs::LEXICAL_V1_ROUTER_ID.as_bytes())
+            .expect("router is serialized");
+        let mut unknown_router = valid.clone();
+        unknown_router[router_range..router_range + 10].copy_from_slice(b"unknown--x");
+        assert!(matches!(
+            Artifact::from_bytes(&unknown_router),
+            Err(FormatError::InvalidFactorizedBpeModel(
+                FactorizedBpeModelError::UnknownRouterPolicy { .. }
+            ))
+        ));
+
+        let first_merge = valid
+            .windows(5)
+            .position(|window| window == [0, b'a', 0, 0, 0])
+            .expect("byte symbol record");
+        let mut unknown_symbol_tag = valid.clone();
+        unknown_symbol_tag[first_merge] = 9;
+        assert!(matches!(
+            Artifact::from_bytes(&unknown_symbol_tag),
+            Err(FormatError::InvalidSymbolReference { tag: 9, .. })
+        ));
+
+        let packs_offset = router_range + 10 + 4;
+        let mut noncanonical_packs = valid;
+        let first_id = noncanonical_packs[packs_offset..packs_offset + 2].to_vec();
+        let second_id_offset = packs_offset + 2 + 4 + 10;
+        let second_id = noncanonical_packs[second_id_offset..second_id_offset + 2].to_vec();
+        noncanonical_packs[packs_offset..packs_offset + 2].copy_from_slice(&second_id);
+        noncanonical_packs[second_id_offset..second_id_offset + 2].copy_from_slice(&first_id);
+        assert!(matches!(
+            Artifact::from_bytes(&noncanonical_packs),
+            Err(FormatError::NonCanonicalOrder {
+                collection: "factorized packs",
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn version_three_rejects_special_tokens_and_mismatched_local_counts() {
+        let model = factorized_bpe_artifact(false)
+            .factorized_bpe()
+            .expect("factorized model")
+            .clone();
+        let fallback = PackDescriptor::new(
+            packtok_core::DEFAULT_BYTE_FALLBACK_PACK_ID,
+            packtok_core::BYTE_FALLBACK_PACK_NAME,
+            BYTE_FALLBACK_TOKEN_COUNT,
+        );
+        let descriptors = || {
+            vec![
+                PackDescriptor::new(
+                    packtok_packs::TEXT_PACK_ID,
+                    packtok_packs::TEXT_PACK_NAME,
+                    1,
+                ),
+                PackDescriptor::new(
+                    packtok_packs::NUMBER_PACK_ID,
+                    packtok_packs::NUMBER_PACK_NAME,
+                    1,
+                ),
+                fallback.clone(),
+            ]
+        };
+
+        let mut mismatch = descriptors();
+        mismatch[0] = PackDescriptor::new(
+            packtok_packs::TEXT_PACK_ID,
+            packtok_packs::TEXT_PACK_NAME,
+            2,
+        );
+        let mismatch_registry = packtok_core::PackRegistry::new(
+            mismatch,
+            packtok_core::ByteFallback::new(packtok_core::DEFAULT_BYTE_FALLBACK_PACK_ID),
+            Vec::new(),
+        )
+        .expect("structurally valid registry");
+        assert!(matches!(
+            Artifact::with_factorized_bpe(mismatch_registry, BTreeMap::new(), model.clone()),
+            Err(FormatError::FactorizedPackVocabularySizeMismatch {
+                pack_id: packtok_packs::TEXT_PACK_ID,
+                declared: 2,
+                actual: 1,
+            })
+        ));
+
+        let special_registry = packtok_core::PackRegistry::new(
+            descriptors(),
+            packtok_core::ByteFallback::new(packtok_core::DEFAULT_BYTE_FALLBACK_PACK_ID),
+            vec![packtok_core::SpecialToken::new(
+                TokenId::new(packtok_packs::TEXT_PACK_ID, 0),
+                "reserved",
+            )],
+        )
+        .expect("valid special token registry");
+        assert!(matches!(
+            Artifact::with_factorized_bpe(special_registry, BTreeMap::new(), model),
+            Err(FormatError::InvalidFactorizedBpeRegistry)
         ));
     }
 

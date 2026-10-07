@@ -1,10 +1,14 @@
 #![forbid(unsafe_code)]
 
 mod bpe;
+mod factorized;
 
 use std::fmt;
 
 pub use bpe::{BpeBufferStats, BpeTokenizer, TokenizerModelError};
+pub use factorized::{
+    FactorizedEncodeStats, FactorizedPackStats, FactorizedTokenizer, FactorizedTokenizerError,
+};
 pub use packtok_core::{
     ByteFallback, DEFAULT_BYTE_FALLBACK_PACK_ID, LocalTokenId, PackId, PackRegistry, TokenId,
 };
@@ -114,6 +118,8 @@ impl Tokenizer for ByteFallbackTokenizer {
 pub enum EncodeError {
     /// The requested token vector could not be reserved.
     AllocationFailed { requested_tokens: usize },
+    /// A router returned non-covering, out-of-range, or non-UTF-8-boundary spans.
+    InvalidRouterOutput { span_index: usize },
 }
 
 impl fmt::Display for EncodeError {
@@ -122,6 +128,10 @@ impl fmt::Display for EncodeError {
             Self::AllocationFailed { requested_tokens } => write!(
                 formatter,
                 "could not reserve space for {requested_tokens} tokens"
+            ),
+            Self::InvalidRouterOutput { span_index } => write!(
+                formatter,
+                "router returned an invalid or noncontiguous span at index {span_index}"
             ),
         }
     }
@@ -153,6 +163,17 @@ pub enum DecodeError {
     },
     /// The decoder could not reserve its output buffer.
     AllocationFailed { requested_bytes: usize },
+    /// The token references a pack not present in the factorized artifact.
+    UnknownPack { index: usize, actual: PackId },
+    /// The local ID is not defined in the referenced factorized pack.
+    LocalIdOutsidePack {
+        index: usize,
+        pack: PackId,
+        actual: LocalTokenId,
+        local_token_count: u32,
+    },
+    /// Total decoded byte length overflowed the host's addressable range.
+    LengthOverflow,
 }
 
 impl fmt::Display for DecodeError {
@@ -189,6 +210,19 @@ impl fmt::Display for DecodeError {
                 formatter,
                 "could not reserve space for {requested_bytes} decoded bytes"
             ),
+            Self::UnknownPack { index, actual } => {
+                write!(formatter, "token {index} references unknown pack {actual}")
+            }
+            Self::LocalIdOutsidePack {
+                index,
+                pack,
+                actual,
+                local_token_count,
+            } => write!(
+                formatter,
+                "token {index} has local ID {actual} outside pack {pack} range 0..{local_token_count}"
+            ),
+            Self::LengthOverflow => formatter.write_str("decoded byte length exceeds host limits"),
         }
     }
 }

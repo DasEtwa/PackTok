@@ -1,5 +1,5 @@
 [package]
-name = "packtok-tokenizer"
+name = "packtok-packs"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -10,5 +10,3 @@ workspace = true
 
 [dependencies]
 packtok-core = { path = "../packtok-core" }
-packtok-format = { path = "../packtok-format" }
-packtok-packs = { path = "../packtok-packs" }

@@ -7,6 +7,7 @@ name = "packtok-bench"
 version = "0.1.0"
 dependencies = [
  "packtok-format",
+ "packtok-packs",
  "packtok-tokenizer",
  "packtok-train",
 ]
@@ -17,6 +18,7 @@ version = "0.1.0"
 dependencies = [
  "packtok-core",
  "packtok-format",
+ "packtok-packs",
  "packtok-tokenizer",
  "packtok-train",
 ]
@@ -30,6 +32,14 @@ name = "packtok-format"
 version = "0.1.0"
 dependencies = [
  "packtok-core",
+ "packtok-packs",
+]
+
+[[package]]
+name = "packtok-packs"
+version = "0.1.0"
+dependencies = [
+ "packtok-core",
 ]
 
 [[package]]
@@ -38,6 +48,7 @@ version = "0.1.0"
 dependencies = [
  "packtok-core",
  "packtok-format",
+ "packtok-packs",
 ]
 
 [[package]]
@@ -46,5 +57,6 @@ version = "0.1.0"
 dependencies = [
  "packtok-core",
  "packtok-format",
+ "packtok-packs",
  "packtok-tokenizer",
 ]

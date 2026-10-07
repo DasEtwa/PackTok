@@ -295,3 +295,15 @@ PackTok may combine ideas differently, but agents must not claim "nobody has eve
 When uncertain between a clever abstraction and a small measurable experiment, choose the small measurable experiment.
 
 PackTok should become sophisticated only when the data gives it a reason to.
+
+## 21. No undocumented facts
+
+From M1 onward, no relevant technical fact may live only in source code, terminal
+output, a commit message, an agent conversation, or a final report. Document every
+material claim, value, default, assumption, architectural decision, format choice,
+benchmark result, experiment configuration, limitation, failure, optimization,
+and compatibility decision in a durable repository document or preserved raw log.
+Numerical claims must include enough context to reproduce or interpret them.
+Preserve unfavorable and failed experiments when they informed a decision; do not
+delete or replace them because a later run looks better. Update the relevant
+document in the same change as the implementation.

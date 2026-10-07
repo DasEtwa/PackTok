@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/packtok-core",
+    "crates/packtok-packs",
     "crates/packtok-format",
     "crates/packtok-tokenizer",
     "crates/packtok-train",
