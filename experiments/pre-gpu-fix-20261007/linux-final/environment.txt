@@ -1,0 +1,78 @@
+53ef2e8639a1e77c40bb26f2a935bdd321f459c0
+ M AGENTS.md
+ M BRAIN_README.md
+ M CHANGELOG.md
+ M FORMAT.md
+ M IDEA.md
+ M LICENSE
+ M README.md
+ M STRUCTURE.md
+ M crates/packtok-model/src/lib.rs
+ M experiments/audit-20261007/SHA256SUMS.txt
+ M experiments/audit-20261007/after-1.txt
+ M experiments/audit-20261007/after-2.txt
+ M experiments/audit-20261007/after-3.txt
+ M experiments/audit-20261007/base-commit.txt
+ M experiments/audit-20261007/before-1.txt
+ M experiments/audit-20261007/before-2.txt
+ M experiments/audit-20261007/before-3.txt
+ M experiments/audit-20261007/before-source-sha256.txt
+ M experiments/audit-20261007/clippy-1.txt
+ M experiments/audit-20261007/environment.txt
+ M experiments/audit-20261007/intermediate-1.txt
+ M experiments/audit-20261007/intermediate-2.txt
+ M experiments/audit-20261007/m3-rerun.txt
+ M experiments/audit-20261007/model-after-loader-2.txt
+ M experiments/audit-20261007/model-after-loader.txt
+ M experiments/audit-20261007/model-compatibility.txt
+ M experiments/audit-20261007/model-regressions-before.txt
+ M experiments/audit-20261007/numerical-tests.txt
+ M experiments/audit-20261007/performance-summary.txt
+ M experiments/audit-20261007/provenance-note.txt
+ M experiments/audit-20261007/regressions-after-1.txt
+ M experiments/audit-20261007/regressions-before.txt
+ M experiments/audit-20261007/release-build.txt
+ M experiments/audit-20261007/release-tests.txt
+ M experiments/audit-20261007/source-sha256.txt
+ M experiments/audit-20261007/tokenizer-regression-before.txt
+ M experiments/audit-20261007/validation.txt
+ M experiments/audit-20261007/workspace-tests.txt
+ M experiments/bpe-baseline/audit-20261007/after-1.txt
+ M experiments/bpe-baseline/audit-20261007/after-2.txt
+ M experiments/bpe-baseline/audit-20261007/after-3.txt
+ M experiments/bpe-baseline/audit-20261007/before.txt
+ M experiments/bpe-baseline/audit-20261007/intermediate-repetition-regression.txt
+ M experiments/bpe-baseline/audit-20261007/source-sha256.txt
+ M experiments/bpe-baseline/post-fix-20261007/after-1.txt
+ M experiments/bpe-baseline/post-fix-20261007/after-2.txt
+ M experiments/bpe-baseline/post-fix-20261007/after-3.txt
+ M experiments/bpe-baseline/post-fix-20261007/after-4.txt
+ M experiments/bpe-baseline/post-fix-20261007/before.txt
+ M experiments/bpe-baseline/post-fix-20261007/final-1.txt
+ M experiments/bpe-baseline/post-fix-20261007/final-2.txt
+ M experiments/bpe-baseline/post-fix-20261007/final-3.txt
+ M experiments/bpe-baseline/post-fix-20261007/linux-tests-final.txt
+ M experiments/bpe-baseline/post-fix-20261007/linux-tests.txt
+ M experiments/bpe-baseline/post-fix-20261007/source-sha256.txt
+ M experiments/bpe-baseline/post-fix-20261007/windows-tests.txt
+ M experiments/bpe-baseline/pr1-review-20261007/held-out-1.txt
+ M experiments/bpe-baseline/pr1-review-20261007/held-out-2.txt
+ M experiments/bpe-baseline/pr1-review-20261007/held-out-3.txt
+ M experiments/bpe-baseline/pr1-review-20261007/source-sha256.txt
+ M experiments/factorized-packs/m2-20261007/final-1.txt
+ M experiments/factorized-packs/m2-20261007/final-2.txt
+ M experiments/factorized-packs/m2-20261007/final-3.txt
+ M experiments/factorized-packs/m2-20261007/pre-final-8b324a2-1.txt
+ M experiments/factorized-packs/m2-20261007/pre-final-8b324a2-2.txt
+ M experiments/factorized-packs/m2-20261007/pre-final-8b324a2-3.txt
+ M experiments/factorized-packs/m2-20261007/preflight-1.txt
+ M experiments/factorized-packs/m2-20261007/preflight-2.txt
+ M experiments/factorized-packs/m2-20261007/preflight-3.txt
+ M experiments/m3-model/runs/audit-20261007/SHA256SUMS.txt
+ M experiments/m3-model/runs/final-20261007/SHA256SUMS.txt
+?? PRE_GPU_CODE_REVIEW.md
+?? experiments/pre-gpu-fix-20261007/
+?? experiments/pre-gpu-review-20261007/
+rustc 1.85.0 (4d91de4e4 2025-02-17)
+cargo 1.85.0 (d73d2caf9 2024-12-31)
+Linux 6.18.40.1-microsoft-standard-WSL2

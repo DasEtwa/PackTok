@@ -1,0 +1,8 @@
+Command: git diff --cached --check
+Exit: 2 (commit not attempted)
+experiments/pre-gpu-fix-20261007/model-source.patch:42: trailing whitespace.
++ 
+experiments/pre-gpu-fix-20261007/model-source.patch:131: trailing whitespace.
++ 
+The records are preserved Git-patch blank context lines, not source whitespace.
+No patch bytes were trimmed. The specific patch file now accepts blank-at-eol.

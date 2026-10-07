@@ -1,0 +1,24 @@
+Reviewed commit: 53ef2e8639a1e77c40bb26f2a935bdd321f459c0
+Branch: m4-factorization-ablation
+Review date: 2026-10-07
+Production diff: empty; only new review documentation/evidence added.
+
+Windows (environment.txt): Rust/Cargo 1.98.1
+cargo fmt --all --check: exit 0 (fmt-windows.txt)
+cargo clippy --workspace --all-targets --all-features -- -D warnings: exit 0 (clippy-windows.txt)
+cargo test --workspace: exit 0, 125 passed, 0 failed (tests-windows.txt)
+cargo build --release --workspace: exit 0 (release-build-windows.txt)
+cargo run --release --manifest-path experiments/pre-gpu-review-20261007/Cargo.toml --target-dir target/pre-gpu-review-20261007: exit 0 (probe-windows.txt)
+
+Linux WSL (environment-linux.txt): Rust/Cargo 1.85.0, declared MSRV
+verify-linux.sh: exit 0; set -e stops at any failing command
+cargo fmt --all --check: exit 0 (fmt-linux.txt)
+cargo clippy --workspace --all-targets --all-features -- -D warnings: exit 0 (clippy-linux.txt)
+cargo test --workspace: exit 0, 126 passed, 0 failed (tests-linux.txt)
+cargo build --release --workspace: exit 0 (release-build-linux.txt)
+cargo run --release --manifest-path experiments/pre-gpu-review-20261007/Cargo.toml --target-dir /var/tmp/packtok-pre-gpu-review-probe: exit 0 (probe-linux.txt)
+
+Both probes reproduce invalid prompt prefix/zero-continuation acceptance and accepted constructor configurations that fail serialization in flat and factorized models.
+Existing test counts sum every test-result passed count; doc-test targets have 0 tests.
+Frozen M4 SHA256SUMS.txt verification: 138 matched, 0 mismatches (frozen-evidence-check.txt).
+No GPU run, new model training, production fix, commit, push or PR mutation was performed.

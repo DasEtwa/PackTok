@@ -1,0 +1,6 @@
+Initial Linux verification command:
+wsl -d Ubuntu -- bash /mnt/c/Users/DasEtwa/PackTok/experiments/pre-gpu-fix-20261007/verify-linux.sh
+The managed Windows sandbox returned exit 1 before the script ran:
+Zugriff verweigert. Fehlercode: Wsl/Service/E_ACCESSDENIED.
+The user explicitly required Linux/MSRV verification. The same command was
+retried with approved sandbox escalation; no script or code change was made.

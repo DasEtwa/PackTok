@@ -173,6 +173,27 @@ trailing bytes. Model format version 1 stores parameters only; Adam moments and
 training progress are not serialized. This is an experimental M3 format, not a
 stable public model checkpoint contract.
 
+### CPU baseline size and prompt validation (pre-M5 fix)
+
+The existing parameter-v1 encoding is unchanged. Its complete byte size is
+`40 + 6 * pack_count + 4 * parameter_count`: the fixed 40 bytes include magic,
+version, kind/reserved, dimensions, seed, pack count and parameter count; every
+pack declaration has a u16 ID and u32 row count; every parameter is f32.
+Flat models have one declaration too. All dynamic multiplications and additions
+are checked. Constructor, loader and writer use one canonical calculation and
+reject a complete size above 67,108,864 bytes (64 MiB). Construction checks this
+before weights or Adam moments are allocated. The independent parameter cap
+still applies, but is not itself sufficient to guarantee a serializable model.
+
+Greedy generation rejects an empty prompt, overflowing prompt-plus-continuation
+length and a returned length above 4,096 IDs. It then validates every supplied
+prompt ID using the same pack/local lookup as inference, before copying or
+truncating it. Zero-continuation requests validate IDs too. Valid long prompts
+still use only the trailing context for prediction. This changes validation,
+not parameter encoding, tokenization, valid-prompt generation or model training.
+The fixes, regressions, archived pre-fix evidence and CPU freeze verification
+are recorded in [PRE_GPU_CODE_REVIEW.md](PRE_GPU_CODE_REVIEW.md).
+
 ## M4 model-side mapping version 1
 
 Tokenizer v1/v2/v3 and M3 parameter version 1 are unchanged. A separate mapping

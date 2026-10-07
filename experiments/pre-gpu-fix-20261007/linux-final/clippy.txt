@@ -1,0 +1,9 @@
+    Checking packtok-core v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-core)
+    Checking packtok-packs v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-packs)
+    Checking packtok-model v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-model)
+    Checking packtok-format v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-format)
+    Checking packtok-tokenizer v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-tokenizer)
+    Checking packtok-train v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-train)
+    Checking packtok-cli v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-cli)
+    Checking packtok-bench v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-bench)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.72s

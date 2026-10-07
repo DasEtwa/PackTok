@@ -1,0 +1,452 @@
+diff --git a/crates/packtok-model/src/lib.rs b/crates/packtok-model/src/lib.rs
+index fc75b95..4e1d3ff 100644
+--- a/crates/packtok-model/src/lib.rs
++++ b/crates/packtok-model/src/lib.rs
+@@ -22,6 +22,39 @@ const MAX_LOCAL_VOCABULARY: u32 = 1_000_000;
+ const MAX_PACK_COUNT: usize = 1024;
+ const MAX_PARAMETER_COUNT: usize = 16_777_216;
+ const MAX_MODEL_BYTES: usize = 64 * 1024 * 1024;
++// Magic, version, kind/reserved, dimensions, seed, pack count, parameter count.
++const MODEL_FIXED_BYTES: usize = 8 + 2 + 1 + 1 + 4 + 4 + 8 + 4 + 8;
++const MODEL_PACK_BYTES: usize = 2 + 4;
++
++#[derive(Debug, Eq, PartialEq)]
++struct SerializedSize {
++    parameter_bytes: usize,
++    total_bytes: usize,
++}
++
++/// Canonical complete version-1 wire size, including every descriptor and field.
++fn serialized_model_size(
++    pack_count: usize,
++    parameter_count: usize,
++) -> Result<SerializedSize, ModelError> {
++    let descriptors = pack_count
++        .checked_mul(MODEL_PACK_BYTES)
++        .ok_or(ModelError::LengthOverflow)?;
++    let parameter_bytes = parameter_count
++        .checked_mul(size_of::<f32>())
++        .ok_or(ModelError::LengthOverflow)?;
++    let total_bytes = MODEL_FIXED_BYTES
++        .checked_add(descriptors)
++        .and_then(|size| size.checked_add(parameter_bytes))
++        .ok_or(ModelError::LengthOverflow)?;
++    if total_bytes > MAX_MODEL_BYTES {
++        return Err(ModelError::ModelTooLarge);
++    }
++    Ok(SerializedSize {
++        parameter_bytes,
++        total_bytes,
++    })
++}
+ 
+ /// Dimensions shared by the flat and factorized model variants.
+ #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+@@ -396,9 +429,14 @@ impl CausalLm {
+         if cursor > MAX_PARAMETER_COUNT {
+             return Err(ModelError::ModelTooLarge);
+         }
++        let pack_count = match &kind {
++            HeadKind::Flat { .. } => 1,
++            HeadKind::Factorized { packs } => packs.len(),
++        };
++        let serialized = serialized_model_size(pack_count, cursor)?;
+         // The shared layout calculation must agree with the serialized body
+         // before weights or Adam moments are allocated.
+-        if parameter_bytes.is_some_and(|bytes| bytes.len() != cursor * 4) {
++        if parameter_bytes.is_some_and(|bytes| bytes.len() != serialized.parameter_bytes) {
+             return Err(ModelError::MalformedArtifact(
+                 "parameter count does not match dimensions",
+             ));
+@@ -623,6 +661,7 @@ impl CausalLm {
+         if capacity > MAX_GENERATION_TOKENS {
+             return Err(ModelError::GenerationTooLong);
+         }
++        self.validate_token_ids(prompt)?;
+         let mut output = Vec::with_capacity(capacity);
+         output.extend_from_slice(prompt);
+         for _ in 0..new_token_count {
+@@ -957,24 +996,7 @@ impl CausalLm {
+     /// Serializes parameters and architecture using the deterministic model format.
+     pub fn to_bytes(&self) -> Result<Vec<u8>, ModelError> {
+         let packs = self.serialized_packs();
+-        let descriptors_bytes = packs
+-            .len()
+-            .checked_mul(6)
+-            .ok_or(ModelError::LengthOverflow)?;
+-        let parameter_bytes = self
+-            .weights
+-            .len()
+-            .checked_mul(4)
+-            .ok_or(ModelError::LengthOverflow)?;
+-        let total = 8_usize
+-            .checked_add(2 + 1 + 1 + 4 + 4 + 8 + 4)
+-            .and_then(|value| value.checked_add(descriptors_bytes))
+-            .and_then(|value| value.checked_add(8))
+-            .and_then(|value| value.checked_add(parameter_bytes))
+-            .ok_or(ModelError::LengthOverflow)?;
+-        if total > MAX_MODEL_BYTES {
+-            return Err(ModelError::ModelTooLarge);
+-        }
++        let total = serialized_model_size(packs.len(), self.weights.len())?.total_bytes;
+         let mut bytes = Vec::with_capacity(total);
+         bytes.extend_from_slice(MODEL_MAGIC);
+         bytes.extend_from_slice(&MODEL_FORMAT_VERSION.to_le_bytes());
+@@ -1060,15 +1082,14 @@ impl CausalLm {
+         if declared_params > MAX_PARAMETER_COUNT {
+             return Err(ModelError::ModelTooLarge);
+         }
+-        let expected_remaining = declared_params
+-            .checked_mul(4)
+-            .ok_or(ModelError::LengthOverflow)?;
+-        if cursor.remaining() != expected_remaining {
++        let serialized = serialized_model_size(pack_count, declared_params)?;
++        if bytes.len() != serialized.total_bytes || cursor.remaining() != serialized.parameter_bytes
++        {
+             return Err(ModelError::MalformedArtifact(
+                 "parameter byte length does not match header",
+             ));
+         }
+-        let parameter_bytes = cursor.read_exact(expected_remaining)?;
++        let parameter_bytes = cursor.read_exact(serialized.parameter_bytes)?;
+         let model = match kind {
+             0 if pack_count == 1 && packs[0].pack_id == 0 => {
+                 Self::flat_model(config, packs[0].token_count, seed, Some(parameter_bytes))?
+@@ -1162,7 +1183,11 @@ impl CausalLm {
+                 maximum: self.config.context_length,
+             });
+         }
+-        for (index, token) in inputs.iter().copied().enumerate() {
++        self.validate_token_ids(inputs)
++    }
++
++    fn validate_token_ids(&self, tokens: &[TokenId]) -> Result<(), ModelError> {
++        for (index, token) in tokens.iter().copied().enumerate() {
+             self.embedding_row(token, index)?;
+         }
+         Ok(())
+@@ -2158,6 +2183,324 @@ mod tests {
+         ));
+     }
+ 
++    #[test]
++    fn serialization_size_boundary_includes_flat_and_factorized_headers() {
++        // Equivalent boundary calculations avoid allocating several huge models.
++        let flat = serialized_model_size(1, 16_777_204).unwrap();
++        assert_eq!(flat.parameter_bytes, 67_108_816);
++        assert_eq!(flat.total_bytes, MAX_MODEL_BYTES - 2);
++        assert_eq!(
++            serialized_model_size(1, 16_777_205),
++            Err(ModelError::ModelTooLarge)
++        );
++        let factorized = serialized_model_size(4, 16_777_200).unwrap();
++        assert_eq!(factorized.total_bytes, MAX_MODEL_BYTES);
++        assert_eq!(
++            serialized_model_size(4, 16_777_201),
++            Err(ModelError::ModelTooLarge)
++        );
++        for pack_count in 1..=MAX_PACK_COUNT {
++            let header = 40 + 6 * pack_count;
++            let largest = (MAX_MODEL_BYTES - header) / 4;
++            assert_eq!(
++                serialized_model_size(pack_count, largest)
++                    .unwrap()
++                    .total_bytes,
++                header + 4 * largest
++            );
++            assert_eq!(
++                serialized_model_size(pack_count, largest + 1),
++                Err(ModelError::ModelTooLarge)
++            );
++        }
++    }
++
++    #[test]
++    fn serialization_size_checked_arithmetic_rejects_overflow() {
++        for (packs, parameters) in [
++            (usize::MAX, 0),
++            (1, usize::MAX),
++            (usize::MAX / 6, 0),
++            (1, usize::MAX / 4),
++        ] {
++            assert_eq!(
++                serialized_model_size(packs, parameters),
++                Err(ModelError::LengthOverflow)
++            );
++        }
++    }
++
++    #[test]
++    fn serialization_constructors_reject_unwritable_boundary_layouts() {
++        let config = ModelConfig {
++            hidden_size: 8,
++            context_length: 6,
++        };
++        assert_eq!(
++            CausalLm::new_flat(config, 986_888, 19),
++            Err(ModelError::ModelTooLarge)
++        );
++        assert_eq!(
++            CausalLm::new_factorized(
++                config,
++                vec![PackVocabulary {
++                    pack_id: 7,
++                    token_count: 986_887,
++                }],
++                19
++            ),
++            Err(ModelError::ModelTooLarge)
++        );
++        let four_packs = |first| {
++            vec![
++                PackVocabulary {
++                    pack_id: 0,
++                    token_count: first,
++                },
++                PackVocabulary {
++                    pack_id: 1,
++                    token_count: 1,
++                },
++                PackVocabulary {
++                    pack_id: 2,
++                    token_count: 1,
++                },
++                PackVocabulary {
++                    pack_id: 3,
++                    token_count: 1,
++                },
++            ]
++        };
++        assert_eq!(
++            CausalLm::new_factorized(config, four_packs(986_882), 19),
++            Err(ModelError::ModelTooLarge)
++        );
++        // The nearest smaller layouts pass the size guard and reach body
++        // validation without allocating ~200 MiB of parameter/Adam state.
++        let bad_body = Err(ModelError::MalformedArtifact(
++            "parameter count does not match dimensions",
++        ));
++        assert_eq!(
++            CausalLm::flat_model(config, 986_887, 19, Some(&[])),
++            bad_body
++        );
++        assert_eq!(
++            CausalLm::factorized_model(config, four_packs(986_881), 19, Some(&[])),
++            bad_body
++        );
++    }
++
++    #[test]
++    fn serialization_constructor_success_obeys_complete_size_rule() {
++        for hidden_size in [2, 8, 16] {
++            let config = ModelConfig {
++                hidden_size,
++                context_length: 16,
++            };
++            for model in [
++                CausalLm::new_flat(config, 512, 19).unwrap(),
++                CausalLm::new_factorized(
++                    config,
++                    vec![
++                        PackVocabulary {
++                            pack_id: 0,
++                            token_count: 214,
++                        },
++                        PackVocabulary {
++                            pack_id: 1,
++                            token_count: 9,
++                        },
++                        PackVocabulary {
++                            pack_id: 2,
++                            token_count: 33,
++                        },
++                        PackVocabulary {
++                            pack_id: u16::MAX,
++                            token_count: 256,
++                        },
++                    ],
++                    19,
++                )
++                .unwrap(),
++            ] {
++                let bytes = model.to_bytes().unwrap();
++                let packs = model.serialized_packs().len();
++                assert_eq!(bytes.len(), 40 + 6 * packs + 4 * model.parameters().len());
++                assert_eq!(
++                    CausalLm::from_bytes(&bytes).unwrap().to_bytes().unwrap(),
++                    bytes
++                );
++            }
++        }
++    }
++
++    #[test]
++    fn serialization_preserves_historical_m3_m4_model_bytes() {
++        for bytes in [
++            include_bytes!("../../../experiments/m3-model/runs/final-20261007/a-same-backbone-m1-flat-seed-20261007.ptlm").as_slice(),
++            include_bytes!("../../../experiments/m3-model/runs/final-20261007/a-same-backbone-m2-factorized-seed-20261007.ptlm").as_slice(),
++            include_bytes!("../../../experiments/m4-ablation/runs/tiny-final-20261007-v2/schedule-B-seed-20261007.ptlm").as_slice(),
++            include_bytes!("../../../experiments/m4-ablation/runs/large-final-20261007/schedule-C-seed-20261007.ptlm").as_slice(),
++        ] {
++            assert_eq!(CausalLm::from_bytes(bytes).unwrap().to_bytes().unwrap(), bytes);
++        }
++    }
++
++    #[test]
++    fn generation_validation_rejects_flat_ids_in_entire_prompt() {
++        let model = CausalLm::new_flat(
++            ModelConfig {
++                hidden_size: 2,
++                context_length: 2,
++            },
++            256,
++            19,
++        )
++        .unwrap();
++        let valid = TokenId::new(0, 97);
++        for invalid in [TokenId::new(0, 256), TokenId::new(1, 97)] {
++            for position in 0..3 {
++                let mut prompt = [valid; 3];
++                prompt[position] = invalid;
++                for count in [0, 1] {
++                    assert_eq!(
++                        model.greedy_generate(&prompt, count),
++                        Err(ModelError::InvalidToken {
++                            index: position,
++                            token: invalid
++                        })
++                    );
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn generation_validation_rejects_factorized_pack_and_local_ids() {
++        let model = CausalLm::new_factorized(
++            ModelConfig {
++                hidden_size: 2,
++                context_length: 2,
++            },
++            vec![PackVocabulary {
++                pack_id: 7,
++                token_count: 256,
++            }],
++            19,
++        )
++        .unwrap();
++        let valid = TokenId::new(7, 97);
++        for (invalid, error) in [
++            (TokenId::new(99, 0), ModelError::UnknownPack(99)),
++            (
++                TokenId::new(7, 256),
++                ModelError::InvalidToken {
++                    index: 0,
++                    token: TokenId::new(7, 256),
++                },
++            ),
++        ] {
++            for position in 0..3 {
++                let mut prompt = [valid; 3];
++                prompt[position] = invalid;
++                let expected = match error {
++                    ModelError::InvalidToken { token, .. } => ModelError::InvalidToken {
++                        index: position,
++                        token,
++                    },
++                    ref other => other.clone(),
++                };
++                for count in [0, 1] {
++                    assert_eq!(model.greedy_generate(&prompt, count), Err(expected.clone()));
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn generation_validation_keeps_valid_long_and_zero_continuation_behavior() {
++        let config = ModelConfig {
++            hidden_size: 2,
++            context_length: 2,
++        };
++        for (model, pack, continuation) in [
++            (
++                CausalLm::new_flat(config, 256, 19).unwrap(),
++                0,
++                [113, 15, 180, 113, 15, 180, 113, 15],
++            ),
++            (
++                CausalLm::new_factorized(
++                    config,
++                    vec![PackVocabulary {
++                        pack_id: 7,
++                        token_count: 256,
++                    }],
++                    19,
++                )
++                .unwrap(),
++                7,
++                [112; 8],
++            ),
++        ] {
++            let prompt = [
++                TokenId::new(pack, 97),
++                TokenId::new(pack, 98),
++                TokenId::new(pack, 99),
++            ];
++            assert_eq!(model.greedy_generate(&prompt, 0).unwrap(), prompt);
++            let mut expected = prompt.to_vec();
++            expected.extend(
++                continuation
++                    .into_iter()
++                    .map(|local| TokenId::new(pack, local)),
++            );
++            // Golden IDs captured before the fix; not another generation loop.
++            assert_eq!(model.greedy_generate(&prompt, 8).unwrap(), expected);
++        }
++    }
++
++    #[test]
++    fn generation_validation_preserves_empty_overflow_and_length_errors() {
++        for model in [
++            CausalLm::new_flat(tiny_config(), 256, 19).unwrap(),
++            CausalLm::new_factorized(
++                tiny_config(),
++                vec![PackVocabulary {
++                    pack_id: 7,
++                    token_count: 256,
++                }],
++                19,
++            )
++            .unwrap(),
++        ] {
++            let pack = model.pack_vocabularies().map_or(0, |p| p[0].pack_id);
++            let valid = TokenId::new(pack, 97);
++            assert_eq!(model.greedy_generate(&[], 0), Err(ModelError::EmptyContext));
++            assert_eq!(
++                model.greedy_generate(&[valid], usize::MAX),
++                Err(ModelError::LengthOverflow)
++            );
++            assert_eq!(
++                model.greedy_generate(&[valid], MAX_GENERATION_TOKENS),
++                Err(ModelError::GenerationTooLong)
++            );
++            let prompt = vec![valid; MAX_GENERATION_TOKENS];
++            assert_eq!(model.greedy_generate(&prompt, 0).unwrap(), prompt);
++            assert_eq!(
++                model.greedy_generate(&prompt, 1),
++                Err(ModelError::GenerationTooLong)
++            );
++            // Bounds reject unsupported lengths before scanning/copying IDs.
++            let mut excessive = vec![valid; MAX_GENERATION_TOKENS + 1];
++            excessive[0] = TokenId::new(99, 0);
++            assert_eq!(
++                model.greedy_generate(&excessive, 0),
++                Err(ModelError::GenerationTooLong)
++            );
++        }
++    }
++
+     #[test]
+     fn training_mac_estimate_is_positive_and_changes_with_active_head() {
+         let flat = CausalLm::new_flat(tiny_config(), 260, 2).unwrap();

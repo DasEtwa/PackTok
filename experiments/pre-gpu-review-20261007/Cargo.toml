@@ -1,0 +1,15 @@
+[package]
+name = "packtok-pre-gpu-review-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "review-probe"
+path = "probe.rs"
+
+[dependencies]
+packtok-core = { path = "../../crates/packtok-core" }
+packtok-model = { path = "../../crates/packtok-model" }

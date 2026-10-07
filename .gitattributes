@@ -8,3 +8,10 @@ experiments/m4-ablation/** whitespace=cr-at-eol,-blank-at-eof
 experiments/m4-ablation/sources/** -diff
 experiments/m4-ablation/corpus/** -diff
 experiments/m4-ablation/corpus-v2/** -diff
+# Preserve pre-GPU review/fix evidence and captured output byte-for-byte.
+experiments/pre-gpu-review-20261007/** -text
+experiments/pre-gpu-review-20261007/** whitespace=cr-at-eol,-blank-at-eof
+experiments/pre-gpu-fix-20261007/** -text
+experiments/pre-gpu-fix-20261007/** whitespace=cr-at-eol,-blank-at-eof
+experiments/pre-gpu-fix-20261007/model-source.patch whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+experiments/pre-gpu-fix-20261007/precommit-whitespace-failure.txt whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol

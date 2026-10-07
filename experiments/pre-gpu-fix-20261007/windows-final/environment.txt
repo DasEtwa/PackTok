@@ -1,0 +1,10 @@
+53ef2e8639a1e77c40bb26f2a935bdd321f459c0
+ M CHANGELOG.md
+ M FORMAT.md
+ M README.md
+ M crates/packtok-model/src/lib.rs
+?? PRE_GPU_CODE_REVIEW.md
+?? experiments/pre-gpu-fix-20261007/
+?? experiments/pre-gpu-review-20261007/
+rustc 1.98.1 (48a229cea 2026-09-01)
+cargo 1.98.1 (797e8a9bc 2026-08-05)

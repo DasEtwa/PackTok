@@ -17,6 +17,10 @@ The [current performance and mathematics audit](PERFORMANCE_MATH_AUDIT.md)
 records prioritized fixes, numerical gradient checks, and preserved before/after
 measurements. Run its focused probes with `cargo run --release -p packtok-bench -- audit`.
 
+The [final pre-GPU correctness pass](PRE_GPU_CODE_REVIEW.md) records the two
+model-contract fixes, scoped regressions and CPU baseline freeze verification.
+Tokenizer behavior, M3/M4 results and artifact encodings remain frozen.
+
 ```text
 cargo run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/m1.packtok
 cargo run --release -p packtok-cli -- inspect target/m1.packtok

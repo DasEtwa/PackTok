@@ -1,5 +1,18 @@
 # Milestone history
 
+## Final pre-GPU correctness pass (2026-10-07)
+
+- Enforce complete model-parameter-v1 artifact size during construction,
+  loading and writing through one checked calculation, before allocating model
+  state. Keep the existing size limits and exact wire encoding.
+- Validate the whole greedy-generation prompt with the canonical model ID
+  lookup, including prefixes outside the context and zero-continuation requests.
+- Add nine scoped regressions for wire boundaries/overflow, constructors,
+  historical wire identity, prompt validation and valid generation behavior.
+- Preserve the original pre-fix review, probes and raw logs. Resolution and CPU
+  baseline freeze evidence: [PRE_GPU_CODE_REVIEW.md](PRE_GPU_CODE_REVIEW.md).
+
+
 ## Performance and mathematics audit (2026-10-07)
 
 - Addressed seven prioritized findings in model numerical failures, model

@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+     Running unittests src/lib.rs (target/linux-pre-gpu-fix-20261007/debug/deps/packtok_model-d6e9310f05a453e3)
+
+running 4 tests
+test tests::generation_validation_rejects_flat_ids_in_entire_prompt ... ok
+test tests::generation_validation_rejects_factorized_pack_and_local_ids ... ok
+test tests::generation_validation_keeps_valid_long_and_zero_continuation_behavior ... ok
+test tests::generation_validation_preserves_empty_overflow_and_length_errors ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.01s
+
