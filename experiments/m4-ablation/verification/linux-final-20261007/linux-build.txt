@@ -1,0 +1,2 @@
+   Compiling packtok-bench v0.1.0 (/mnt/c/Users/DasEtwa/PackTok/crates/packtok-bench)
+    Finished `release` profile [optimized] target(s) in 4.16s

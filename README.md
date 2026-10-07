@@ -1,10 +1,11 @@
 # PackTok
 
-Rust-first tokenizer research implementation. **Historical milestone: M3, the tiny
-autoregressive model comparison (completed).** M1 remains the frozen flat
-byte-level BPE control group; M2 is the first factorized pack architecture. M3
-records a first model-level comparison on a small synthetic corpus; the result
-does not establish general quality or presuppose that factorization wins.
+Rust-first tokenizer research implementation. **Current milestone: M4,
+factorization ablation and larger-corpus validation (completed).** M1 remains
+the flat byte-level BPE control; lexical-v1 and M0–M3 results are frozen.
+M4 isolates token sequence from output head on a fixed sourced mixture. It finds
+a small tokenizer-sequence benefit at equal updates and an output-head budget
+benefit through additional training; it does not establish general superiority.
 
 **Canonical project map:** [DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)
 

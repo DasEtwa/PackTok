@@ -31,6 +31,13 @@ const CONFIG: ModelConfig = ModelConfig {
 };
 const SEEDS: [u64; 3] = [20_261_007, 20_261_008, 20_261_009];
 
+fn train_input_path(directory: &Path) -> String {
+    format!(
+        "{}/train.txt",
+        directory.to_string_lossy().replace('\\', "/")
+    )
+}
+
 struct Representation {
     splits: Vec<EncodedText>,
     mapping: IdMapping,
@@ -139,10 +146,7 @@ pub(super) fn run(corpus_name: &str, label: &str) -> Result<(), Box<dyn Error>> 
     // Artifact provenance preserves the spelling of the input path. Path::join
     // introduces backslashes on Windows, unlike the frozen M3 forward-slash
     // path; canonical spelling keeps descriptive metadata byte-identical too.
-    let train_path = format!(
-        "{}/train.txt",
-        directory.to_string_lossy().replace('\\', "/")
-    );
+    let train_path = train_input_path(directory);
     let corpus = load_corpus(Path::new(&train_path))?;
     let mut report = format!(
         "PackTok M4 v1 corpus={corpus_name} hidden=16 context=16 batch=4 seeds={SEEDS:?} Adam=M3-default budget=\"M3 MAC v1\" no-early-stop\n{environment}"
@@ -520,6 +524,35 @@ fn train_run(
 mod tests {
     use super::*;
     use packtok_format::Artifact;
+    #[test]
+    fn joined_path_provenance_preserves_frozen_m3_tokenizer_bytes() {
+        let joined = Path::new("fixtures").join("m3-model");
+        let input = train_input_path(&joined);
+        assert_eq!(input, "fixtures/m3-model/train.txt");
+        assert_eq!(train_input_path(Path::new("fixtures\\m3-model")), input);
+        let raw = include_bytes!("../../../fixtures/m3-model/train.txt");
+        let provenance = packtok_train::CorpusProvenance {
+            input: input.clone(),
+            files: vec![input],
+            total_bytes: raw.len() as u64,
+            fnv1a64: packtok_train::fnv1a64(raw),
+        };
+        let a = train_bpe_with_provenance(raw, BpeTrainingConfig::default(), &provenance).unwrap();
+        let d = train_factorized_bpe_with_provenance_report(
+            raw,
+            FactorizedTrainingConfig::default(),
+            &provenance,
+        )
+        .unwrap();
+        assert_eq!(
+            a.to_bytes().unwrap(),
+            include_bytes!("../../../experiments/m3-model/artifacts/m1-flat-v2.packtok")
+        );
+        assert_eq!(
+            d.artifact.to_bytes().unwrap(),
+            include_bytes!("../../../experiments/m3-model/artifacts/m2-factorized-v3.packtok")
+        );
+    }
     #[test]
     fn normalization_uses_target_bytes_not_token_count_or_whole_file() {
         assert_eq!(nll_per_byte(3., 2, 5).unwrap(), 1.2);

@@ -1,0 +1,1 @@
+trained 256 learned merges (vocabulary 512); corpus 1640 bytes across 1 files; wrote experiments/m4-ablation/verification/frozen-artifacts/m1-control.packtok

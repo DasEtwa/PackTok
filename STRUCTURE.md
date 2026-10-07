@@ -367,7 +367,7 @@ Every optimization must preserve deterministic results unless an experiment expl
 - validation-loss and compute comparison
 - reproducible report
 
-### M4+ — Research
+### M5+ — Research after the M4 ablation
 
 Only after M0–M3 provide trustworthy baselines:
 
