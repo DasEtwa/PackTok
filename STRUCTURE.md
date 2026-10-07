@@ -163,14 +163,16 @@ No hidden Python dependency.
 
 Experimental model-facing integration.
 
-Responsibilities may later include:
+Current M3 responsibilities:
 
-- pack/local embeddings
-- hierarchical or factorized output heads
-- score composition
-- tiny reference LM used for controlled experiments
+- flat token embeddings and output head for the M1 control
+- independent pack-local embeddings and factorized pack/local heads for M2
+- tiny CPU causal model and training/evaluation contracts
+- parameter accounting, model serialization, and greedy generation smoke tests
 
-Keep this crate small at first. PackTok must be usable as a tokenizer/research library without forcing users into one neural runtime.
+The M3 crate depends only on `packtok-core`; tokenization, corpus training,
+artifact loading, and benchmark orchestration stay outside it. PackTok remains
+usable as a tokenizer/research library without forcing users into this model.
 
 ### `packtok-bench`
 
@@ -232,11 +234,13 @@ packtok-packs
     ↑
 packtok-train
 
-packtok-tokenizer ─────┐
-packtok-packs ─────────┼→ packtok-model
-packtok-format ────────┘
+packtok-core ─────────────→ packtok-model
 
-all relevant crates ─────→ packtok-bench
+packtok-format ───────────┐
+packtok-tokenizer ────────┤
+packtok-train ────────────┼→ packtok-bench
+packtok-packs ────────────┤
+packtok-model ────────────┘
 library crates ───────────→ packtok-cli
 ```
 
@@ -395,4 +399,15 @@ deterministic `lexical-v1` routing, one global learned-token budget, a version-3
 artifact section, exact mixed-pack encode/decode, inspection commands, and a
 held-out comparison against frozen M1. This describes the current code and
 does not imply that factorization improves tokenization.
+
+## M3 model boundary
+
+M3 adds `packtok-model` as the CPU-only owner of the causal recurrent reference
+model, flat and pack-factorized heads, model parameter serialization, and
+deterministic training/evaluation contracts. It depends on `packtok-core` for
+token IDs and does not depend on tokenizer training or runtime. The
+`packtok-bench` harness uses the model crate and existing tokenizers to train
+both variants on the same raw splits and record comparison metrics. This keeps
+model implementation separate from tokenizer and experiment orchestration.
+
 The BRAIN space [`DasEtwa/BRAIN/PackTok`](https://github.com/DasEtwa/BRAIN/tree/main/PackTok) remains the high-level project map.

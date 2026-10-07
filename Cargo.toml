@@ -5,6 +5,7 @@ members = [
     "crates/packtok-format",
     "crates/packtok-tokenizer",
     "crates/packtok-train",
+    "crates/packtok-model",
     "crates/packtok-cli",
     "crates/packtok-bench",
 ]

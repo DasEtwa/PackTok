@@ -1,14 +1,16 @@
 # PackTok
 
-Rust-first tokenizer research implementation. **Current milestone: M2, the first
-factorized pack architecture.** M1 remains the frozen flat byte-level BPE control
-group. M2 routes text deterministically into TEXT, NUMBER, and STRUCTURE local
-vocabularies while sharing one raw-byte fallback pack; it does not establish that
-factorization improves tokenization.
+Rust-first tokenizer research implementation. **Current milestone: M3, the tiny
+autoregressive model comparison (in progress).** M1 remains the frozen flat
+byte-level BPE control group; M2 is the first factorized pack architecture. M3
+compares their model-facing trade-offs without presuming that factorization wins.
 
 **Canonical project map:** [DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)
 
 ## Train and inspect
+
+M3 model architecture and experiment results: [M3_MODEL.md](M3_MODEL.md) and
+[M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
 
 ```text
 cargo run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/m1.packtok
@@ -17,6 +19,7 @@ cargo run --release -p packtok-cli -- encode --artifact target/m1.packtok "Sämt
 cargo run --release -p packtok-cli -- inspect-token target/m1.packtok 256
 cargo run --release -p packtok-cli -- validate target/m1.packtok
 cargo run --release -p packtok-bench
+cargo run --release -p packtok-bench -- m3 final-run-label
 
 cargo run --release -p packtok-cli -- route "Hello 123!"
 cargo run --release -p packtok-cli -- train-packs fixtures/benchmark/train.txt target/m2.packtok
@@ -33,8 +36,9 @@ cargo run --release -p packtok-cli -- stats target/m2.packtok
 - `packtok-format` — deterministic version-1, version-2, and version-3 artifacts.
 - `packtok-tokenizer` — M0 byte fallback, frozen M1 BPE, and M2 factorized runtime.
 - `packtok-train` — deterministic flat and factorized BPE training, corpus handling, and reference oracles.
+- `packtok-model` — small CPU-only causal model with flat and factorized heads for M3.
 - `packtok-cli` — training, encoding, decoding, validation, and inspection commands.
-- `packtok-bench` — matched held-out M0/M1/M2 throughput, token counts, memory and sequence lengths.
+- `packtok-bench` — tokenizer benchmarks and the M3 tiny-model comparison harness.
 
 Details: [M2 factorized design](M2_PACKS.md) · [M2 benchmark](M2_PACKS_BENCHMARK.md) ·
 [M1 BPE control](M1_BPE.md) · [artifact format](FORMAT.md) ·

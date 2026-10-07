@@ -1,5 +1,16 @@
 # Milestone history
 
+## M3 — Tiny autoregressive model comparison (in progress)
+
+- Adds a small CPU-only recurrent model boundary with a flat M1 head and a
+  genuinely factorized M2 pack/local head.
+- Adds a new manually authored train/validation/test split that is separate from
+  the frozen M1/M2 tokenizer evaluation samples.
+- M3 model architecture, byte-normalized metrics, and benchmark protocol are
+  recorded in [M3_MODEL.md](M3_MODEL.md) and [M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
+  Final results and verification are pending; no model-quality conclusion is
+  claimed here.
+
 ## M2 — First factorized pack architecture (2026-10-07)
 
 - Added a generic Rust routing contract and the experimental, versioned lexical-v1

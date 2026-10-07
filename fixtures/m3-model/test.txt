@@ -1,0 +1,5 @@
+At the harbor, a mechanic repairs a yellow bicycle while gulls circle above the boats. The engine log records 42 quiet minutes.
+Before sunset, Niko places a folded blanket in the cabin and draws a route from the lighthouse to the western pier.
+Im Lesesaal entdeckt Farah ein Gedicht über Schnee, Wälder und leise Schritte. Danach schreibt sie Grüße an ihre Schwester.
+Ein kleiner Fuchs läuft am Zaun entlang, bleibt vor einer Pfütze stehen und springt über das Wasser in das hohe Gras.
+The parser accepts a simple tuple ("blue", 4), rejects a missing bracket, and prints one short diagnostic beside line 9.
