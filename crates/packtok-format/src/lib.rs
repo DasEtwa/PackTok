@@ -1905,6 +1905,20 @@ mod tests {
     }
 
     #[test]
+    fn version_three_writer_enforces_the_reader_artifact_size_limit() {
+        let valid = factorized_bpe_artifact(false);
+        let model = valid.factorized_bpe().expect("v3 model").clone();
+        let metadata = BTreeMap::from([("large".to_owned(), "x".repeat(MAX_ARTIFACT_BYTES))]);
+        assert!(matches!(
+            Artifact::with_factorized_bpe(valid.registry().clone(), metadata, model),
+            Err(FormatError::ArtifactTooLarge {
+                maximum: MAX_ARTIFACT_BYTES,
+                ..
+            })
+        ));
+    }
+
+    #[test]
     fn bpe_model_rejects_duplicate_pairs_and_expansion_length_overflow() {
         let duplicate = FlatBpeModel::new(vec![
             FlatBpeMerge {
