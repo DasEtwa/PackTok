@@ -136,7 +136,14 @@ pub(super) fn run(corpus_name: &str, label: &str) -> Result<(), Box<dyn Error>> 
         .iter()
         .map(|b| std::str::from_utf8(b))
         .collect::<Result<_, _>>()?;
-    let corpus = load_corpus(&directory.join("train.txt"))?;
+    // Artifact provenance preserves the spelling of the input path. Path::join
+    // introduces backslashes on Windows, unlike the frozen M3 forward-slash
+    // path; canonical spelling keeps descriptive metadata byte-identical too.
+    let train_path = format!(
+        "{}/train.txt",
+        directory.to_string_lossy().replace('\\', "/")
+    );
+    let corpus = load_corpus(Path::new(&train_path))?;
     let mut report = format!(
         "PackTok M4 v1 corpus={corpus_name} hidden=16 context=16 batch=4 seeds={SEEDS:?} Adam=M3-default budget=\"M3 MAC v1\" no-early-stop\n{environment}"
     );

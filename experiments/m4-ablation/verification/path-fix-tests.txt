@@ -1,0 +1,17 @@
+   Compiling packtok-bench v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-bench)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.34s
+     Running unittests src\main.rs (target\debug\deps\packtok_bench-c88d4b0e7b9f0979.exe)
+
+running 9 tests
+test m4::tests::normalization_uses_target_bytes_not_token_count_or_whole_file ... ok
+test m4_corpus::tests::gutenberg_extraction_preserves_body_bytes ... ok
+test metrics::tests::sequence_quantiles_use_nearest_rank_and_include_empty_records ... ok
+test m3::tests::corpus_split_guard_rejects_shared_raw_passages ... ok
+test m4_corpus::tests::overlap_guard_checks_long_partial_copy_not_file_equality ... ok
+test m3::tests::flat_and_factorized_generation_decode_with_the_prompt_bytes_intact ... ok
+test tests::benchmark_training_and_evaluation_passages_are_separate ... ok
+test metrics::tests::process_peak_memory_is_available_and_nonzero ... ok
+test m4::tests::all_four_mapping_embeddings_reproducibility_overfit_and_generation ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
+

@@ -74,3 +74,12 @@ The extra Linux test covers literal-backslash corpus paths. Logs are retained.
 No model settings changed after these checks. Frozen implementation is commit
 9928c15; a233b85 adds only raw-data/verification metadata. Final experiment
 environment files record the exact checkout commit used by each run.
+
+The first tiny final attempt at cc7c2eb failed closed before any model trained:
+Windows Path::join changed the spelling of TRAIN's provenance path from forward
+slashes to backslashes, so descriptive tokenizer metadata differed from the M3
+artifact. No tokenization or merge algorithm changed. The M4 harness now supplies
+a canonical forward-slash input path, preserving the frozen artifact's complete
+bytes on Windows and Linux. The failed directory `runs/tiny-final-20261007/`
+and console are retained; the corrected final run uses a new label. No model
+outcome was observed in the failed attempt, and no experimental setting changed.
