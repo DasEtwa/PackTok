@@ -351,8 +351,18 @@ rounded logs and writes new output paths without overwriting raw runs. Root
 primary tables use Rust's full-precision summaries; last-digit rounding is
 explicit. The Linux verification script now requires a unique labeled directory
 and refuses overwrite, retaining original preflight evidence.
-The complete SHA256SUMS.txt captures 136 M4 evidence files, including sources,
+The complete SHA256SUMS.txt captures 138 M4 evidence files, including sources,
 splits, wire artifacts, scripts, tables and verification logs; every digest was
 verified before delivery. Raw verification output preserves CRLF and a final
 blank line where emitted. Git whitespace attributes accept those log bytes;
 no captured output was trimmed or normalized to satisfy a whitespace check.
+
+## Delivery
+
+[PR #4](https://github.com/DasEtwa/PackTok/pull/4) is open from
+`m4-factorization-ablation` against `m3-tiny-model`. Automatic merge is
+disabled; no merge was performed. Result/verification snapshot:
+`009dcef40d2125ac81c992f9917ad4cd08ef2c0c`. Measured source:
+`8ae3df4968279f978ffff981fa1eb38347a8dcde`. Subsequent commits add delivery
+documentation and checksum metadata only. The preserved delivery record and
+Windows command exit summary identify these exact snapshots.

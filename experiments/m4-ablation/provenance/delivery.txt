@@ -1,0 +1,8 @@
+PR #4: https://github.com/DasEtwa/PackTok/pull/4
+Branch: m4-factorization-ablation
+Base: m3-tiny-model
+State at creation: OPEN
+Automatic merge: disabled (autoMergeRequest=null)
+Result/verification commit: 009dcef40d2125ac81c992f9917ad4cd08ef2c0c
+Measured source commit: 8ae3df4968279f978ffff981fa1eb38347a8dcde
+Later delivery commits contain documentation/checksum metadata only.
