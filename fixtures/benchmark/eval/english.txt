@@ -1,0 +1,3 @@
+A small, repeatable benchmark gives us a baseline before optimization. PackTok currently maps every UTF-8 byte to one local token.
+Rain.
+The observatory recorded an unexpected flash above the northern ridge just before midnight.

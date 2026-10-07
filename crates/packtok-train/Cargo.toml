@@ -1,0 +1,16 @@
+[package]
+name = "packtok-train"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+packtok-core = { path = "../packtok-core" }
+packtok-format = { path = "../packtok-format" }
+
+[dev-dependencies]
+packtok-tokenizer = { path = "../packtok-tokenizer" }

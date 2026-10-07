@@ -1,0 +1,2 @@
+# Benchmark split bytes are corpus data, including their exact line endings.
+fixtures/benchmark/** -text

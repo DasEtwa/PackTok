@@ -1,0 +1,29 @@
+PackTok PR #1 final review validation, 2026-10-07
+Starting commit: bfd3224f46f30c1bb61682a94cdea927c2fca079
+State: final audit/review working tree, before commit; see source-sha256.txt.
+
+Windows 10 Pro 10.0.19045, x86_64-pc-windows-msvc
+rustc 1.98.1 (48a229cea 2026-09-01), LLVM 22.1.8
+cargo fmt --all --check: passed
+cargo clippy --workspace --all-targets --all-features -- -D warnings: passed
+cargo test --workspace: 59 passed, 0 failed; 0 doc tests
+cargo build --release --workspace: passed
+git diff --check: passed
+Bench: three release runs; held-out-1.txt, held-out-2.txt, held-out-3.txt
+
+Ubuntu 26.04.1 LTS in WSL, kernel 6.18.40.1-microsoft-standard-WSL2
+rustc 1.85.0 (4d91de4e4 2025-02-17), x86_64-unknown-linux-gnu
+cargo +1.85.0 test --workspace: 60 passed, 0 failed; 0 doc tests
+Per suite: bench 3, CLI unit 7, CLI integration 2, core 6,
+format 17, tokenizer 10, train 15 (Windows train 14).
+Unix-only test passed:
+literal_backslash_and_nested_paths_remain_distinct_and_deterministic
+Linux and Windows process peak memory tests both passed.
+Compiler/build dirs isolated under /var/tmp/packtok-pr1-* in Linux.
+
+Original fixtures/m1_bpe_corpus.txt release CLI training/validation twice:
+712 corpus bytes, 84 merges, 340 IDs, 1881 artifact bytes
+Both SHA-256: CEF973A354422C88E6FEF54D0B6EEE09495980DF4E5BD0B7E5ADC37896E7D907
+Same artifact digest as the original M1 implementation and first audit.
+
+This file summarizes observed command outcomes; it is not a raw terminal transcript.

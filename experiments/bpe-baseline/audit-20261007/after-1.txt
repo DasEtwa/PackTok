@@ -1,0 +1,19 @@
+PackTok M0 byte fallback and M1 flat byte-level BPE benchmark
+measurement: fixed input; 25ms warm-up, 200ms per direction; release profile recommended
+M1 model: 256 byte tokens + 84 learned merges = 340 vocabulary IDs; artifact=1881 B; fixture=712 B; train-once=4.985 ms (0.14 MiB/s; excludes file loading)
+English prose: input=4160 B; M0 tokens/input=4160 encode=1360.69 MiB/s (68596 iters, 285359360 tokens) decode=465.02 MiB/s (23443 iters); M1 tokens/input=3264 encode=18.87 MiB/s (952 iters, 3107328 tokens) decode=251.38 MiB/s (12673 iters) bytes/token=1.275 reduction_vs_M0=21.54%
+  matched pre-audit rank scans: encode=12.47 MiB/s; current/scan=1.51x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=192512/4176 B (excludes model, input, allocator overhead and RSS)
+German prose: input=4736 B; M0 tokens/input=4736 encode=1344.59 MiB/s (59541 iters, 281986176 tokens) decode=470.18 MiB/s (20820 iters); M1 tokens/input=3136 encode=21.35 MiB/s (946 iters, 2966656 tokens) decode=237.73 MiB/s (10527 iters) bytes/token=1.510 reduction_vs_M0=33.78%
+  matched pre-audit rank scans: encode=14.41 MiB/s; current/scan=1.48x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=214528/4752 B (excludes model, input, allocator overhead and RSS)
+Unicode-heavy text: input=4320 B; M0 tokens/input=4320 encode=1345.22 MiB/s (65305 iters, 282117600 tokens) decode=472.10 MiB/s (22921 iters); M1 tokens/input=3488 encode=38.13 MiB/s (1851 iters, 6456288 tokens) decode=274.01 MiB/s (13303 iters) bytes/token=1.239 reduction_vs_M0=19.26%
+  matched pre-audit rank scans: encode=14.78 MiB/s; current/scan=2.58x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=200704/4336 B (excludes model, input, allocator overhead and RSS)
+Source-like text: input=5952 B; M0 tokens/input=5952 encode=1403.62 MiB/s (49456 iters, 294362112 tokens) decode=472.45 MiB/s (16647 iters); M1 tokens/input=4288 encode=25.27 MiB/s (891 iters, 3820608 tokens) decode=255.06 MiB/s (8988 iters) bytes/token=1.388 reduction_vs_M0=27.96%
+  matched pre-audit rank scans: encode=12.70 MiB/s; current/scan=1.99x
+  M1 owned vector allocation/reallocation requests enc/dec=3/2; peak vector capacity enc/dec=272384/5968 B (excludes model, input, allocator overhead and RSS)
+Stress Dense repeated bytes: input=16384 B; merges=8; tokens=64; current=603.64 MiB/s; scan=433.93 MiB/s; current/scan=1.39x
+Stress Dense repetitions, larger model: input=16384 B; merges=72; tokens=64; current=483.01 MiB/s; scan=407.05 MiB/s; current/scan=1.19x
+Stress Unmatched repeated bytes: input=16384 B; merges=84; tokens=16384; current=249.34 MiB/s; scan=19.52 MiB/s; current/scan=12.78x
+Stress Training fixture repeated: input=22784 B; merges=84; tokens=13728; current=15.89 MiB/s; scan=7.70 MiB/s; current/scan=2.06x

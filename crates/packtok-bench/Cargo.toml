@@ -1,0 +1,14 @@
+[package]
+name = "packtok-bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+packtok-format = { path = "../packtok-format" }
+packtok-tokenizer = { path = "../packtok-tokenizer" }
+packtok-train = { path = "../packtok-train" }

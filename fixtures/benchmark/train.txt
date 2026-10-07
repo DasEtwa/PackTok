@@ -1,0 +1,24 @@
+The archivist catalogued copper instruments, folded maps, and weathered journals.
+The archivist catalogued copper instruments, folded maps, and weathered journals.
+A patient mechanic adjusted bicycle bearings beside the old railway workshop.
+A patient mechanic adjusted bicycle bearings beside the old railway workshop.
+At dusk, lanterns reflected in the canal while an orchestra rehearsed upstairs.
+At dusk, lanterns reflected in the canal while an orchestra rehearsed upstairs.
+Im botanischen Garten wachsen Klee und wilde Kräuter zwischen niedrigen Mauern.
+Im botanischen Garten wachsen Klee und wilde Kräuter zwischen niedrigen Mauern.
+Die Gärtnerin prüft morgens den Boden und gießt die jungen Setzlinge vorsichtig.
+Die Gärtnerin prüft morgens den Boden und gießt die jungen Setzlinge vorsichtig.
+Ein Fahrrad steht neben dem Gewächshaus; dahinter beginnt ein schmaler Kiesweg.
+Ein Fahrrad steht neben dem Gewächshaus; dahinter beginnt ein schmaler Kiesweg.
+午後の図書館では静かな音楽が流れています。 🚲 🍀 🧭
+午後の図書館では静かな音楽が流れています。 🚲 🍀 🧭
+Καλημέρα στον κήπο. Un bateau longe la rive au lever du soleil.
+Καλημέρα στον κήπο. Un bateau longe la rive au lever du soleil.
+pub fn weighted_total(values: &[i64], weight: i64) -> i64 {
+    values.iter().copied().sum::<i64>() * weight
+}
+pub fn weighted_total(values: &[i64], weight: i64) -> i64 {
+    values.iter().copied().sum::<i64>() * weight
+}
+{"sensor":"barometer","readings":[1012,1014,1013],"unit":"hPa"}
+{"sensor":"barometer","readings":[1012,1014,1013],"unit":"hPa"}

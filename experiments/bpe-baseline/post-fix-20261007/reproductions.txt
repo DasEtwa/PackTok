@@ -1,0 +1,26 @@
+Audit target: 613f21e48d0337adeea9043ac292391ecfa29807
+2026-10-07, Windows / Rust 1.98.1
+
+New training regression, reproduced before the trainer fix:
+cargo test -p packtok-train training_skips_merges_above_the_token_expansion_bound -- --nocapture
+Input: vec![b'a'; 3 * 1024 * 1024], default config
+Test FAILED: InvalidModel(ExpandedTokenTooLarge { token_id: 276 })
+The final model constructor rejects a 2 MiB token after the trainer has selected it.
+Expected: skip that pair, retain 20 merges and represent the input as three 1 MiB tokens.
+
+New performance regression, reproduced before the runtime fix:
+See before.txt. Same valid models, inputs and measurement durations for both encoders.
+16 KiB of 'a' except byte 8191='b', 72 merges:
+current 5.27 MiB/s vs retained scanner 371.47 MiB/s
+16 KiB alternating 'ab', trained 9-merge model:
+current 6.92 MiB/s vs retained scanner 368.10 MiB/s
+Pure 'a' with the same 72-merge model: current 486.64 MiB/s.
+
+New CLI bug, reproduced before native-argument validation:
+cargo test -p packtok-cli --test cli_decode non_unicode_arguments_return_a_clear_error_instead_of_panicking -- --nocapture
+Native argument: OsString::from_wide(&[0xd800]) after command 'validate'
+Test FAILED: actual subprocess exit code 101, expected 1
+stderr: thread 'main' panicked in std::env.rs; Result::unwrap Err "\u{d800}"
+Unix equivalent: OsString::from_vec(vec![0xff]); verified by the final Linux regression test.
+
+This file summarizes observed reproductions; before.txt is raw benchmark stdout.
