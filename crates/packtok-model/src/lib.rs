@@ -11,6 +11,9 @@ use std::fmt;
 
 use packtok_core::{PackId, TokenId};
 
+mod mapping;
+pub use mapping::IdMapping;
+
 const MODEL_MAGIC: &[u8; 8] = b"PACKLM3\0";
 const MODEL_FORMAT_VERSION: u16 = 1;
 const MAX_HIDDEN_SIZE: usize = 1024;
@@ -273,6 +276,38 @@ impl CausalLm {
         seed: u64,
     ) -> Result<Self, ModelError> {
         Self::factorized_model(config, packs, seed, None)
+    }
+
+    /// Creates a factorized head with the same seeded global input embeddings as
+    /// a flat model. `global_ids[row]` is the global row represented by this
+    /// pack-concatenated row. The permutation only renames storage addresses;
+    /// forward and backward embedding arithmetic remain identical.
+    pub fn new_factorized_permuted(
+        config: ModelConfig,
+        packs: Vec<PackVocabulary>,
+        seed: u64,
+        global_ids: &[u32],
+    ) -> Result<Self, ModelError> {
+        let mut model = Self::new_factorized(config, packs, seed)?;
+        let rows = model.embedding_rows();
+        if global_ids.len() != rows {
+            return Err(ModelError::InvalidVocabulary);
+        }
+        let mut seen = vec![false; rows];
+        for &id in global_ids {
+            let index = usize::try_from(id).map_err(|_| ModelError::InvalidVocabulary)?;
+            if index >= rows || seen[index] {
+                return Err(ModelError::InvalidVocabulary);
+            }
+            seen[index] = true;
+        }
+        let d = config.hidden_size;
+        let original = model.weights[..rows * d].to_vec();
+        for (row, &global) in global_ids.iter().enumerate() {
+            let start = global as usize * d;
+            model.weights[row * d..(row + 1) * d].copy_from_slice(&original[start..start + d]);
+        }
+        Ok(model)
     }
 
     fn factorized_model(
@@ -1634,6 +1669,62 @@ const MAX_GENERATION_TOKENS: usize = 4096;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn permuted_factorized_inputs_validate_bijection_and_joint_loss() {
+        let config = ModelConfig {
+            hidden_size: 2,
+            context_length: 2,
+        };
+        let packs = vec![
+            PackVocabulary {
+                pack_id: 0,
+                token_count: 128,
+            },
+            PackVocabulary {
+                pack_id: 1,
+                token_count: 128,
+            },
+        ];
+        let permutation: Vec<_> = (0..256).rev().collect();
+        let mut model =
+            CausalLm::new_factorized_permuted(config, packs.clone(), 19, &permutation).unwrap();
+        let flat = CausalLm::new_flat(config, 256, 19).unwrap();
+        assert_eq!(
+            flat.hidden_states(&[TokenId::new(0, 255)]).unwrap(),
+            model.hidden_states(&[TokenId::new(0, 0)]).unwrap()
+        );
+        model.weights.fill(0.);
+        let inputs = [TokenId::new(0, 0)];
+        let targets = [TokenId::new(1, 7)];
+        let metrics = model
+            .evaluate(&[TrainingExample {
+                inputs: &inputs,
+                targets: &targets,
+            }])
+            .unwrap();
+        assert!((metrics.loss_per_token - (2_f64.ln() + 128_f64.ln())).abs() < 1e-12);
+        assert!(
+            (metrics.primary_head_loss_per_token.unwrap() + metrics.local_loss_per_token.unwrap()
+                - metrics.loss_per_token)
+                .abs()
+                < 1e-12
+        );
+        for target in [TokenId::new(2, 0), TokenId::new(1, 128)] {
+            assert!(
+                model
+                    .evaluate(&[TrainingExample {
+                        inputs: &inputs,
+                        targets: &[target]
+                    }])
+                    .is_err()
+            );
+        }
+        let mut bad = permutation.clone();
+        bad[0] = bad[1];
+        assert!(CausalLm::new_factorized_permuted(config, packs.clone(), 19, &bad).is_err());
+        assert!(CausalLm::new_factorized_permuted(config, packs, 19, &permutation[..255]).is_err());
+    }
 
     fn tiny_config() -> ModelConfig {
         ModelConfig {

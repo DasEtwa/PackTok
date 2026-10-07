@@ -43,14 +43,14 @@ const CHECKPOINT_INTERVAL: usize = 20;
 const REPETITIONS: usize = 3;
 const GENERATION_NEW_TOKENS: usize = 8;
 
-struct EncodedText {
-    raw_bytes: usize,
-    tokens: Vec<TokenId>,
-    token_byte_lengths: Vec<usize>,
+pub(super) struct EncodedText {
+    pub(super) raw_bytes: usize,
+    pub(super) tokens: Vec<TokenId>,
+    pub(super) token_byte_lengths: Vec<usize>,
 }
 
 impl EncodedText {
-    fn token_count(&self) -> usize {
+    pub(super) fn token_count(&self) -> usize {
         self.tokens.len()
     }
 
@@ -62,15 +62,15 @@ impl EncodedText {
         self.tokens.len().saturating_sub(1)
     }
 
-    fn target_bytes(&self) -> usize {
+    pub(super) fn target_bytes(&self) -> usize {
         self.token_byte_lengths.iter().skip(1).sum()
     }
 }
 
-struct Window {
-    inputs: Vec<TokenId>,
-    targets: Vec<TokenId>,
-    target_bytes: usize,
+pub(super) struct Window {
+    pub(super) inputs: Vec<TokenId>,
+    pub(super) targets: Vec<TokenId>,
+    pub(super) target_bytes: usize,
 }
 
 struct TrainingDataset<'a> {
@@ -107,13 +107,13 @@ struct RunContext<'a> {
     tokenizer: &'a dyn Tokenizer,
 }
 
-struct SplitResult {
-    metrics: EvaluationMetrics,
-    elapsed: Duration,
-    raw_bytes: usize,
-    scored_bytes: usize,
-    tokens: usize,
-    bytes_per_token: f64,
+pub(super) struct SplitResult {
+    pub(super) metrics: EvaluationMetrics,
+    pub(super) elapsed: Duration,
+    pub(super) raw_bytes: usize,
+    pub(super) scored_bytes: usize,
+    pub(super) tokens: usize,
+    pub(super) bytes_per_token: f64,
 }
 
 struct RepetitionResult {
@@ -572,7 +572,10 @@ fn finish_run(
     })
 }
 
-fn evaluate_split(model: &CausalLm, split: &EncodedText) -> Result<SplitResult, Box<dyn Error>> {
+pub(super) fn evaluate_split(
+    model: &CausalLm,
+    split: &EncodedText,
+) -> Result<SplitResult, Box<dyn Error>> {
     let examples = evaluation_examples(split, MODEL_CONFIG.context_length);
     let started = Instant::now();
     let metrics = model.evaluate(&examples)?;
@@ -587,7 +590,10 @@ fn evaluate_split(model: &CausalLm, split: &EncodedText) -> Result<SplitResult, 
     })
 }
 
-fn evaluation_examples(split: &EncodedText, context_length: usize) -> Vec<TrainingExample<'_>> {
+pub(super) fn evaluation_examples(
+    split: &EncodedText,
+    context_length: usize,
+) -> Vec<TrainingExample<'_>> {
     let mut examples = Vec::with_capacity(split.target_count());
     for target_index in 1..split.tokens.len() {
         let context_start = target_index.saturating_sub(context_length);
@@ -599,7 +605,7 @@ fn evaluation_examples(split: &EncodedText, context_length: usize) -> Vec<Traini
     examples
 }
 
-fn sample_windows(
+pub(super) fn sample_windows(
     tokens: &[TokenId],
     token_byte_lengths: &[usize],
     rng: &mut SampleRng,
@@ -628,7 +634,7 @@ fn sample_windows(
     Ok(windows)
 }
 
-fn encode_m1_text(
+pub(super) fn encode_m1_text(
     tokenizer: &BpeTokenizer,
     artifact: &Artifact,
     text: &str,
@@ -646,7 +652,7 @@ fn encode_m1_text(
     encoded_text(text, tokens, lengths)
 }
 
-fn encode_m2_text(
+pub(super) fn encode_m2_text(
     tokenizer: &FactorizedTokenizer,
     artifact: &Artifact,
     text: &str,
@@ -711,7 +717,7 @@ fn evaluate_split_bits(split: &SplitResult) -> f64 {
     bits_per_byte(&split.metrics, split.scored_bytes)
 }
 
-fn factorized_stats(
+pub(super) fn factorized_stats(
     model: &CausalLm,
     split: &EncodedText,
     metrics: &EvaluationMetrics,
@@ -872,7 +878,7 @@ fn append_summary(report: &mut String, results: &[RepetitionResult]) -> Result<(
     Ok(())
 }
 
-fn mean_sd(values: &[f64]) -> String {
+pub(super) fn mean_sd(values: &[f64]) -> String {
     if values.is_empty() {
         return "unavailable".to_owned();
     }
@@ -885,7 +891,7 @@ fn mean_sd(values: &[f64]) -> String {
     format!("{mean:.8}+/-{:.8};variance={variance:.12}", variance.sqrt())
 }
 
-fn environment_record(run_path: &Path) -> Result<String, Box<dyn Error>> {
+pub(super) fn environment_record(run_path: &Path) -> Result<String, Box<dyn Error>> {
     let rustc = Command::new("rustc")
         .arg("--version")
         .arg("--verbose")
@@ -1050,7 +1056,7 @@ fn write_or_check(path: &Path, bytes: &[u8]) -> Result<(), Box<dyn Error>> {
     write_new(path, bytes)
 }
 
-fn write_new(path: &Path, bytes: &[u8]) -> Result<(), Box<dyn Error>> {
+pub(super) fn write_new(path: &Path, bytes: &[u8]) -> Result<(), Box<dyn Error>> {
     let mut file = OpenOptions::new().write(true).create_new(true).open(path)?;
     if let Err(error) = file.write_all(bytes).and_then(|()| file.sync_all()) {
         drop(file);
@@ -1067,7 +1073,7 @@ fn write_new(path: &Path, bytes: &[u8]) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn bytes_hex(bytes: &[u8]) -> String {
+pub(super) fn bytes_hex(bytes: &[u8]) -> String {
     let mut output = String::with_capacity(bytes.len() * 2);
     for byte in bytes {
         let _ = write!(output, "{byte:02x}");
@@ -1075,12 +1081,12 @@ fn bytes_hex(bytes: &[u8]) -> String {
     output
 }
 
-struct SampleRng {
+pub(super) struct SampleRng {
     state: u64,
 }
 
 impl SampleRng {
-    fn new(seed: u64) -> Self {
+    pub(super) fn new(seed: u64) -> Self {
         Self {
             state: if seed == 0 {
                 0x9e37_79b9_7f4a_7c15
@@ -1090,7 +1096,7 @@ impl SampleRng {
         }
     }
 
-    fn next(&mut self) -> u64 {
+    pub(super) fn next(&mut self) -> u64 {
         let mut value = self.state;
         value ^= value << 13;
         value ^= value >> 7;

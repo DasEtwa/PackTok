@@ -1,0 +1,12 @@
+M4 corpus preparation v1; block=8192 extended through next LF; source block index modulo20:18 validation,19 test,others train. No inserted bytes or normalization. Drop whole held-out blocks with shared128bytes; train priority, then validation. Exact final guard includes concatenation boundaries.
+source raw_bytes body_bytes train_bytes validation_bytes test_bytes
+austen.txt 772386 752487 686645 33009 32833
+goethe.txt 555695 535924 486648 24658 24618
+rust-vec.rs 147744 147744 147744 0 0
+rust-map.rs 118108 118108 118108 0 0
+rust-Cargo.toml 3139 3139 3139 0 0
+synthetic-json.txt 222772 222772 206235 8234 8303
+synthetic-unicode.txt 259115 259115 242678 8220 8217
+split=train bytes=1891197 removed_leaking_bytes=0
+split=validation bytes=74121 removed_leaking_bytes=0
+split=test bytes=73971 removed_leaking_bytes=0

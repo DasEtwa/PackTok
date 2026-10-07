@@ -1,3 +1,6 @@
 # Benchmark split bytes are corpus data, including their exact line endings.
 fixtures/benchmark/** -text
 fixtures/m3-model/** -text
+experiments/m4-ablation/sources/** -text
+experiments/m4-ablation/corpus/** -text
+experiments/m4-ablation/** -text

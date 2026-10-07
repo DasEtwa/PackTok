@@ -108,3 +108,10 @@
   exact raw-byte fallback encoding/decoding.
 - M0 benchmark results remain in
   [M0_BENCHMARK_BASELINE.md](M0_BENCHMARK_BASELINE.md); M1 does not overwrite them.
+
+## M4 — Factorization ablation (2026-10-07)
+
+Adds artifact-only balanced M1 grouping, bijective M2 flattening, equivalent
+input-row control, four-variant CPU harness, sourced corpus preparation and
+preserved preflight/final evidence. M0–M3 results remain frozen. Design and
+results are in M4_ABLATION.md and M4_ABLATION_BENCHMARK.md.

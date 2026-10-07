@@ -2,6 +2,8 @@
 
 mod audit;
 mod m3;
+mod m4;
+mod m4_corpus;
 mod metrics;
 mod scan;
 
@@ -57,6 +59,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut arguments = std::env::args();
     let _program = arguments.next();
     let command = arguments.next();
+    if command.as_deref() == Some("m4-corpus") {
+        return m4_corpus::run();
+    }
+    if command.as_deref() == Some("m4") {
+        let corpus = arguments
+            .next()
+            .ok_or("usage: packtok-bench m4 tiny|large unique-label")?;
+        let label = arguments.next().ok_or("missing unique run label")?;
+        if arguments.next().is_some() {
+            return Err("unexpected argument".into());
+        }
+        return m4::run(&corpus, &label);
+    }
     if command.as_deref() == Some("audit") {
         if arguments.next().is_some() {
             return Err("usage: packtok-bench audit".into());

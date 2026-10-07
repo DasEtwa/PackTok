@@ -1,6 +1,6 @@
 # PackTok
 
-Rust-first tokenizer research implementation. **Current milestone: M3, the tiny
+Rust-first tokenizer research implementation. **Historical milestone: M3, the tiny
 autoregressive model comparison (completed).** M1 remains the frozen flat
 byte-level BPE control group; M2 is the first factorized pack architecture. M3
 records a first model-level comparison on a small synthetic corpus; the result
@@ -59,3 +59,11 @@ of the previous findings, and extended repetition benchmarks.
 Verify with `cargo fmt --all --check`,
 `cargo clippy --workspace --all-targets --all-features -- -D warnings`,
 `cargo test --workspace`, and `cargo build --release --workspace`.
+
+## M4 factorization ablation
+
+M4 adds the unchanged-tokenizer A/B/C/D CPU experiment and fixed sourced mixed
+corpus. Design: [M4_ABLATION.md](M4_ABLATION.md); durable results:
+[M4_ABLATION_BENCHMARK.md](M4_ABLATION_BENCHMARK.md). Run preparation with
+`cargo run --release -p packtok-bench -- m4-corpus` and comparisons with
+`cargo run --release -p packtok-bench -- m4 tiny|large unique-label`.

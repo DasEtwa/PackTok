@@ -163,16 +163,14 @@ No hidden Python dependency.
 
 Experimental model-facing integration.
 
-Current M3 responsibilities:
+Responsibilities may later include:
 
-- flat token embeddings and output head for the M1 control
-- independent pack-local embeddings and factorized pack/local heads for M2
-- tiny CPU causal model and training/evaluation contracts
-- parameter accounting, model serialization, and greedy generation smoke tests
+- pack/local embeddings
+- hierarchical or factorized output heads
+- score composition
+- tiny reference LM used for controlled experiments
 
-The M3 crate depends only on `packtok-core`; tokenization, corpus training,
-artifact loading, and benchmark orchestration stay outside it. PackTok remains
-usable as a tokenizer/research library without forcing users into this model.
+Keep this crate small at first. PackTok must be usable as a tokenizer/research library without forcing users into one neural runtime.
 
 ### `packtok-bench`
 
@@ -234,13 +232,11 @@ packtok-packs
     ↑
 packtok-train
 
-packtok-core ─────────────→ packtok-model
+packtok-tokenizer ─────┐
+packtok-packs ─────────┼→ packtok-model
+packtok-format ────────┘
 
-packtok-format ───────────┐
-packtok-tokenizer ────────┤
-packtok-train ────────────┼→ packtok-bench
-packtok-packs ────────────┤
-packtok-model ────────────┘
+all relevant crates ─────→ packtok-bench
 library crates ───────────→ packtok-cli
 ```
 
@@ -252,21 +248,6 @@ In particular:
 - core must not depend on CLI
 - format must not depend on model code
 - benchmarks may depend on production crates, production crates must not depend on benchmarks
-
-### Implemented M1 dependency boundary
-
-The current M1 workspace implements only the components needed for a flat BPE
-baseline. `packtok-train` depends on `packtok-core` and `packtok-format`; it uses
-`packtok-tokenizer` only as a development dependency for differential tests.
-`packtok-tokenizer` depends on `packtok-core` and `packtok-format`, and has no
-training dependency. The CLI and benchmark are orchestration surfaces that may
-depend on those library crates. The M1 benchmark and experiment details are in
-[M1_BPE.md](M1_BPE.md) and [M1_BPE_BENCHMARK.md](M1_BPE_BENCHMARK.md).
-Current held-out evaluation and review verification are in
-[M1_REVIEW_FIXES.md](M1_REVIEW_FIXES.md). OS memory measurement and the retained
-scan comparison live inside `packtok-bench`; production crates do not depend on
-either measurement helper. Synthetic training/evaluation files live in
-`fixtures/benchmark/`, and raw observations are retained in `experiments/bpe-baseline/`.
 
 ## Artifact boundary
 
@@ -354,11 +335,12 @@ Every optimization must preserve deterministic results unless an experiment expl
 
 ### M2 — PackTok v0.1
 
-- shared byte fallback and independent local BPE vocabularies
-- deterministic lexical-v1 routing and one global learned-token budget
-- version-3 artifact section with pack-local byte/local merge references
-- exact mixed-pack runtime encode/decode and CLI inspection
-- held-out comparison against the frozen M1 flat BPE control
+- pack schema
+- local vocabularies
+- canonical packed IDs
+- first deterministic annotation/import path
+- byte fallback
+- PackTok-vs-BPE tokenizer benchmarks
 
 ### M3 — Tiny model comparison
 
@@ -383,46 +365,4 @@ Only after M0–M3 provide trustworthy baselines:
 
 If a code change alters a core invariant, artifact format, crate boundary, or experiment definition, update the relevant document in the same change.
 
-## M2 implementation status
-
-The implemented M2 dependency boundary adds `packtok-packs` as the owner of the
-generic routing interface and the versioned `lexical-v1` experimental policy.
-`packtok-train` uses it to route the training corpus and create independent
-pack-local merge graphs; `packtok-tokenizer` uses it to apply the same runtime
-policy. Both consume normative model types from `packtok-format`. Neither format
-nor runtime depends on training. The M2 CLI and benchmark orchestrate these
-library crates. Implementation behavior and measurements are documented in
-[M2_PACKS.md](M2_PACKS.md) and [M2_PACKS_BENCHMARK.md](M2_PACKS_BENCHMARK.md).
-
-M2 now implements a shared byte fallback and independent local BPE vocabularies,
-deterministic `lexical-v1` routing, one global learned-token budget, a version-3
-artifact section, exact mixed-pack encode/decode, inspection commands, and a
-held-out comparison against frozen M1. This describes the current code and
-does not imply that factorization improves tokenization.
-
-## M3 model boundary
-
-The additive `packtok-bench audit` mode owns focused model loading, evaluation,
-training, and M2 workspace probes inside the existing benchmark crate. Numerical
-guards and direct model parameter loading remain in `packtok-model`; workspace
-sizing remains in `packtok-tokenizer`. No crate responsibility or dependency
-direction changed. Details and reproducible evidence are in
-[PERFORMANCE_MATH_AUDIT.md](PERFORMANCE_MATH_AUDIT.md).
-
-M3 adds `packtok-model` as the CPU-only owner of the causal recurrent reference
-model, flat and pack-factorized heads, model parameter serialization, and
-deterministic training/evaluation contracts. It depends on `packtok-core` for
-token IDs and does not depend on tokenizer training or runtime. The
-`packtok-bench` harness uses the model crate and existing tokenizers to train
-both variants on the same raw splits and record comparison metrics. This keeps
-model implementation separate from tokenizer and experiment orchestration.
-
 The BRAIN space [`DasEtwa/BRAIN/PackTok`](https://github.com/DasEtwa/BRAIN/tree/main/PackTok) remains the high-level project map.
-
-## M4 boundary
-
-The existing model crate owns generic bijections and seeded embedding row
-permutations. It still depends only on core. Benchmark m4/m4_corpus modules own
-artifact-derived grouping, corpus preparation and experimental orchestration.
-No new crate, service or external dependency is required. M4 is the factorial
-ablation in M4_ABLATION.md; the earlier M4+ research list is future work.
