@@ -1,0 +1,16 @@
+PackTok M1 fixture corpus.
+A careful baseline starts from raw bytes and records every merge.
+The same text, corpus order, and configuration should produce the same artifact.
+
+Sämtliche Häuser öffnen Türen; Grüße von der Straße, für große Wörter.
+Äpfel, Öl, Übermut, Fußgänger, Maße und weißes Papier.
+Emoji stay bytes too: ✨ 🦦 🇩🇪 👩🏽‍💻
+Combining sequence: ä and é. Precomposed sequence: ä and é.
+Other scripts: 漢字かなカナ 中文 नमस्ते мир مرحبا.
+
+fn encode(input: &[u8]) -> Vec<u32> {
+    input.iter().map(|byte| u32::from(*byte)).collect()
+}
+
+// Whitespace, tabs, and newlines are corpus data.
+let repeated = "  spaces\tstay\nexactly\n";
