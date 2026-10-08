@@ -251,3 +251,11 @@ worker/cleanup-inclusive cap is unchanged. Remote assembly is unavoidable
 transport overhead. Source/parts/archive hashes and sizes are recorded per
 candidate without overwriting earlier evidence; retry-plan-v2.json archives the
 earlier plan. There has still been only one real GPU allocation.
+
+Final retry candidate: v4/source `be47bc53ea6fd860320cc78cffa74e8aa51514b5`.
+Local hashes/loader/reference/transfer checks pass; retry-plan.json records its
+exact archive size, chunk count and conditional cost projection. Rust source,
+primary config, lockfile and CPU-built executable are unchanged from the first
+attempt (verification/recovery-model-byte-identity.txt). The first GPU
+attempt is finished; retry authorization and
+all full-run budget approval are still pending.

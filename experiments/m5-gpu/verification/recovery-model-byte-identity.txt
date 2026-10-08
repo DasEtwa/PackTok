@@ -1,0 +1,2 @@
+Original and recovery CUDA executable bytes identical.
+Rust model/source/config/lockfile unchanged after first attempt.
