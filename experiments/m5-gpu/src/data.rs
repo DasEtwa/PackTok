@@ -144,7 +144,7 @@ impl Sequence {
         }
         let mut tokens = Vec::with_capacity(n);
         let mut bytes = Vec::with_capacity(n);
-        for w in raw[16..].as_chunks::<8>().0 {
+        for w in raw[16..].chunks(8) {
             tokens.push(u32::from_le_bytes(w[..4].try_into()?));
             bytes.push(u32::from_le_bytes(w[4..].try_into()?));
         }

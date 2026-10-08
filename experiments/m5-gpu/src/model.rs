@@ -35,7 +35,7 @@ impl ModelConfig {
             || self.hidden < 2
             || self.hidden > 1024
             || self.heads == 0
-            || !self.hidden.is_multiple_of(self.heads)
+            || self.hidden.checked_rem(self.heads) != Some(0)
             || self.ffn == 0
             || self.ffn > 4096
             || self.context == 0
@@ -271,6 +271,15 @@ pub struct Rng(u64);
 impl Rng {
     pub fn new(seed: u64) -> Self {
         Self(if seed == 0 { 0x9e3779b97f4a7c15 } else { seed })
+    }
+    pub fn state(&self) -> u64 {
+        self.0
+    }
+    pub fn from_state(state: u64) -> candle_core::Result<Self> {
+        if state == 0 {
+            candle_core::bail!("zero RNG state");
+        }
+        Ok(Self(state))
     }
     pub fn next_u64(&mut self) -> u64 {
         let mut x = self.0;
@@ -516,6 +525,32 @@ mod tests {
         m.load(&path)?;
         assert_eq!(expected, m.forward(&x)?.to_vec3::<f32>()?);
         std::fs::remove_file(path).map_err(candle_core::Error::wrap)?;
+        Ok(())
+    }
+    #[test]
+    fn model_safetensors_save_load_roundtrip_is_independent_cpu() -> candle_core::Result<()> {
+        let source = Transformer::new(tiny(), 19, &Device::Cpu)?;
+        let path = std::env::temp_dir().join(format!(
+            "packtok-m5-model-{}.safetensors",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_file(&path);
+        source.vars.save(&path)?;
+        let input = Tensor::new(&[[1_u32, 2, 3, 4]], &Device::Cpu)?;
+        let expected = source.forward(&input)?.flatten_all()?.to_vec1::<f32>()?;
+        let mut loaded = Transformer::new(tiny(), 997, &Device::Cpu)?;
+        loaded.load(&path)?;
+        let actual = loaded.forward(&input)?.flatten_all()?.to_vec1::<f32>()?;
+        assert_eq!(actual, expected);
+        let parameters = |model: &Transformer| -> candle_core::Result<Vec<(String, Vec<f32>)>> {
+            model
+                .named_vars()
+                .into_iter()
+                .map(|(name, var)| Ok((name, var.flatten_all()?.to_vec1::<f32>()?)))
+                .collect()
+        };
+        assert_eq!(parameters(&source)?, parameters(&loaded)?);
+        let _ = std::fs::remove_file(path);
         Ok(())
     }
 }

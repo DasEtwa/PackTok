@@ -768,6 +768,7 @@ dependencies = [
  "packtok-model",
  "packtok-tokenizer",
  "packtok-train",
+ "safetensors",
  "serde",
  "serde_json",
  "sha2",

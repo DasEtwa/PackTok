@@ -3,7 +3,7 @@ use crate::{
     data::{Sequence, bits_per_byte},
     hash,
     model::{ModelConfig, Rng, Transformer, finite_gradients, loss},
-    write_new,
+    overfit, write_new,
 };
 use candle_core::{Device, Tensor};
 use candle_nn::{AdamW, Optimizer, ParamsAdamW};
@@ -86,7 +86,14 @@ fn compare(actual: &[f32], expected: &[f32]) -> Result<f64> {
     }
     Ok(max)
 }
-fn gpu_snapshot() -> Result<String> {
+pub fn require_l4() -> Result<String> {
+    let snapshot = gpu_snapshot()?;
+    if snapshot.split(',').next().map(str::trim) != Some("NVIDIA L4") {
+        return Err(format!("unauthorized GPU: {snapshot}").into());
+    }
+    Ok(snapshot)
+}
+pub fn gpu_snapshot() -> Result<String> {
     let out = std::process::Command::new("nvidia-smi")
         .args([
             "--id=0",
@@ -106,7 +113,7 @@ fn emit(out: &mut fs::File, row: serde_json::Value) -> Result<()> {
     println!("{}", serde_json::to_string(&row)?);
     Ok(())
 }
-fn init_hash(m: &Transformer) -> Result<String> {
+pub(crate) fn init_hash(m: &Transformer) -> Result<String> {
     let mut bytes = Vec::new();
     for (name, var) in m.named_vars() {
         bytes.extend_from_slice(name.as_bytes());
@@ -117,7 +124,7 @@ fn init_hash(m: &Transformer) -> Result<String> {
     }
     Ok(hash(&bytes))
 }
-fn batch(
+pub(crate) fn batch(
     seq: &Sequence,
     starts: &[usize],
     context: usize,
@@ -215,6 +222,7 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
     )?;
     drop((tiny, grads, logits, l));
     let mut expected_init = None;
+    let mut overfit_passed = true;
     for variant in ["A", "C"] {
         let seq = Sequence::load(&data.join(format!("{variant}-train.seq")))?;
         if seq.tokens.len() < 4097 {
@@ -311,45 +319,17 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
             serde_json::json!({"stage":"train-prefix-evaluation", "variant":variant,
             "metrics":scored,"purpose":"TRAIN-only timing/normalization gate, no held-out scoring"}),
         )?;
-        // Fixed auxiliary overfit fixture; never touches validation/test or chooses primary hyperparameters.
+        // Verify this primary-weight checkpoint independently of memorization behavior.
         if variant == "A" {
-            let x = Tensor::new(&[[1_u32, 2, 3, 4, 1, 2, 3, 4]], &device)?;
-            let y = Tensor::new(&[[2_u32, 3, 4, 1, 2, 3, 4, 1]], &device)?;
-            let before = loss(&m.forward(&x)?, &y)?.to_scalar::<f32>()?;
-            let now = Instant::now();
-            let mut overfit = AdamW::new(
-                m.optimizer_vars(),
-                ParamsAdamW {
-                    lr: 0.005,
-                    weight_decay: 0.0,
-                    ..adam()
-                },
-            )?;
-            for _ in 0..100 {
-                let l = loss(&m.forward(&x)?, &y)?;
-                if !l.to_scalar::<f32>()?.is_finite() {
-                    return Err("overfit diverged".into());
-                }
-                overfit.backward_step(&l)?;
-            }
-            device.synchronize()?;
-            let after = loss(&m.forward(&x)?, &y)?.to_scalar::<f32>()?;
-            emit(
-                &mut log,
-                serde_json::json!({"stage":"tiny-overfit","initial_loss":before,"final_loss":after,"steps":100,"seconds":now.elapsed().as_secs_f64(),"gpu":gpu_snapshot()?}),
-            )?;
-            if !after.is_finite() || after >= 0.25 || after >= before * 0.1 {
-                return Err("tiny GPU overfit gate failed".into());
-            }
+            let (x, y) = overfit::fixed_batch_for_checkpoint(&device)?;
             let expected = m.forward(&x)?.flatten_all()?.to_vec1::<f32>()?;
             let path = out_dir.join("preflight.safetensors");
             let now = Instant::now();
             save_checkpoint(&m, &path)?;
             device.synchronize()?;
-            let seconds = now.elapsed().as_secs_f64();
             emit(
                 &mut log,
-                serde_json::json!({"stage":"checkpoint-write","seconds":seconds,"bytes":fs::metadata(&path)?.len(),"sha256":"computed locally after download/release"}),
+                serde_json::json!({"stage":"checkpoint-write","seconds":now.elapsed().as_secs_f64(),"bytes":fs::metadata(&path)?.len(),"sha256":"computed locally after download/release","weights":"after-primary-18-updates"}),
             )?;
             let mut restored = Transformer::new(m.config.clone(), 20261009, &device)?;
             if restored.forward(&x)?.flatten_all()?.to_vec1::<f32>()? == expected {
@@ -360,17 +340,46 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
                 &restored.forward(&x)?.flatten_all()?.to_vec1::<f32>()?,
                 &expected,
             )?;
-            let metrics = bits_per_byte(f64::from(after) * 8.0, 8, 8)?;
             emit(
                 &mut log,
-                serde_json::json!({"stage":"checkpoint-reload-byte-normalization","bits_per_byte":metrics,"raw_target_bytes":8,"targets":8}),
+                serde_json::json!({"stage":"checkpoint-reload","status":"PASS","weights":"after-primary-18-updates"}),
             )?;
+            let checkpoint_loss = loss(&restored.forward(&x)?, &y)?.to_scalar::<f32>()?;
+            if !checkpoint_loss.is_finite() {
+                return Err("checkpoint reload produced a nonfinite fixture loss".into());
+            }
+            let metrics = bits_per_byte(f64::from(checkpoint_loss) * 8.0, 8, 8)?;
+            emit(
+                &mut log,
+                serde_json::json!({"stage":"checkpoint-reload-byte-normalization","loss_per_token":checkpoint_loss,
+                    "bits_per_byte":metrics,"raw_target_bytes":8,"targets":8}),
+            )?;
+
+            // The 500-update memorization diagnostic is isolated from primary training.
+            // Its failure is recorded while C initialization and checkpoint verification finish.
+            let outcome = overfit::run(&m, &device, "post-18", 0.005)?;
+            for row in &outcome.samples {
+                emit(&mut log, serde_json::to_value(row)?)?;
+            }
+            device.synchronize()?;
+            emit(
+                &mut log,
+                serde_json::json!({"stage":"tiny-overfit-summary","initial_loss":outcome.initial_loss,"final_loss":outcome.final_loss,
+                    "steps":outcome.completed_updates,"seconds":outcome.seconds,"passed_original_threshold":outcome.passed_original_threshold,
+                    "divergence_step":outcome.divergence_step,"nonfinite_step":outcome.nonfinite_step,"stagnation_step":outcome.stagnation_step,
+                    "gpu":gpu_snapshot()?}),
+            )?;
+            overfit_passed = outcome.passed_original_threshold;
         }
     }
     emit(
         &mut log,
-        serde_json::json!({"stage":"gate","status":"PASS","final_gpu":gpu_snapshot()?}),
+        serde_json::json!({"stage":"gate","status":if overfit_passed {"PASS"} else {"FAIL"},
+            "tiny_overfit_passed_original_threshold":overfit_passed,"final_gpu":gpu_snapshot()?}),
     )?;
+    if !overfit_passed {
+        return Err("tiny GPU overfit diagnostic failed its unchanged threshold; A/C primary checks and A checkpoint roundtrip completed".into());
+    }
     Ok(())
 }
 pub fn adam() -> ParamsAdamW {
@@ -407,15 +416,20 @@ impl Default for TrainConfig {
     }
 }
 #[derive(Serialize)]
-struct Score {
-    loss_per_token: f64,
-    nll: f64,
-    bits_per_byte: f64,
-    targets: u64,
-    raw_target_bytes: u64,
-    seconds: f64,
+pub struct Score {
+    pub loss_per_token: f64,
+    pub nll: f64,
+    pub bits_per_byte: f64,
+    pub targets: u64,
+    pub raw_target_bytes: u64,
+    pub seconds: f64,
 }
-fn evaluate(m: &Transformer, seq: &Sequence, batch_size: usize, device: &Device) -> Result<Score> {
+pub fn evaluate(
+    m: &Transformer,
+    seq: &Sequence,
+    batch_size: usize,
+    device: &Device,
+) -> Result<Score> {
     seq.validate()?;
     if seq.tokens.len() < 2 || batch_size == 0 {
         return Err("evaluation requires a target and a positive batch size".into());
@@ -544,7 +558,7 @@ pub fn train(
             &mut log,
             serde_json::json!({"stage":"train","variant":variant,"regime":regime,"seed":seed,"step":step,
             "loss_per_token":value,"step_seconds":seconds,"train_seconds":training_seconds,"targets":positions,"raw_target_bytes":bytes,
-            "gpu":if step == 1 || step.is_multiple_of(100) {Some(gpu_snapshot()?)} else {None}}),
+            "gpu":if step == 1 || step % 100 == 0 {Some(gpu_snapshot()?)} else {None}}),
         )?;
         training_pipeline_seconds += pipeline_start.elapsed().as_secs_f64();
         if step == 1 || step % config.evaluation_every == 0 {

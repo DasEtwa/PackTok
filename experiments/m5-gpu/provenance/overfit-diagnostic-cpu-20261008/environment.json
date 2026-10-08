@@ -1,0 +1,53 @@
+{
+  "command": "cargo run --release --quiet -- diagnose-overfit data/prepared-v2 provenance/overfit-diagnostic-cpu-20261008/diagnostic.jsonl",
+  "configuration": {
+    "batch": "same fixed eight-token x/y for all 500 updates",
+    "model": "frozen M5 primary Transformer; 14681984 parameters",
+    "optimizer": "AdamW lr=0.005, weight_decay=0, no warmup, no clipping",
+    "original_gate": "final loss <0.25 and <10% of step-0 loss; unchanged",
+    "states": [
+      "fresh seed 20261008",
+      "exact deterministic replay after 18 A TRAIN updates"
+    ],
+    "validation_or_test_used": false
+  },
+  "cpu_model": "Intel Core i7-2600 @ 3.40 GHz; 8 logical CPUs",
+  "kind": "M5 fixed-batch overfit diagnosis",
+  "limitation": "CPU reproduction matches the historical L4 step-0 loss but not the step-100 trajectory. It diagnoses the 100-update gate as insufficient on CPU and does not prove the CUDA 500-update gate.",
+  "mode": "CPU only; no GPU allocation or CUDA execution",
+  "overfit_source_sha256_at_capture": "613567a5bdc4f817f8da6c1e3d4e67129e77f2766cf8d68e6871f2e242cf5569",
+  "raw_output_sha256": "f3c214ffdd99250888e4cf5a5659b536004329cc029167560377d5c91caf9e3e",
+  "release_executable_sha256": "28e9dfe2a9782bcb48284d301bb4b79db0379842fa6a3a6d290dd73a5d982914",
+  "results": {
+    "fresh": {
+      "divergence_or_stagnation": false,
+      "finite_gradients_and_parameters": true,
+      "initial_loss": 6.246869,
+      "original_threshold_passed": true,
+      "seconds": 428.92813206,
+      "seconds_per_update": 0.85785626412,
+      "step_100": 0.27022687,
+      "step_200": 0.0006084574,
+      "step_500": 0.00015188499,
+      "updates": 500
+    },
+    "post_18": {
+      "divergence_or_stagnation": false,
+      "finite_gradients_and_parameters": true,
+      "initial_loss": 7.586294,
+      "original_threshold_passed": true,
+      "seconds": 416.888985238,
+      "seconds_per_update": 0.833777970476,
+      "step_100": 0.937163,
+      "step_200": 0.34282112,
+      "step_350": 0.23944183,
+      "step_500": 0.2385193,
+      "updates": 500
+    }
+  },
+  "system": "Linux DESKTOP-FGES40P 6.18.40.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Fri Jul 31 22:12:15 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "train_sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+  "verified_git_head": "377fb9e6ab0af0c408f489419b142600f7752329",
+  "working_tree_was_dirty": true
+}

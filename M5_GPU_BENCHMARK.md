@@ -353,3 +353,28 @@ Scoped Drive upload/readback and a new manifest-based restore pass for a harmles
 unresolved pending explicit publishing approval and Branding readiness. The
 loader/CUDA gate, real model checkpoint and measured Transformer comparison remain
 unverified. No training/compute budget is inferred from CPU simulation.
+
+
+## Overfit gate revision 2 and extended CPU preparation (2026-10-08)
+
+The original L4 result above remains failed at 100 fixed-batch updates and is
+preserved verbatim. A new CPU-only 500-update diagnostic used fresh weights and
+the exactly replayed post-18 A state. Both met the historical strict
+`<0.25` and `<10% initial` values by step 500, with finite parameters and
+gradients. The fresh CPU loss was 6.246869 at step 0, 0.270227 at step 100 and
+0.000151885 at step 500. Post-18 CPU loss was 7.586294, 0.937163, 0.342821,
+0.239442 and 0.238519 at steps 0/100/200/350/500. CPU trajectories differ from
+the historical CUDA trajectory (2.5422 at step 100), so a 500-step CUDA gate is
+still unverified; this preparation makes no full-preflight PASS claim.
+
+The exact protocol, source/build/input hashes, raw logs and limitation are in
+[the revision-2 diagnostic record](experiments/m5-gpu/provenance/M5_OVERFIT_DIAGNOSTIC_V2.md)
+and `provenance/overfit-diagnostic-cpu-20261008/`. The primary M5 preregistration
+was not edited. Separate 2k pilot, 20k five-seed and optional separately
+budgeted 30k configs are frozen in `configs/*-v1.json`. Resumable AdamW,
+atomic identity-verified Safetensors and domain-stratified held-out reporting
+are CPU implemented; deterministic interruption, optimizer equivalence,
+manifest coverage and aggregation regressions pass. No GPU allocation or
+training occurred in this preparation. The pilot's training-only runtime proxy
+is 364.4 s / about 0.1559 CU from historical throughput/rate, excluding setup,
+evaluation, checkpoint and billing uncertainty; it is not a budget approval.

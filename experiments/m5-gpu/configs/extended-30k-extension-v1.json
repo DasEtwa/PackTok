@@ -1,0 +1,82 @@
+{
+  "B": {
+    "claim_limit": "byte matching is not FLOP matching",
+    "matching_rule": "train over the exact same immutable TRAIN raw-byte interval [start,end) for A and C, selecting the largest shared token-boundary interval no longer than 8 MiB; score complete token targets only and preserve the preceding context token per non-overlapping context window",
+    "max_byte_budget_per_model": 8388608,
+    "report": [
+      "actual matched bytes",
+      "token targets per tokenizer",
+      "updates per tokenizer",
+      "GPU time per tokenizer"
+    ],
+    "target": "match actual represented training bytes across A/C"
+  },
+  "T": "Match A/C target-token positions and update counts; report distinct raw-byte exposures.",
+  "approval_requirement": "separate explicit runtime and compute-unit budget approval before any 30k run",
+  "architecture": {
+    "context": 256,
+    "ffn": 1536,
+    "heads": 6,
+    "hidden": 384,
+    "layers": 8,
+    "vocab": 512
+  },
+  "batch_size": 8,
+  "context": 256,
+  "evaluation": {
+    "context_policy": "existing non-overlapping context-256 evaluation; do not select hyperparameters on held-out test",
+    "final_test_only": true,
+    "validation_every_updates": 500
+  },
+  "no_gpu_execution_in_preparation": true,
+  "optimizer": {
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-08,
+    "learning_rate": 0.0003,
+    "name": "AdamW",
+    "weight_decay": 0.01
+  },
+  "paired_seeds": [
+    20261008,
+    20261009,
+    20261010,
+    20261011,
+    20261012
+  ],
+  "parameters": 14681984,
+  "regimes": [
+    "T",
+    "B"
+  ],
+  "revision": "m5-extended-30k-v1",
+  "schedule": {
+    "decay": "cosine",
+    "total_updates": 30000,
+    "warmup_updates": 100
+  },
+  "schema": "packtok-m5-extended-experiment-v1",
+  "scientific_inputs": {
+    "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+    "prepared_sequence_sha256": {
+      "A_test_sequence_sha256": "d82168e96a56d59cb85b521da503f3a19570ee2c072d67ebdcdf743417df1ccb",
+      "A_train_sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+      "A_validation_sequence_sha256": "34a99f414c346cffad3fa818c4911f9399384be1fcb1f37b772e0ffa1da651b3",
+      "C_test_sequence_sha256": "2f2eea0814faec257f0a494deaf795de82ea7c2178c0e52972ae860cb3a90ff7",
+      "C_train_sequence_sha256": "f558ecf674382cd7aa69980560b56718a7be69d917a1396405fa208a3b27939b",
+      "C_validation_sequence_sha256": "3d995cc1d32e8686615a4b4c400918c8ec36899dbc07ebdea4f37a0a5e753245"
+    },
+    "primary_config_sha256": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+    "tokenizer_sha256": {
+      "A": "f20cb1db1c47484bda335e9a0032de92aae96cf54265f190cf8ed23060534da1",
+      "C": "04285c24bb4181871148b64c79251273c07cda6e57812175021d75fbf8b386e6"
+    }
+  },
+  "status": "separately-budgeted-optional-extension-not-approved",
+  "target_positions_per_update": 2048,
+  "updates_per_model": 30000,
+  "variants": [
+    "A",
+    "C"
+  ]
+}

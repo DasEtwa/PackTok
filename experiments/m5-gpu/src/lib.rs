@@ -1,6 +1,8 @@
 #![forbid(unsafe_code)]
 pub mod corpus;
 pub mod data;
+pub mod domains;
+pub mod extended;
 pub mod model;
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub fn hash(bytes: &[u8]) -> String {
@@ -24,4 +26,6 @@ pub fn write_new(path: &std::path::Path, bytes: &[u8]) -> Result<()> {
     f.sync_all()?;
     Ok(())
 }
+pub mod overfit;
+pub mod resume;
 pub mod runner;
