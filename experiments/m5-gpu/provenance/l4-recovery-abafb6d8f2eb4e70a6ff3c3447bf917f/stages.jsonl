@@ -1,0 +1,8 @@
+{"stage": "sessions-before", "end_utc": "2026-10-08T16:14:14Z", "seconds": 6.495248014000026, "exit": 0}
+{"stage": "source-integrity", "end_utc": "2026-10-08T16:14:22Z", "seconds": 0.3168577669999877, "exit": 0}
+{"stage": "cli-version", "end_utc": "2026-10-08T16:14:23Z", "seconds": 0.7678667829999313, "exit": 0}
+{"stage": "usage-before", "end_utc": "2026-10-08T16:14:24Z", "seconds": 1.5699264940000148, "exit": 0}
+{"stage": "allocation", "end_utc": "2026-10-08T16:14:28Z", "seconds": 3.8762195709999787, "exit": null}
+{"stage": "stop-0", "end_utc": "2026-10-08T16:14:30Z", "seconds": 1.8712657949999993, "exit": 0}
+{"stage": "sessions-after-0", "end_utc": "2026-10-08T16:14:32Z", "seconds": 1.6205423469999687, "exit": 0}
+{"stage": "usage-after", "end_utc": "2026-10-08T16:14:33Z", "seconds": 1.0705055649999622, "exit": 0}

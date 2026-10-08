@@ -296,3 +296,35 @@ requested, and no CUDA/gradient/overfit/timing/VRAM/checkpoint quality claim is
 made. [RECOVERY_STORAGE.md](experiments/m5-gpu/provenance/RECOVERY_STORAGE.md)
 is the operational protocol and documents the narrow Drive-policy change,
 immutable manifest/readback contract, retained failures and exact-resume lock.
+
+## Recovery request result and accounting (2026-10-08)
+
+Run `l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f` requested L4 once.
+The CLI printed `Session READY`; local SIGTERM interrupted the provisioning
+command before its process exit could be observed. No endpoint/hardware,
+remote OS/driver, loader output, CUDA gate, gradients, optimizer update,
+overfit, A/C timing, VRAM or weight checkpoint was collected. These values
+are unavailable, not zero or a model failure. The original loader cause
+therefore remains unresolved. No remote diagnostic archive could be created
+because remote execution was never reached. The complete local lifecycle
+logs were preserved for durable backup instead.
+
+The supervisor issued stop successfully (`Session terminated`) and parsed
+`No active sessions found on server`. Its exact measured request-to-cleanup-
+verification interval is **8.439486265182495 seconds**. This is a local
+supervision interval; exact server allocation-to-release duration is not
+measurable from the available timestamps. CLI balance was **167.55 CU before
+and after**, with **0.00/hour and zero active assignments** after cleanup.
+No active-rate observation was reached. At the previous 1.54 CU/hour, using
+the entire measured supervision interval as a conditional proxy would be
+approximately **0.00361 CU**, not measured billing. The 30-minute authorized
+upper-window proxy remains 0.77 CU at that historical rate. Rounded/lagged
+balance output does not establish zero consumption.
+
+One new allocation request was consumed; cumulative historical request count
+is two. No retry or full training occurred. The real WSL Drive fixture passed
+full-content recovery (53 bytes, SHA-256 recorded in RECOVERY_STORAGE.md), and
+the corrected foreground WSL service lifetime passed a 40-second CPU test.
+The frozen model, tokenizer, corpus and bundle v4 bytes are unchanged. Final
+run duration/CU projections cannot be computed without synchronized CUDA
+throughput. Current state: **M5_BLOCKED — INFRASTRUCTURE**.

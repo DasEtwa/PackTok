@@ -1,0 +1,48 @@
+{
+  "status": "M5_BLOCKED — INFRASTRUCTURE",
+  "source_commit": "74d91332d6612b1e0b8a74734409319a1b542861",
+  "pr": "https://github.com/DasEtwa/PackTok/pull/5",
+  "allocation_requests_this_task": 1,
+  "request_to_release_verification_seconds": 8.439486265182495,
+  "actual_server_allocation_duration_seconds": null,
+  "requested_hardware": "L4",
+  "verified_hardware": null,
+  "remote_execution_reached": false,
+  "cuda_gate": "NOT_RUN",
+  "cleanup_verified": true,
+  "cli_balance_before": 167.55,
+  "cli_balance_after": 167.55,
+  "active_rate_observed": null,
+  "historical_rate_proxy": 1.54,
+  "conditional_interval_proxy_cu": 0.0036102246801058453,
+  "actual_billing_cu": null,
+  "wsl_drive_fixture": "COMPLETE_VERIFIED",
+  "lifecycle_archive_backup": {
+    "source_commit": "74d91332d6612b1e0b8a74734409319a1b542861",
+    "variant": "infrastructure-l4-recovery",
+    "seed": 20261008,
+    "kind": "diagnostic-archive",
+    "configuration_sha256": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+    "dataset_sha256": {
+      "train": "d84c640e29b20f2c042d2910d0504efc2d64fb195476bfb3adfc591d523210ce",
+      "validation": "72b840ddcb9f471078e377dfeca85667798a27ddbc055bbe4525376e33853135",
+      "test": "62e3397fbc737fadafc236c6d3e1f25dfd73c61d66a9372a48af5450fbffd3ac"
+    },
+    "tokenizer_sha256": {
+      "A": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec",
+      "C": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf"
+    },
+    "run_id": "m5-diagnostic-archive-1d532d5187284428a8b9e12ec1ee431e",
+    "artifact": "lifecycle-evidence.tar.gz",
+    "bytes": 1466,
+    "sha256": "1f38c841cd8d8450fd1f564444bef001fbe072bc5e7ef062c928654686a8cdb9",
+    "status": "COMPLETE_VERIFIED",
+    "exact_training_resume": false,
+    "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-diagnostic-archive-1d532d5187284428a8b9e12ec1ee431e",
+    "verification": "full-download SHA-256 and size; local source rehashed"
+  },
+  "model_weight_recovery": "NOT_RUN",
+  "exact_training_resume": false,
+  "further_allocation_authorized": false,
+  "full_training_authorized": false
+}

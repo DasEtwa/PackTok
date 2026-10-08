@@ -1,0 +1,6 @@
+Oct 08 18:14:07 LOCAL-HOST systemd[402]: Started packtok-m5-recovery-20261008T161407-347.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight.
+Oct 08 18:14:28 LOCAL-HOST systemd[402]: Stopping packtok-m5-recovery-20261008T161407-347.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight...
+Oct 08 18:14:33 LOCAL-HOST systemd[402]: packtok-m5-recovery-20261008T161407-347.service: Main process exited, code=exited, status=1/FAILURE
+Oct 08 18:14:33 LOCAL-HOST systemd[402]: packtok-m5-recovery-20261008T161407-347.service: Failed with result 'exit-code'.
+Oct 08 18:14:33 LOCAL-HOST systemd[402]: Stopped packtok-m5-recovery-20261008T161407-347.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight.
+Oct 08 18:14:33 LOCAL-HOST systemd[402]: packtok-m5-recovery-20261008T161407-347.service: Consumed 9.982s CPU time.

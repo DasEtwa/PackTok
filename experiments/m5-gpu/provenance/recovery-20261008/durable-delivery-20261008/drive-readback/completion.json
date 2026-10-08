@@ -1,0 +1,24 @@
+{
+  "source_commit": "74d91332d6612b1e0b8a74734409319a1b542861",
+  "variant": "infrastructure-recovery-delivery",
+  "seed": 20261008,
+  "kind": "diagnostic-archive",
+  "configuration_sha256": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+  "dataset_sha256": {
+    "train": "d84c640e29b20f2c042d2910d0504efc2d64fb195476bfb3adfc591d523210ce",
+    "validation": "72b840ddcb9f471078e377dfeca85667798a27ddbc055bbe4525376e33853135",
+    "test": "62e3397fbc737fadafc236c6d3e1f25dfd73c61d66a9372a48af5450fbffd3ac"
+  },
+  "tokenizer_sha256": {
+    "A": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec",
+    "C": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf"
+  },
+  "run_id": "m5-diagnostic-archive-d13ce7c8b62f44c3a2fb9e31666a6e64",
+  "artifact": "delivery-evidence.tar.gz",
+  "bytes": 48881,
+  "sha256": "cb2639c0109f90ae069cc34c45a6ac4f78d39347bb6683385160f23d17a055c5",
+  "status": "COMPLETE_VERIFIED",
+  "exact_training_resume": false,
+  "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-diagnostic-archive-d13ce7c8b62f44c3a2fb9e31666a6e64",
+  "verification": "full-download SHA-256 and size; local source rehashed"
+}

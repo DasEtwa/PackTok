@@ -296,3 +296,24 @@ pending. No second allocation or GPU model measurement has occurred at this
 pre-allocation record. Existing weights-only checkpoints still cannot resume
 optimizer/training state; long runs remain prohibited until complete resumable
 checkpointing is implemented, tested and a measured budget explicitly approved.
+
+## Recovery outcome after the authorized request (2026-10-08)
+
+The independent WSL Drive fixture now passes with the dedicated Desktop OAuth
+client and `drive.file` scope. Exactly one recovery allocation request was
+issued from source commit 74d91332d6612b1e0b8a74734409319a1b542861. The CLI
+printed `Session READY`, but the local user service received SIGTERM before
+hardware inspection, bundle upload or Rust execution. The supervisor stopped
+the owned alias and verified its absence; no second allocation is authorized.
+The failed request, resource accounting and local supervision correction are
+preserved separately from the original loader-127 attempt in
+`provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f`.
+
+The corrected launcher retains the foreground WSL client with `systemd-run
+--user --wait`, preserving the bounded service while the client remains alive.
+A real 40-second CPU lifetime regression passed. The Python work/cleanup bounds
+and systemd TERM/KILL bounds remain 1620/180 and 1680/120 seconds respectively.
+No global WSL lifetime setting or other distribution was changed. GPU
+correctness, throughput, memory and persistent model-weight recovery remain
+unmeasured. Full training remains locked. Current state:
+**M5_BLOCKED — INFRASTRUCTURE**.

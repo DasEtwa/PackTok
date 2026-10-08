@@ -1,0 +1,13 @@
+## m5-gpu-transformer...origin/m5-gpu-transformer
+ M experiments/m5-gpu/provenance/recovery-20261008/cpu-final-path.txt
+?? experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/
+?? experiments/m5-gpu/provenance/recovery-20261008/PREFLIGHT_READY.json
+?? experiments/m5-gpu/provenance/recovery-20261008/active-launcher-path.txt
+?? experiments/m5-gpu/provenance/recovery-20261008/cpu-check-20261008T160850-494/
+?? experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T155824-559/
+?? experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/
+?? experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161030-362/
+?? experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161407-347/
+?? experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/
+?? experiments/m5-gpu/provenance/recovery-20261008/wsl-lifetime-20261008T161852-470/
+?? experiments/m5-gpu/scripts/launch-l4-recovery.sh

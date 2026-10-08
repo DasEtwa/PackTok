@@ -92,3 +92,11 @@ pre-allocation blocker: the shared rclone OAuth client hit Google's API quota;
 a dedicated Desktop OAuth client is being configured. No new GPU measurement
 or full training is claimed. Protocol and preserved checks:
 [M5 recovery and storage](experiments/m5-gpu/provenance/RECOVERY_STORAGE.md).
+
+The dedicated OAuth client and real WSL→Drive copy/download/SHA-256 fixture
+are now verified. The one authorized recovery L4 request was interrupted by
+local WSL service lifetime management before CUDA diagnostics or Rust ran.
+Cleanup stopped the owned session and verified no active allocation. A
+corrected foreground WSL launcher passed a CPU lifetime test; no second GPU
+request or full training was performed. M5 remains **M5_BLOCKED — INFRASTRUCTURE**;
+GPU correctness and persistent model-weight recovery still require evidence.

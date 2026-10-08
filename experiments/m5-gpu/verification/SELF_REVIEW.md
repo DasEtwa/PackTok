@@ -88,3 +88,22 @@ the real GPU gate and persistent weight recovery remain unmeasured until run.
 Operational protocol and remaining exact-resume limitations are in
 provenance/RECOVERY_STORAGE.md. The real shared-client OAuth quota failure is
 preserved as an infrastructure blocker before allocation, not a storage PASS.
+
+## Dedicated OAuth / consumed recovery request review
+
+The dedicated client resolved the shared-client quota blocker. A real fixture
+completed upload, full download, SHA-256/size verification and manifest readback
+before the single recovery request. Credentials and OAuth logs stay outside
+the repository in protected WSL storage. The previous folder skeleton and the
+interrupted fixture journal are retained; no remote deletion was used.
+
+The detached user-service launcher had a confirmed lifetime defect: the user
+manager stopped it after its WSL client ended. Its short initial CPU probe did
+not cover this boundary. The real request received handled SIGTERM before
+remote work; cleanup passed and the exclusive attempt marker blocks retries.
+The corrected `--wait` launcher retains a WSL client until service completion.
+The real 40-second lifetime regression and the 18 orchestration/storage tests
+pass on CPU. This correction has not been retried on a GPU. No CUDA correctness,
+weight recovery or exact optimizer/training resume is claimed. Future long
+runs additionally require production OAuth/token-lifetime readiness and the
+documented complete resumable-checkpoint implementation/test gate.

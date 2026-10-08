@@ -177,3 +177,104 @@ been created while the real Drive fixture is blocked. The authorizer for a
 dedicated Desktop client reads only a user-supplied local JSON outside either
 checkout, creates a separate remote, and keeps all raw OAuth output private.
 No client credentials are embedded in repository scripts.
+
+## Dedicated OAuth and real storage verification, 2026-10-08
+
+The user authorized agent-assisted setup in the signed-in browser. The Drive
+API was verified enabled in the existing PackTok Cloud project. A Desktop
+client named `PackTok WSL Backup` was created; the user's own account was added
+as the sole test user. The consent request was restricted to `drive.file`.
+Google initially rejected consent because no test user existed; that rejection
+was preserved here and resolved through the normal test-user configuration.
+The app remains External/Testing. This bounded verification does not establish
+long-term unattended token validity; publication/token-lifetime readiness must
+be addressed before future long runs.
+
+The browser JSON download did not produce a completed download event in two
+bounded attempts. The visible creation-dialog fields were instead transferred
+through a one-shot loopback form to protected WSL storage, without printing
+secrets. `receive-drive-client.py` binds only 127.0.0.1, uses an unpredictable
+route, validates the local Origin and bounded field lengths, refuses to replace
+an existing file, writes with fsync/0600 inside a 0700 directory, and closes
+after success or a 300-second limit. Credentials remain outside both checkouts.
+The dedicated rclone remote is `packtok-drive-own`; the old shared-client
+configuration is retained. No credentials or raw OAuth logs are uploaded.
+
+`cpu-final-20261008T155824-559` was interrupted during a project-context change
+before its fixture completed. Its INCOMPLETE journal is retained. A fresh run,
+`cpu-final-20261008T160630-344`, completed upload, full download, size/SHA-256
+comparison, local source rehash, completion-manifest upload and full manifest
+readback. Its fixture run is
+`m5-preflight-fixture-ff72854580914442a6b6848b428a1414`, 53 bytes, SHA-256
+`5e79279a52956a9e2b16925d6b85bb0870eeaf9a26c34c70d028546a3ec35a83`.
+The completion records source commit 74d91332d6612b1e0b8a74734409319a1b542861
+and the frozen configuration/dataset/tokenizer hashes. The known old folder
+skeleton was preserved as `PackTok/M5/preflight/bootstrap-shared-client-20261008`
+through a metadata-only move/rename. No Drive files were deleted.
+
+The repeated CPU verification in this successful run passed, and
+`cpu-check-20261008T160850-494` independently reverified the original fourteen
+bundle parts, all outer/inner/source hashes, executable identity, driver
+exclusion, local loader, exact CPU reference and original transfer/lifecycle
+mocks. PREFLIGHT_READY.json now seals the real fixture and successful CPU
+evidence. Immediately before dispatch, CLI 0.7.4 reported no active sessions,
+167.55 CU, 0.00 CU/hour and zero active assignments. No GPU was allocated by
+these preparation commands.
+
+The first detached `nohup` launcher returned a PID, but a subsequent process
+inventory found no supervisor and no recovery run/attempt/ownership marker.
+Colab still reported no active sessions. This launch consumed no allocation;
+the precise local process-termination cause was not established. To preserve
+supervision across terminal/context changes, `launch-l4-recovery.sh` now uses a
+transient Ubuntu-24.04 user systemd service, with no restart. A synthetic sleep
+service was verified active from a separate WSL command after dispatch.
+The service sends handled TERM after 1680 seconds and kills remaining
+processes after at most another 120 seconds; the Python supervisor retains
+its tighter 1620-second work deadline and 180-second cleanup reserve. Abrupt
+host failure still cannot guarantee release. The explicit manual recovery
+commands above remain required if release cannot be verified.
+
+## Consumed request, verified release and launcher lifetime correction
+
+The recovery request from the preceding readiness snapshot is preserved in
+`../provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/`. Its CLI allocation
+log printed `Session READY`; the local user service was stopped at
+2026-10-08 16:14:28 UTC and delivered handled SIGTERM while the allocation
+child was still running. The service journal confirms the stop and supervisor
+exit 1; the user-manager configuration reported Linger=no. The local lifetime
+boundary, rather than a Rust/CUDA result, is the blocker. Microsoft's
+[WSL systemd documentation](https://learn.microsoft.com/en-us/windows/wsl/systemd)
+also states that systemd services do not keep a WSL instance alive. The exact
+external shutdown trigger is not independently attributed beyond the recorded
+service stop/user-session behavior.
+
+The first short service probe was insufficient. The corrected launcher uses
+`systemd-run --user --wait` so the foreground WSL client remains open for the
+entire supervised service lifetime. No linger/global WSL setting was changed.
+`wsl-lifetime-20261008T161852-470` is a real CPU-only regression: the service
+was still active after 20 seconds and completed the full 40-second workload
+with exit zero. The 18 existing recovery regressions were rerun successfully.
+If the supervising client/host abruptly disappears, guaranteed cleanup remains
+impossible; handled service termination invokes the existing bounded release.
+
+The owned session was stopped and its absence verified before analysis/edits.
+Resource accounting records one request, no captured endpoint, cleanup=true
+and request-to-cleanup verification 8.439486265182495 seconds. CLI balance
+167.55 CU before/after is rounded output; actual billed use and exact server
+allocation duration are unknown. No active rate was captured. The 1.54 CU/hour
+historical conditional proxy gives approximately 0.00361 CU for the measured
+local interval, with the same uncertainty as the earlier 0.77 CU window proxy.
+No remote command, loader gate or checkpoint ran; no remote archive was
+technically available. Local lifecycle evidence is backed up separately using
+the verified Drive pipeline after release. The v4 exclusive attempted marker
+is retained and the one-request authorization is exhausted. No second request
+or full training is permitted by this task.
+
+OAuth remains External/Testing. Google's
+[refresh-token expiration documentation](https://developers.google.com/identity/protocols/oauth2)
+specifies seven-day refresh tokens for this status with scopes beyond basic
+profile/login; `drive.file` is such a scope. Stored files remain durable, but
+the current authorization must be renewed normally or the app made production
+ready before relying on unattended access beyond that lifetime. No OAuth
+bypass or additional scope is introduced. Current experiment state:
+**M5_BLOCKED — INFRASTRUCTURE**.
