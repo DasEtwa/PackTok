@@ -1,0 +1,21 @@
+ 5638480 data/sources/pg100.txt
+ 2044802 data/sources/pg1023.txt
+ 1865684 data/sources/pg145.txt
+  162301 data/sources/pg2335.txt
+  164682 data/sources/pg2336.txt
+  142517 data/sources/pg2337.txt
+  190060 data/sources/pg2338.txt
+  179928 data/sources/pg2339.txt
+  158776 data/sources/pg2340.txt
+  186728 data/sources/pg2341.txt
+  263463 data/sources/pg2342.txt
+  555695 data/sources/pg2403.txt
+  742616 data/sources/pg2404.txt
+ 1090067 data/sources/pg24782.txt
+  633751 data/sources/pg5323.txt
+ 1821169 data/sources/pg7469.txt
+ 2033321 data/sources/pg766.txt
+ 1924202 data/sources/pg883.txt
+30109525 data/sources/rust-1.85.0.tar.gz
+49907767 total
+Rust eligible files: 1309 bytes: 14702372

@@ -1,0 +1,20 @@
+                                                                                
+ Usage: colab new [OPTIONS]                                                     
+                                                                                
+ Create a new session                                                           
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --session   -s      <str>  Session name                                      │
+│ --tpu               <str>  TPU accelerator variant. Supported: v5e1, v6e1.   │
+│ --gpu               <str>  GPU accelerator variant. Supported: T4, L4, G4,   │
+│                            H100, A100.                                       │
+│                            If omitted (along with --tpu), a CPU runtime is   │
+│                            created.                                          │
+│                            Availability varies by Colab subscription tier.   │
+│ --high-mem                 Request a high-RAM machine shape (CPU, T4, A100,  │
+│                            etc.). Requires Colab Pro or Pro+ entitlement.    │
+│                            Ignored for accelerators that only offer a single │
+│                            shape (L4, v5e1, v6e1).                           │
+│ --help      -h             Show this message and exit.                       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

@@ -1,0 +1,4 @@
+# M5 numerical evidence and mapping/tokenizer artifacts retain exact bytes.
+experiments/m5-gpu/artifacts/** -text
+experiments/m5-gpu/provenance/** -text
+experiments/m5-gpu/verification/** -text

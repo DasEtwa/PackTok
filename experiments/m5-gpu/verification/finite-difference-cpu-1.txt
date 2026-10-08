@@ -1,0 +1,19 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.52s
+     Running unittests src/lib.rs (experiments/m5-gpu/target/debug/deps/packtok_m5-fa56264ab159247d)
+
+running 1 test
+test model::tests::gradients_match_finite_differences ... FAILED
+
+failures:
+
+---- model::tests::gradients_match_finite_differences stdout ----
+Error: missing fixture block0.norm1.weight
+
+
+failures:
+    model::tests::gradients_match_finite_differences
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `--lib`

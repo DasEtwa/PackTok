@@ -1,0 +1,10 @@
+	linux-vdso.so.1 (0x00007e01a4cf6000)
+	libcuda.so.1 => /usr/lib/wsl/lib/libcuda.so.1 (0x00007e01a3a00000)
+	libcurand.so.10 => not found
+	libcublas.so.12 => not found
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007e01a4cbb000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007e01a4bd2000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007e01a3600000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007e01a4cf8000)
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007e01a4bcb000)
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007e01a4bc6000)

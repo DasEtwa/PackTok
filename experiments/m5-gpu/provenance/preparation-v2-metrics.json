@@ -1,0 +1,100 @@
+[
+  {
+    "bytes": 3985,
+    "repetition": 0,
+    "seconds": 377.202220517,
+    "sha256": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec",
+    "stage": "tokenizer",
+    "variant": "A"
+  },
+  {
+    "bytes": 3985,
+    "repetition": 1,
+    "seconds": 377.440384398,
+    "sha256": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec",
+    "stage": "tokenizer",
+    "variant": "A"
+  },
+  {
+    "first_token_bytes": 4,
+    "raw_bytes": 34632012,
+    "raw_sha256": "d84c640e29b20f2c042d2910d0504efc2d64fb195476bfb3adfc591d523210ce",
+    "seconds": 15.775040265,
+    "sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+    "split": "train",
+    "stage": "encode-roundtrip-map",
+    "tokens": 18716345,
+    "variant": "A"
+  },
+  {
+    "first_token_bytes": 2,
+    "raw_bytes": 1459716,
+    "raw_sha256": "72b840ddcb9f471078e377dfeca85667798a27ddbc055bbe4525376e33853135",
+    "seconds": 0.417756614,
+    "sequence_sha256": "34a99f414c346cffad3fa818c4911f9399384be1fcb1f37b772e0ffa1da651b3",
+    "split": "validation",
+    "stage": "encode-roundtrip-map",
+    "tokens": 799653,
+    "variant": "A"
+  },
+  {
+    "first_token_bytes": 2,
+    "raw_bytes": 1425771,
+    "raw_sha256": "62e3397fbc737fadafc236c6d3e1f25dfd73c61d66a9372a48af5450fbffd3ac",
+    "seconds": 0.417122413,
+    "sequence_sha256": "d82168e96a56d59cb85b521da503f3a19570ee2c072d67ebdcdf743417df1ccb",
+    "split": "test",
+    "stage": "encode-roundtrip-map",
+    "tokens": 783315,
+    "variant": "A"
+  },
+  {
+    "bytes": 4552,
+    "repetition": 0,
+    "seconds": 175.246278644,
+    "sha256": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf",
+    "stage": "tokenizer",
+    "variant": "C"
+  },
+  {
+    "bytes": 4552,
+    "repetition": 1,
+    "seconds": 175.151816254,
+    "sha256": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf",
+    "stage": "tokenizer",
+    "variant": "C"
+  },
+  {
+    "first_token_bytes": 4,
+    "raw_bytes": 34632012,
+    "raw_sha256": "d84c640e29b20f2c042d2910d0504efc2d64fb195476bfb3adfc591d523210ce",
+    "seconds": 11.66614914,
+    "sequence_sha256": "f558ecf674382cd7aa69980560b56718a7be69d917a1396405fa208a3b27939b",
+    "split": "train",
+    "stage": "encode-roundtrip-map",
+    "tokens": 20414481,
+    "variant": "C"
+  },
+  {
+    "first_token_bytes": 2,
+    "raw_bytes": 1459716,
+    "raw_sha256": "72b840ddcb9f471078e377dfeca85667798a27ddbc055bbe4525376e33853135",
+    "seconds": 0.480400656,
+    "sequence_sha256": "3d995cc1d32e8686615a4b4c400918c8ec36899dbc07ebdea4f37a0a5e753245",
+    "split": "validation",
+    "stage": "encode-roundtrip-map",
+    "tokens": 883730,
+    "variant": "C"
+  },
+  {
+    "first_token_bytes": 2,
+    "raw_bytes": 1425771,
+    "raw_sha256": "62e3397fbc737fadafc236c6d3e1f25dfd73c61d66a9372a48af5450fbffd3ac",
+    "seconds": 0.485925248,
+    "sequence_sha256": "2f2eea0814faec257f0a494deaf795de82ea7c2178c0e52972ae860cb3a90ff7",
+    "split": "test",
+    "stage": "encode-roundtrip-map",
+    "tokens": 867165,
+    "variant": "C"
+  }
+]

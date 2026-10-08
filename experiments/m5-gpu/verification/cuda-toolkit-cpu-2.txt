@@ -1,0 +1,6 @@
+data/cuda-downloads/cuda_nvcc-linux-x86_64-12.4.131-archive.tar.xz: OK
+data/cuda-downloads/cuda_cudart-linux-x86_64-12.4.127-archive.tar.xz: OK
+data/cuda-downloads/cuda_cccl-linux-x86_64-12.4.127-archive.tar.xz: OK
+data/cuda-downloads/cuda_nvrtc-linux-x86_64-12.4.127-archive.tar.xz: OK
+data/cuda-downloads/libcublas-linux-x86_64-12.4.5.8-archive.tar.xz: FAILED
+sha256sum: WARNING: 1 computed checksum did NOT match

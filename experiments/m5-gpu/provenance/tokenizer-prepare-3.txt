@@ -1,0 +1,12 @@
+tokenizer A repetition 0: 377.202s, 3985 bytes, SHA256 22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec
+tokenizer A repetition 1: 377.440s, 3985 bytes, SHA256 22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec
+encoded A/train: 34632012 bytes -> 18716345 tokens, 15.775s
+encoded A/validation: 1459716 bytes -> 799653 tokens, 0.418s
+encoded A/test: 1425771 bytes -> 783315 tokens, 0.417s
+M2 allocation: [FactorizedPackTrainingStats { pack_id: 65535, spans: 0, routed_bytes: 0, learned_merges: 0, local_vocab_size: 0 }, FactorizedPackTrainingStats { pack_id: 0, spans: 5066967, routed_bytes: 22666960, learned_merges: 196, local_vocab_size: 196 }, FactorizedPackTrainingStats { pack_id: 1, spans: 441732, routed_bytes: 1197151, learned_merges: 4, local_vocab_size: 4 }, FactorizedPackTrainingStats { pack_id: 2, spans: 5219672, routed_bytes: 10767901, learned_merges: 56, local_vocab_size: 56 }]
+tokenizer C repetition 0: 175.246s, 4552 bytes, SHA256 334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf
+M2 allocation: [FactorizedPackTrainingStats { pack_id: 65535, spans: 0, routed_bytes: 0, learned_merges: 0, local_vocab_size: 0 }, FactorizedPackTrainingStats { pack_id: 0, spans: 5066967, routed_bytes: 22666960, learned_merges: 196, local_vocab_size: 196 }, FactorizedPackTrainingStats { pack_id: 1, spans: 441732, routed_bytes: 1197151, learned_merges: 4, local_vocab_size: 4 }, FactorizedPackTrainingStats { pack_id: 2, spans: 5219672, routed_bytes: 10767901, learned_merges: 56, local_vocab_size: 56 }]
+tokenizer C repetition 1: 175.152s, 4552 bytes, SHA256 334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf
+encoded C/train: 34632012 bytes -> 20414481 tokens, 11.666s
+encoded C/validation: 1459716 bytes -> 883730 tokens, 0.480s
+encoded C/test: 1425771 bytes -> 867165 tokens, 0.486s

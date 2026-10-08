@@ -128,3 +128,11 @@ Adds artifact-only balanced M1 grouping, bijective M2 flattening, equivalent
 input-row control, four-variant CPU harness, sourced corpus preparation and
 preserved preflight/final evidence. M0–M3 results remain frozen. Design and
 results are in M4_ABLATION.md and M4_ABLATION_BENCHMARK.md.
+
+## M5 preparation — 2026-10-08
+
+Started the isolated Rust/Candle Transformer A/C experiment from exact CPU freeze
+f3b6c3f; M4 delivery/provenance was pushed before branching. CPU-first dedicated
+WSL preparation and strictly bounded L4 lifecycle are documented in the M5 design
+and benchmark record. Historical tokenization, models and results remain frozen.
+No final GPU quality result exists at this preparation stage.

@@ -1,0 +1,39 @@
+sha256sum: data/sources/pg100.txt: No such file or directory
+data/sources/pg100.txt: FAILED open or read
+sha256sum: data/sources/pg1023.txt: No such file or directory
+data/sources/pg1023.txt: FAILED open or read
+sha256sum: data/sources/pg145.txt: No such file or directory
+data/sources/pg145.txt: FAILED open or read
+sha256sum: data/sources/pg2335.txt: No such file or directory
+data/sources/pg2335.txt: FAILED open or read
+sha256sum: data/sources/pg2336.txt: No such file or directory
+data/sources/pg2336.txt: FAILED open or read
+sha256sum: data/sources/pg2337.txt: No such file or directory
+data/sources/pg2337.txt: FAILED open or read
+sha256sum: data/sources/pg2338.txt: No such file or directory
+data/sources/pg2338.txt: FAILED open or read
+sha256sum: data/sources/pg2339.txt: No such file or directory
+data/sources/pg2339.txt: FAILED open or read
+sha256sum: data/sources/pg2340.txt: No such file or directory
+data/sources/pg2340.txt: FAILED open or read
+sha256sum: data/sources/pg2341.txt: No such file or directory
+data/sources/pg2341.txt: FAILED open or read
+sha256sum: data/sources/pg2342.txt: No such file or directory
+data/sources/pg2342.txt: FAILED open or read
+sha256sum: data/sources/pg2403.txt: No such file or directory
+data/sources/pg2403.txt: FAILED open or read
+sha256sum: data/sources/pg2404.txt: No such file or directory
+data/sources/pg2404.txt: FAILED open or read
+sha256sum: data/sources/pg24782.txt: No such file or directory
+data/sources/pg24782.txt: FAILED open or read
+sha256sum: data/sources/pg5323.txt: No such file or directory
+data/sources/pg5323.txt: FAILED open or read
+sha256sum: data/sources/pg7469.txt: No such file or directory
+data/sources/pg7469.txt: FAILED open or read
+sha256sum: data/sources/pg766.txt: No such file or directory
+data/sources/pg766.txt: FAILED open or read
+sha256sum: data/sources/pg883.txt: No such file or directory
+data/sources/pg883.txt: FAILED open or read
+sha256sum: data/sources/rust-1.85.0.tar.gz: No such file or directory
+data/sources/rust-1.85.0.tar.gz: FAILED open or read
+sha256sum: WARNING: 19 listed files could not be read

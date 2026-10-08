@@ -1,0 +1,20 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0 48.8M    0  160k    0     0   132k      0  0:06:18  0:00:01  0:06:17  132k 59 48.8M   59 29.2M    0     0  13.2M      0  0:00:03  0:00:02  0:00:01 13.2M100 48.8M  100 48.8M    0     0  17.2M      0  0:00:02  0:00:02 --:--:-- 17.2M
+data/cuda-downloads/cuda_nvcc-linux-x86_64-12.4.131-archive.tar.xz: OK
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 1073k  100 1073k    0     0   893k      0  0:00:01  0:00:01 --:--:--  893k
+data/cuda-downloads/cuda_cudart-linux-x86_64-12.4.127-archive.tar.xz: OK
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 1130k    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 1130k  100 1130k    0     0   992k      0  0:00:01  0:00:01 --:--:--  993k
+data/cuda-downloads/cuda_cccl-linux-x86_64-12.4.127-archive.tar.xz: OK
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 32.5M    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0 30 32.5M   30 10.0M    0     0  6882k      0  0:00:04  0:00:01  0:00:03 6881k100 32.5M  100 32.5M    0     0  13.8M      0  0:00:02  0:00:02 --:--:-- 13.8M
+data/cuda-downloads/cuda_nvrtc-linux-x86_64-12.4.127-archive.tar.xz: OK
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  2  446M    2 9655k    0     0  9784k      0  0:00:46 --:--:--  0:00:46 9782k  8  446M    8 36.6M    0     0  18.4M      0  0:00:24  0:00:01  0:00:23 18.4M 15  446M   15 68.6M    0     0  22.9M      0  0:00:19  0:00:02  0:00:17 22.9M 22  446M   22  101M    0     0  25.5M      0  0:00:17  0:00:03  0:00:14 25.5M 28  446M   28  128M    0     0  25.7M      0  0:00:17  0:00:04  0:00:13 25.7M 36  446M   36  161M    0     0  26.9M      0  0:00:16  0:00:05  0:00:11 30.3M 44  446M   44  199M    0     0  28.5M      0  0:00:15  0:00:06  0:00:09 32.5M 53  446M   53  238M    0     0  29.8M      0  0:00:14  0:00:07  0:00:07 33.9M 60  446M   60  271M    0     0  30.2M      0  0:00:14  0:00:08  0:00:06 33.9M 68  446M   68  304M    0     0  30.4M      0  0:00:14  0:00:09  0:00:05 35.1M 71  446M   71  317M    0     0  28.9M      0  0:00:15  0:00:10  0:00:05 31.2M 78  446M   78  350M    0     0  29.2M      0  0:00:15  0:00:11  0:00:04 30.2M 86  446M   86  385M    0     0  29.5M      0  0:00:15  0:00:13  0:00:02 29.2M 93  446M   93  416M    0     0  29.7M      0  0:00:14  0:00:13  0:00:01 29.0M 99  446M   99  445M    0     0  29.6M      0  0:00:15  0:00:15 --:--:-- 28.0M100  446M  100  446M    0     0  29.6M      0  0:00:15  0:00:15 --:--:-- 31.7M
+data/cuda-downloads/libcublas-linux-x86_64-12.4.5.8-archive.tar.xz: OK

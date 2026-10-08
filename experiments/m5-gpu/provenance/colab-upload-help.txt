@@ -1,0 +1,14 @@
+                                                                                
+ Usage: colab upload [OPTIONS] {local_path} {remote_path}                       
+                                                                                
+ Upload a file to a session                                                     
+                                                                                
+╭─ Arguments ──────────────────────────────────────────────────────────────────╮
+│ *    local_path       <str>  Local file to upload [required]                 │
+│ *    remote_path      <str>  Remote path to upload to [required]             │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --session  -s      <str>  Session name                                       │
+│ --help     -h             Show this message and exit.                        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

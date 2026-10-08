@@ -1,0 +1,14 @@
+                                                                                
+ Usage: colab download [OPTIONS] {remote_path} {local_path}                     
+                                                                                
+ Download a file from a session                                                 
+                                                                                
+╭─ Arguments ──────────────────────────────────────────────────────────────────╮
+│ *    remote_path      <str>  Remote path to download from [required]         │
+│ *    local_path       <str>  Local path to save the file [required]          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --session  -s      <str>  Session name                                       │
+│ --help     -h             Show this message and exit.                        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

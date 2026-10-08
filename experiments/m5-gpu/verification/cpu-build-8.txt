@@ -1,0 +1,2 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `release` profile [optimized] target(s) in 0.95s

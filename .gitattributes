@@ -15,3 +15,7 @@ experiments/pre-gpu-fix-20261007/** -text
 experiments/pre-gpu-fix-20261007/** whitespace=cr-at-eol,-blank-at-eof
 experiments/pre-gpu-fix-20261007/model-source.patch whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
 experiments/pre-gpu-fix-20261007/precommit-whitespace-failure.txt whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+# M5 numerical evidence and mapping/tokenizer artifacts retain exact bytes.
+experiments/m5-gpu/artifacts/** -text
+experiments/m5-gpu/provenance/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
+experiments/m5-gpu/verification/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
