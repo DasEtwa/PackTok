@@ -1,0 +1,1 @@
+Owned session/endpoint absent after stop.

@@ -9,3 +9,5 @@
 *.safetensors
 
 *.safetensors.tmp
+
+bundle-*/

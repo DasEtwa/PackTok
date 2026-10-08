@@ -79,5 +79,7 @@ M5 compares only A (M1 flat tokens) and C (canonical flattened M2 tokens) throug
 the same Transformer and flat head. It preserves the CPU freeze and runs all
 preparation in dedicated Ubuntu-24.04 WSL. CUDA/Colab work is isolated and L4
 allocation is limited to an explicitly bounded correctness preflight before
-separate budget approval. No GPU result is claimed yet. Design and cost record:
+separate budget approval. The first runtime preflight failed before Rust started; the L4 was released.
+CPU recovery preparation is documented and no GPU quality result is claimed.
+Design and cost record:
 [M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md), [M5_GPU_BENCHMARK.md](M5_GPU_BENCHMARK.md).

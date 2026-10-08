@@ -54,6 +54,11 @@ cleanup() {
       rc=1
     fi
   fi
+  # Colab exec may exit zero even when its Python cell raised. Only preserved
+  # remote evidence is authoritative, checked locally AFTER confirmed release.
+  if test -f "$run/released-verified-at.txt" && test -f "$run/results.tar.gz"; then
+    if ! python3 scripts/check-preflight.py "$run/results.tar.gz" > "$run/result-verification.txt" 2>&1; then rc=1; fi
+  fi
   printf '%s\n' "$rc" > "$run/exit-code.txt"
   printf 'Lifecycle logs: %s\n' "$run"
   exit "$rc"

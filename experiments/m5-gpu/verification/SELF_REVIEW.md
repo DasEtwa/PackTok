@@ -58,3 +58,16 @@ compatibility logs preserve all canonical model/tokenizer identities. Root
 sources/lockfile and historical experiment files match CPU-freeze Git blobs.
 No unresolved confirmed CPU correctness issue was found in this narrow pass.
 GPU gate is still pending and must not be inferred from these results.
+
+## Post-attempt lifecycle/runtime corrections
+
+The first real VM exposed an additional wrapper issue: CLI transport status zero
+can accompany a remote kernel exception. Correctness now requires downloaded
+remote exit/gate evidence checked on CPU after verified release; eleven mocked
+cases and rejection of the actual failed archive cover this. Loader stderr and
+bootstrap output are preserved, inherited driver paths retained, pinned runtime
+shared libraries prepared locally for a distinct recovery bundle. The exact
+first remote soname failure is unconfirmed because its stderr was missing.
+No GPU/model gate has passed and no automatic retry is performed. Models,
+schedule/tokenizers/splits are unchanged. CPU resource accounting includes the
+failed allocated time rather than hiding it.

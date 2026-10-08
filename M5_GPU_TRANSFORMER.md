@@ -1,6 +1,7 @@
 # M5 — GPU Transformer scale probe
 
-Status: local CPU preparation; no GPU result yet. M5 begins at the exact CPU
+Status: CPU preparation complete; initial L4 runtime preflight failed before Rust
+started and was immediately released. No GPU model/quality result exists. M5 begins at the exact CPU
 freeze `f3b6c3fb41f46c93e701b585d859b0b9071d65a5`. M4's subsequent delivery-only
 commit `3b304d2dfdbae8111da7b6cf714569fff353d030` was pushed to its existing PR
 before branching. Branch `m5-gpu-transformer` targets `m4-factorization-ablation`.
@@ -149,8 +150,12 @@ cublas 12.4.5.8, curand 10.3.5.147) are hash-verified and installed locally only
 component hashes/sizes/licenses are preserved. CUDA_COMPUTE_CAP=89 and two compile
 jobs build the pinned CUDA backend on WSL CPU. A small existing Linux loader/
 runtime bundle handles remote glibc compatibility; source/package notices are
-retained. GPU VM prerequisites are an existing CUDA driver/cublas/curand runtime,
-L4 hardware and the CLI kernel. No remote ordinary package installation or Rust/
+retained. The first package relied on remotely exposed cuBLAS/cuRAND sonames and failed
+in the loader before Rust could run. Its evidence remains preserved. A recovery
+package carries the already CPU-acquired pinned cuBLAS/cuBLASLt/cuRAND shared
+libraries plus their original notices; it never carries the WSL CUDA driver.
+Inherited library paths and `/usr/lib64-nvidia` are preserved/searched. GPU VM
+prerequisites are now an existing NVIDIA driver, L4 hardware and the CLI kernel. No remote ordinary package installation or Rust/
 nvcc compilation is planned. Driver PTX/module JIT is unavoidable and included
 in setup/warmup, not claimed to be a separately measured compilation interval.
 Remote host orchestration, ELF resolution, input loading, CUDA transfers,
@@ -158,7 +163,10 @@ checkpoint serialization/reload and output packaging are unavoidable parts of
 the CUDA phase and counted while allocated. Dataset/tokenizer construction,
 analytical accounting, source/checkpoint hashing and statistical reporting run
 locally. In-memory GPU-weight fingerprints are part of the initialization/update
-correctness assertions, not final checkpoint hashing.
+correctness assertions, not final checkpoint hashing. Result verification is also local and after
+confirmed release: Colab CLI 0.7.4 can exit zero on a kernel exception, so the
+remote exit file and final Rust gate PASS are mandatory. Loader stderr/bootstrap
+output are retained. A failed attempt is not converted into a pass.
 No full training until measured-throughput/runtime/CU estimate has been shown
 and explicitly approved. A missing CU rate is reported unavailable, never guessed.
 The local wrapper must trap errors/interruptions and always stop the owned
@@ -238,3 +246,9 @@ three complete pairs remain incomplete. This is a small empirical sign check,
 not significance proof; optional B outcomes are reported separately and may
 reveal dependence on exposure/regime. No quality classification is made from
 preflight training-prefix or overfit diagnostics.
+
+The first prepared bundle has been attempted once; recovery preparation uses a
+distinct `bundle-v2` path and never deletes the original bundle/failure logs.
+No further allocation occurs automatically after the first failed preflight.
+A new bounded preflight requires the user to authorize retry; full training still
+requires throughput-based budget approval.

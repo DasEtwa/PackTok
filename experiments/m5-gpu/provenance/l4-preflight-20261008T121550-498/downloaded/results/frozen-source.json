@@ -1,0 +1,1 @@
+{"source_commit":"a464e12cb27f447f51978cb5855e460859e32542","cpu_freeze":"f3b6c3fb41f46c93e701b585d859b0b9071d65a5","backend":"candle-0.9.1","precision":"FP32","gpu":"NVIDIA L4","compiled_cuda":"12.4.131","compute_capability":"8.9","mode":"preflight-only"}

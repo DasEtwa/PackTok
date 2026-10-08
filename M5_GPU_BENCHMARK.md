@@ -1,6 +1,7 @@
 # M5 — Provenance, CPU preparation and GPU measurements
 
-Status: CPU implementation and preparation complete; no L4 allocation or GPU quality result.
+Status: `M5_BLOCKED` at the initial runtime preflight. CPU implementation/data
+preparation complete; the failed L4 was released and no GPU quality result exists.
 Design and limits: [M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md).
 
 ## Starting state
@@ -40,6 +41,9 @@ All corpus outcomes, tokenizer hashes, CPU/GPU tests, times and costs will be
 appended when measured. Nothing below is an inferred GPU measurement.
 
 ## GPU accounting
+
+CPU-preparation snapshot before the first attempt (current attempt accounting
+is below in the preserved failure section):
 
 GPU allocation count so far: 0. Allocated L4 time: 0. No GPU training or evaluation
 has been run; no compute-unit cost estimate is claimed yet. The final preflight
@@ -149,3 +153,58 @@ quality run or full training is authorized. Provisioning/upload/unpack/library
 resolution/download are unavoidable session overhead; no remote ordinary
 installation or Rust/nvcc compilation is planned. The wrapper caps the phase
 and cleans up the owned L4 before local analysis.
+
+## Initial L4 preflight failure — preserved, not passed
+
+Attempt 1: provenance/l4-preflight-20261008T121550-498/. Its frozen source is
+`a464e12cb27f447f51978cb5855e460859e32542`, packaged before the delivery commit
+`c44c94127656bf2338a4b710eff15967f63ceafa`. The downloaded tar and small extracted
+logs are retained; download hash/contents and RESOURCE_ACCOUNTING.json are durable.
+
+Actual NVIDIA L4, driver 580.82.07, total device memory 23034 MiB, Ubuntu 24.04.4
+LTS/kernel 6.6.122+. The ELF loader exited 127 before the Rust model/CUDA gate
+started. Loader stdout is empty and stderr was not captured; the exact missing
+remote library cannot be proved from this attempt. A local CPU reproduction
+without cuRAND also exits 127 with a missing libcurand.so.10 message
+(verification/runtime-missing-libs-reproduction.txt). The initial remote wrapper
+also overwrote inherited library paths, which could hide the driver. These are
+runtime compatibility hazards, not evidence that the Transformer itself failed.
+
+The CLI execute command exited zero despite a Python RuntimeError (execute.txt).
+The original lifecycle exited zero but never produced a CUDA PASS. This wrapper
+contract is fixed: after confirmed GPU release, check-preflight.py requires both
+remote exit zero and a final Rust gate PASS from the downloaded archive. The
+real failed archive is rejected (verification/real-failure-rejected.txt). Eleven
+CPU-mocked lifecycle cases pass (lifecycle-cpu-7.txt), including the misleading
+CLI-success/remote-failure case and endpoint-survival detection. No allocation
+was needed to fix/test this.
+
+Resource boundaries: provisioning 4 s; status 2 s; active usage 1 s; upload 25 s;
+remote execution 5 s; pre-transfer usage 1 s; download 1 s; stop 1 s. Allocation
+request to stop 41 s, through verified cleanup 45 s. Model initialization,
+training and evaluation never started; GPU compilation 0 s (compiled on WSL).
+The five-second remote phase includes unpacking/environment/loader failure and
+output packaging; CUDA setup itself was not reached/separately measured. No
+checkpoint, step throughput, inference throughput or sampled peak VRAM exists.
+
+Displayed balance stayed 167.55 CU; observed active CLI rate was 1.54 CU/hour,
+then 0.00/hour with zero assignments after stop. Displayed delta 0.00 CU is not
+proof of zero cost because billing delay/rounding is unresolved. Multiplying the
+observed rate by 41 s gives a **proxy** 0.017538889 CU, not measured billing.
+Full multi-seed time/CU cannot be estimated without a successful timed GPU gate.
+The owned endpoint is confirmed absent; no L4 remains allocated.
+
+CPU-only recovery: preserve complete bootstrap/loader stderr, retain inherited
+CUDA-driver search paths including /usr/lib64-nvidia, and package the already
+acquired pinned cuBLAS/cuBLASLt/cuRAND redistributable libraries/notices. Local
+portable-loader checks use only the bundle plus the WSL driver, without reaching
+back into toolkit paths. More transfer bytes are a documented tradeoff for
+avoiding another remote library hunt/install. No model/tokenizer/data/config
+change is made, no failed evidence is overwritten, no automatic GPU retry occurs.
+A distinct bundle-v2 may be prepared; retry requires user authorization.
+
+One progress-observation command had a quoting/working-directory failure and
+read no provenance path; the corrected file-backed command observed the actual
+phase. It did not change the GPU job or delay cleanup. All analysis/edits above
+occurred after release verification. M5 is currently blocked at GPU runtime
+preflight, not a completed quality comparison.

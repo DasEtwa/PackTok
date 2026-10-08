@@ -30,15 +30,21 @@ exec)
  if test "${MOCK_FAIL:-}" = exec; then exit 7; fi;;
 download)
  if test "${MOCK_FAIL:-}" = download; then exit 6; fi
- printf 'results fixture\n' > "$5";;
+ if test "${MOCK_FAIL:-}" = kernel; then cp "$MOCK_ROOT/kernel.tar.gz" "$5"; else cp "$MOCK_ROOT/pass.tar.gz" "$5"; fi;;
 stop) test "$*" = 'stop -s packtok-m5'; if test "${MOCK_STOP_LEAK:-0}" != 1; then rm -f "$MOCK_ROOT/active"; fi;;
 *) exit 99;;
 esac
 MOCK
 chmod +x "$fixture/bin/colab"
+mkdir -p "$fixture/result/results/gate"
+printf '0\n' > "$fixture/result/results/exit-code.txt"
+printf '{"stage":"gate","status":"PASS"}\n' > "$fixture/result/results/gate/preflight.jsonl"
+tar -czf "$fixture/pass.tar.gz" -C "$fixture/result" results
+printf '127\n' > "$fixture/result/results/exit-code.txt"
+tar -czf "$fixture/kernel.tar.gz" -C "$fixture/result" results
 export PATH="$fixture/bin:$PATH" MOCK_ROOT="$fixture"
 export PACKTOK_M5_BUNDLE="$fixture/bundle" PACKTOK_M5_LOGROOT="$fixture/logs"
-for failure in none upload exec download hardware; do
+for failure in none upload exec download hardware kernel; do
  : > "$fixture/calls"
  rm -f "$fixture/bundle/preflight-attempted"
  export MOCK_FAIL="$failure" MOCK_HARDWARE=L4

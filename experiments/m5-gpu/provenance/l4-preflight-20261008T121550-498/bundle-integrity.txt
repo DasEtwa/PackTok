@@ -1,0 +1,2 @@
+CPU_READY: OK
+packtok-m5-bundle.tar.gz: OK

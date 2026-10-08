@@ -1,0 +1,77 @@
+{
+  "status": "M5_BLOCKED",
+  "attempt": 1,
+  "gpu_allocation_count": 1,
+  "source_commit": "a464e12cb27f447f51978cb5855e460859e32542",
+  "delivery_commit_before_attempt": "c44c94127656bf2338a4b710eff15967f63ceafa",
+  "actual_gpu": "NVIDIA L4",
+  "driver": "580.82.07",
+  "gpu_memory_total_mib": 23034,
+  "remote_os": "Ubuntu 24.04.4 LTS",
+  "remote_kernel": "6.6.122+",
+  "gpu_rust_model_started": false,
+  "cuda_correctness_gate": "not reached",
+  "remote_exit": 127,
+  "cli_execute_exit": 0,
+  "compilation_on_gpu_seconds": 0,
+  "gpu_training_seconds": 0,
+  "gpu_evaluation_seconds": 0,
+  "allocation_request_to_stop_seconds": 41,
+  "allocation_request_to_cleanup_verified_seconds": 45,
+  "stop_seconds": 2,
+  "stages": [
+    {
+      "end_utc": "2026-10-08T12:16:01Z",
+      "name": "allocation",
+      "wall_seconds": 4,
+      "cli_exit": 0
+    },
+    {
+      "end_utc": "2026-10-08T12:16:03Z",
+      "name": "status",
+      "wall_seconds": 2,
+      "cli_exit": 0
+    },
+    {
+      "end_utc": "2026-10-08T12:16:04Z",
+      "name": "usage-active",
+      "wall_seconds": 1,
+      "cli_exit": 0
+    },
+    {
+      "end_utc": "2026-10-08T12:16:29Z",
+      "name": "upload",
+      "wall_seconds": 25,
+      "cli_exit": 0
+    },
+    {
+      "end_utc": "2026-10-08T12:16:34Z",
+      "name": "execute",
+      "wall_seconds": 5,
+      "cli_exit": 0
+    },
+    {
+      "end_utc": "2026-10-08T12:16:35Z",
+      "name": "usage-before-transfer",
+      "wall_seconds": 1,
+      "cli_exit": 0
+    },
+    {
+      "end_utc": "2026-10-08T12:16:36Z",
+      "name": "download",
+      "wall_seconds": 1,
+      "cli_exit": 0
+    }
+  ],
+  "balance_before_displayed_cu": 167.55,
+  "balance_after_displayed_cu": 167.55,
+  "displayed_delta_cu": 0.0,
+  "observed_active_rate_cu_per_hour": 1.54,
+  "rate_times_request_to_stop_cu_proxy": 0.01753888888888889,
+  "actual_cu_consumption": "unavailable: display unchanged, accounting lag/rounding not resolved; do not infer free allocation",
+  "session_release": "verified absent, zero active assignments",
+  "peak_vram": "unavailable: loader failed before monitor/Rust",
+  "checkpoint": "none",
+  "full_runtime_estimate": "unavailable: no measured GPU training throughput",
+  "diagnosis": "ELF loader failed before Rust, exact stderr was not captured. Local missing-libcurand reproduction also exits 127; remote missing soname is unconfirmed. Recovery bundles pinned CUDA runtime libraries and preserves inherited driver paths."
+}
