@@ -180,7 +180,7 @@ CLI-success/remote-failure case and endpoint-survival detection. No allocation
 was needed to fix/test this.
 
 Resource boundaries: provisioning 4 s; status 2 s; active usage 1 s; upload 25 s;
-remote execution 5 s; pre-transfer usage 1 s; download 1 s; stop 1 s. Allocation
+remote execution 5 s; pre-transfer usage 1 s; download 1 s; stop 2 s. Allocation
 request to stop 41 s, through verified cleanup 45 s. Model initialization,
 training and evaluation never started; GPU compilation 0 s (compiled on WSL).
 The five-second remote phase includes unpacking/environment/loader failure and
@@ -208,3 +208,34 @@ read no provenance path; the corrected file-backed command observed the actual
 phase. It did not change the GPU job or delay cleanup. All analysis/edits above
 occurred after release verification. M5 is currently blocked at GPU runtime
 preflight, not a completed quality comparison.
+
+## CPU-prepared recovery candidate (not executed)
+
+Source commit `c89cefe731e8cda6cdbdc06371f818749c6ddc01`. The distinct
+local bundle-v2 resolves CUDA shared libraries from its own runtime, with only
+the NVIDIA driver external; portable-loader-runtime-v2-v2.txt and
+portable-loader-cpu-v2.txt pass on WSL CPU. No CUDA tensors are executed locally.
+The complete input/archive hashes and sizes are bundle-input-SHA256SUMS-v2.txt,
+bundle-SHA256SUMS-v2.txt and bundle-sizes-v2.txt; original package/evidence remains
+unchanged. Model/tokenizer/split/configuration bytes are unchanged.
+
+Proposed retry is one additional L4 preflight, maximum 1200 s (1080 s supervised
+worker plus cleanup reserve); explicit retry authorization is pending. At the
+previous observed rate 1.54 CU/hour, twenty minutes is a conditional proxy
+0.513333333 CU, not a guaranteed price or billing measurement. retry-plan.json
+also records archive bytes and a linear transfer projection using the measured
+first 25-second upload; network/provisioning variability is unbounded by that
+projection and the hard lifecycle deadline still applies. Full multi-seed time/
+cost remain unavailable until a successful timed CUDA gate; full training is
+not authorized by retry approval. No second allocation has occurred.
+
+### Recovery transfer preflight on CPU
+
+The v2 candidate is retained but not run. Its 456605835-byte archive
+(bundle-sizes-v2.txt; verify exact bytes there) implies about 304 s upload under
+a simple linear projection from the first 37548916-byte/25 s transfer. That
+would exceed the original 180 s upload timeout. This was detected before any
+second allocation. The v3 candidate extends only upload to 420 s while retaining
+the global 1080 s worker and 1200 s cleanup-inclusive cap. All v2 checks/hashes
+are preserved; no research configuration changed. Exact archive/projection
+values in retry-plan.json supersede rounded prose estimates.

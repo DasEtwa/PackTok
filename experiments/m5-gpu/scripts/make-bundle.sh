@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../../.."
 root=experiments/m5-gpu
 bundle_name=${PACKTOK_M5_BUNDLE_NAME:-bundle}
-case "$bundle_name" in bundle) evidence_tag='';; bundle-v2) evidence_tag='-v2';; *) echo "Unsupported bundle name" >&2; exit 2;; esac
+case "$bundle_name" in bundle) evidence_tag='';; bundle-v2|bundle-v3) evidence_tag="-${bundle_name#bundle-}";; *) echo "Unsupported bundle name" >&2; exit 2;; esac
 bundle_root="$root/$bundle_name"
 test ! -e "$bundle_root"
 # Build only locally, with the already prepared compiler. No CUDA operations.
@@ -59,7 +59,7 @@ cp "$bundle/SHA256SUMS.txt" "$root/provenance/bundle-input-SHA256SUMS${evidence_
 git ls-files -z -- "$root/src" "$root/Cargo.toml" "$root/Cargo.lock" "$root/scripts" "$root/configs" | while IFS= read -r -d '' file; do
   sha256sum "$(realpath "$file")"
 done > "$bundle_root/source.sha256"
-"$bundle/runtime/ld-linux-x86-64.so.2" --library-path "$(pwd)/$bundle/runtime:/usr/lib/wsl/lib" --list "$bundle/packtok-m5" > "$root/verification/portable-loader-runtime-v2${evidence_tag}.txt" 2>&1
+"$bundle/runtime/ld-linux-x86-64.so.2" --library-path "$(pwd)/$bundle/runtime:/usr/lib/wsl/lib" --list "$bundle/packtok-m5" > "$root/verification/portable-loader-runtime${evidence_tag}.txt" 2>&1
 # Verify CPU reference under the actual bundled loader, still on local CPU.
 libpath="$(pwd)/$bundle/runtime:/usr/lib/wsl/lib"
 "$bundle/runtime/ld-linux-x86-64.so.2" --library-path "$libpath" "$bundle/packtok-m5" reference > "$root/verification/portable-loader-cpu${evidence_tag}.txt" 2>&1

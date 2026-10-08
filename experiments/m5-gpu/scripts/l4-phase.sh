@@ -22,7 +22,7 @@ sed -n 's/^\[packtok-m5\] \([^ ]*\) |.*/\1/p' "$run/status.txt" > "$run/endpoint
 test -s "$run/endpoint.txt"
 grep -Fq 'Hardware: L4' "$run/status.txt"
 stage usage-active 30 colab usage
-stage upload 180 colab upload -s packtok-m5 "$bundle/packtok-m5-bundle.tar.gz" content/packtok-m5-bundle.tar.gz
+stage upload 420 colab upload -s packtok-m5 "$bundle/packtok-m5-bundle.tar.gz" content/packtok-m5-bundle.tar.gz
 # Python here is the official CLI kernel transport only. Rust owns the model.
 set +e
 stage execute 610 colab exec -s packtok-m5 -f scripts/remote-bridge.py --timeout 600

@@ -248,7 +248,13 @@ reveal dependence on exposure/regime. No quality classification is made from
 preflight training-prefix or overfit diagnostics.
 
 The first prepared bundle has been attempted once; recovery preparation uses a
-distinct `bundle-v2` path and never deletes the original bundle/failure logs.
+distinct `bundle-v2`/`bundle-v3` paths and never deletes the original bundle/failure logs.
 No further allocation occurs automatically after the first failed preflight.
 A new bounded preflight requires the user to authorize retry; full training still
 requires throughput-based budget approval.
+
+Recovery upload is bounded at 420 s, inside the unchanged 1080 s worker /
+1200 s lifecycle cap. CPU packaging showed that the pinned runtime payload
+would exceed the old 180 s upload allowance at the first observed transfer rate.
+The v2 candidate was never allocated; the final candidate is v3 with this
+explicit transfer allowance. This changes orchestration only, not experiments.
