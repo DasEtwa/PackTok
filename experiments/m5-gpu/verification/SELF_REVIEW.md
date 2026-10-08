@@ -71,3 +71,20 @@ first remote soname failure is unconfirmed because its stderr was missing.
 No GPU/model gate has passed and no automatic retry is performed. Models,
 schedule/tokenizers/splits are unchanged. CPU resource accounting includes the
 failed allocated time rather than hiding it.
+
+## Authorized v4 recovery / independent storage review
+
+The recovery addition retains all frozen model/corpus/config/tokenizer bytes.
+It uses the original v4 archive plus small transport/diagnostic scripts; the
+CPU weight recovery verifier is an example consuming the existing Transformer.
+No historical root dependency, CUDA requirement or scientific contract changes.
+New regression tests include wrong GPU, hidden remote loader failure, missing
+PASS, transfer failure, timeout cleanup, stale/unowned ownership, surviving
+endpoint, authentication unavailable, partial upload, checksum mismatch,
+known-good retention and full copy/readback. Early bootstrap/loader archive
+tests verify diagnostic preservation before Rust. Readiness gating prevents
+allocation without a verified independent Drive fixture. These are CPU mocks;
+the real GPU gate and persistent weight recovery remain unmeasured until run.
+Operational protocol and remaining exact-resume limitations are in
+provenance/RECOVERY_STORAGE.md. The real shared-client OAuth quota failure is
+preserved as an infrastructure blocker before allocation, not a storage PASS.

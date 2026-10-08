@@ -274,3 +274,25 @@ Current user decision: stop at CPU state. The additional preflight proposal was
 declined; no further GPU allocation or full training is authorized. A later
 resume must explicitly authorize a bounded new preflight, then separately approve
 measured full-run cost if that gate passes. No model-quality conclusion exists.
+
+## Authorized recovery and scoped persistent storage (2026-10-08)
+
+The user's subsequent instruction supersedes the previous stop decision for
+exactly one additional L4 correctness preflight, at most 30 minutes including
+cleanup. Full training remains locked. The scientific M5 configuration and
+bundle-v4 executable/input identity remain frozen. [RECOVERY_STORAGE.md](experiments/m5-gpu/provenance/RECOVERY_STORAGE.md)
+records the new independent transport/loader supervisor, 27-minute work deadline
+and 3-minute cleanup reserve, unchanged bundle hashes, CPU checks, storage
+protocol, failures and full-resume implementation prerequisites.
+
+The same instruction narrowly supersedes the old Drive-mount/cloud-weight-upload
+prohibition: user-authorized PackTok artifacts/weights may be backed up under
+MyDrive/PackTok, using verified immutable copies. The primary path is local
+Ubuntu-24.04 rclone; optional native Colab mounting is deferred. No unrelated
+Drive data or Ubuntu/MOOS environment is modified. A follow-up requires a real
+WSL upload/full-download/SHA-256 fixture pass before the L4 request. The initial
+shared OAuth client hit Google's project quota; dedicated client setup is
+pending. No second allocation or GPU model measurement has occurred at this
+pre-allocation record. Existing weights-only checkpoints still cannot resume
+optimizer/training state; long runs remain prohibited until complete resumable
+checkpointing is implemented, tested and a measured budget explicitly approved.

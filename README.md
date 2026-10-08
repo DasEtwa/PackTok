@@ -84,3 +84,11 @@ CPU recovery preparation is documented; the user chose to stop at CPU state.
 No further GPU work or GPU quality result is claimed.
 Design and cost record:
 [M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md), [M5_GPU_BENCHMARK.md](M5_GPU_BENCHMARK.md).
+
+The subsequent recovery task authorizes one additional L4 preflight (maximum
+30 minutes including release), after verified independent WSL→Drive persistence.
+The scientific experiment and recovery bundle v4 are reused unchanged. Current
+pre-allocation blocker: the shared rclone OAuth client hit Google's API quota;
+a dedicated Desktop OAuth client is being configured. No new GPU measurement
+or full training is claimed. Protocol and preserved checks:
+[M5 recovery and storage](experiments/m5-gpu/provenance/RECOVERY_STORAGE.md).

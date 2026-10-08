@@ -274,3 +274,25 @@ passed entirely on WSL CPU, with no CUDA operations/allocation. Evidence:
 verification/transformer-cuda-clippy-cpu.txt. CPU test totals remain 135/135 for
 root MSRV and 18/18 for the isolated model. No source/config/tokenizer/split or
 trained historical weights changed after the recorded CPU verification.
+
+## New authorized v4 recovery — pre-allocation preparation
+
+Delivery starting point remains clean `4ed7f0de96cdb90fec23903186838e5a73bb5578`,
+draft PR #5 on the existing stacked base. The user now permits exactly one
+additional NVIDIA L4 allocation, capped at 1800 seconds including cleanup,
+after a verified independent WSL Drive fixture. Historical failure/accounting
+and all four packages remain preserved. A 30-minute proxy at the historical
+1.54 CU/hour is 0.77 CU; neither future rate nor actual billing is inferred.
+
+The unchanged v4 outer/inner/source/binary hashes, bundled-loader dependencies,
+CPU reference, prepared corpus/tokenizer/mapping integrity and original mocks
+pass in `provenance/recovery-20261008/cpu-check-20261008T145301-363/`.
+The new CPU-only lifecycle/storage regression suite and root Rust 1.85/M5
+checks are kept in distinct `recovery-20261008/checks-*` directories. A real
+Drive namespace setup encountered HTTP 403 `rateLimitExceeded` for the shared
+rclone OAuth project before fixture backup verification; OAuth itself completed.
+The user is being guided through a dedicated Desktop client. No GPU was
+requested, and no CUDA/gradient/overfit/timing/VRAM/checkpoint quality claim is
+made. [RECOVERY_STORAGE.md](experiments/m5-gpu/provenance/RECOVERY_STORAGE.md)
+is the operational protocol and documents the narrow Drive-policy change,
+immutable manifest/readback contract, retained failures and exact-resume lock.

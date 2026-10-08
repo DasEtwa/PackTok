@@ -11,3 +11,6 @@
 *.safetensors.tmp
 
 bundle-*/
+
+# External orchestration bytecode, never scientific provenance.
+__pycache__/

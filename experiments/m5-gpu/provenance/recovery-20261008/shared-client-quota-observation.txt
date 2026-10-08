@@ -1,0 +1,24 @@
+Observed during the real WSL Drive setup on 2026-10-08 at 14:54:58 UTC.
+This preserves the material error fields from CLI output, not a successful backup.
+
+rclone version: 1.75.1
+OAuth browser consent: completed
+scope: drive.file
+remote: packtok-drive
+command family: rclone mkdir packtok-drive:PackTok/M5/...
+Google API: drive.googleapis.com
+HTTP status: 403
+reason: RATE_LIMIT_EXCEEDED / rateLimitExceeded
+message: Quota exceeded for quota metric 'Queries' and limit 'Previous quota: Requests per minute'
+quota_metric: drive.googleapis.com/default
+quota_limit: defaultPerMinutePerProject
+quota_limit_value: 840000
+shared OAuth consumer project_number: 202264815644
+
+Local rclone warning: shared Google Drive client_id is being retired and will
+stop working during 2026. Dedicated client_id is required for reliable use.
+Source: https://rclone.org/drive/#making-your-own-client-id
+
+No test artifact upload or full-content readback was completed.
+No L4 allocation was requested. Do not convert this into a storage PASS.
+Previously created PackTok/M5 folder skeleton is retained; nothing was deleted.
