@@ -258,3 +258,14 @@ Recovery upload is bounded at 420 s, inside the unchanged 1080 s worker /
 would exceed the old 180 s upload allowance at the first observed transfer rate.
 The v2 candidate was never allocated; the final candidate is v3 with this
 explicit transfer allowance. This changes orchestration only, not experiments.
+
+The recovery archive's CLI upload is split on local CPU into 33554432-byte chunks
+(32 MiB). The official CLI base64-encodes complete input files, so chunking bounds
+that host-memory amplification instead of creating one large JSON request. The
+remote kernel only assembles the transport parts with a 16 MiB copy buffer before
+unpacking. This is counted transfer/bootstrap overhead, not corpus preprocessing.
+All parts have local hashes, fixed zero-padded ordering and a bounded aggregate
+420-second upload inside the same total lifecycle cap. test-transfer.sh checks
+upload/order/byte identity with a local mock; no GPU is allocated by it. V3 was
+prepared but not allocated; v4 is the final recovery candidate with chunked
+transport. Earlier archives/checks/hashes remain preserved.

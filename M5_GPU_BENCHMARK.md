@@ -239,3 +239,15 @@ second allocation. The v3 candidate extends only upload to 420 s while retaining
 the global 1080 s worker and 1200 s cleanup-inclusive cap. All v2 checks/hashes
 are preserved; no research configuration changed. Exact archive/projection
 values in retry-plan.json supersede rounded prose estimates.
+
+V3 CPU candidate (source 70ecf8e29dac240d9a197a5dbcf9dd54fb248358) retained,
+never allocated. Inspection of installed official CLI contents.py lines 56–60
+confirms full-file reading/base64 encoding. Recovery v4 transfers fixed 32 MiB
+CPU-created chunks to reduce CLI memory amplification; no remote upload-size
+limit is asserted as a measured fact. Verification/transfer-cpu-1.txt checks
+mocked upload ordering and byte identity; lifecycle-cpu-11.txt preserves all
+eleven lifecycle cases. The aggregate upload is still capped at 420 s, and the
+worker/cleanup-inclusive cap is unchanged. Remote assembly is unavoidable
+transport overhead. Source/parts/archive hashes and sizes are recorded per
+candidate without overwriting earlier evidence; retry-plan-v2.json archives the
+earlier plan. There has still been only one real GPU allocation.

@@ -7,6 +7,7 @@ trap 'rm -rf -- "$fixture"' EXIT
 mkdir "$fixture/bin" "$fixture/bundle" "$fixture/logs"
 printf 'fixture\n' > "$fixture/bundle/CPU_READY"
 printf 'bundle\n' > "$fixture/bundle/packtok-m5-bundle.tar.gz"
+cp "$fixture/bundle/packtok-m5-bundle.tar.gz" "$fixture/bundle/packtok-m5-bundle.tar.gz.part000"
 sha256sum "$(realpath scripts/l4-session.sh)" > "$fixture/bundle/source.sha256"
 (cd "$fixture/bundle" && sha256sum CPU_READY packtok-m5-bundle.tar.gz > bundle.sha256)
 cat > "$fixture/bin/colab" <<'MOCK'

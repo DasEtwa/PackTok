@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../../.."
 root=experiments/m5-gpu
 bundle_name=${PACKTOK_M5_BUNDLE_NAME:-bundle}
-case "$bundle_name" in bundle) evidence_tag='';; bundle-v2|bundle-v3) evidence_tag="-${bundle_name#bundle-}";; *) echo "Unsupported bundle name" >&2; exit 2;; esac
+case "$bundle_name" in bundle) evidence_tag='';; bundle-v2|bundle-v3|bundle-v4) evidence_tag="-${bundle_name#bundle-}";; *) echo "Unsupported bundle name" >&2; exit 2;; esac
 bundle_root="$root/$bundle_name"
 test ! -e "$bundle_root"
 # Build only locally, with the already prepared compiler. No CUDA operations.
@@ -65,8 +65,10 @@ libpath="$(pwd)/$bundle/runtime:/usr/lib/wsl/lib"
 "$bundle/runtime/ld-linux-x86-64.so.2" --library-path "$libpath" "$bundle/packtok-m5" reference > "$root/verification/portable-loader-cpu${evidence_tag}.txt" 2>&1
 # Deterministic tar metadata; the source commit and file checksums stay explicit.
 tar --sort=name --mtime='UTC 2026-10-08' --owner=0 --group=0 --numeric-owner -C "$bundle_root" -cf - packtok-m5 | gzip -n > "$bundle_root/packtok-m5-bundle.tar.gz"
+split -b 33554432 -d -a 3 "$bundle_root/packtok-m5-bundle.tar.gz" "$bundle_root/packtok-m5-bundle.tar.gz.part"
+wc -c "$bundle_root/"*.part??? > "$root/provenance/bundle-chunk-sizes${evidence_tag}.txt"
 printf 'source_commit=%s\nmode=preflight-only\n' "$commit" > "$bundle_root/CPU_READY"
-(cd "$bundle_root" && sha256sum CPU_READY packtok-m5-bundle.tar.gz > bundle.sha256)
+(cd "$bundle_root" && sha256sum CPU_READY packtok-m5-bundle.tar.gz packtok-m5-bundle.tar.gz.part??? > bundle.sha256)
 cp "$bundle_root/bundle.sha256" "$root/provenance/bundle-SHA256SUMS${evidence_tag}.txt"
 wc -c "$bundle_root/packtok-m5-bundle.tar.gz" "$root/target-cuda/release/packtok-m5" > "$root/provenance/bundle-sizes${evidence_tag}.txt"
 printf 'CPU bundle ready; no GPU allocated.\n'

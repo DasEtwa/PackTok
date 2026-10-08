@@ -1,0 +1,16 @@
+{
+  "recovery_source_commit": "c89cefe731e8cda6cdbdc06371f818749c6ddc01",
+  "scope": "one additional L4 preflight only; not full training",
+  "requires_user_retry_authorization": true,
+  "runtime_hard_limit_seconds": 1200,
+  "supervised_worker_limit_seconds": 1080,
+  "cleanup_reserve_seconds": 120,
+  "observed_previous_rate_cu_per_hour": 1.54,
+  "twenty_minute_rate_proxy_cu": 0.5133333333333333,
+  "balance_last_displayed_cu": 167.55,
+  "original_bundle_bytes": 37548916,
+  "recovery_bundle_bytes": 456605835,
+  "original_upload_seconds": 25,
+  "linear_transfer_proxy_seconds": 304.0073347257215,
+  "limitations": "Past observed rate and linear transfer are estimates, not future price/throughput guarantees. Full seed runtime cannot be estimated before successful CUDA timing. No actual billing charge inferred from rounded/delayed balance."
+}
