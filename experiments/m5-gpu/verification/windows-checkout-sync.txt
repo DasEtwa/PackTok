@@ -1,0 +1,9 @@
+The clean Windows UI checkout was moved to m5-gpu-transformer and synchronized
+using native Ubuntu-24.04 Git with core.autocrlf=true. One later fast-forward
+failed on a pre-existing empty index.lock (mtime 2026-10-08 12:40:01 UTC).
+No Windows or WSL Git process remained during verification; exclusive file open
+succeeded. The stale zero-byte lock was preserved, not deleted, at
+C:\Users\DasEtwa\AppData\Local\Temp\packtok-m5-stale-index-lock-20261008.
+The fast-forward then succeeded and Windows status was clean. Native source
+checkout was already committed/pushed; no user changes were overwritten.
+This is delivery metadata only, after user CPU-stop decision; no GPU allocation.
