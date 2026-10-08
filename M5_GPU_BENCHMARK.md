@@ -130,3 +130,22 @@ Raw upstream licenses/notices, CLI help and verification logs contain original
 CRLF/trailing whitespace. The first staged whitespace check is preserved in
 verification/precommit-raw-whitespace.txt. Scoped Git attributes preserve these
 raw evidence bytes and exempt their whitespace; source/docs retain normal checks.
+
+## Frozen preflight package
+
+CPU implementation/source commit: `a464e12cb27f447f51978cb5855e460859e32542`.
+Draft stacked PR: [#5](https://github.com/DasEtwa/PackTok/pull/5), base
+`m4-factorization-ablation`; not merged. The CUDA binary was compiled entirely
+on local WSL CPU and passed the bundled-loader CPU reference check. Source and
+prepared inputs are frozen by bundle-input-SHA256SUMS.txt, bundle-SHA256SUMS.txt
+and frozen-source.json inside the archive. Sizes and portable runtime versions/
+notices are retained. The elapsed CPU-preparation wall interval (including user
+wait/storage recovery, not active CPU time) is cpu-preparation-duration.json.
+
+Planned GPU-only work: CUDA initialization/reference, identical primary A/C
+initialization, eighteen updates per variant with sixteen timed, TRAIN-prefix
+scoring, fixed tiny overfit, safetensors write and fresh CUDA reload. No held-out
+quality run or full training is authorized. Provisioning/upload/unpack/library
+resolution/download are unavoidable session overhead; no remote ordinary
+installation or Rust/nvcc compilation is planned. The wrapper caps the phase
+and cleans up the owned L4 before local analysis.
