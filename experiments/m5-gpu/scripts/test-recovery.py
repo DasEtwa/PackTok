@@ -27,25 +27,38 @@ drive = module('drive-backup')
 remote = module('remote-recovery')
 
 FAKE_COLAB = '''#!/usr/bin/env python3
-import os,json,sys,time,shutil
+import os,json,sys,time,shutil,signal,subprocess
 from pathlib import Path
 r=Path(os.environ['MOCK_ROOT']); args=sys.argv[1:]; op=args[0]
 with (r/'calls').open('a') as f: f.write(' '.join(args)+'\\n')
 mode=os.environ.get('MOCK_MODE','pass')
+with (r/'events.jsonl').open('a') as f: f.write(json.dumps(dict(op=op,pid=os.getpid(),pgid=os.getpgrp(),sid=os.getsid(0),epoch=time.time()))+'\\n')
+def signalled(signum,frame):
+ with (r/'signals.jsonl').open('a') as f: f.write(json.dumps(dict(pid=os.getpid(),signal=signum,epoch=time.time()))+'\\n')
+ sys.exit(128+signum)
+signal.signal(signal.SIGTERM,signalled);signal.signal(signal.SIGINT,signalled)
 if op=='version': print('Version: 0.7.4')
 elif op=='usage': print('Current balance: 100.00 compute units\\nUsage rate: 1.54/hr\\nActive assignments: 1')
 elif op=='sessions':
  print('[LIV] unrelated | Hardware: L4 | Variant: GPU')
+ if (r/'swapped').exists(): print('[packtok-m5] alien | Hardware: L4 | Variant: GPU')
  if (r/'active').exists(): print('[?] fixture | Hardware: L4 | Variant: GPU' if mode=='leak' else '[packtok-m5] fixture | Hardware: L4 | Variant: GPU')
 elif op=='new':
  assert args==['new','-s','packtok-m5','--gpu','L4']; (r/'active').touch()
+ if mode=='unknown': sys.exit(7)
 elif op=='status': print('[packtok-m5] fixture | Hardware: '+('T4' if mode=='hardware' else 'L4')+' | Variant: GPU')
 elif op=='upload':
  if mode=='upload': sys.exit(8)
 elif op=='exec':
+ (r/'exec-pid.json').write_text(json.dumps(dict(pid=os.getpid(),pgid=os.getpgrp(),sid=os.getsid(0),epoch=time.time())))
+ if mode=='orphan':
+  child=subprocess.Popen(['/usr/bin/sleep','600']); (r/'descendant-pid.txt').write_text(str(child.pid))
+ time.sleep(float(os.environ.get('MOCK_EXEC_SECONDS','0')))
  if mode=='timeout': time.sleep(10)
  if mode=='exec': sys.exit(7)
 elif op=='download':
+ if mode=='swapped': (r/'swapped').touch()
+ if mode=='missing': sys.exit(0)
  if mode=='download': sys.exit(6)
  shutil.copyfile(r/('failure.tar.gz' if mode=='loader' else 'nopass.tar.gz' if mode=='nopass' else 'pass.tar.gz'),args[4])
 elif op=='stop':
@@ -113,11 +126,38 @@ class Lifecycle(unittest.TestCase):
         self.assertNotEqual(p2.returncode,0)
         self.assertEqual(calls2.count('new -s'),1)
 
+    def test_transport_success_without_archive_fails(self):
+        p, calls = self.invoke('missing')
+        self.assertNotEqual(p.returncode, 0)
+        self.assertFalse((self.base/'active').exists())
+        self.assertTrue(next((self.root/'provenance').glob('*/result-missing.txt')).exists())
+
+    def test_success_reaps_transport_descendants(self):
+        p, calls = self.invoke('orphan')
+        self.assertEqual(p.returncode, 0, p.stdout+p.stderr)
+        pid = int((self.base/'descendant-pid.txt').read_text())
+        status = Path(f'/proc/{pid}/stat')
+        self.assertTrue(not status.exists() or status.read_text().split()[2] == 'Z')
+
     def test_wrong_hardware(self):
         p,calls=self.invoke('hardware')
         self.assertNotEqual(p.returncode,0)
         self.assertNotIn('exec -s',calls)
         self.assertIn('stop -s packtok-m5',calls)
+
+    def test_reassigned_alias_is_not_stopped(self):
+        p, calls = self.invoke('swapped')
+        self.assertNotEqual(p.returncode, 0)
+        self.assertNotIn('stop -s', calls)
+        self.assertTrue((self.base/'active').exists())
+        self.assertTrue((self.root/'bundle-v4/recovery-owned.json').exists())
+        self.assertTrue(next((self.root/'provenance').glob('*/release-refused-0.txt')).exists())
+
+    def test_unknown_allocation_endpoint_is_not_stopped(self):
+        p, calls = self.invoke('unknown')
+        self.assertNotEqual(p.returncode, 0)
+        self.assertNotIn('stop -s', calls)
+        self.assertTrue((self.root/'bundle-v4/recovery-owned.json').exists())
 
     def test_storage_readiness_missing_blocks_allocation(self):
         (self.root/'provenance/recovery-20261008/PREFLIGHT_READY.json').unlink()

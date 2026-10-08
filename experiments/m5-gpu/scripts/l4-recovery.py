@@ -49,21 +49,42 @@ class Supervisor:
         if limit <= 0:
             raise TimeoutError('Supervised work deadline reached')
         start = time.monotonic()
+        started_utc = utc()
         rc = None
+        pid = None
+        termination = None
         with (self.run / (stage + '.txt')).open('xb') as output:
             self.child = subprocess.Popen(args, stdout=output, stderr=subprocess.STDOUT,
                                           cwd=self.root.parent.parent, start_new_session=True)
+            pid = self.child.pid
             try:
                 rc = self.child.wait(timeout=limit)
-            except BaseException:
-                # An unresponsive transport must not prevent the parent from releasing.
-                os.killpg(self.child.pid, signal.SIGKILL)
-                self.child.wait(timeout=5)
+            except BaseException as error:
+                termination = type(error).__name__
                 raise
             finally:
+                # Own process groups only. Reap descendants even when their CLI
+                # leader reports success; a surviving transport is never useful.
+                try:
+                    os.killpg(pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
+                try:
+                    self.child.wait(timeout=1)
+                except subprocess.TimeoutExpired:
+                    pass
+                try:
+                    os.killpg(pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                self.child.wait(timeout=5)
+                if rc is None:
+                    rc = self.child.returncode
                 self.child = None
                 with (self.run / 'stages.jsonl').open('a') as f:
-                    f.write(json.dumps(dict(stage=stage, end_utc=utc(), seconds=time.monotonic()-start, exit=rc)) + '\n')
+                    f.write(json.dumps(dict(stage=stage, start_utc=started_utc, end_utc=utc(),
+                                            pid=pid, pgid=pid, termination=termination,
+                                            seconds=time.monotonic()-start, exit=rc)) + '\n')
         if rc:
             raise RuntimeError(f'{stage}: CLI/process exit {rc}')
         return (self.run / (stage + '.txt')).read_text()
@@ -74,10 +95,20 @@ class Supervisor:
         # User-facing commentary/analysis happens only after these release queries.
         for attempt in range(2):
             try:
+                rows = inventory(self.command(f'sessions-before-stop-{attempt}',
+                                               ['colab', 'sessions'], 20, cleanup=True))
+                aliases = [endpoint for alias, endpoint, hardware in rows if alias == 'packtok-m5']
+                if aliases and (self.endpoint is None or aliases != [self.endpoint]):
+                    raise RuntimeError('Release refused: alias ownership is unknown or changed')
+                if self.endpoint and any(endpoint == self.endpoint and alias != 'packtok-m5'
+                                         for alias, endpoint, hardware in rows):
+                    raise RuntimeError('Release refused: owned endpoint has another alias')
+                if not aliases:
+                    break
                 self.command(f'stop-{attempt}', ['colab', 'stop', '-s', 'packtok-m5'], 25, cleanup=True)
                 break
-            except Exception:
-                pass
+            except Exception as error:
+                (self.run / f'release-refused-{attempt}.txt').write_text(str(error)+'\n')
         for attempt in range(2):
             try:
                 rows = inventory(self.command(f'sessions-after-{attempt}', ['colab', 'sessions'], 20, cleanup=True))
@@ -101,7 +132,8 @@ class Supervisor:
             self.marker.rename(self.run / 'ownership-released.json')
         else:
             (self.run / 'URGENT-RELEASE-UNCONFIRMED.txt').write_text(
-                'colab status -s packtok-m5; colab stop -s packtok-m5; colab sessions; colab usage\n')
+                'Inspect colab sessions/status and the recorded ownership endpoint before any stop.\n'
+                'Unknown/reassigned aliases must not be stopped automatically. Manual owner verification required.\n')
 
     def execute(self):
         # Pre-existing ownership is audited before any fresh request.
@@ -191,8 +223,11 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--preflight', action='store_true', required=True)
     p.add_argument('--root', default='experiments/m5-gpu')
+    p.add_argument('--work-seconds', type=int, default=1620)
     args = p.parse_args()
-    s = Supervisor(args.root)
+    if not 1 <= args.work_seconds <= 1620:
+        p.error('work deadline must be 1..1620 seconds; cleanup reserve cannot be extended')
+    s = Supervisor(args.root, work_seconds=args.work_seconds)
     def interrupted(signum, frame):
         raise InterruptedError(f'handled signal {signum}')
     signal.signal(signal.SIGTERM, interrupted)
@@ -217,12 +252,16 @@ def main():
         s.release()
     if s.allocated and not s.released:
         rc = 1
-    if s.released and (s.run/'results.tar.gz').exists():
+    if s.released and not (s.run/'results.tar.gz').is_file():
+        (s.run/'result-missing.txt').write_text('Remote archive missing; transport exit zero is insufficient.\n')
+        rc = 1
+    if s.released and (s.run/'results.tar.gz').is_file():
         try:
             s.command('result-verification', ['python3', str(s.root/'scripts/check-preflight.py'),
                                             str(s.run/'results.tar.gz')], 30, cleanup=True)
         except Exception:
             rc = 1
+    (s.run/'supervisor-process.json').write_text(json.dumps(dict(pid=os.getpid(), pgid=os.getpgrp(), end_utc=utc(), work_seconds=s.work_seconds))+'\n')
     (s.run/'exit-code.txt').write_text(str(rc)+'\n')
     print(f'Lifecycle logs: {s.run}; release_verified={s.released}; exit={rc}')
     return rc

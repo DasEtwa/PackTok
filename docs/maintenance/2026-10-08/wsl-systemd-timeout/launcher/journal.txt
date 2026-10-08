@@ -1,0 +1,5 @@
+2026-10-08T19:17:04.084273+02:00 DESKTOP-FGES40P systemd[413]: Started packtok-supervised-20261008T171704-539.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight --root /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-systemd-timeout/experiments/m5-gpu --work-seconds 20.
+2026-10-08T19:17:07.285254+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171704-539.service: Service reached runtime time limit. Stopping.
+2026-10-08T19:17:07.634754+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171704-539.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-08T19:17:07.634884+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171704-539.service: Failed with result 'timeout'.
+2026-10-08T19:17:07.635203+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171704-539.service: Consumed 1.474s CPU time, 14.6M memory peak, 0B memory swap peak.

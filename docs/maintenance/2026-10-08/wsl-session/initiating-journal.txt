@@ -1,0 +1,5 @@
+2026-10-08T19:04:48.693239+02:00 DESKTOP-FGES40P systemd[1]: Started packtok-maintenance-disposable-session.service - /bin/bash /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/disposable-session.sh.
+2026-10-08T19:04:48.696393+02:00 DESKTOP-FGES40P (bash)[1634]: PAM unable to dlopen(pam_lastlog.so): /usr/lib/security/pam_lastlog.so: cannot open shared object file: No such file or directory
+2026-10-08T19:04:48.696426+02:00 DESKTOP-FGES40P (bash)[1634]: PAM adding faulty module: pam_lastlog.so
+2026-10-08T19:04:48.701335+02:00 DESKTOP-FGES40P (bash)[1634]: pam_unix(login:session): session opened for user dasetwa(uid=1000) by dasetwa(uid=0)
+2026-10-08T19:05:38.364129+02:00 DESKTOP-FGES40P systemd[1]: packtok-maintenance-disposable-session.service: Deactivated successfully.

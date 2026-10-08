@@ -1,0 +1,43 @@
+[
+  {
+    "case": "wsl-normal",
+    "worker_seconds": 310.09092636599996,
+    "supervised_request_to_release_seconds": 312.2134609222412,
+    "service_result": "Result=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nActiveState=inactive\nSubState=dead\n",
+    "cleanup_verified": true,
+    "real_gpu_calls": 0,
+    "descendant_pid": 1504,
+    "descendant_alive": false
+  },
+  {
+    "case": "wsl-session",
+    "worker_seconds": 310.12157981000007,
+    "supervised_request_to_release_seconds": 311.84412384033203,
+    "service_result": "Result=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nActiveState=inactive\nSubState=dead\n",
+    "cleanup_verified": true,
+    "real_gpu_calls": 0,
+    "disposable_session_terminated": "Only verified disposable logind session 11 was terminated.",
+    "descendant_pid": 1721,
+    "descendant_alive": false
+  },
+  {
+    "case": "wsl-interrupt",
+    "worker_seconds": 20.071889645999818,
+    "supervised_request_to_release_seconds": 21.64183211326599,
+    "service_result": "Result=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nActiveState=inactive\nSubState=dead\n",
+    "cleanup_verified": true,
+    "real_gpu_calls": 0,
+    "descendant_pid": 525,
+    "descendant_alive": false
+  },
+  {
+    "case": "wsl-clientkill-v2",
+    "worker_seconds": 20.097423428000013,
+    "supervised_request_to_release_seconds": 21.510714054107666,
+    "service_result": "Result=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nActiveState=inactive\nSubState=dead\n",
+    "cleanup_verified": true,
+    "real_gpu_calls": 0,
+    "descendant_pid": 585,
+    "descendant_alive": false
+  }
+]

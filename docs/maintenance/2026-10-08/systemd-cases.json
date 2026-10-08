@@ -1,0 +1,42 @@
+[
+  {
+    "case": "wsl-timeout",
+    "exit": 1,
+    "seconds": 3.6049906650000025,
+    "cleanup_verified": true,
+    "recover_exit": 1,
+    "gpu_calls": 0
+  },
+  {
+    "case": "wsl-systemd-timeout",
+    "exit": 1,
+    "seconds": 3.9519261229999927,
+    "cleanup_verified": true,
+    "recover_exit": 1,
+    "gpu_calls": 0
+  },
+  {
+    "case": "wsl-signal",
+    "exit": 1,
+    "seconds": 2.210518577000016,
+    "cleanup_verified": true,
+    "recover_exit": 1,
+    "gpu_calls": 0
+  },
+  {
+    "case": "wsl-failure",
+    "exit": 1,
+    "seconds": 2.3516637589999903,
+    "cleanup_verified": true,
+    "recover_exit": 1,
+    "gpu_calls": 0
+  },
+  {
+    "case": "wsl-leak",
+    "exit": 1,
+    "seconds": 2.5453792799999917,
+    "cleanup_verified": false,
+    "recover_exit": 1,
+    "gpu_calls": 0
+  }
+]

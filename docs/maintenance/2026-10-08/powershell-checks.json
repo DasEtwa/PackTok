@@ -1,0 +1,13 @@
+{
+  "syntax": "PASS",
+  "negative_cases": [
+    {
+      "receipt": "C:\\Users\\DasEtwa\\PackTok\\target\\maintenance-host\\final-review.json",
+      "rejected_before_dispatch": true
+    },
+    {
+      "receipt": "C:\\Users\\DasEtwa\\PackTok\\target\\maintenance-host\\missing-parent\\receipt.json",
+      "rejected_before_dispatch": true
+    }
+  ]
+}

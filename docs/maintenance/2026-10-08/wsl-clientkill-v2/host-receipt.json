@@ -1,0 +1,10 @@
+{
+  "max_stop_seconds": 5,
+  "mode": "cpu-mock",
+  "fixture": "/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-clientkill-v2",
+  "host_client_pid": 4724,
+  "start_utc": "2026-10-08T17:17:03.2153065Z",
+  "initiating_pid": 8664,
+  "runtime_seconds": 60,
+  "distribution": "Ubuntu-24.04"
+}

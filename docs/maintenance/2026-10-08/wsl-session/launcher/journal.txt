@@ -1,0 +1,2 @@
+2026-10-08T19:04:49.661291+02:00 DESKTOP-FGES40P systemd[402]: Started packtok-supervised-20261008T170449-1686.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight --root /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-session/experiments/m5-gpu --work-seconds 340.
+2026-10-08T19:10:01.853947+02:00 DESKTOP-FGES40P systemd[402]: packtok-supervised-20261008T170449-1686.service: Consumed 2.163s CPU time, 256.0K memory peak, 0B memory swap peak.

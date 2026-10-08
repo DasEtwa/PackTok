@@ -1,0 +1,5 @@
+COMMAND ["systemctl", "--user", "list-units", "packtok-supervised*", "--all", "--no-legend"]
+COMMAND ["loginctl", "show-user", "dasetwa", "-p", "Linger", "-p", "State", "-p", "Sessions"]
+State=active
+Sessions=3
+Linger=no

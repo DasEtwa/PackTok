@@ -1,0 +1,14 @@
+packtok-m5-bundle.tar.gz.part000: OK
+packtok-m5-bundle.tar.gz.part001: OK
+packtok-m5-bundle.tar.gz.part002: OK
+packtok-m5-bundle.tar.gz.part003: OK
+packtok-m5-bundle.tar.gz.part004: OK
+packtok-m5-bundle.tar.gz.part005: OK
+packtok-m5-bundle.tar.gz.part006: OK
+packtok-m5-bundle.tar.gz.part007: OK
+packtok-m5-bundle.tar.gz.part008: OK
+packtok-m5-bundle.tar.gz.part009: OK
+packtok-m5-bundle.tar.gz.part010: OK
+packtok-m5-bundle.tar.gz.part011: OK
+packtok-m5-bundle.tar.gz.part012: OK
+packtok-m5-bundle.tar.gz.part013: OK
