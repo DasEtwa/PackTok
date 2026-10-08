@@ -1,0 +1,237 @@
+COMMAND: cargo +1.85.0 test --workspace
+START: 2026-10-08T16:58:01.937112+00:00
+warning: corrupt incremental compilation artifact found at `/home/dasetwa/projects/PackTok/target/debug/incremental/packtok-21egn2l5z3cwn/s-hn0nu9u2wm-04oty4v-working/dep-graph.bin`. This file will automatically be ignored and deleted. If you see this message repeatedly or can provoke it without manually manipulating the compiler's artifacts, please file an issue. The incremental compilation system relies on hardlinks and filesystem locks behaving correctly, and may not deal well with OS crashes, so whatever information you can provide about your filesystem or other state may be very relevant.
+
+warning: could not load dep-graph from `/home/dasetwa/projects/PackTok/target/debug/incremental/packtok-1yjf0orsmqsst/s-hn0nu9u8ub-1hawr5b-working/dep-graph.bin`: memory map must have a non-zero length
+
+warning: `packtok-cli` (bin "packtok") generated 1 warning
+warning: `packtok-cli` (bin "packtok" test) generated 1 warning
+warning: corrupt incremental compilation artifact found at `/home/dasetwa/projects/PackTok/target/debug/incremental/packtok_bench-37lwnz1ap0bae/s-hn0nu9u8di-1eicd6r-working/dep-graph.bin`. This file will automatically be ignored and deleted. If you see this message repeatedly or can provoke it without manually manipulating the compiler's artifacts, please file an issue. The incremental compilation system relies on hardlinks and filesystem locks behaving correctly, and may not deal well with OS crashes, so whatever information you can provide about your filesystem or other state may be very relevant.
+
+warning: `packtok-bench` (bin "packtok-bench" test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running unittests src/main.rs (target/debug/deps/packtok_bench-204f2dc9ad033340)
+
+running 10 tests
+test m3::tests::corpus_split_guard_rejects_shared_raw_passages ... ok
+test m4::tests::normalization_uses_target_bytes_not_token_count_or_whole_file ... ok
+test m4_corpus::tests::gutenberg_extraction_preserves_body_bytes ... ok
+test metrics::tests::process_peak_memory_is_available_and_nonzero ... ok
+test metrics::tests::sequence_quantiles_use_nearest_rank_and_include_empty_records ... ok
+test m4_corpus::tests::overlap_guard_checks_long_partial_copy_not_file_equality ... ok
+test m3::tests::flat_and_factorized_generation_decode_with_the_prompt_bytes_intact ... ok
+test tests::benchmark_training_and_evaluation_passages_are_separate ... ok
+test m4::tests::joined_path_provenance_preserves_frozen_m3_tokenizer_bytes ... ok
+test m4::tests::all_four_mapping_embeddings_reproducibility_overfit_and_generation ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.26s
+
+     Running unittests src/main.rs (target/debug/deps/packtok-fab2f5da0a1818d1)
+
+running 8 tests
+test tests::bounded_artifact_reader_accepts_legacy_and_rejects_truncation ... ok
+test tests::byte_inspection_escapes_controls_and_invalid_utf8 ... ok
+test tests::parses_full_width_pack_and_local_ids ... ok
+test tests::decoded_output_is_exact_for_text_empty_and_invalid_utf8 ... ok
+test tests::rejects_malformed_token_ids ... ok
+test tests::parses_m2_pack_names_and_local_ids ... ok
+test tests::artifact_reads_stop_at_size_limit ... ok
+test tests::failed_artifact_write_is_removed_and_existing_files_are_preserved ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/cli_decode.rs (target/debug/deps/cli_decode-3cb46177e2df3f98)
+
+running 4 tests
+test non_unicode_arguments_return_a_clear_error_instead_of_panicking ... ok
+test factorized_cli_routes_encodes_decodes_and_inspects_pack_tokens ... ok
+test byte_fallback_stdout_preserves_exact_bytes_and_encode_round_trips ... ok
+test bpe_stdout_preserves_exact_text_raw_bytes_and_empty_output ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running unittests src/lib.rs (target/debug/deps/packtok_core-ba942524b1597e63)
+
+running 6 tests
+test tests::default_registry_has_exactly_one_byte_fallback_pack ... ok
+test tests::registry_rejects_duplicate_pack_ids_and_names ... ok
+test tests::registry_rejects_special_token_collisions_and_invalid_references ... ok
+test tests::registry_requires_exact_byte_fallback_address_space ... ok
+test tests::registry_sorts_arbitrary_packs_deterministically ... ok
+test tests::token_id_order_is_pack_then_local_id ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/packtok_format-9baf16d59379decf)
+
+running 22 tests
+test tests::artifact_round_trip_preserves_semantics ... ok
+test tests::artifact_creation_rejects_empty_metadata_key ... ok
+test tests::bpe_model_rejects_duplicate_pairs_and_expansion_length_overflow ... ok
+test tests::byte_fallback_artifact_has_stable_header ... ok
+test tests::factorized_model_rejects_unknown_router_pack_parent_pair_and_expansion_errors ... ok
+test tests::parser_rejects_invalid_special_token_references ... ok
+test tests::parser_rejects_malformed_pack_definitions ... ok
+test tests::parser_rejects_noncanonical_metadata_order ... ok
+test tests::serialization_is_deterministic_for_equivalent_input_order ... ok
+test tests::parser_rejects_invalid_utf8_in_pack_metadata ... ok
+test tests::malformed_artifacts_fail_clearly ... ok
+test tests::token_expansion_limit_accepts_boundary_and_rejects_compact_bombs ... ok
+test tests::version_three_parser_rejects_unknown_router_symbol_tags_and_noncanonical_pack_order ... ok
+test tests::version_three_rejects_special_tokens_and_mismatched_local_counts ... ok
+test tests::version_three_round_trip_is_deterministic_and_keeps_v1_v2_paths ... ok
+test tests::version_two_round_trip_is_deterministic_and_version_one_is_preserved ... ok
+test tests::version_two_rejects_invalid_merge_references_and_truncation ... ok
+test tests::version_three_writer_enforces_the_reader_artifact_size_limit ... ok
+test tests::version_one_constructor_rejects_oversized_artifact ... ok
+test tests::constructors_reject_metadata_beyond_reader_limit_in_both_versions ... ok
+test tests::constructor_rejects_special_tokens_beyond_reader_limit ... ok
+test tests::metadata_at_reader_limit_round_trips_in_both_versions ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
+
+     Running unittests src/lib.rs (target/debug/deps/packtok_model-d6e9310f05a453e3)
+
+running 37 tests
+test mapping::tests::malformed_mapping_rejects_duplicate_gap_and_oversized_domains ... ok
+test tests::changing_future_inputs_does_not_change_prior_hidden_states ... ok
+test tests::factorized_accuracy_reports_pack_and_gold_pack_local_heads ... ok
+test tests::cross_entropy_is_invariant_to_large_common_offsets ... ok
+test mapping::tests::flatten_is_bijective_and_canonical ... ok
+test tests::failed_adam_update_preserves_weights_moments_and_step ... ok
+test tests::compact_header_cannot_allocate_a_large_unrepresented_model ... ok
+test tests::byte_fallback_rows_are_valid_factorized_targets ... ok
+test tests::generation_validation_rejects_factorized_pack_and_local_ids ... ok
+test tests::generation_validation_rejects_flat_ids_in_entire_prompt ... ok
+test mapping::tests::balanced_artifact_only_deterministic_and_roundtrip ... ok
+test tests::adam_update_changes_parameters ... ok
+test tests::invalid_pack_and_local_targets_are_rejected ... ok
+test tests::greedy_generation_is_bounded_and_keeps_prompt ... ok
+test tests::generation_validation_keeps_valid_long_and_zero_continuation_behavior ... ok
+test tests::loss_only_matches_training_loss_on_extreme_and_invalid_logits ... ok
+test tests::flat_and_factorized_cross_entropy_are_finite_and_teacher_forced ... ok
+test tests::inference_rejects_overflowing_logits_in_both_heads ... ok
+test tests::generation_validation_preserves_empty_overflow_and_length_errors ... ok
+test tests::mac_estimate_validates_input_ids_and_reports_example_index ... ok
+test tests::permuted_factorized_inputs_validate_bijection_and_joint_loss ... ok
+test tests::overflowing_adam_moment_is_rejected_without_changing_state ... ok
+test tests::output_shapes_follow_flat_and_factorized_vocabularies ... ok
+test tests::malformed_model_bytes_and_nonfinite_parameters_are_rejected ... ok
+test tests::parameter_partitions_sum_to_total_for_both_heads ... ok
+test tests::same_local_id_in_different_packs_uses_distinct_embedding_rows ... ok
+test tests::serialization_constructors_reject_unwritable_boundary_layouts ... ok
+test tests::same_seed_initializes_identical_parameters ... ok
+test tests::serialization_size_checked_arithmetic_rejects_overflow ... ok
+test tests::serialization_size_boundary_includes_flat_and_factorized_headers ... ok
+test tests::model_serialization_round_trip_preserves_greedy_ids ... ok
+test tests::training_mac_estimate_is_positive_and_changes_with_active_head ... ok
+test tests::serialization_preserves_historical_m3_m4_model_bytes ... ok
+test tests::serialization_constructor_success_obeys_complete_size_rule ... ok
+test tests::recurrent_and_both_head_gradients_match_finite_differences ... ok
+test tests::factorized_model_overfits_the_same_raw_sequence_and_learns_packs ... ok
+test tests::flat_model_overfits_a_small_repeated_sequence ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.28s
+
+     Running unittests src/lib.rs (target/debug/deps/packtok_packs-45cc4c27fe79ecbf)
+
+running 3 tests
+test tests::lexical_v1_is_deterministic_and_covers_only_character_boundaries ... ok
+test tests::lexical_v1_routes_all_non_letters_ascii_to_structure ... ok
+test tests::lexical_v1_coalesces_ascii_classes_and_keeps_unicode_scalars_whole ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/packtok_tokenizer-10efdcf948cbdf63)
+
+running 18 tests
+test bpe::tests::uniform_detection_checks_block_boundaries_and_remainder ... ok
+test bpe::tests::measured_paths_preserve_results_and_count_owned_buffers ... ok
+test factorized::tests::decoder_rejects_unknown_pack_and_local_id_gap ... ok
+test factorized::tests::artifact_runtime_records_temporary_and_pack_metrics ... ok
+test factorized::tests::identical_bytes_in_distinct_pack_tokens_decode_without_ambiguity ... ok
+test factorized::tests::mixed_pack_unicode_and_raw_byte_round_trips_are_exact ... ok
+test factorized::tests::runtime_encoder_does_not_merge_across_pack_boundaries ... ok
+test factorized::tests::shared_byte_and_overlapping_local_ids_are_distinct_tokens ... ok
+test tests::byte_fallback_round_trips_required_text_classes ... ok
+test tests::decoder_rejects_unknown_packs_and_out_of_range_local_ids ... ok
+test tests::deterministic_token_ids_are_byte_values_in_one_pack ... ok
+test tests::every_ascii_byte_and_nul_round_trip ... ok
+test tests::raw_byte_decode_preserves_invalid_utf8_while_text_decode_rejects_it ... ok
+test tests::tokenizer_uses_registry_fallback_id ... ok
+test bpe::tests::event_decoder_rejects_invalid_ids_and_handles_deep_merge_chains ... ok
+test bpe::tests::dense_repetition_detection_handles_periods_and_exception_positions ... ok
+test factorized::tests::symbol_workspace_is_bounded_by_longest_routed_span ... ok
+test tests::deterministic_generated_unicode_round_trips ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/packtok_train-7340c6f887862724)
+
+running 27 tests
+test factorized::tests::config_defaults_and_validation_preserve_shared_byte_budget ... ok
+test factorized::tests::global_candidate_ties_use_pack_id_then_symbol_refs ... ok
+test factorized::tests::malformed_non_utf8_corpus_is_rejected_without_normalization ... ok
+test factorized::tests::pack_local_ids_overlap_without_aliasing_and_byte_fallback_is_shared ... ok
+test factorized::tests::reference_routing_agrees_with_shared_router_and_preserves_char_boundaries ... ok
+test factorized::tests::routing_boundaries_prevent_cross_pack_merges ... ok
+test tests::artifact_preserves_training_provenance_and_encoding ... ok
+test tests::default_configuration_and_ranges_are_explicit ... ok
+test tests::empty_directory_and_missing_corpus_are_explicit ... ok
+test tests::directory_files_are_sorted_and_joined_without_separators ... ok
+test tests::known_tiny_corpus_has_expected_merge_sequence ... ok
+test tests::literal_backslash_and_nested_paths_remain_distinct_and_deterministic ... ok
+test tests::pair_frequency_ties_choose_lexicographically_smallest_ids ... ok
+test tests::corpus_reads_multiple_chunks_and_preserves_raw_bytes ... ok
+test tests::repeated_pair_counts_overlap_but_replacement_is_non_overlapping ... ok
+test tests::runtime_encoder_matches_reference_and_round_trips_bytes ... ok
+test factorized::tests::production_and_reference_match_on_deterministic_unicode_inputs ... ok
+test factorized::tests::runtime_ids_match_reference_and_round_trip_exactly ... ok
+test tests::training_twice_produces_identical_artifact_bytes ... ok
+test tests::zero_merge_training_and_empty_inputs_keep_all_byte_ids ... ok
+test tests::production_trainer_matches_slow_reference_on_deterministic_inputs ... ok
+test tests::event_encoder_matches_reference_across_models_and_all_short_inputs ... ok
+test tests::dense_nonuniform_runtime_paths_match_reference_and_round_trip ... ok
+test factorized::tests::artifact_training_twice_is_byte_identical_and_records_pack_stats ... ok
+test tests::event_encoder_matches_reference_on_fixture_prefixes_and_arbitrary_bytes ... ok
+test tests::training_skips_merges_above_the_token_expansion_bound ... ok
+test tests::training_considers_other_pairs_after_a_dominant_pair_reaches_the_bound ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.74s
+
+   Doc-tests packtok_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_format
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_packs
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_tokenizer
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_train
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

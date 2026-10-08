@@ -1,0 +1,11 @@
+{
+  "remote": "packtok-drive-own",
+  "backend": "drive",
+  "scope": "drive.file",
+  "client_matches_protected_desktop_json": true,
+  "refresh_token_present": true,
+  "config_mode": "0o600",
+  "config_directory_mode": "0o700",
+  "client_mode": "0o600",
+  "client_directory_mode": "0o700"
+}

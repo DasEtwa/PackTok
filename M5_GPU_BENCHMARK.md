@@ -328,3 +328,28 @@ the corrected foreground WSL service lifetime passed a 40-second CPU test.
 The frozen model, tokenizer, corpus and bundle v4 bytes are unchanged. Final
 run duration/CU projections cannot be computed without synchronized CUDA
 throughput. Current state: **M5_BLOCKED — INFRASTRUCTURE**.
+
+## CPU-only maintenance evidence (2026-10-08)
+
+Maintenance preserved the two historical allocation requests and all failure/
+accounting records above. It made **zero new real GPU allocations**. Read-only
+inventory/usage again showed no active assignment. CPU workspace gates pass on
+Windows and native Ubuntu-24.04, including Linux root MSRV 1.85; the isolated M5
+runner's CPU tests pass. Historical model/tokenizer byte identities are checked
+without regenerating old outcomes.
+
+Two actual-supervisor mock executions exceeded five minutes (310.090926 and
+310.121580 seconds), with verified release, inactive service, empty cgroup and no
+owned descendant. The second survived termination of its verified disposable
+PAM/logind session. A separate active-worker test killed only its initiating
+PowerShell helper; its independent WSL client completed safely. Short systemd
+timeout/signal/failure/cleanup regressions pass. Exact timing scope, final-review
+reruns and limitations are in the
+[maintenance report](docs/maintenance/2026-10-08/REPORT.md); these observations
+do not establish 30-minute GPU reliability or CUDA success.
+
+Scoped Drive upload/readback and a new manifest-based restore pass for a harmless
+55-byte fixture. OAuth remains Testing and its seven-day authorization limit is
+unresolved pending explicit publishing approval and Branding readiness. The
+loader/CUDA gate, real model checkpoint and measured Transformer comparison remain
+unverified. No training/compute budget is inferred from CPU simulation.

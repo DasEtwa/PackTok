@@ -1,0 +1,3 @@
+COMMAND: cargo +stable build --locked --release --manifest-path experiments/m5-gpu/Cargo.toml --example recover_weights
+START: 2026-10-08T16:58:30.201280+00:00
+    Finished `release` profile [optimized] target(s) in 0.09s

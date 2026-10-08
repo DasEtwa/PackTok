@@ -1,0 +1,468 @@
+{
+  "status": "ALL_92_PRESERVED",
+  "reconciliation": "Only these verified paths may be restored from the preservation commit before fast-forward",
+  "verified_paths": [
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/allocation.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/bundle-integrity.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/cli-version.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/exit-code.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/failure.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/lifecycle-accounting.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/ownership-released.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/sessions-after-0.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/sessions-before.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/source-integrity.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/stages.jsonl",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/stop-0.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/usage-after.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/l4-recovery-abafb6d8f2eb4e70a6ff3c3447bf917f/usage-before.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/RECOVERY_STORAGE.md",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/active-launcher-path.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-check-20261008T160850-494/bundle-v4-verification-file-backed.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-check-20261008T160850-494/lifecycle-original.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-check-20261008T160850-494/prepared-verification.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-check-20261008T160850-494/transfer-original.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T155824-559/drive-fixture-readback/backup-status.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T155824-559/drive-fixture-result.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T155824-559/fixture-metadata.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T155824-559/rclone-environment.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T155824-559/storage-fixture.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/drive-fixture-readback/backup-status.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/drive-fixture-readback/completion-readback.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/drive-fixture-readback/completion.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/drive-fixture-readback/storage-fixture.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/drive-fixture-result.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/fixture-metadata.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/m5-clippy.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/m5-fmt.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/m5-tests.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/rclone-environment.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/recover-weights-build.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/recovery-regressions.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/root-build-msrv.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/root-clippy-msrv.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/root-fmt-msrv.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/root-test-msrv.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/storage-fixture.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-path.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/DELIVERY_BACKUP.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/durable-delivery-20261008/drive-readback/backup-status.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/durable-delivery-20261008/drive-readback/completion-readback.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/durable-delivery-20261008/drive-readback/completion.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/durable-delivery-20261008/metadata.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/FINAL_LOCAL_VERIFICATION.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161030-362/launcher.sha256",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161030-362/pid.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161030-362/supervisor.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161407-347/launcher.sha256",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161407-347/service-start.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161407-347/supervisor.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/launcher-20261008T161407-347/unit.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/local-service-events.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/frozen-hashes-after.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/regressions.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/sessions-final.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/source-commit.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/usage-final.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162040-345/worktree.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/archive-metadata.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/archive.sha256",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/drive-archive-readback/backup-status.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/drive-archive-readback/completion-readback.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/drive-archive-readback/completion.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/drive-archive-result.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/frozen-hashes-after.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/native-diff-check.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/one-request-consumed.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/regressions.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/sessions-final.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/source-commit.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/usage-final.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/worktree.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/PREFLIGHT_READY.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/RECOVERY_OUTCOME.json",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/wsl-lifetime-20261008T161852-470/after.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/wsl-lifetime-20261008T161852-470/during.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/wsl-lifetime-20261008T161852-470/launcher-verified.sha256",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/wsl-lifetime-20261008T161852-470/result.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/recovery-20261008/wsl-lifetime-20261008T161852-470/waited-service.txt",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/check-wsl-supervision.sh",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/launch-l4-recovery.sh",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/preserve-recovery-outcome.sh",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/receive-drive-client.py",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "experiments/m5-gpu/verification/SELF_REVIEW.md",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "M5_GPU_BENCHMARK.md",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "M5_GPU_TRANSFORMER.md",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    },
+    {
+      "path": "README.md",
+      "preserved_git_blob_match": true,
+      "raw_byte_match": true
+    }
+  ],
+  "preservation_commit": "1412541f40f6d11a2fdb674c2d832318473cac0e",
+  "windows_head": "74d91332d6612b1e0b8a74734409319a1b542861"
+}

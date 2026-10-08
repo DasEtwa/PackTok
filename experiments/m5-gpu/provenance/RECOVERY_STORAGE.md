@@ -278,3 +278,32 @@ the current authorization must be renewed normally or the app made production
 ready before relying on unattended access beyond that lifetime. No OAuth
 bypass or additional scope is introduced. Current experiment state:
 **M5_BLOCKED — INFRASTRUCTURE**.
+
+## Dedicated maintenance follow-up (2026-10-08)
+
+All previous failure and delivery receipts above remain preserved. The initial
+uncommitted recovery work was published as
+1412541f40f6d11a2fdb674c2d832318473cac0e before maintenance changes. No additional
+GPU was allocated, and the consumed v4 marker remains in place.
+
+New [storage/recovery guidance](../../../docs/development/storage-and-recovery.md)
+documents protected-config migration, same-account/client reauthorization and
+manifest/size/SHA-256 verification from a fresh destination. An explicit external
+artifact manifest links known completion receipts without secrets. Nine restore
+regressions and a real fresh-destination fixture restore pass. This is byte
+recovery evidence, not optimizer/RNG/cursor resume or a real GPU model checkpoint.
+
+Google Cloud inspection confirms consent branding PackTok, Desktop client
+PackTok WSL Backup and External/Testing audience. Data Access now declares exactly
+the already-used non-sensitive drive.file scope. The selected longevity route is
+Production with the same client/account, followed by fresh consent; publishing
+is pending explicit user approval and the console's Branding prerequisite.
+Token revocation, inactivity and issuance limits still apply after Production.
+See [OAuth decision and procedures](../../../docs/development/oauth.md).
+
+The independent bounded host-client launcher replaces reliance on an ephemeral
+invoking tool. Five-minute actual-entrypoint tests, disposable session termination,
+initiating helper interruption, deadlines/signals and safe ownership refusal are
+documented in the [maintenance report](../../../docs/maintenance/2026-10-08/REPORT.md).
+No linger or permanent background setting was installed. M5 remains blocked at
+the real CUDA preflight; CPU/Drive passes do not authorize a new allocation.

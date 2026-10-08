@@ -1,0 +1,9 @@
+{
+  "staged_paths": 1112,
+  "generated_mock_inputs_staged": 0,
+  "credential_candidates": 0,
+  "large_files_over_5MiB": 0,
+  "whitespace_check": "PASS",
+  "source_scripts": 7,
+  "evidence_policy": "Keep per-stage systemd/supervisor records; exclude fake binaries, archives and build/mock inputs"
+}

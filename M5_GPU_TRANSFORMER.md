@@ -317,3 +317,23 @@ No global WSL lifetime setting or other distribution was changed. GPU
 correctness, throughput, memory and persistent model-weight recovery remain
 unmeasured. Full training remains locked. Current state:
 **M5_BLOCKED — INFRASTRUCTURE**.
+
+## Dedicated repository maintenance (2026-10-08; no GPU allocation)
+
+The outstanding recovery evidence is preserved in commit
+1412541f40f6d11a2fdb674c2d832318473cac0e. Later maintenance keeps this scientific
+protocol, original failure records, corpus/mapping/artifact paths and v4 attempt
+marker unchanged. The supported host launcher now owns an independent bounded
+WSL client; actual-entrypoint CPU tests cover five-minute execution, disposable
+PAM-session termination, initiating-client interruption, deadlines, signals and
+owned descendant cleanup. Release rechecks endpoint ownership before a stop and
+refuses unknown/reassigned aliases. No CPU mock is GPU evidence.
+
+The same drive.file/Desktop-client workflow remains active, with verified
+readback and manifest-based fresh-destination restore. OAuth is still
+External/Testing; Production publication needs explicit user approval and the
+console's Branding prerequisite. No broader scope or permanent WSL setting was
+introduced. See the [maintenance report](docs/maintenance/2026-10-08/REPORT.md),
+[WSL design](docs/development/gpu-colab.md) and
+[OAuth decision](docs/development/oauth.md). M5 GPU preflight remains incomplete;
+the next allocation is a separately authorized task, not an automatic retry.

@@ -1,0 +1,177 @@
+{
+  "initial_files": 785,
+  "byte_preserved": 773,
+  "expected_existing_edits": [
+    {
+      "path": ".gitattributes",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": ".gitignore",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "CHANGELOG.md",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "M5_GPU_BENCHMARK.md",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "M5_GPU_TRANSFORMER.md",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "README.md",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "STRUCTURE.md",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "experiments/m5-gpu/provenance/RECOVERY_STORAGE.md",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/check-wsl-supervision.sh",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/l4-recovery.py",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/launch-l4-recovery.sh",
+      "expected_maintenance_edit": true
+    },
+    {
+      "path": "experiments/m5-gpu/scripts/test-recovery.py",
+      "expected_maintenance_edit": true
+    }
+  ],
+  "unexpected_historical_changes": [],
+  "credential_candidates": [],
+  "staged_credential_candidates": [],
+  "files_over_5MiB": [],
+  "relative_links_checked": 355,
+  "missing_links": [
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./IDEA.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./STRUCTURE.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./README.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./STRUCTURE.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./IDEA.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./STRUCTURE.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./AGENTS.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-AGENTS.md",
+      "target": "./README.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-IDEA.md",
+      "target": "./README.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-IDEA.md",
+      "target": "./STRUCTURE.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-IDEA.md",
+      "target": "./AGENTS.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-README.md",
+      "target": "./IDEA.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-README.md",
+      "target": "./STRUCTURE.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-README.md",
+      "target": "./AGENTS.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-STRUCTURE.md",
+      "target": "./README.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-STRUCTURE.md",
+      "target": "./IDEA.md",
+      "active": false
+    },
+    {
+      "document": "experiments/m4-ablation/provenance/BRAIN-STRUCTURE.md",
+      "target": "./AGENTS.md",
+      "active": false
+    },
+    {
+      "document": "experiments/pre-gpu-fix-20261007/PRE_GPU_CODE_REVIEW-before.md",
+      "target": "experiments/pre-gpu-review-20261007/verification-summary.txt",
+      "active": false
+    },
+    {
+      "document": "experiments/pre-gpu-fix-20261007/PRE_GPU_CODE_REVIEW-before.md",
+      "target": "experiments/pre-gpu-review-20261007/probe.rs",
+      "active": false
+    },
+    {
+      "document": "experiments/pre-gpu-fix-20261007/PRE_GPU_CODE_REVIEW-before.md",
+      "target": "experiments/pre-gpu-review-20261007/probe-windows.txt",
+      "active": false
+    },
+    {
+      "document": "experiments/pre-gpu-fix-20261007/PRE_GPU_CODE_REVIEW-before.md",
+      "target": "experiments/pre-gpu-review-20261007/probe-linux.txt",
+      "active": false
+    },
+    {
+      "document": "experiments/pre-gpu-fix-20261007/PRE_GPU_CODE_REVIEW-before.md",
+      "target": "experiments/pre-gpu-review-20261007/verify-linux.sh",
+      "active": false
+    }
+  ],
+  "active_missing_links": [],
+  "runtime_web_byte_changes": [],
+  "runtime_web_git_state_unchanged": true,
+  "real_gpu_allocations_this_task": 0,
+  "security_scan_limit": "Heuristic pattern scan; no credential values output",
+  "historical_text_policy": "Exact native bytes; initial checkout EOL differences remain documented"
+}
