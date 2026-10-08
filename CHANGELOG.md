@@ -1,5 +1,22 @@
 # Milestone history
 
+## Repository maintenance and infrastructure hardening (2026-10-08)
+
+- Preserve and publish outstanding M5 recovery evidence before maintenance.
+- Add documentation navigation and an English research-oriented README, with
+  one authoritative results synthesis retaining negative/inconclusive findings.
+- Keep historical experiment paths, artifacts, raw logs and scientific sources
+  unchanged; verify CPU gates and historical compatibility on Linux and Windows.
+- Supervise WSL work through an independent bounded host client; test the actual
+  entrypoint for five-minute lifetimes, disposable session termination, initiating
+  client interruption, deadlines, signals, ownership and descendant cleanup.
+- Retain scoped Drive backups, add manifest-verified restore and document OAuth
+  longevity. External/Testing publication remains pending explicit user approval
+  and Branding readiness; scope stays drive.file.
+- No M6, new GPU allocation, PR merge, destructive cleanup or history rewrite.
+  [Maintenance report](docs/maintenance/2026-10-08/REPORT.md) and
+  [targeted review](docs/maintenance/2026-10-08/SELF_REVIEW.md).
+
 ## Final pre-GPU correctness pass (2026-10-07)
 
 - Enforce complete model-parameter-v1 artifact size during construction,

@@ -1,102 +1,151 @@
-# PackTok
+# PackTok — Experimental Factorized Tokenization in Rust
 
-Rust-first tokenizer research implementation. **Current milestone: M4,
-factorization ablation and larger-corpus validation (completed).** M1 remains
-the flat byte-level BPE control; lexical-v1 and M0–M3 results are frozen.
-M4 isolates token sequence from output head on a fixed sourced mixture. It finds
-a small tokenizer-sequence benefit at equal updates and an output-head budget
-benefit through additional training; it does not establish general superiority.
+PackTok investigates whether structured token spaces and pack-based representations
+can improve language-model efficiency, quality or extensibility. It provides a
+deterministic byte-level BPE control and an experimental tokenizer with independent
+pack vocabularies. Every byte remains representable, with exact encode/decode
+round-trips and no implicit normalization.
 
-**Canonical project map:** [DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)
+The project is a research implementation. Current results support narrow,
+corpus-dependent observations; they do not establish general superiority over
+flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence.
+**M5 GPU preflight is incomplete and remains blocked by infrastructure.** There
+is no completed Transformer quality comparison. This maintenance work is not M6.
 
-## Train and inspect
+## Research motivation
 
-M3 model architecture and experiment results: [M3_MODEL.md](M3_MODEL.md) and
-[M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
-The [current performance and mathematics audit](PERFORMANCE_MATH_AUDIT.md)
-records prioritized fixes, numerical gradient checks, and preserved before/after
-measurements. Run its focused probes with `cargo run --release -p packtok-bench -- audit`.
+A conventional flat BPE vocabulary assigns every learned token one global ID.
+PackTok explores a representation in which a token has a `(pack_id, local_id)`
+pair. Specialized vocabularies share a complete raw-byte fallback. Pack names
+are metadata; grammatical categories are not built into the core.
 
-The [final pre-GPU correctness pass](PRE_GPU_CODE_REVIEW.md) records the two
-model-contract fixes, scoped regressions and CPU baseline freeze verification.
-Tokenizer behavior, M3/M4 results and artifact encodings remain frozen.
+The implemented `lexical-v1` experiment routes spans using context-free byte
+rules into TEXT, NUMBER and STRUCTURE packs. It is not a contextual POS tagger.
+Tokenizer representation and model prediction are separate: pack/local IDs can
+be mapped bijectively to global model IDs for a flat output head, or consumed by
+a model that predicts a pack and then a local token. A pack representation does
+not require a factorized model head.
+
+## Architecture
 
 ```text
-cargo run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/m1.packtok
-cargo run --release -p packtok-cli -- inspect target/m1.packtok
-cargo run --release -p packtok-cli -- encode --artifact target/m1.packtok "Sämtliche Häuser"
-cargo run --release -p packtok-cli -- inspect-token target/m1.packtok 256
-cargo run --release -p packtok-cli -- validate target/m1.packtok
-cargo run --release -p packtok-bench
-cargo run --release -p packtok-bench -- m3 final-run-label
-
-cargo run --release -p packtok-cli -- route "Hello 123!"
-cargo run --release -p packtok-cli -- train-packs fixtures/benchmark/train.txt target/m2.packtok
-cargo run --release -p packtok-cli -- inspect-pack target/m2.packtok TEXT
-cargo run --release -p packtok-cli -- inspect-token target/m2.packtok TEXT:0
-cargo run --release -p packtok-cli -- inspect-merges target/m2.packtok TEXT
-cargo run --release -p packtok-cli -- stats target/m2.packtok
+raw bytes
+   ├── M1 flat BPE ──────────────── global token IDs ── flat model output
+   └── M2 lexical-v1 + local BPE ── pack/local IDs
+                                      ├── bijective global mapping ── flat output
+                                      └── pack/local embeddings and output heads
 ```
 
-## Workspace
+The Rust workspace separates contracts (`packtok-core`), serialization
+(`packtok-format`), routing (`packtok-packs`), training (`packtok-train`),
+encoding/decoding (`packtok-tokenizer`), CPU models (`packtok-model`), CLI
+(`packtok-cli`) and evaluation (`packtok-bench`). Training is not a tokenizer
+runtime dependency. There is no separate implemented `packtok-runtime` crate.
 
-- `packtok-core` — token and pack contracts.
-- `packtok-packs` — shared router contract and the experimental `lexical-v1` policy.
-- `packtok-format` — deterministic version-1, version-2, and version-3 artifacts.
-- `packtok-tokenizer` — M0 byte fallback, frozen M1 BPE, and M2 factorized runtime.
-- `packtok-train` — deterministic flat and factorized BPE training, corpus handling, and reference oracles.
-- `packtok-model` — small CPU-only causal model with flat and factorized heads for M3.
-- `packtok-cli` — training, encoding, decoding, validation, and inspection commands.
-- `packtok-bench` — tokenizer benchmarks and the M3 tiny-model comparison harness.
+The M5 Transformer lives in its own Cargo workspace under `experiments/m5-gpu/`.
+Its pinned Candle dependency and optional CUDA feature do not enter the root
+workspace. Python is confined to external transport and maintenance tools; Rust
+owns tokenizer/model training, runtime and benchmark computation. See
+[architecture overview](docs/architecture/overview.md) and [STRUCTURE.md](STRUCTURE.md).
 
-Details: [M2 factorized design](M2_PACKS.md) · [M2 benchmark](M2_PACKS_BENCHMARK.md) ·
-[M1 BPE control](M1_BPE.md) · [artifact format](FORMAT.md) ·
-[benchmark results](M1_BPE_BENCHMARK.md) · [milestone history](CHANGELOG.md) ·
-[M0 historical benchmark](M0_BENCHMARK_BASELINE.md).
-The [performance and correctness audit](M1_PERFORMANCE_AUDIT.md) records fixes,
-repeated throughput measurements, and the encoder's temporary-memory trade-off.
-The [PR #1 review fixes and current results](M1_REVIEW_FIXES.md) cover all seven
-Codex findings and the separate synthetic training/evaluation split. Older
-benchmark reports retain their original training-like observations.
-The [post-fix audit](POST_FIX_AUDIT.md) records three additional fixes, verification
-of the previous findings, and extended repetition benchmarks.
+## Research milestones
 
-Verify with `cargo fmt --all --check`,
-`cargo clippy --workspace --all-targets --all-features -- -D warnings`,
-`cargo test --workspace`, and `cargo build --release --workspace`.
+| Milestone | Implemented question and current evidence |
+|---|---|
+| [M0](docs/milestones/M0.md) | Token/pack contracts, versioned artifacts, deterministic byte fallback and exact round-trips. |
+| [M1](docs/milestones/M1.md) | Flat byte-level BPE control with reference paths, held-out tokenizer benchmarks and audits. |
+| [M2](docs/milestones/M2.md) | Independent lexical-v1 pack vocabularies with shared bytes; compression and runtime trade-offs against M1. |
+| [M3](docs/milestones/M3.md) | Tiny CPU RNN comparison changes both tokenizer and output head; a synthetic-corpus signal motivated ablation. |
+| [M4](docs/milestones/M4.md) | A/B/C/D ablation on a fixed sourced mixture. The tokenizer contributed a small tested quality difference. Generic output factorization did not improve same-schedule quality; reduced analytical output work allowed more updates under matched MACs. A strong favorable interaction was not established. |
+| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. CPU preparation passes; GPU correctness, throughput, VRAM and quality remain unverified after preserved infrastructure failures. |
 
-## M4 factorization ablation
+[Research results](docs/research/results.md) explains each hypothesis, experiment,
+measurement, interpretation and limitation, with links to original reports and
+raw records. Negative and inconclusive evidence is retained.
 
-M4 adds the unchanged-tokenizer A/B/C/D CPU experiment and fixed sourced mixed
-corpus. Design: [M4_ABLATION.md](M4_ABLATION.md); durable results:
-[M4_ABLATION_BENCHMARK.md](M4_ABLATION_BENCHMARK.md). Run preparation with
-`cargo run --release -p packtok-bench -- m4-corpus` and comparisons with
-`cargo run --release -p packtok-bench -- m4 tiny|large unique-label`.
+## Getting started
 
-## M5 GPU Transformer probe (in preparation)
+Install Rust using the [official rustup instructions](https://rustup.rs/).
+The root workspace declares Rust **1.85** as its minimum version and uses edition
+2024. From the repository root:
 
-M5 compares only A (M1 flat tokens) and C (canonical flattened M2 tokens) through
-the same Transformer and flat head. It preserves the CPU freeze and runs all
-preparation in dedicated Ubuntu-24.04 WSL. CUDA/Colab work is isolated and L4
-allocation is limited to an explicitly bounded correctness preflight before
-separate budget approval. The first runtime preflight failed before Rust started; the L4 was released.
-CPU recovery preparation is documented; the user chose to stop at CPU state.
-No further GPU work or GPU quality result is claimed.
-Design and cost record:
-[M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md), [M5_GPU_BENCHMARK.md](M5_GPU_BENCHMARK.md).
+```sh
+rustup toolchain install 1.85.0 --profile minimal --component rustfmt --component clippy
+cargo +1.85.0 build --release --workspace
+cargo +1.85.0 test --workspace
+cargo +1.85.0 run --release -p packtok-cli -- help
+```
 
-The subsequent recovery task authorizes one additional L4 preflight (maximum
-30 minutes including release), after verified independent WSL→Drive persistence.
-The scientific experiment and recovery bundle v4 are reused unchanged. Current
-pre-allocation blocker: the shared rclone OAuth client hit Google's API quota;
-a dedicated Desktop OAuth client is being configured. No new GPU measurement
-or full training is claimed. Protocol and preserved checks:
-[M5 recovery and storage](experiments/m5-gpu/provenance/RECOVERY_STORAGE.md).
+A byte-fallback example requires no trained artifact:
 
-The dedicated OAuth client and real WSL→Drive copy/download/SHA-256 fixture
-are now verified. The one authorized recovery L4 request was interrupted by
-local WSL service lifetime management before CUDA diagnostics or Rust ran.
-Cleanup stopped the owned session and verified no active allocation. A
-corrected foreground WSL launcher passed a CPU lifetime test; no second GPU
-request or full training was performed. M5 remains **M5_BLOCKED — INFRASTRUCTURE**;
-GPU correctness and persistent model-weight recovery still require evidence.
+```sh
+cargo +1.85.0 run --release -p packtok-cli -- encode "Hi"
+# 65535:72 65535:105
+cargo +1.85.0 run --release -p packtok-cli -- decode "65535:72 65535:105"
+# Hi (raw decoded bytes, without an added newline)
+```
+
+Train and inspect a small BPE artifact (choose a new output path; existing files
+are protected from overwrite):
+
+```sh
+cargo +1.85.0 run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/example.packtok
+cargo +1.85.0 run --release -p packtok-cli -- inspect target/example.packtok
+cargo +1.85.0 run --release -p packtok-cli -- encode --artifact target/example.packtok "Sämtliche Häuser"
+cargo +1.85.0 run --release -p packtok-cli -- validate target/example.packtok
+```
+
+Decode the emitted numeric sequence using `decode --artifact target/example.packtok
+"<IDs from encode>"`. For pack training and inspection, see the
+[tested CLI examples](docs/development/building.md). Example verification is
+recorded in [maintenance evidence](docs/maintenance/2026-10-08/REPORT.md).
+
+## Reproducibility
+
+Protocols fix raw corpus/splits, normalization policy, deterministic tie-breaking,
+IDs, seeds, model configurations and measurement boundaries. Byte-normalized loss
+is used for cross-tokenizer quality; token perplexity is not interchangeable
+across different token sequences. Analytical MAC matching is not measured GPU
+compute or equal wall time.
+
+- [Artifact formats and compatibility](FORMAT.md)
+- [M1 held-out methodology](M1_REVIEW_FIXES.md) and [synthetic fixture provenance](fixtures/benchmark/README.md)
+- [M3 protocol](M3_MODEL.md) and [original results](M3_MODEL_BENCHMARK.md)
+- [M4 sources, splits and complete results](M4_ABLATION_BENCHMARK.md)
+- [M5 CPU provenance](experiments/m5-gpu/provenance/CPU_PREPARATION.md), [frozen protocol](M5_GPU_TRANSFORMER.md) and [failure/accounting record](M5_GPU_BENCHMARK.md)
+
+Historical experiment paths, raw sources, failed runs and numerical measurements
+remain intact. Large M5 datasets, CUDA bundles and weights stay outside Git;
+[storage and recovery](docs/development/storage-and-recovery.md) describes integrity
+manifests, protected credentials and the limits of weights-only checkpoints.
+
+## Documentation
+
+Start with the [documentation index](docs/README.md), [results overview](docs/research/results.md),
+[building](docs/development/building.md), [testing](docs/development/testing.md) or
+[WSL/Colab operations](docs/development/gpu-colab.md). The [changelog](CHANGELOG.md)
+tracks milestones. [IDEA.md](IDEA.md), [STRUCTURE.md](STRUCTURE.md) and
+[AGENTS.md](AGENTS.md) retain their canonical roles; the high-level project map is
+[DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok).
+
+## Roadmap
+
+A successful, separately authorized M5 correctness preflight and measured budget
+are prerequisites for a larger Transformer comparison. Exact training resume
+also needs optimizer, RNG and cursor state; current safetensors store weights only.
+
+Future hypotheses include improved pack routing, learned pack allocations,
+adaptive vocabulary, larger model comparisons, and specialized language or
+reasoning packs. These ideas are not implemented or proven by appearing here.
+Any new experiment must keep byte fallback, controlled comparisons and preserved
+negative results. There is no automatic GPU retry or M6 launch.
+
+## License and contributions
+
+PackTok code is licensed under [Apache-2.0](LICENSE). Retained third-party corpus
+sources keep their original notices and licensing scope; see each provenance
+record. Contributions should propose a small falsifiable experiment or a measured
+correctness/performance improvement, document relevant facts, and pass the
+[verification gates](docs/development/testing.md). Read
+[contribution guidance](docs/development/contributing.md) and [AGENTS.md](AGENTS.md)
+before changing frozen experiments.

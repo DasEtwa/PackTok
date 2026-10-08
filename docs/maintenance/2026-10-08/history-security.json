@@ -1,0 +1,6 @@
+{
+  "reachable_blobs_scanned": 707,
+  "credential_candidates": [],
+  "history_blobs_over_5MiB": [],
+  "method": "pattern scan all refs; values never output; heuristic, not proof of absence"
+}

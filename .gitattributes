@@ -19,3 +19,5 @@ experiments/pre-gpu-fix-20261007/precommit-whitespace-failure.txt whitespace=cr-
 experiments/m5-gpu/artifacts/** -text
 experiments/m5-gpu/provenance/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
 experiments/m5-gpu/verification/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
+# Maintenance raw evidence retains captured Windows/Linux bytes.
+docs/maintenance/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab

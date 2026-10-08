@@ -4,3 +4,23 @@
 
 # Local read-only historical verification build output.
 /experiments/pre-gpu-fix-20261007/target/
+
+# Protected credentials and external weights never belong in this repository.
+**/rclone.conf*
+**/client_secret*.json
+**/*oauth-client*.json
+**/.credentials/
+**/.oauth/
+*.safetensors
+*.safetensors.tmp
+/colab-session*.json
+/transfer-bundles/
+
+# Reproducible CPU mock inputs stay local; public lifecycle logs are retained.
+docs/maintenance/**/bin/
+docs/maintenance/**/experiments/
+docs/maintenance/**/*.tar.gz
+docs/maintenance/**/pass/results/
+docs/maintenance/**/failure/results/
+docs/maintenance/**/nopass/results/
+__pycache__/
