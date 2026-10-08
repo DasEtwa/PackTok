@@ -259,3 +259,18 @@ primary config, lockfile and CPU-built executable are unchanged from the first
 attempt (verification/recovery-model-byte-identity.txt). The first GPU
 attempt is finished; retry authorization and
 all full-run budget approval are still pending.
+
+## User stop at CPU state
+
+After reviewing the proposed extra bounded preflight, the user explicitly chose
+“Beim CPU-Stand stoppen”. No second GPU allocation or final seed run is
+authorized or executed. The proposal is preserved as retry-plan-before-user-stop.json;
+retry-plan.json records the decision. Recovery package/source remains available
+locally, but CUDA/runtime correctness is unverified. Status remains M5_BLOCKED
+at the GPU preflight; this is not M5_GPU_PREFLIGHT_READY or a signal result.
+
+Additional static CUDA-feature Clippy (all targets/all features, -D warnings)
+passed entirely on WSL CPU, with no CUDA operations/allocation. Evidence:
+verification/transformer-cuda-clippy-cpu.txt. CPU test totals remain 135/135 for
+root MSRV and 18/18 for the isolated model. No source/config/tokenizer/split or
+trained historical weights changed after the recorded CPU verification.

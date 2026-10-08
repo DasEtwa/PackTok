@@ -269,3 +269,8 @@ All parts have local hashes, fixed zero-padded ordering and a bounded aggregate
 upload/order/byte identity with a local mock; no GPU is allocated by it. V3 was
 prepared but not allocated; v4 is the final recovery candidate with chunked
 transport. Earlier archives/checks/hashes remain preserved.
+
+Current user decision: stop at CPU state. The additional preflight proposal was
+declined; no further GPU allocation or full training is authorized. A later
+resume must explicitly authorize a bounded new preflight, then separately approve
+measured full-run cost if that gate passes. No model-quality conclusion exists.

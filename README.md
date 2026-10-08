@@ -80,6 +80,7 @@ the same Transformer and flat head. It preserves the CPU freeze and runs all
 preparation in dedicated Ubuntu-24.04 WSL. CUDA/Colab work is isolated and L4
 allocation is limited to an explicitly bounded correctness preflight before
 separate budget approval. The first runtime preflight failed before Rust started; the L4 was released.
-CPU recovery preparation is documented and no GPU quality result is claimed.
+CPU recovery preparation is documented; the user chose to stop at CPU state.
+No further GPU work or GPU quality result is claimed.
 Design and cost record:
 [M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md), [M5_GPU_BENCHMARK.md](M5_GPU_BENCHMARK.md).
