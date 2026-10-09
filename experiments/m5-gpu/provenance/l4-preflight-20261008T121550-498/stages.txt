@@ -1,0 +1,14 @@
+2026-10-08T12:15:57Z allocation START
+2026-10-08T12:16:01Z allocation END seconds=4 exit=0
+2026-10-08T12:16:01Z status START
+2026-10-08T12:16:03Z status END seconds=2 exit=0
+2026-10-08T12:16:03Z usage-active START
+2026-10-08T12:16:04Z usage-active END seconds=1 exit=0
+2026-10-08T12:16:04Z upload START
+2026-10-08T12:16:29Z upload END seconds=25 exit=0
+2026-10-08T12:16:29Z execute START
+2026-10-08T12:16:34Z execute END seconds=5 exit=0
+2026-10-08T12:16:34Z usage-before-transfer START
+2026-10-08T12:16:35Z usage-before-transfer END seconds=1 exit=0
+2026-10-08T12:16:35Z download START
+2026-10-08T12:16:36Z download END seconds=1 exit=0

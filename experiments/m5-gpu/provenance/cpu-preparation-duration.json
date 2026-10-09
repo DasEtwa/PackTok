@@ -1,0 +1,7 @@
+{
+  "first_environment_observation": "2026-10-08T09:54:04+00:00",
+  "bundle_ready_observation": "2026-10-08T12:15:34.773498+00:00",
+  "elapsed_wall_seconds": 8490.773498,
+  "definition": "elapsed wall interval, includes interruption, storage recovery and user wait; not active CPU time",
+  "gpu_allocation_count_so_far": 0
+}

@@ -1,0 +1,14 @@
+test_corrupt_payload (__main__.Restore.test_corrupt_payload) ... ok
+test_corrupt_receipt (__main__.Restore.test_corrupt_receipt) ... ok
+test_existing_destination_preserved (__main__.Restore.test_existing_destination_preserved) ... ok
+test_incomplete_receipt (__main__.Restore.test_incomplete_receipt) ... ok
+test_oversize_rejected_before_transport (__main__.Restore.test_oversize_rejected_before_transport) ... ok
+test_path_traversal (__main__.Restore.test_path_traversal) ... ok
+test_unrelated_namespace (__main__.Restore.test_unrelated_namespace) ... ok
+test_valid_restore (__main__.Restore.test_valid_restore) ... ok
+test_wrong_receipt_identity (__main__.Restore.test_wrong_receipt_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.012s
+
+OK

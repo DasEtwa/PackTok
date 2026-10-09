@@ -1,0 +1,36 @@
+{
+  "status": "CPU_READY_FOR_ONE_AUTHORIZED_PILOT_ALLOCATION",
+  "branch": "m5-gpu-transformer",
+  "source_commit": "5e77c36ff2dd78b076677c45866971beef734f9d",
+  "package_id": "pilot-2k-v1-l4-20261009T032000Z",
+  "package_sha256": "656ae7cc5d6aeabebbadddae6bfcab9f65307ce987c5588efe7fabe7d5f767ac",
+  "binary_sha256": "c5b9794f50cadca7565c69dc4d7c5fa997b367ad40a43bc9746bc5393d9aac51",
+  "config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+  "source_diff_since_binary_commit": "none for M5 source, Cargo manifests/lock, scripts and configs; executable is byte-identical to verified v5 CUDA binary",
+  "frozen_plan_cpu_validation": "passed",
+  "package_content_sha256_validation": "passed",
+  "gpu_preparation_execution": "none",
+  "no_conflicting_owned_colab_session": true,
+  "pilot_revision": "m5-paired-pilot-2k-v1",
+  "regime": "T",
+  "variants": [
+    "A",
+    "C"
+  ],
+  "seed": 20261008,
+  "updates_each": 2000,
+  "target_positions_each": 4096000,
+  "expected_raw_target_bytes": {
+    "A": 7575564,
+    "C": 6946291
+  },
+  "identical_initial_l4_hash_from_prior_cuda_gate": {
+    "A": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+    "C": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1"
+  },
+  "user_authorized_allocation_count": 1,
+  "max_allocation_seconds": 1800,
+  "work_cutoff_seconds": 1500,
+  "cleanup_reserve_seconds": 300,
+  "drive_readback_workflow": "previous fixture readback passed; result archive will use existing drive-backup.py copy and full readback verification"
+}

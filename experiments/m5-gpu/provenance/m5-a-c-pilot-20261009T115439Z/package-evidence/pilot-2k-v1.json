@@ -1,0 +1,81 @@
+{
+  "architecture": {
+    "context": 256,
+    "ffn": 1536,
+    "heads": 6,
+    "hidden": 384,
+    "layers": 8,
+    "vocab": 512
+  },
+  "batch_size": 8,
+  "budget_match": "T: exactly equal target-token positions and update numbers for A/C; report actual raw-byte exposure separately",
+  "context": 256,
+  "evaluation": {
+    "context_policy": "existing non-overlapping context-256 evaluation; do not select hyperparameters on held-out test",
+    "final_test_only": true,
+    "validation_every_updates": 500
+  },
+  "measurements": [
+    "training loss curve",
+    "validation bits per raw byte",
+    "synchronized GPU step time",
+    "tokens per second",
+    "raw bytes per second",
+    "peak GPU memory",
+    "real wall time",
+    "compute-unit consumption"
+  ],
+  "no_gpu_execution_in_preparation": true,
+  "optimizer": {
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-08,
+    "learning_rate": 0.0003,
+    "name": "AdamW",
+    "weight_decay": 0.01
+  },
+  "paired_seeds": [
+    20261008
+  ],
+  "parameters": 14681984,
+  "prior_runtime_projection": {
+    "active_rate_cu_per_hour": 1.54,
+    "cu_proxy": 0.1557,
+    "limitations": "linear proxy only; excludes validation, checkpointing, provisioning and billing delay; not an approved or guaranteed cost",
+    "source": "historical M5 L4 smoke mean step 0.0911 s; not a measured pilot",
+    "training_only_pair_seconds": 364.4
+  },
+  "regimes": [
+    "T"
+  ],
+  "revision": "m5-paired-pilot-2k-v1",
+  "schedule": {
+    "decay": "constant",
+    "total_updates": 2000,
+    "warmup_updates": 0
+  },
+  "schema": "packtok-m5-extended-experiment-v1",
+  "scientific_inputs": {
+    "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+    "prepared_sequence_sha256": {
+      "A_test_sequence_sha256": "d82168e96a56d59cb85b521da503f3a19570ee2c072d67ebdcdf743417df1ccb",
+      "A_train_sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+      "A_validation_sequence_sha256": "34a99f414c346cffad3fa818c4911f9399384be1fcb1f37b772e0ffa1da651b3",
+      "C_test_sequence_sha256": "2f2eea0814faec257f0a494deaf795de82ea7c2178c0e52972ae860cb3a90ff7",
+      "C_train_sequence_sha256": "f558ecf674382cd7aa69980560b56718a7be69d917a1396405fa208a3b27939b",
+      "C_validation_sequence_sha256": "3d995cc1d32e8686615a4b4c400918c8ec36899dbc07ebdea4f37a0a5e753245"
+    },
+    "primary_config_sha256": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+    "tokenizer_sha256": {
+      "A": "f20cb1db1c47484bda335e9a0032de92aae96cf54265f190cf8ed23060534da1",
+      "C": "04285c24bb4181871148b64c79251273c07cda6e57812175021d75fbf8b386e6"
+    }
+  },
+  "status": "frozen-proposal-awaiting-explicit-gpu-budget-approval",
+  "target_positions_per_update": 2048,
+  "updates_per_model": 2000,
+  "variants": [
+    "A",
+    "C"
+  ]
+}

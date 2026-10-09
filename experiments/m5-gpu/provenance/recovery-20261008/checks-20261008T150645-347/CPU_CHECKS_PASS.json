@@ -1,0 +1,16 @@
+{
+  "status": "CPU_CHECKS_PASS",
+  "verified_files": {
+    "provenance/recovery-20261008/checks-20261008T150645-347/root-build-msrv.txt": "c9ef3b68d69664e1d157e575848e4f6146e26ad39b9aa75897123cb92d2ce4bd",
+    "provenance/recovery-20261008/checks-20261008T150645-347/root-test-msrv.txt": "04d5946439979d2d0d4e7ff31e36ff9df25dd85e441f4b86446508b669b6c066",
+    "provenance/recovery-20261008/checks-20261008T150645-347/m5-tests.txt": "68224d38359ea78522292d3daf61338886a267d30b06b4cb9a85527a7f48b266",
+    "provenance/recovery-20261008/checks-20261008T150645-347/m5-clippy.txt": "930acda508762e80b1f63ceb104c265560fa88d7d77813972a0ca48102875dde",
+    "provenance/recovery-20261008/checks-20261008T150645-347/root-clippy-msrv.txt": "1aa6bef404dd8ffaa73d761d688d7a65439e3e099d3856b19d60cc894141c32c",
+    "provenance/recovery-20261008/checks-20261008T150645-347/m5-fmt.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "provenance/recovery-20261008/checks-20261008T150645-347/recovery-regressions.txt": "74f0b65c29fd9c626dca34a3e5ce0680cf42efad28170bb331e521bcf48546af",
+    "provenance/recovery-20261008/checks-20261008T150645-347/recover-weights-build.txt": "f81d1a455a530f6ed9ace81deb684f57718eb678a823e68b35598bafc664b325",
+    "provenance/recovery-20261008/checks-20261008T150645-347/root-fmt-msrv.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/test-recovery.py": "c40f5ccb7a14f7a7da09cfbdfc1f66cba714a3549b1436b34fd4945245c1e4b3",
+    "examples/recover_weights.rs": "26ad1ac8d3f9432f021fe0bf9765543c7c98998bb949e6a9a5b508d7bc09b5b2"
+  }
+}

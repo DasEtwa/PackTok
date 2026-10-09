@@ -1,0 +1,6 @@
+cuda_nvcc	cuda_nvcc/linux-x86_64/cuda_nvcc-linux-x86_64-12.4.131-archive.tar.xz	7ffba1ada0e4b8c17e451ac7a60d386aa2642ecd08d71202a0b100c98bd74681	51184484
+cuda_cudart	cuda_cudart/linux-x86_64/cuda_cudart-linux-x86_64-12.4.127-archive.tar.xz	0483bff9a36e7a44465db3cd42874f6f70f019297dcf803fbefcbf58d7448c8f	1099680
+cuda_cccl	cuda_cccl/linux-x86_64/cuda_cccl-linux-x86_64-12.4.127-archive.tar.xz	e1636f27a142d24e73dfd831c54bbf5575b498fd5900648d7372fae46f824fdf	1157180
+cuda_nvrtc	cuda_nvrtc/linux-x86_64/cuda_nvrtc-linux-x86_64-12.4.127-archive.tar.xz	b5e7a984fcf05d3123684d7926e595306d31fbf99f9b19e9a0d268a02fc75827	34123316
+libcublas	libcublas/linux-x86_64/libcublas-linux-x86_64-12.4.5.8-archive.tar.xz	c267c4d2cd42065ae2c30ca41a43ddce4e0ecc5484de23f299e3c397b5506eda	468331916
+libcurand	libcurand/linux-x86_64/libcurand-linux-x86_64-10.3.5.147-archive.tar.xz	f3752abef1ffae7bc9180bd9885905e971cc9c28d7f4d5860731a012e07638a3	81720172

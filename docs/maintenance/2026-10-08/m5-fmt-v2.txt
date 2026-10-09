@@ -1,0 +1,2 @@
+COMMAND: cargo +stable fmt --manifest-path experiments/m5-gpu/Cargo.toml --all --check
+START: 2026-10-08T16:58:15.432852+00:00

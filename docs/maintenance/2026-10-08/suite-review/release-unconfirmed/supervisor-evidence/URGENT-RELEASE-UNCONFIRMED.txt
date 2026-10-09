@@ -1,0 +1,2 @@
+Inspect colab sessions/status and the recorded ownership endpoint before any stop.
+Unknown/reassigned aliases must not be stopped automatically. Manual owner verification required.

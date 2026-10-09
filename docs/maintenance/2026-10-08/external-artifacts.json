@@ -1,0 +1,49 @@
+{
+  "artifacts": [
+    {
+      "run_id": "m5-diagnostic-archive-1d532d5187284428a8b9e12ec1ee431e",
+      "artifact": "lifecycle-evidence.tar.gz",
+      "bytes": 1466,
+      "sha256": "1f38c841cd8d8450fd1f564444bef001fbe072bc5e7ef062c928654686a8cdb9",
+      "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-diagnostic-archive-1d532d5187284428a8b9e12ec1ee431e",
+      "kind": "diagnostic-archive",
+      "source_commit": "74d91332d6612b1e0b8a74734409319a1b542861",
+      "completion_sha256": "845ea99d1c0559b23e159fab5a5e6bb03472e67eaf0118cc62c5cb73ca744a65",
+      "receipt_path": "experiments/m5-gpu/provenance/recovery-20261008/outcome-20261008T162415-357/drive-archive-readback/completion.json"
+    },
+    {
+      "run_id": "m5-preflight-fixture-ff72854580914442a6b6848b428a1414",
+      "artifact": "storage-fixture.txt",
+      "bytes": 53,
+      "sha256": "5e79279a52956a9e2b16925d6b85bb0870eeaf9a26c34c70d028546a3ec35a83",
+      "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-preflight-fixture-ff72854580914442a6b6848b428a1414",
+      "kind": "preflight-fixture",
+      "source_commit": "74d91332d6612b1e0b8a74734409319a1b542861",
+      "completion_sha256": "41990d8adc128a821fe490288f1a362e6974f4aea64e2c409c5e5dac2c2b6a54",
+      "receipt_path": "experiments/m5-gpu/provenance/recovery-20261008/cpu-final-20261008T160630-344/drive-fixture-readback/completion.json"
+    },
+    {
+      "run_id": "m5-diagnostic-archive-d13ce7c8b62f44c3a2fb9e31666a6e64",
+      "artifact": "delivery-evidence.tar.gz",
+      "bytes": 48881,
+      "sha256": "cb2639c0109f90ae069cc34c45a6ac4f78d39347bb6683385160f23d17a055c5",
+      "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-diagnostic-archive-d13ce7c8b62f44c3a2fb9e31666a6e64",
+      "kind": "diagnostic-archive",
+      "source_commit": "74d91332d6612b1e0b8a74734409319a1b542861",
+      "completion_sha256": "a81dcce834509bbfb6af9dad44e594cf407454030627f2eb9d9339e4d433627b",
+      "receipt_path": "experiments/m5-gpu/provenance/recovery-20261008/durable-delivery-20261008/drive-readback/completion.json"
+    },
+    {
+      "run_id": "m5-preflight-fixture-e607586553f945d08024abed4d789c1d",
+      "artifact": "storage-maintenance-fixture.txt",
+      "bytes": 55,
+      "sha256": "0fa58bed48e2f8e42c99ce6e374bf9cb616d416d3ce66819757b77a3c0ce9a1c",
+      "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-preflight-fixture-e607586553f945d08024abed4d789c1d",
+      "kind": "preflight-fixture",
+      "source_commit": "1412541f40f6d11a2fdb674c2d832318473cac0e",
+      "completion_sha256": "c4644089f52f0c810d3abb293be1e1040d46438839b080a9484bf661092e3f20",
+      "receipt_path": "docs/maintenance/2026-10-08/drive-maintenance-readback/completion.json"
+    }
+  ],
+  "secrets_included": false
+}

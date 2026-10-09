@@ -1,0 +1,2 @@
+name, driver_version, memory.total [MiB], memory.free [MiB]
+NVIDIA L4, 580.82.07, 23034 MiB, 22564 MiB

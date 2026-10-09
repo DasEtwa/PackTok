@@ -1,0 +1,7 @@
+Running as unit: packtok-supervised-20261008T172542-584.service; invocation ID: 599e9e1dd0244538a370216cf37dc3f5
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 1.841s
+CPU time consumed: 1.424s
+Memory peak: 256.0K
+Memory swap peak: 0B

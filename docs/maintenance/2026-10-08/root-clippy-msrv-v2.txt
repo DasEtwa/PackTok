@@ -1,0 +1,3 @@
+COMMAND: cargo +1.85.0 clippy --workspace --all-targets --all-features -- -D warnings
+START: 2026-10-08T16:58:01.219168+00:00
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s

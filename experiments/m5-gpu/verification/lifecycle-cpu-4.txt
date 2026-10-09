@@ -1,0 +1,9 @@
+PASS cleanup case=none exit=0
+PASS cleanup case=upload exit=8
+PASS cleanup case=exec exit=7
+PASS cleanup case=download exit=1
+PASS cleanup case=hardware exit=1
+PASS unowned alias untouched
+PASS stale owned session released
+PASS unapproved full training rejected before API call
+PASS handled interruption cleanup exit=143

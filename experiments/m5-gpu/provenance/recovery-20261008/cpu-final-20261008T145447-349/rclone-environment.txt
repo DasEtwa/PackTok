@@ -1,0 +1,14 @@
+Thu Oct  8 14:54:47 UTC 2026
+rclone v1.75.1
+- os/version: ubuntu 24.04 (64 bit)
+- os/kernel: 6.18.40.1-microsoft-standard-WSL2 (x86_64)
+- os/type: linux
+- os/arch: amd64
+- go/version: go1.26.8
+- go/linking: static
+- go/tags: none
+rclone configuration permissions=600
+rclone directory permissions=700
+packtok-drive: drive 
+982b5aa772841168f8e380f139e9e787b2a105403e32b94da8676a0e1c0a13ab  /home/dasetwa/.local/share/packtok-rclone/rclone-v1.75.1-linux-amd64.zip
+f66d8c1d552ad90296a11bc8b46d56a7fa5da1a7fa05e7ca522d95df92c4a4c0  /home/dasetwa/.local/bin/rclone

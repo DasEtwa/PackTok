@@ -1,0 +1,17 @@
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/Cargo.lock: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/Cargo.toml: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/configs/primary.json: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/acquire.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-phase.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-session.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/make-bundle.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/prepare-cuda.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/remote-bridge.py: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/remote.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/test-lifecycle.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/corpus.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/data.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/lib.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/main.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/model.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/runner.rs: OK

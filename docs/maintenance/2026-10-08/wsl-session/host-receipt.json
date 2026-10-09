@@ -1,0 +1,10 @@
+﻿{
+    "fixture":  "/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-session",
+    "distribution":  "Ubuntu-24.04",
+    "initiating_pid":  9712,
+    "start_utc":  "2026-10-08T17:04:49.3644154Z",
+    "max_stop_seconds":  5,
+    "runtime_seconds":  360,
+    "mode":  "cpu-mock",
+    "host_client_pid":  14880
+}

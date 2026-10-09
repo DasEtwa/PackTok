@@ -1,0 +1,1 @@
+[packtok-m5] gpu-l4-s-kkb-ass1a1-15byfppau2u9m | Hardware: L4 | Shape: Standard | Variant: GPU | Status: IDLE

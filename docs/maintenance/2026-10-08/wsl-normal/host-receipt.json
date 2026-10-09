@@ -1,0 +1,10 @@
+{
+  "distribution": "Ubuntu-24.04",
+  "fixture": "/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal",
+  "host_client_pid": 16028,
+  "initiating_pid": 6924,
+  "max_stop_seconds": 5,
+  "start_utc": "2026-10-08T17:03:32.3424395Z",
+  "runtime_seconds": 360,
+  "mode": "cpu-mock"
+}

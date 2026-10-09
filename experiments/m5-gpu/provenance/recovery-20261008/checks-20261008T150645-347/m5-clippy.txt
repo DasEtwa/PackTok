@@ -1,0 +1,2 @@
+    Checking packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.28s

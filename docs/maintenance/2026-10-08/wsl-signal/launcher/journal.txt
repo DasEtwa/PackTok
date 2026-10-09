@@ -1,0 +1,5 @@
+2026-10-08T19:17:08.124172+02:00 DESKTOP-FGES40P systemd[413]: Started packtok-supervised-20261008T171708-605.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight --root /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-signal/experiments/m5-gpu --work-seconds 20.
+2026-10-08T19:17:09.642619+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171708-605.service: Sent signal SIGTERM to main process 615 (python3) on client request.
+2026-10-08T19:17:09.984154+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171708-605.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-08T19:17:09.984306+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171708-605.service: Failed with result 'exit-code'.
+2026-10-08T19:17:09.984621+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171708-605.service: Consumed 1.419s CPU time, 14.7M memory peak, 0B memory swap peak.

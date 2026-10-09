@@ -1,0 +1,6 @@
+Result=timeout
+ExecMainCode=1
+ExecMainStatus=1
+ControlGroup=
+ActiveState=failed
+SubState=failed

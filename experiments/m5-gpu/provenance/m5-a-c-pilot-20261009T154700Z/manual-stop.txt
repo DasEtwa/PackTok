@@ -1,0 +1,7 @@
+Manual release of the owned Colab alias after the remote result archive was safely downloaded.
+Command: colab stop -s packtok-m5
+Command exit code: 0
+Output:
+[colab] Stopping session 'packtok-m5'...
+[colab] Session terminated.
+Follow-up verification: release-verified-after-manual-stop.txt and usage-after-confirmed-release.txt.

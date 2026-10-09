@@ -1,0 +1,5 @@
+UTC=2026-10-08T10:48:46.2917195Z
+export_sha256=1FAB43A9628B3930BBF87F06ADC68638C9FCD69BB9DF9E7F9C9ECABB5DFC7870
+export_seconds=39.8429851
+direct_copy_unverified=source_VHD_locked_after_terminate
+move_seconds=42.9130136

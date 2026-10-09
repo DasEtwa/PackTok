@@ -1,0 +1,31 @@
+{
+  "attempt": "20261009T134013Z",
+  "drive_folder": "https://drive.google.com/drive/folders/1EuzQtRgySXPD053ZXnXgxNXy2UsFMJuo",
+  "archive": {
+    "name": "results.tar.gz",
+    "bytes": 161437114,
+    "sha256": "3029e36a2eb993e6a620def53ef4b21703d14508f392b4aff6bd1f2d35b892a8"
+  },
+  "parts": [
+    {
+      "name": "m5-a-c-pilot-evidence-20261009T134013Z-part000",
+      "drive_file_id": "117--HOC0NSAFHXw5VBuDGJd9nCV1MbTh",
+      "drive_url": "https://drive.google.com/file/d/117--HOC0NSAFHXw5VBuDGJd9nCV1MbTh/view?usp=drivesdk",
+      "bytes": 83886080,
+      "sha256": "02c608c5246d1464656b7bc00f92802fc9961e802bdb8b2c249f4e2628678308",
+      "full_readback": "PASS"
+    },
+    {
+      "name": "m5-a-c-pilot-evidence-20261009T134013Z-part001",
+      "drive_file_id": "14a4cBPklLL_PcKcvk74cMlu5ejBnt8GI",
+      "drive_url": "https://drive.google.com/file/d/14a4cBPklLL_PcKcvk74cMlu5ejBnt8GI/view?usp=drivesdk",
+      "bytes": 77551034,
+      "sha256": "9bc5cbde177fbf37a98598b7444411cf628d3acdb27b23524a03972d1f22d184",
+      "full_readback": "PASS"
+    }
+  ],
+  "reassembled_readback_sha256": "3029e36a2eb993e6a620def53ef4b21703d14508f392b4aff6bd1f2d35b892a8",
+  "archive_readback": "PASS; reassembled Drive downloads match the original archive SHA-256; tar listing succeeds",
+  "checkpoint_sha256": "da3b08bfda2bc991992a4487f4659c7b406b2af5f2abe62789bef8d80e50655a",
+  "drive_retrieved_at_utc": "2026-10-09T14:11Z"
+}

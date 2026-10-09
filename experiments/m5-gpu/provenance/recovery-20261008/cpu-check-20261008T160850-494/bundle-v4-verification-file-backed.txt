@@ -1,0 +1,97 @@
+CPU_READY: OK
+packtok-m5-bundle.tar.gz: OK
+packtok-m5-bundle.tar.gz.part000: OK
+packtok-m5-bundle.tar.gz.part001: OK
+packtok-m5-bundle.tar.gz.part002: OK
+packtok-m5-bundle.tar.gz.part003: OK
+packtok-m5-bundle.tar.gz.part004: OK
+packtok-m5-bundle.tar.gz.part005: OK
+packtok-m5-bundle.tar.gz.part006: OK
+packtok-m5-bundle.tar.gz.part007: OK
+packtok-m5-bundle.tar.gz.part008: OK
+packtok-m5-bundle.tar.gz.part009: OK
+packtok-m5-bundle.tar.gz.part010: OK
+packtok-m5-bundle.tar.gz.part011: OK
+packtok-m5-bundle.tar.gz.part012: OK
+packtok-m5-bundle.tar.gz.part013: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/Cargo.lock: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/Cargo.toml: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/configs/primary.json: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/acquire.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/check-preflight.py: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-phase.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-session.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/make-bundle.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/prepare-cuda.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/remote-bridge.py: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/remote.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/test-lifecycle.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/test-transfer.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/upload-bundle.sh: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/corpus.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/data.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/lib.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/main.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/model.rs: OK
+/home/dasetwa/projects/PackTok/experiments/m5-gpu/src/runner.rs: OK
+./artifacts/A-0.packtok: OK
+./artifacts/A.mapping: OK
+./artifacts/C-0.packtok: OK
+./artifacts/C.mapping: OK
+./cpu-reference.json: OK
+./data/A-train.seq: OK
+./data/C-train.seq: OK
+./frozen-source.json: OK
+./packtok-m5: OK
+./remote.sh: OK
+./runtime/ld-linux-x86-64.so.2: OK
+./runtime/libc.so.6: OK
+./runtime/libc6.copyright: OK
+./runtime/libcublas.LICENSE: OK
+./runtime/libcublas.so.12: OK
+./runtime/libcublasLt.so.12: OK
+./runtime/libcurand.LICENSE: OK
+./runtime/libcurand.so.10: OK
+./runtime/libdl.so.2: OK
+./runtime/libgcc-s1.copyright: OK
+./runtime/libgcc_s.so.1: OK
+./runtime/libm.so.6: OK
+./runtime/libpthread.so.0: OK
+./runtime/librt.so.1: OK
+./runtime/libstdc++.so.6: OK
+./runtime/libstdc++6.copyright: OK
+./source/M5_GPU_TRANSFORMER.md: OK
+./source/experiments/m5-gpu/Cargo.lock: OK
+./source/experiments/m5-gpu/Cargo.toml: OK
+./source/experiments/m5-gpu/configs/primary.json: OK
+./source/experiments/m5-gpu/scripts/acquire.sh: OK
+./source/experiments/m5-gpu/scripts/check-preflight.py: OK
+./source/experiments/m5-gpu/scripts/l4-phase.sh: OK
+./source/experiments/m5-gpu/scripts/l4-session.sh: OK
+./source/experiments/m5-gpu/scripts/make-bundle.sh: OK
+./source/experiments/m5-gpu/scripts/prepare-cuda.sh: OK
+./source/experiments/m5-gpu/scripts/remote-bridge.py: OK
+./source/experiments/m5-gpu/scripts/remote.sh: OK
+./source/experiments/m5-gpu/scripts/test-lifecycle.sh: OK
+./source/experiments/m5-gpu/scripts/test-transfer.sh: OK
+./source/experiments/m5-gpu/scripts/upload-bundle.sh: OK
+./source/experiments/m5-gpu/src/corpus.rs: OK
+./source/experiments/m5-gpu/src/data.rs: OK
+./source/experiments/m5-gpu/src/lib.rs: OK
+./source/experiments/m5-gpu/src/main.rs: OK
+./source/experiments/m5-gpu/src/model.rs: OK
+./source/experiments/m5-gpu/src/runner.rs: OK
+	linux-vdso.so.1 (0x000076989524e000)
+	libcuda.so.1 => /usr/lib/wsl/lib/libcuda.so.1 (0x0000769894000000)
+	libcurand.so.10 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libcurand.so.10 (0x000076988da00000)
+	libcublas.so.12 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libcublas.so.12 (0x0000769886e00000)
+	libgcc_s.so.1 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libgcc_s.so.1 (0x0000769895218000)
+	libm.so.6 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libm.so.6 (0x0000769894317000)
+	libc.so.6 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libc.so.6 (0x0000769886a00000)
+	/lib64/ld-linux-x86-64.so.2 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/ld-linux-x86-64.so.2 (0x0000769895250000)
+	libdl.so.2 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libdl.so.2 (0x0000769895211000)
+	libpthread.so.0 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libpthread.so.0 (0x000076989520c000)
+	librt.so.1 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/librt.so.1 (0x0000769895207000)
+	libcublasLt.so.12 => /home/dasetwa/projects/PackTok/experiments/m5-gpu/bundle-v4/packtok-m5/runtime/libcublasLt.so.12 (0x0000769868a00000)
+source_commit=be47bc53ea6fd860320cc78cffa74e8aa51514b5
+mode=preflight-only

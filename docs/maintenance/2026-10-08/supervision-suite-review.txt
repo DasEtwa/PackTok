@@ -1,0 +1,50 @@
+/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/suite-review/python-timeout
+/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/suite-review/systemd-timeout
+/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/suite-review/signal
+/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/suite-review/failure
+/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/suite-review/release-unconfirmed
+/home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/suite-review/success
+[
+  {
+    "case": "python-timeout",
+    "exit": 1,
+    "seconds": 2.9298514280000063,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "systemd-timeout",
+    "exit": 1,
+    "seconds": 3.896483346999986,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "signal",
+    "exit": 1,
+    "seconds": 2.3398789260000115,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "failure",
+    "exit": 1,
+    "seconds": 2.4422877000000085,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "release-unconfirmed",
+    "exit": 1,
+    "seconds": 2.3809053109999923,
+    "cleanup_verified": false,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "success",
+    "exit": 0,
+    "seconds": 2.2279689169999983,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  }
+]

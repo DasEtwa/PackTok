@@ -1,0 +1,22 @@
+{
+  "status": "M5_BLOCKED \u2014 INFRASTRUCTURE",
+  "reason": "user-created Desktop OAuth client pending; required real WSL Drive fixture not verified",
+  "delivery_start_commit": "4ed7f0de96cdb90fec23903186838e5a73bb5578",
+  "allocation_count_this_task": 0,
+  "historical_allocation_count": 1,
+  "allocation_seconds_this_task": 0,
+  "authorized_unused_allocations": 1,
+  "cuda_gate": null,
+  "gradients": null,
+  "optimizer": null,
+  "overfit": null,
+  "timings": null,
+  "peak_vram": null,
+  "weight_recovery": null,
+  "drive_backup": "not verified: shared-client project quota",
+  "full_training_authorized": false,
+  "exact_training_resume": false,
+  "rate_proxy_30_minutes_cu": 0.77,
+  "rate_proxy_basis": "historical 1.54 CU/hour; conditional, not guaranteed billing",
+  "current_cli_snapshot": "frozen-no-allocation-state.txt"
+}

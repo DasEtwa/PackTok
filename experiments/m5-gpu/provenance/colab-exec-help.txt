@@ -1,0 +1,17 @@
+                                                                                
+ Usage: colab exec [OPTIONS]                                                    
+                                                                                
+ Execute code in a session                                                      
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --session       -s      <str>    Session name                                │
+│ --file          -f      <str>    File to execute                             │
+│ --output-image          <str>    Path to save plot                           │
+│ --timeout               <float>  Timeout in seconds for code execution       │
+│                                  [default: 30.0]                             │
+│ --env                   <str>    Set an environment variable in the remote   │
+│                                  kernel as KEY=VALUE. Repeat for multiple    │
+│                                  variables.                                  │
+│ --help          -h               Show this message and exit.                 │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

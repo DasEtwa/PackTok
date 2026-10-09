@@ -1,0 +1,44 @@
+[
+  {
+    "case": "python-timeout",
+    "exit": 1,
+    "seconds": 3.2370168400000026,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "systemd-timeout",
+    "exit": 1,
+    "seconds": 3.7917335859999994,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "signal",
+    "exit": 1,
+    "seconds": 2.038393119000002,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "failure",
+    "exit": 1,
+    "seconds": 1.9781588210000045,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "release-unconfirmed",
+    "exit": 1,
+    "seconds": 2.0261022350000033,
+    "cleanup_verified": false,
+    "real_gpu_calls": 0
+  },
+  {
+    "case": "success",
+    "exit": 0,
+    "seconds": 2.077577577999996,
+    "cleanup_verified": true,
+    "real_gpu_calls": 0
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "model": {
+    "layers": 8,
+    "hidden": 384,
+    "heads": 6,
+    "ffn": 1536,
+    "context": 256,
+    "vocab": 512
+  },
+  "batch": 8,
+  "steps": 2000,
+  "seeds": [
+    20261008,
+    20261009,
+    20261010
+  ],
+  "byte_budget": 8388608,
+  "precision": "FP32",
+  "evaluation_every": 500
+}

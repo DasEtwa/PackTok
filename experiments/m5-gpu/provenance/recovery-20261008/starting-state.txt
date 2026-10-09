@@ -1,0 +1,11 @@
+Thu Oct  8 14:43:50 UTC 2026
+## m5-gpu-transformer...origin/m5-gpu-transformer
+?? experiments/m5-gpu/provenance/recovery-20261008/
+4ed7f0de96cdb90fec23903186838e5a73bb5578
+origin	https://github.com/DasEtwa/PackTok.git (fetch)
+origin	https://github.com/DasEtwa/PackTok.git (push)
+Version: 0.7.4
+[colab] No active sessions found on server.
+Current balance: 167.55 compute units
+Usage rate: 0.00/hr
+Active assignments: 0

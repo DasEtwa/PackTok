@@ -1,0 +1,19 @@
+{
+  "gpu_allocations": 0,
+  "failures": [
+    {
+      "package": "pilot-2k-v1-l4-20261009T030000Z",
+      "status": "PREPARATION_FAILED",
+      "stage": "local plan-extended package validation",
+      "reason": "artifacts were packed one directory too high; local frozen-plan validation returned No such file or directory"
+    },
+    {
+      "package": "pilot-2k-v1-l4-20261009T031000Z",
+      "status": "SUPERSEDED_BEFORE_ALLOCATION",
+      "stage": "remote script preflight review",
+      "reason": "input checksum glob selected the artifacts directory instead of the packed artifact files"
+    }
+  ],
+  "final_package": "pilot-2k-v1-l4-20261009T032000Z",
+  "final_package_frozen_plan_validation": "passed"
+}

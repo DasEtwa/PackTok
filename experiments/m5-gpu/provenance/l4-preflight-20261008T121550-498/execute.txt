@@ -1,0 +1,5 @@
+[0;31m---------------------------------------------------------------------------[0m[0;31mRuntimeError[0m                              Traceback (most recent call last)[0;32m/tmp/ipykernel_1203/2821331149.py[0m in [0;36m<cell line: 0>[0;34m()[0m
+[1;32m      8[0m [0mresult[0m [0;34m=[0m [0msubprocess[0m[0;34m.[0m[0mrun[0m[0;34m([0m[0;34m[[0m[0;34m"bash"[0m[0;34m,[0m [0;34m"/content/packtok-m5/remote.sh"[0m[0;34m][0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      9[0m [0;32mif[0m [0mresult[0m[0;34m.[0m[0mreturncode[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 10[0;31m     [0;32mraise[0m [0mRuntimeError[0m[0;34m([0m[0;34mf"Rust CUDA preflight failed with exit {result.returncode}"[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[0;31mRuntimeError[0m: Rust CUDA preflight failed with exit 127

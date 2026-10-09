@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "identical_result_lines": 93,
+  "models": 72,
+  "tokenizers": 6,
+  "historical_pairs": 12,
+  "comparison_policy": "Normalize only printed Windows path separators in derived comparison; raw logs/artifacts untouched",
+  "initial_exact_text_comparison": "Failed on 78 OS path spellings; retained in script-and-compatibility-checks.json"
+}

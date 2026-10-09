@@ -1,0 +1,86 @@
+{
+  "claim_limit": "T is matched by target-token positions; B is matched by actual represented target bytes, not FLOPs",
+  "config_revision": "m5-extended-20k-v1",
+  "config_sha256": "2943cb456a82d76dc1c0f8371bd946897e151dd344b03de239cf98bb3534f621",
+  "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+  "parameters": 14681984,
+  "schedule": {
+    "decay": "cosine",
+    "total_updates": 20000,
+    "warmup_updates": 100
+  },
+  "variants": [
+    {
+      "B_exact_pair_match": {
+        "a_end_token": 4435304,
+        "a_start_token": 2,
+        "c_end_token": 5208933,
+        "c_start_token": 2,
+        "raw_byte_end": 8388616,
+        "raw_byte_start": 8,
+        "raw_target_bytes": 8388608
+      },
+      "T_raw_target_bytes_by_seed": [
+        {
+          "raw_target_bytes": 75795916,
+          "seed": 20261008
+        },
+        {
+          "raw_target_bytes": 75799960,
+          "seed": 20261009
+        },
+        {
+          "raw_target_bytes": 75764161,
+          "seed": 20261010
+        },
+        {
+          "raw_target_bytes": 75798189,
+          "seed": 20261011
+        },
+        {
+          "raw_target_bytes": 75801744,
+          "seed": 20261012
+        }
+      ],
+      "T_target_positions": 40960000,
+      "T_updates": 20000,
+      "variant": "A"
+    },
+    {
+      "B_exact_pair_match": {
+        "a_end_token": 4435304,
+        "a_start_token": 2,
+        "c_end_token": 5208933,
+        "c_start_token": 2,
+        "raw_byte_end": 8388616,
+        "raw_byte_start": 8,
+        "raw_target_bytes": 8388608
+      },
+      "T_raw_target_bytes_by_seed": [
+        {
+          "raw_target_bytes": 69456987,
+          "seed": 20261008
+        },
+        {
+          "raw_target_bytes": 69469142,
+          "seed": 20261009
+        },
+        {
+          "raw_target_bytes": 69489665,
+          "seed": 20261010
+        },
+        {
+          "raw_target_bytes": 69474904,
+          "seed": 20261011
+        },
+        {
+          "raw_target_bytes": 69497291,
+          "seed": 20261012
+        }
+      ],
+      "T_target_positions": 40960000,
+      "T_updates": 20000,
+      "variant": "C"
+    }
+  ]
+}

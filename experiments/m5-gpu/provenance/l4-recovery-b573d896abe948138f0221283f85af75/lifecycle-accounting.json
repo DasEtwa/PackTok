@@ -1,0 +1,10 @@
+{
+  "allocation_count_this_invocation": 1,
+  "endpoint": "gpu-l4-s-kkb-ass1a0-1tu0zxhhqeln5",
+  "request_epoch": 1791504662.882394,
+  "cleanup_verified": true,
+  "request_to_cleanup_seconds": 483.8329367637634,
+  "cleanup_end_utc": "2026-10-09T00:19:06Z",
+  "total_cap_seconds": 1800,
+  "abrupt_host_failure_cleanup_guaranteed": false
+}

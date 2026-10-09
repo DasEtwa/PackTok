@@ -1,0 +1,226 @@
+{
+  "schema": "m5-pilot-attempt-evidence-v1",
+  "status": "partial-before-training",
+  "variant_updates": {
+    "A": 0,
+    "C": 0
+  },
+  "remote_exit_code": 1,
+  "failure_archive": "results.tar.gz",
+  "drive_readback": {
+    "status": "COMPLETE_VERIFIED",
+    "remote": "packtok-drive-own:PackTok/M5/pilot/m5-a-c-pilot-evidence-20261009T115439Z.tar.gz",
+    "local_sha256": "78a8196ea53d907c04da0cb398a072815d61d69fd33a2a24eef0f22dadce83ca",
+    "readback_sha256": "78a8196ea53d907c04da0cb398a072815d61d69fd33a2a24eef0f22dadce83ca",
+    "bytes": 21323
+  },
+  "files": [
+    {
+      "path": "DRIVE_READBACK.json",
+      "size": 325,
+      "sha256": "bb46f570ecb9d9f852d7916a1c37c9fdb0f136df0f9459b3de49ad63a27c0241"
+    },
+    {
+      "path": "DRIVE_READBACK_VERIFIED.json",
+      "size": 341,
+      "sha256": "d0d38f3efb67ba2d2e7c8f8e8ae36462bd8af7c798beba3d4e9397d1e1ffbc22"
+    },
+    {
+      "path": "PILOT_ATTEMPT.md",
+      "size": 4093,
+      "sha256": "b89ab8773267498f27bf8bb2e8835818036cf45e0ff3a9fbe15a61e326307edf"
+    },
+    {
+      "path": "READINESS.json",
+      "size": 713,
+      "sha256": "dcad4289d384cf84f58d12537b01b1a109ee1a60a3f4ac578b4ac70df1d7f4fc"
+    },
+    {
+      "path": "allocation-requested-at.txt",
+      "size": 21,
+      "sha256": "ac3c715c9805a20ba82a4b7d26876910701b898ec959fab7c844a46739c5fb44"
+    },
+    {
+      "path": "allocation-to-cleanup-seconds.txt",
+      "size": 4,
+      "sha256": "21ca02eaccf1da6098acf79a3e614ba4cbaf24ec627628aed027955e9245d47f"
+    },
+    {
+      "path": "allocation.txt",
+      "size": 64,
+      "sha256": "777e0bb2f973b5c303fa7d85fe24da1ce091b5678a91105af5639eeef92bfa25"
+    },
+    {
+      "path": "attempt-record.json",
+      "size": 567,
+      "sha256": "e53395aa90fdf52786677749f83a8643c92513e94750bd866a66da8043d05df4"
+    },
+    {
+      "path": "cli-version.txt",
+      "size": 15,
+      "sha256": "35dc191044edde7f64496577fb170ed546bb97ccdbcf94a79d2e10acbb7c5ae7"
+    },
+    {
+      "path": "download.txt",
+      "size": 135,
+      "sha256": "324150cc0552fdadd29816cefbdbe4f9a13da6ab848f2a33f6e3e9d94c11005e"
+    },
+    {
+      "path": "drive-readback-verified.tar.gz",
+      "size": 45476,
+      "sha256": "fbe902d2948a19cadca8fede5f9aa6c6b611dfd19b071ad3c5c42ead254fad53"
+    },
+    {
+      "path": "drive-readback.tar.gz",
+      "size": 21323,
+      "sha256": "78a8196ea53d907c04da0cb398a072815d61d69fd33a2a24eef0f22dadce83ca"
+    },
+    {
+      "path": "drive-receipt-readback.json",
+      "size": 341,
+      "sha256": "d0d38f3efb67ba2d2e7c8f8e8ae36462bd8af7c798beba3d4e9397d1e1ffbc22"
+    },
+    {
+      "path": "execute.txt",
+      "size": 295,
+      "sha256": "b21eb54cc181cbdcf7b259e4bf299b000cab901f12096ceac5bf5e2432f1c164"
+    },
+    {
+      "path": "lifecycle-exit-code.txt",
+      "size": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "package-content-verification.txt",
+      "size": 3794,
+      "sha256": "c6cbb44b8d7ef3f95c0da5717152e3459bdcacab06dfd3b30fb5bef3af43835e"
+    },
+    {
+      "path": "package-evidence/PACKAGE-SHA256SUMS.txt",
+      "size": 9064,
+      "sha256": "f9cb3cfd4c591fc0650bdc7567ca3e4ccb3ed6c37ade6896c0f9b349537b2476"
+    },
+    {
+      "path": "package-evidence/bundle-parts.sha256",
+      "size": 1485,
+      "sha256": "f43dbd679110518fa34dbc4bb5fccbf662a226b3601e920f3ebe0ae5f015b702"
+    },
+    {
+      "path": "package-evidence/frozen-source.json",
+      "size": 671,
+      "sha256": "2a430d48068f3fdb0996e044c842668dcbefba3fec694fd22693e91a4db01d27"
+    },
+    {
+      "path": "package-evidence/pilot-2k-v1.json",
+      "size": 2846,
+      "sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8"
+    },
+    {
+      "path": "package-evidence/source.sha256",
+      "size": 6635,
+      "sha256": "0d619a4c97427737ae54cee765868db298e15a135e20d96ceafd34e51b5508da"
+    },
+    {
+      "path": "release-verification.txt",
+      "size": 42,
+      "sha256": "2ae44f16ff21868fb4dda0cc48c8cc53c97aa46a9c419e887dacd97a714e487d"
+    },
+    {
+      "path": "released-verified-at.txt",
+      "size": 21,
+      "sha256": "c474409aaba971afad6c8e6a9fe3837e54e772810d645b4875620038b83de918"
+    },
+    {
+      "path": "remote-exit-code.txt",
+      "size": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "results-extracted/results/bootstrap-console.txt",
+      "size": 58,
+      "sha256": "807e2e3ce2638f5d4e6fa1892e7b2b43479a2e2aad5c77713ca57a02917c3bf0"
+    },
+    {
+      "path": "results-extracted/results/exit-code.txt",
+      "size": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "results.tar.gz",
+      "size": 243,
+      "sha256": "bfcaa6ebcad3a84b077d0ac11a707ca154eab08fa9fac7b7302cd7ebdcd7d5bf"
+    },
+    {
+      "path": "run-once.sh",
+      "size": 4211,
+      "sha256": "326dd92a3016c1b5c9295511d4d79aecf5a14d53d22676405aa70a784c50d051"
+    },
+    {
+      "path": "sessions-after.txt",
+      "size": 44,
+      "sha256": "dec807c11992d9001acb723d969c49727402fe62c5e6cbd3899944bfdd03c140"
+    },
+    {
+      "path": "sessions-before.txt",
+      "size": 44,
+      "sha256": "dec807c11992d9001acb723d969c49727402fe62c5e6cbd3899944bfdd03c140"
+    },
+    {
+      "path": "source-fix/colab-exec-pilot.sh",
+      "size": 334,
+      "sha256": "8b92a981680a538782fa301286c04906821d30174b0ab0305c00b3ccbc17602c"
+    },
+    {
+      "path": "source-fix/remote-bridge.py",
+      "size": 2780,
+      "sha256": "ff390834524154b418903dba1c30f96ce987d241a2d80ab047c8d27242fdceaf"
+    },
+    {
+      "path": "source-fix/test-remote-bridge.py",
+      "size": 6024,
+      "sha256": "96e316dcf9ea680161918e9456dc423d1f451a65f91a6fbdf90683184928b13e"
+    },
+    {
+      "path": "status.txt",
+      "size": 110,
+      "sha256": "32933a034d61f29f3c7912c11e4ac5f67334e94bee53bf3de0dcf7e406da9b8d"
+    },
+    {
+      "path": "stop.txt",
+      "size": 69,
+      "sha256": "2ad9fe71e874e7e8a4abfe08571a4756c9dcd0bd3a5ae9da3d9f0db73a8fa2f0"
+    },
+    {
+      "path": "upload-list.txt",
+      "size": 2340,
+      "sha256": "b5e5ebddb8a85962c4e73680bf3b173010e9cdc1633d71d1b6823e8cec28acbb"
+    },
+    {
+      "path": "usage-active.txt",
+      "size": 80,
+      "sha256": "2e67ebd6a8e26e5951d8fdc93ed32a6e78556c0eb413d5a99fbbe6ea12e23501"
+    },
+    {
+      "path": "usage-after.txt",
+      "size": 80,
+      "sha256": "bfe6b8756538df7d117f6ff9c836be8d6963915804b7eae4d60d0113d18958f4"
+    },
+    {
+      "path": "usage-before-download.txt",
+      "size": 80,
+      "sha256": "168cb079f0ff88374768b1081f4cfe5d8c0a53a8f8494b7a277025ace8b4d295"
+    },
+    {
+      "path": "usage-before.txt",
+      "size": 80,
+      "sha256": "6c075982f699fea172140208a5509550dea6456eef4f00b533ea3fe800c9bd18"
+    }
+  ],
+  "drive_readback_verified_archive": {
+    "status": "COMPLETE_VERIFIED",
+    "remote": "packtok-drive-own:PackTok/M5/pilot/m5-a-c-pilot-evidence-20261009T115439Z-verified.tar.gz",
+    "bytes": 45476,
+    "archive_sha256": "fbe902d2948a19cadca8fede5f9aa6c6b611dfd19b071ad3c5c42ead254fad53",
+    "full_readback_sha256": "fbe902d2948a19cadca8fede5f9aa6c6b611dfd19b071ad3c5c42ead254fad53"
+  }
+}

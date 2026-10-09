@@ -1,0 +1,1113 @@
+ docs/development/gpu-colab.md                      | 96 ++++++++++++++++++++++
+ docs/maintenance/2026-10-08/disposable-session.sh  |  8 ++
+ docs/maintenance/2026-10-08/lifecycle-original.txt | 11 +++
+ .../2026-10-08/long-supervision-results.json       | 43 ++++++++++
+ docs/maintenance/2026-10-08/powershell-checks.json | 13 +++
+ .../2026-10-08/recovery-after-review.txt           | 29 +++++++
+ docs/maintenance/2026-10-08/recovery-after-v1.txt  | 27 ++++++
+ docs/maintenance/2026-10-08/recovery-before.txt    | 25 ++++++
+ .../2026-10-08/suite-review/failure/MOCK_ONLY.json |  1 +
+ .../2026-10-08/suite-review/failure/calls          | 26 ++++++
+ .../2026-10-08/suite-review/failure/events.jsonl   | 26 ++++++
+ .../2026-10-08/suite-review/failure/exec-pid.json  |  1 +
+ .../2026-10-08/suite-review/failure/invocation.txt |  0
+ .../suite-review/failure/launcher/client.txt       |  2 +
+ .../suite-review/failure/launcher/journal.txt      |  4 +
+ .../failure/launcher/launcher-exit.txt             |  1 +
+ .../suite-review/failure/launcher/launcher-used.sh | 52 ++++++++++++
+ .../suite-review/failure/launcher/launcher.sha256  |  1 +
+ .../failure/launcher/service-after.txt             |  6 ++
+ .../failure/launcher/service-start.txt             |  7 ++
+ .../suite-review/failure/launcher/supervisor.txt   |  1 +
+ .../suite-review/failure/launcher/unit.txt         |  1 +
+ .../failure/supervisor-evidence/allocation.txt     |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../failure/supervisor-evidence/cli-version.txt    |  1 +
+ .../failure/supervisor-evidence/download-0.txt     |  0
+ .../failure/supervisor-evidence/execute.txt        |  0
+ .../failure/supervisor-evidence/exit-code.txt      |  1 +
+ .../failure/supervisor-evidence/failure.txt        |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../failure/supervisor-evidence/stages.jsonl       | 28 +++++++
+ .../failure/supervisor-evidence/status.txt         |  1 +
+ .../failure/supervisor-evidence/stop-0.txt         |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../failure/supervisor-evidence/upload-000.txt     |  0
+ .../failure/supervisor-evidence/upload-001.txt     |  0
+ .../failure/supervisor-evidence/upload-002.txt     |  0
+ .../failure/supervisor-evidence/upload-003.txt     |  0
+ .../failure/supervisor-evidence/upload-004.txt     |  0
+ .../failure/supervisor-evidence/upload-005.txt     |  0
+ .../failure/supervisor-evidence/upload-006.txt     |  0
+ .../failure/supervisor-evidence/upload-007.txt     |  0
+ .../failure/supervisor-evidence/upload-008.txt     |  0
+ .../failure/supervisor-evidence/upload-009.txt     |  0
+ .../failure/supervisor-evidence/upload-010.txt     |  0
+ .../failure/supervisor-evidence/upload-011.txt     |  0
+ .../failure/supervisor-evidence/upload-012.txt     |  0
+ .../failure/supervisor-evidence/upload-013.txt     |  0
+ .../failure/supervisor-evidence/usage-active.txt   |  3 +
+ .../failure/supervisor-evidence/usage-after.txt    |  3 +
+ .../failure/supervisor-evidence/usage-before.txt   |  3 +
+ .../suite-review/python-timeout/MOCK_ONLY.json     |  1 +
+ .../2026-10-08/suite-review/python-timeout/calls   | 25 ++++++
+ .../suite-review/python-timeout/events.jsonl       | 25 ++++++
+ .../suite-review/python-timeout/exec-pid.json      |  1 +
+ .../suite-review/python-timeout/invocation.txt     |  0
+ .../python-timeout/launcher/client.txt             |  2 +
+ .../python-timeout/launcher/journal.txt            |  4 +
+ .../python-timeout/launcher/launcher-exit.txt      |  1 +
+ .../python-timeout/launcher/launcher-used.sh       | 52 ++++++++++++
+ .../python-timeout/launcher/launcher.sha256        |  1 +
+ .../python-timeout/launcher/service-after.txt      |  6 ++
+ .../python-timeout/launcher/service-start.txt      |  7 ++
+ .../python-timeout/launcher/supervisor.txt         |  1 +
+ .../suite-review/python-timeout/launcher/unit.txt  |  1 +
+ .../suite-review/python-timeout/signals.jsonl      |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../python-timeout/supervisor-evidence/execute.txt |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../python-timeout/supervisor-evidence/failure.txt |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-missing.txt         |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 26 ++++++
+ .../python-timeout/supervisor-evidence/status.txt  |  1 +
+ .../python-timeout/supervisor-evidence/stop-0.txt  |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../release-unconfirmed/MOCK_ONLY.json             |  1 +
+ .../suite-review/release-unconfirmed/active        |  0
+ .../suite-review/release-unconfirmed/calls         | 27 ++++++
+ .../suite-review/release-unconfirmed/events.jsonl  | 27 ++++++
+ .../suite-review/release-unconfirmed/exec-pid.json |  1 +
+ .../release-unconfirmed/invocation.txt             |  0
+ .../release-unconfirmed/launcher/client.txt        |  2 +
+ .../release-unconfirmed/launcher/journal.txt       |  4 +
+ .../release-unconfirmed/launcher/launcher-exit.txt |  1 +
+ .../release-unconfirmed/launcher/launcher-used.sh  | 52 ++++++++++++
+ .../release-unconfirmed/launcher/launcher.sha256   |  1 +
+ .../release-unconfirmed/launcher/service-after.txt |  6 ++
+ .../release-unconfirmed/launcher/service-start.txt |  7 ++
+ .../release-unconfirmed/launcher/supervisor.txt    |  1 +
+ .../release-unconfirmed/launcher/unit.txt          |  1 +
+ .../URGENT-RELEASE-UNCONFIRMED.txt                 |  2 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/release-refused-0.txt      |  1 +
+ .../supervisor-evidence/release-refused-1.txt      |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  2 +
+ .../supervisor-evidence/sessions-after-1.txt       |  2 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../supervisor-evidence/sessions-before-stop-1.txt |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 28 +++++++
+ .../supervisor-evidence/status.txt                 |  1 +
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/suite-review/results.json           | 44 ++++++++++
+ .../2026-10-08/suite-review/signal/MOCK_ONLY.json  |  1 +
+ .../2026-10-08/suite-review/signal/calls           | 26 ++++++
+ .../suite-review/signal/descendant-pid.txt         |  1 +
+ .../2026-10-08/suite-review/signal/events.jsonl    | 26 ++++++
+ .../2026-10-08/suite-review/signal/exec-pid.json   |  1 +
+ .../2026-10-08/suite-review/signal/invocation.txt  |  0
+ .../suite-review/signal/launcher/client.txt        |  2 +
+ .../suite-review/signal/launcher/journal.txt       |  5 ++
+ .../suite-review/signal/launcher/launcher-exit.txt |  1 +
+ .../suite-review/signal/launcher/launcher-used.sh  | 52 ++++++++++++
+ .../suite-review/signal/launcher/launcher.sha256   |  1 +
+ .../suite-review/signal/launcher/service-after.txt |  6 ++
+ .../suite-review/signal/launcher/service-start.txt |  7 ++
+ .../suite-review/signal/launcher/supervisor.txt    |  1 +
+ .../suite-review/signal/launcher/unit.txt          |  1 +
+ .../2026-10-08/suite-review/signal/signals.jsonl   |  1 +
+ .../signal/supervisor-evidence/allocation.txt      |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../signal/supervisor-evidence/cli-version.txt     |  1 +
+ .../signal/supervisor-evidence/download-0.txt      |  0
+ .../signal/supervisor-evidence/execute.txt         |  0
+ .../signal/supervisor-evidence/exit-code.txt       |  1 +
+ .../signal/supervisor-evidence/failure.txt         |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../signal/supervisor-evidence/sessions-before.txt |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../signal/supervisor-evidence/stages.jsonl        | 28 +++++++
+ .../signal/supervisor-evidence/status.txt          |  1 +
+ .../signal/supervisor-evidence/stop-0.txt          |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../signal/supervisor-evidence/upload-000.txt      |  0
+ .../signal/supervisor-evidence/upload-001.txt      |  0
+ .../signal/supervisor-evidence/upload-002.txt      |  0
+ .../signal/supervisor-evidence/upload-003.txt      |  0
+ .../signal/supervisor-evidence/upload-004.txt      |  0
+ .../signal/supervisor-evidence/upload-005.txt      |  0
+ .../signal/supervisor-evidence/upload-006.txt      |  0
+ .../signal/supervisor-evidence/upload-007.txt      |  0
+ .../signal/supervisor-evidence/upload-008.txt      |  0
+ .../signal/supervisor-evidence/upload-009.txt      |  0
+ .../signal/supervisor-evidence/upload-010.txt      |  0
+ .../signal/supervisor-evidence/upload-011.txt      |  0
+ .../signal/supervisor-evidence/upload-012.txt      |  0
+ .../signal/supervisor-evidence/upload-013.txt      |  0
+ .../signal/supervisor-evidence/usage-active.txt    |  3 +
+ .../signal/supervisor-evidence/usage-after.txt     |  3 +
+ .../signal/supervisor-evidence/usage-before.txt    |  3 +
+ .../2026-10-08/suite-review/success/MOCK_ONLY.json |  1 +
+ .../2026-10-08/suite-review/success/calls          | 26 ++++++
+ .../suite-review/success/descendant-pid.txt        |  1 +
+ .../2026-10-08/suite-review/success/events.jsonl   | 26 ++++++
+ .../2026-10-08/suite-review/success/exec-pid.json  |  1 +
+ .../2026-10-08/suite-review/success/invocation.txt |  0
+ .../suite-review/success/launcher/client.txt       |  2 +
+ .../suite-review/success/launcher/journal.txt      |  2 +
+ .../success/launcher/launcher-exit.txt             |  1 +
+ .../suite-review/success/launcher/launcher-used.sh | 52 ++++++++++++
+ .../suite-review/success/launcher/launcher.sha256  |  1 +
+ .../success/launcher/service-after.txt             |  6 ++
+ .../success/launcher/service-start.txt             |  7 ++
+ .../suite-review/success/launcher/supervisor.txt   |  1 +
+ .../suite-review/success/launcher/unit.txt         |  1 +
+ .../success/supervisor-evidence/allocation.txt     |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../success/supervisor-evidence/cli-version.txt    |  1 +
+ .../success/supervisor-evidence/download-0.txt     |  0
+ .../success/supervisor-evidence/execute.txt        |  0
+ .../success/supervisor-evidence/exit-code.txt      |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../success/supervisor-evidence/stages.jsonl       | 28 +++++++
+ .../success/supervisor-evidence/status.txt         |  1 +
+ .../success/supervisor-evidence/stop-0.txt         |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../success/supervisor-evidence/upload-000.txt     |  0
+ .../success/supervisor-evidence/upload-001.txt     |  0
+ .../success/supervisor-evidence/upload-002.txt     |  0
+ .../success/supervisor-evidence/upload-003.txt     |  0
+ .../success/supervisor-evidence/upload-004.txt     |  0
+ .../success/supervisor-evidence/upload-005.txt     |  0
+ .../success/supervisor-evidence/upload-006.txt     |  0
+ .../success/supervisor-evidence/upload-007.txt     |  0
+ .../success/supervisor-evidence/upload-008.txt     |  0
+ .../success/supervisor-evidence/upload-009.txt     |  0
+ .../success/supervisor-evidence/upload-010.txt     |  0
+ .../success/supervisor-evidence/upload-011.txt     |  0
+ .../success/supervisor-evidence/upload-012.txt     |  0
+ .../success/supervisor-evidence/upload-013.txt     |  0
+ .../success/supervisor-evidence/usage-active.txt   |  3 +
+ .../success/supervisor-evidence/usage-after.txt    |  3 +
+ .../success/supervisor-evidence/usage-before.txt   |  3 +
+ .../suite-review/systemd-timeout/MOCK_ONLY.json    |  1 +
+ .../2026-10-08/suite-review/systemd-timeout/calls  | 26 ++++++
+ .../suite-review/systemd-timeout/events.jsonl      | 26 ++++++
+ .../suite-review/systemd-timeout/exec-pid.json     |  1 +
+ .../suite-review/systemd-timeout/invocation.txt    |  0
+ .../systemd-timeout/launcher/client.txt            |  2 +
+ .../systemd-timeout/launcher/journal.txt           |  5 ++
+ .../systemd-timeout/launcher/launcher-exit.txt     |  1 +
+ .../systemd-timeout/launcher/launcher-used.sh      | 52 ++++++++++++
+ .../systemd-timeout/launcher/launcher.sha256       |  1 +
+ .../systemd-timeout/launcher/service-after.txt     |  6 ++
+ .../systemd-timeout/launcher/service-start.txt     |  7 ++
+ .../systemd-timeout/launcher/supervisor.txt        |  1 +
+ .../suite-review/systemd-timeout/launcher/unit.txt |  1 +
+ .../suite-review/systemd-timeout/signals.jsonl     |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/failure.txt                |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 28 +++++++
+ .../systemd-timeout/supervisor-evidence/status.txt |  1 +
+ .../systemd-timeout/supervisor-evidence/stop-0.txt |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/suite-v2/failure/MOCK_ONLY.json     |  1 +
+ docs/maintenance/2026-10-08/suite-v2/failure/calls | 25 ++++++
+ .../2026-10-08/suite-v2/failure/events.jsonl       | 25 ++++++
+ .../2026-10-08/suite-v2/failure/exec-pid.json      |  1 +
+ .../2026-10-08/suite-v2/failure/invocation.txt     |  0
+ .../suite-v2/failure/launcher/client.txt           |  2 +
+ .../suite-v2/failure/launcher/journal.txt          |  4 +
+ .../suite-v2/failure/launcher/launcher-exit.txt    |  1 +
+ .../suite-v2/failure/launcher/launcher-used.sh     | 52 ++++++++++++
+ .../suite-v2/failure/launcher/launcher.sha256      |  1 +
+ .../suite-v2/failure/launcher/service-after.txt    |  6 ++
+ .../suite-v2/failure/launcher/service-start.txt    |  7 ++
+ .../suite-v2/failure/launcher/supervisor.txt       |  1 +
+ .../2026-10-08/suite-v2/failure/launcher/unit.txt  |  1 +
+ .../failure/supervisor-evidence/allocation.txt     |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../failure/supervisor-evidence/cli-version.txt    |  1 +
+ .../failure/supervisor-evidence/download-0.txt     |  0
+ .../failure/supervisor-evidence/execute.txt        |  0
+ .../failure/supervisor-evidence/exit-code.txt      |  1 +
+ .../failure/supervisor-evidence/failure.txt        |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../failure/supervisor-evidence/stages.jsonl       | 27 ++++++
+ .../failure/supervisor-evidence/status.txt         |  1 +
+ .../failure/supervisor-evidence/stop-0.txt         |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../failure/supervisor-evidence/upload-000.txt     |  0
+ .../failure/supervisor-evidence/upload-001.txt     |  0
+ .../failure/supervisor-evidence/upload-002.txt     |  0
+ .../failure/supervisor-evidence/upload-003.txt     |  0
+ .../failure/supervisor-evidence/upload-004.txt     |  0
+ .../failure/supervisor-evidence/upload-005.txt     |  0
+ .../failure/supervisor-evidence/upload-006.txt     |  0
+ .../failure/supervisor-evidence/upload-007.txt     |  0
+ .../failure/supervisor-evidence/upload-008.txt     |  0
+ .../failure/supervisor-evidence/upload-009.txt     |  0
+ .../failure/supervisor-evidence/upload-010.txt     |  0
+ .../failure/supervisor-evidence/upload-011.txt     |  0
+ .../failure/supervisor-evidence/upload-012.txt     |  0
+ .../failure/supervisor-evidence/upload-013.txt     |  0
+ .../failure/supervisor-evidence/usage-active.txt   |  3 +
+ .../failure/supervisor-evidence/usage-after.txt    |  3 +
+ .../failure/supervisor-evidence/usage-before.txt   |  3 +
+ .../suite-v2/python-timeout/MOCK_ONLY.json         |  1 +
+ .../2026-10-08/suite-v2/python-timeout/calls       | 24 ++++++
+ .../suite-v2/python-timeout/events.jsonl           | 24 ++++++
+ .../suite-v2/python-timeout/exec-pid.json          |  1 +
+ .../suite-v2/python-timeout/invocation.txt         |  0
+ .../suite-v2/python-timeout/launcher/client.txt    |  2 +
+ .../suite-v2/python-timeout/launcher/journal.txt   |  4 +
+ .../python-timeout/launcher/launcher-exit.txt      |  1 +
+ .../python-timeout/launcher/launcher-used.sh       | 52 ++++++++++++
+ .../python-timeout/launcher/launcher.sha256        |  1 +
+ .../python-timeout/launcher/service-after.txt      |  6 ++
+ .../python-timeout/launcher/service-start.txt      |  7 ++
+ .../python-timeout/launcher/supervisor.txt         |  1 +
+ .../suite-v2/python-timeout/launcher/unit.txt      |  1 +
+ .../suite-v2/python-timeout/signals.jsonl          |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../python-timeout/supervisor-evidence/execute.txt |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../python-timeout/supervisor-evidence/failure.txt |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-missing.txt         |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 25 ++++++
+ .../python-timeout/supervisor-evidence/status.txt  |  1 +
+ .../python-timeout/supervisor-evidence/stop-0.txt  |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../suite-v2/release-unconfirmed/MOCK_ONLY.json    |  1 +
+ .../2026-10-08/suite-v2/release-unconfirmed/active |  0
+ .../2026-10-08/suite-v2/release-unconfirmed/calls  | 26 ++++++
+ .../suite-v2/release-unconfirmed/events.jsonl      | 26 ++++++
+ .../suite-v2/release-unconfirmed/exec-pid.json     |  1 +
+ .../suite-v2/release-unconfirmed/invocation.txt    |  0
+ .../release-unconfirmed/launcher/client.txt        |  2 +
+ .../release-unconfirmed/launcher/journal.txt       |  4 +
+ .../release-unconfirmed/launcher/launcher-exit.txt |  1 +
+ .../release-unconfirmed/launcher/launcher-used.sh  | 52 ++++++++++++
+ .../release-unconfirmed/launcher/launcher.sha256   |  1 +
+ .../release-unconfirmed/launcher/service-after.txt |  6 ++
+ .../release-unconfirmed/launcher/service-start.txt |  7 ++
+ .../release-unconfirmed/launcher/supervisor.txt    |  1 +
+ .../suite-v2/release-unconfirmed/launcher/unit.txt |  1 +
+ .../URGENT-RELEASE-UNCONFIRMED.txt                 |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/sessions-after-0.txt       |  2 +
+ .../supervisor-evidence/sessions-after-1.txt       |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 27 ++++++
+ .../supervisor-evidence/status.txt                 |  1 +
+ .../supervisor-evidence/stop-0.txt                 |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ docs/maintenance/2026-10-08/suite-v2/results.json  | 44 ++++++++++
+ .../2026-10-08/suite-v2/signal/MOCK_ONLY.json      |  1 +
+ docs/maintenance/2026-10-08/suite-v2/signal/calls  | 25 ++++++
+ .../2026-10-08/suite-v2/signal/descendant-pid.txt  |  1 +
+ .../2026-10-08/suite-v2/signal/events.jsonl        | 25 ++++++
+ .../2026-10-08/suite-v2/signal/exec-pid.json       |  1 +
+ .../2026-10-08/suite-v2/signal/invocation.txt      |  0
+ .../2026-10-08/suite-v2/signal/launcher/client.txt |  2 +
+ .../suite-v2/signal/launcher/journal.txt           |  5 ++
+ .../suite-v2/signal/launcher/launcher-exit.txt     |  1 +
+ .../suite-v2/signal/launcher/launcher-used.sh      | 52 ++++++++++++
+ .../suite-v2/signal/launcher/launcher.sha256       |  1 +
+ .../suite-v2/signal/launcher/service-after.txt     |  6 ++
+ .../suite-v2/signal/launcher/service-start.txt     |  7 ++
+ .../suite-v2/signal/launcher/supervisor.txt        |  1 +
+ .../2026-10-08/suite-v2/signal/launcher/unit.txt   |  1 +
+ .../2026-10-08/suite-v2/signal/signals.jsonl       |  1 +
+ .../signal/supervisor-evidence/allocation.txt      |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../signal/supervisor-evidence/cli-version.txt     |  1 +
+ .../signal/supervisor-evidence/download-0.txt      |  0
+ .../signal/supervisor-evidence/execute.txt         |  0
+ .../signal/supervisor-evidence/exit-code.txt       |  1 +
+ .../signal/supervisor-evidence/failure.txt         |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../signal/supervisor-evidence/sessions-before.txt |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../signal/supervisor-evidence/stages.jsonl        | 27 ++++++
+ .../suite-v2/signal/supervisor-evidence/status.txt |  1 +
+ .../suite-v2/signal/supervisor-evidence/stop-0.txt |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../signal/supervisor-evidence/upload-000.txt      |  0
+ .../signal/supervisor-evidence/upload-001.txt      |  0
+ .../signal/supervisor-evidence/upload-002.txt      |  0
+ .../signal/supervisor-evidence/upload-003.txt      |  0
+ .../signal/supervisor-evidence/upload-004.txt      |  0
+ .../signal/supervisor-evidence/upload-005.txt      |  0
+ .../signal/supervisor-evidence/upload-006.txt      |  0
+ .../signal/supervisor-evidence/upload-007.txt      |  0
+ .../signal/supervisor-evidence/upload-008.txt      |  0
+ .../signal/supervisor-evidence/upload-009.txt      |  0
+ .../signal/supervisor-evidence/upload-010.txt      |  0
+ .../signal/supervisor-evidence/upload-011.txt      |  0
+ .../signal/supervisor-evidence/upload-012.txt      |  0
+ .../signal/supervisor-evidence/upload-013.txt      |  0
+ .../signal/supervisor-evidence/usage-active.txt    |  3 +
+ .../signal/supervisor-evidence/usage-after.txt     |  3 +
+ .../signal/supervisor-evidence/usage-before.txt    |  3 +
+ .../2026-10-08/suite-v2/success/MOCK_ONLY.json     |  1 +
+ docs/maintenance/2026-10-08/suite-v2/success/calls | 25 ++++++
+ .../2026-10-08/suite-v2/success/descendant-pid.txt |  1 +
+ .../2026-10-08/suite-v2/success/events.jsonl       | 25 ++++++
+ .../2026-10-08/suite-v2/success/exec-pid.json      |  1 +
+ .../2026-10-08/suite-v2/success/invocation.txt     |  0
+ .../suite-v2/success/launcher/client.txt           |  2 +
+ .../suite-v2/success/launcher/journal.txt          |  2 +
+ .../suite-v2/success/launcher/launcher-exit.txt    |  1 +
+ .../suite-v2/success/launcher/launcher-used.sh     | 52 ++++++++++++
+ .../suite-v2/success/launcher/launcher.sha256      |  1 +
+ .../suite-v2/success/launcher/service-after.txt    |  6 ++
+ .../suite-v2/success/launcher/service-start.txt    |  7 ++
+ .../suite-v2/success/launcher/supervisor.txt       |  1 +
+ .../2026-10-08/suite-v2/success/launcher/unit.txt  |  1 +
+ .../success/supervisor-evidence/allocation.txt     |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../success/supervisor-evidence/cli-version.txt    |  1 +
+ .../success/supervisor-evidence/download-0.txt     |  0
+ .../success/supervisor-evidence/execute.txt        |  0
+ .../success/supervisor-evidence/exit-code.txt      |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../success/supervisor-evidence/stages.jsonl       | 27 ++++++
+ .../success/supervisor-evidence/status.txt         |  1 +
+ .../success/supervisor-evidence/stop-0.txt         |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../success/supervisor-evidence/upload-000.txt     |  0
+ .../success/supervisor-evidence/upload-001.txt     |  0
+ .../success/supervisor-evidence/upload-002.txt     |  0
+ .../success/supervisor-evidence/upload-003.txt     |  0
+ .../success/supervisor-evidence/upload-004.txt     |  0
+ .../success/supervisor-evidence/upload-005.txt     |  0
+ .../success/supervisor-evidence/upload-006.txt     |  0
+ .../success/supervisor-evidence/upload-007.txt     |  0
+ .../success/supervisor-evidence/upload-008.txt     |  0
+ .../success/supervisor-evidence/upload-009.txt     |  0
+ .../success/supervisor-evidence/upload-010.txt     |  0
+ .../success/supervisor-evidence/upload-011.txt     |  0
+ .../success/supervisor-evidence/upload-012.txt     |  0
+ .../success/supervisor-evidence/upload-013.txt     |  0
+ .../success/supervisor-evidence/usage-active.txt   |  3 +
+ .../success/supervisor-evidence/usage-after.txt    |  3 +
+ .../success/supervisor-evidence/usage-before.txt   |  3 +
+ .../suite-v2/systemd-timeout/MOCK_ONLY.json        |  1 +
+ .../2026-10-08/suite-v2/systemd-timeout/calls      | 25 ++++++
+ .../suite-v2/systemd-timeout/events.jsonl          | 25 ++++++
+ .../suite-v2/systemd-timeout/exec-pid.json         |  1 +
+ .../suite-v2/systemd-timeout/invocation.txt        |  0
+ .../suite-v2/systemd-timeout/launcher/client.txt   |  2 +
+ .../suite-v2/systemd-timeout/launcher/journal.txt  |  5 ++
+ .../systemd-timeout/launcher/launcher-exit.txt     |  1 +
+ .../systemd-timeout/launcher/launcher-used.sh      | 52 ++++++++++++
+ .../systemd-timeout/launcher/launcher.sha256       |  1 +
+ .../systemd-timeout/launcher/service-after.txt     |  6 ++
+ .../systemd-timeout/launcher/service-start.txt     |  7 ++
+ .../systemd-timeout/launcher/supervisor.txt        |  1 +
+ .../suite-v2/systemd-timeout/launcher/unit.txt     |  1 +
+ .../suite-v2/systemd-timeout/signals.jsonl         |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/failure.txt                |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 27 ++++++
+ .../systemd-timeout/supervisor-evidence/status.txt |  1 +
+ .../systemd-timeout/supervisor-evidence/stop-0.txt |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/supervision-suite-review.txt        | 50 +++++++++++
+ .../2026-10-08/supervision-suite-v2.txt            | 50 +++++++++++
+ docs/maintenance/2026-10-08/systemd-cases.json     | 42 ++++++++++
+ docs/maintenance/2026-10-08/transfer-original.txt  |  4 +
+ .../2026-10-08/wsl-clientkill-v2/MOCK_ONLY.json    |  1 +
+ .../maintenance/2026-10-08/wsl-clientkill-v2/calls | 25 ++++++
+ .../wsl-clientkill-v2/client-interruption.json     |  6 ++
+ .../wsl-clientkill-v2/descendant-pid.txt           |  1 +
+ .../2026-10-08/wsl-clientkill-v2/events.jsonl      | 25 ++++++
+ .../2026-10-08/wsl-clientkill-v2/exec-pid.json     |  1 +
+ .../2026-10-08/wsl-clientkill-v2/host-receipt.json | 10 +++
+ .../wsl-clientkill-v2/launcher/client.txt          |  2 +
+ .../wsl-clientkill-v2/launcher/journal.txt         |  2 +
+ .../wsl-clientkill-v2/launcher/launcher-exit.txt   |  1 +
+ .../wsl-clientkill-v2/launcher/launcher-used.sh    | 52 ++++++++++++
+ .../wsl-clientkill-v2/launcher/launcher.sha256     |  1 +
+ .../wsl-clientkill-v2/launcher/service-after.txt   |  6 ++
+ .../wsl-clientkill-v2/launcher/service-start.txt   |  7 ++
+ .../wsl-clientkill-v2/launcher/supervisor.txt      |  1 +
+ .../2026-10-08/wsl-clientkill-v2/launcher/unit.txt |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 27 ++++++
+ .../supervisor-evidence/status.txt                 |  1 +
+ .../supervisor-evidence/stop-0.txt                 |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/wsl-failure/MOCK_ONLY.json          |  1 +
+ docs/maintenance/2026-10-08/wsl-failure/calls      | 26 ++++++
+ .../2026-10-08/wsl-failure/events.jsonl            | 26 ++++++
+ .../2026-10-08/wsl-failure/exec-pid.json           |  1 +
+ .../2026-10-08/wsl-failure/invocation.txt          |  0
+ .../2026-10-08/wsl-failure/launcher/client.txt     |  2 +
+ .../2026-10-08/wsl-failure/launcher/journal.txt    |  4 +
+ .../wsl-failure/launcher/launcher-exit.txt         |  1 +
+ .../wsl-failure/launcher/launcher-used.sh          | 52 ++++++++++++
+ .../wsl-failure/launcher/launcher.sha256           |  1 +
+ .../wsl-failure/launcher/service-after.txt         |  6 ++
+ .../wsl-failure/launcher/service-start.txt         |  7 ++
+ .../2026-10-08/wsl-failure/launcher/supervisor.txt |  1 +
+ .../2026-10-08/wsl-failure/launcher/unit.txt       |  1 +
+ .../2026-10-08/wsl-failure/recovery-invocation.txt |  1 +
+ .../wsl-failure/supervisor-evidence/allocation.txt |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../wsl-failure/supervisor-evidence/download-0.txt |  0
+ .../wsl-failure/supervisor-evidence/execute.txt    |  0
+ .../wsl-failure/supervisor-evidence/exit-code.txt  |  1 +
+ .../wsl-failure/supervisor-evidence/failure.txt    |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-failure/supervisor-evidence/stages.jsonl   | 27 ++++++
+ .../wsl-failure/supervisor-evidence/status.txt     |  1 +
+ .../wsl-failure/supervisor-evidence/stop-0.txt     |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../wsl-failure/supervisor-evidence/upload-000.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-001.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-002.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-003.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-004.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-005.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-006.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-007.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-008.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-009.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-010.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-011.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-012.txt |  0
+ .../wsl-failure/supervisor-evidence/upload-013.txt |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../maintenance/2026-10-08/wsl-final-lifecycle.txt |  5 ++
+ .../2026-10-08/wsl-final-review/MOCK_ONLY.json     |  1 +
+ docs/maintenance/2026-10-08/wsl-final-review/calls | 26 ++++++
+ .../2026-10-08/wsl-final-review/descendant-pid.txt |  1 +
+ .../2026-10-08/wsl-final-review/events.jsonl       | 26 ++++++
+ .../2026-10-08/wsl-final-review/exec-pid.json      |  1 +
+ .../2026-10-08/wsl-final-review/final-result.json  | 12 +++
+ .../wsl-final-review/host-client-after.json        |  5 ++
+ .../2026-10-08/wsl-final-review/host-receipt.json  | 10 +++
+ .../wsl-final-review/launcher/client.txt           |  2 +
+ .../wsl-final-review/launcher/journal.txt          |  2 +
+ .../wsl-final-review/launcher/launcher-exit.txt    |  1 +
+ .../wsl-final-review/launcher/launcher-used.sh     | 52 ++++++++++++
+ .../wsl-final-review/launcher/launcher.sha256      |  1 +
+ .../wsl-final-review/launcher/service-after.txt    |  6 ++
+ .../wsl-final-review/launcher/service-start.txt    |  7 ++
+ .../wsl-final-review/launcher/supervisor.txt       |  1 +
+ .../2026-10-08/wsl-final-review/launcher/unit.txt  |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before-stop-0.txt |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 28 +++++++
+ .../supervisor-evidence/status.txt                 |  1 +
+ .../supervisor-evidence/stop-0.txt                 |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../wsl-final-review/tested-source-sha256.json     |  6 ++
+ .../2026-10-08/wsl-interrupt/MOCK_ONLY.json        |  1 +
+ docs/maintenance/2026-10-08/wsl-interrupt/calls    | 25 ++++++
+ .../2026-10-08/wsl-interrupt/descendant-pid.txt    |  1 +
+ .../2026-10-08/wsl-interrupt/events.jsonl          | 25 ++++++
+ .../2026-10-08/wsl-interrupt/exec-pid.json         |  1 +
+ .../2026-10-08/wsl-interrupt/launcher/client.txt   |  2 +
+ .../2026-10-08/wsl-interrupt/launcher/journal.txt  |  2 +
+ .../wsl-interrupt/launcher/launcher-exit.txt       |  1 +
+ .../wsl-interrupt/launcher/launcher-used.sh        | 52 ++++++++++++
+ .../wsl-interrupt/launcher/launcher.sha256         |  1 +
+ .../wsl-interrupt/launcher/service-after.txt       |  6 ++
+ .../wsl-interrupt/launcher/service-start.txt       |  7 ++
+ .../wsl-interrupt/launcher/supervisor.txt          |  1 +
+ .../2026-10-08/wsl-interrupt/launcher/unit.txt     |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../wsl-interrupt/supervisor-evidence/execute.txt  |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-interrupt/supervisor-evidence/stages.jsonl | 27 ++++++
+ .../wsl-interrupt/supervisor-evidence/status.txt   |  1 +
+ .../wsl-interrupt/supervisor-evidence/stop-0.txt   |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../maintenance/2026-10-08/wsl-leak/MOCK_ONLY.json |  1 +
+ docs/maintenance/2026-10-08/wsl-leak/active        |  0
+ docs/maintenance/2026-10-08/wsl-leak/calls         | 27 ++++++
+ docs/maintenance/2026-10-08/wsl-leak/events.jsonl  | 27 ++++++
+ docs/maintenance/2026-10-08/wsl-leak/exec-pid.json |  1 +
+ .../maintenance/2026-10-08/wsl-leak/invocation.txt |  0
+ .../2026-10-08/wsl-leak/launcher/client.txt        |  2 +
+ .../2026-10-08/wsl-leak/launcher/journal.txt       |  4 +
+ .../2026-10-08/wsl-leak/launcher/launcher-exit.txt |  1 +
+ .../2026-10-08/wsl-leak/launcher/launcher-used.sh  | 52 ++++++++++++
+ .../2026-10-08/wsl-leak/launcher/launcher.sha256   |  1 +
+ .../2026-10-08/wsl-leak/launcher/service-after.txt |  6 ++
+ .../2026-10-08/wsl-leak/launcher/service-start.txt |  7 ++
+ .../2026-10-08/wsl-leak/launcher/supervisor.txt    |  1 +
+ .../2026-10-08/wsl-leak/launcher/unit.txt          |  1 +
+ .../2026-10-08/wsl-leak/recovery-invocation.txt    |  1 +
+ .../URGENT-RELEASE-UNCONFIRMED.txt                 |  1 +
+ .../wsl-leak/supervisor-evidence/allocation.txt    |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../wsl-leak/supervisor-evidence/cli-version.txt   |  1 +
+ .../wsl-leak/supervisor-evidence/download-0.txt    |  0
+ .../wsl-leak/supervisor-evidence/execute.txt       |  0
+ .../wsl-leak/supervisor-evidence/exit-code.txt     |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/sessions-after-0.txt       |  2 +
+ .../supervisor-evidence/sessions-after-1.txt       |  2 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-leak/supervisor-evidence/stages.jsonl      | 27 ++++++
+ .../wsl-leak/supervisor-evidence/status.txt        |  1 +
+ .../wsl-leak/supervisor-evidence/stop-0.txt        |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../wsl-leak/supervisor-evidence/upload-000.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-001.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-002.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-003.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-004.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-005.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-006.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-007.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-008.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-009.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-010.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-011.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-012.txt    |  0
+ .../wsl-leak/supervisor-evidence/upload-013.txt    |  0
+ .../wsl-leak/supervisor-evidence/usage-active.txt  |  3 +
+ .../wsl-leak/supervisor-evidence/usage-after.txt   |  3 +
+ .../wsl-leak/supervisor-evidence/usage-before.txt  |  3 +
+ .../2026-10-08/wsl-normal/MOCK_ONLY.json           |  1 +
+ docs/maintenance/2026-10-08/wsl-normal/calls       | 25 ++++++
+ .../2026-10-08/wsl-normal/descendant-pid.txt       |  1 +
+ .../maintenance/2026-10-08/wsl-normal/events.jsonl | 25 ++++++
+ .../2026-10-08/wsl-normal/exec-pid.json            |  1 +
+ .../2026-10-08/wsl-normal/host-receipt.json        | 10 +++
+ .../2026-10-08/wsl-normal/launcher/client.txt      |  2 +
+ .../2026-10-08/wsl-normal/launcher/journal.txt     |  2 +
+ .../wsl-normal/launcher/launcher-exit.txt          |  1 +
+ .../wsl-normal/launcher/launcher-used.sh           | 52 ++++++++++++
+ .../2026-10-08/wsl-normal/launcher/launcher.sha256 |  1 +
+ .../wsl-normal/launcher/service-after.txt          |  6 ++
+ .../wsl-normal/launcher/service-start.txt          |  7 ++
+ .../2026-10-08/wsl-normal/launcher/supervisor.txt  |  1 +
+ .../2026-10-08/wsl-normal/launcher/unit.txt        |  1 +
+ .../wsl-normal/supervisor-evidence/allocation.txt  |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../wsl-normal/supervisor-evidence/cli-version.txt |  1 +
+ .../wsl-normal/supervisor-evidence/download-0.txt  |  0
+ .../wsl-normal/supervisor-evidence/execute.txt     |  0
+ .../wsl-normal/supervisor-evidence/exit-code.txt   |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-normal/supervisor-evidence/stages.jsonl    | 27 ++++++
+ .../wsl-normal/supervisor-evidence/status.txt      |  1 +
+ .../wsl-normal/supervisor-evidence/stop-0.txt      |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../wsl-normal/supervisor-evidence/upload-000.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-001.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-002.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-003.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-004.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-005.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-006.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-007.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-008.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-009.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-010.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-011.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-012.txt  |  0
+ .../wsl-normal/supervisor-evidence/upload-013.txt  |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../wsl-normal/supervisor-evidence/usage-after.txt |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/wsl-session/MOCK_ONLY.json          |  1 +
+ docs/maintenance/2026-10-08/wsl-session/calls      | 25 ++++++
+ .../2026-10-08/wsl-session/descendant-pid.txt      |  1 +
+ .../2026-10-08/wsl-session/events.jsonl            | 25 ++++++
+ .../2026-10-08/wsl-session/exec-pid.json           |  1 +
+ .../2026-10-08/wsl-session/host-receipt.json       | 10 +++
+ .../2026-10-08/wsl-session/initiating-cgroup.txt   |  1 +
+ .../2026-10-08/wsl-session/initiating-journal.txt  |  5 ++
+ .../wsl-session/initiating-linux-pid.txt           |  1 +
+ .../2026-10-08/wsl-session/initiating-ready.txt    |  1 +
+ .../2026-10-08/wsl-session/initiating-session.txt  |  1 +
+ .../2026-10-08/wsl-session/launcher/client.txt     |  2 +
+ .../2026-10-08/wsl-session/launcher/journal.txt    |  2 +
+ .../wsl-session/launcher/launcher-exit.txt         |  1 +
+ .../wsl-session/launcher/launcher-used.sh          | 52 ++++++++++++
+ .../wsl-session/launcher/launcher.sha256           |  1 +
+ .../wsl-session/launcher/service-after.txt         |  6 ++
+ .../wsl-session/launcher/service-start.txt         |  7 ++
+ .../2026-10-08/wsl-session/launcher/supervisor.txt |  1 +
+ .../2026-10-08/wsl-session/launcher/unit.txt       |  1 +
+ .../2026-10-08/wsl-session/session-before.txt      |  4 +
+ .../2026-10-08/wsl-session/session-termination.txt |  1 +
+ .../wsl-session/supervisor-evidence/allocation.txt |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../wsl-session/supervisor-evidence/download-0.txt |  0
+ .../wsl-session/supervisor-evidence/execute.txt    |  0
+ .../wsl-session/supervisor-evidence/exit-code.txt  |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-session/supervisor-evidence/stages.jsonl   | 27 ++++++
+ .../wsl-session/supervisor-evidence/status.txt     |  1 +
+ .../wsl-session/supervisor-evidence/stop-0.txt     |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../wsl-session/supervisor-evidence/upload-000.txt |  0
+ .../wsl-session/supervisor-evidence/upload-001.txt |  0
+ .../wsl-session/supervisor-evidence/upload-002.txt |  0
+ .../wsl-session/supervisor-evidence/upload-003.txt |  0
+ .../wsl-session/supervisor-evidence/upload-004.txt |  0
+ .../wsl-session/supervisor-evidence/upload-005.txt |  0
+ .../wsl-session/supervisor-evidence/upload-006.txt |  0
+ .../wsl-session/supervisor-evidence/upload-007.txt |  0
+ .../wsl-session/supervisor-evidence/upload-008.txt |  0
+ .../wsl-session/supervisor-evidence/upload-009.txt |  0
+ .../wsl-session/supervisor-evidence/upload-010.txt |  0
+ .../wsl-session/supervisor-evidence/upload-011.txt |  0
+ .../wsl-session/supervisor-evidence/upload-012.txt |  0
+ .../wsl-session/supervisor-evidence/upload-013.txt |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/wsl-signal/MOCK_ONLY.json           |  1 +
+ .../2026-10-08/wsl-signal/before-signal.txt        |  3 +
+ docs/maintenance/2026-10-08/wsl-signal/calls       | 26 ++++++
+ .../2026-10-08/wsl-signal/descendant-pid.txt       |  1 +
+ .../maintenance/2026-10-08/wsl-signal/events.jsonl | 26 ++++++
+ .../2026-10-08/wsl-signal/exec-pid.json            |  1 +
+ .../2026-10-08/wsl-signal/invocation.txt           |  0
+ .../2026-10-08/wsl-signal/launcher/client.txt      |  2 +
+ .../2026-10-08/wsl-signal/launcher/journal.txt     |  5 ++
+ .../wsl-signal/launcher/launcher-exit.txt          |  1 +
+ .../wsl-signal/launcher/launcher-used.sh           | 52 ++++++++++++
+ .../2026-10-08/wsl-signal/launcher/launcher.sha256 |  1 +
+ .../wsl-signal/launcher/service-after.txt          |  6 ++
+ .../wsl-signal/launcher/service-start.txt          |  7 ++
+ .../2026-10-08/wsl-signal/launcher/supervisor.txt  |  1 +
+ .../2026-10-08/wsl-signal/launcher/unit.txt        |  1 +
+ .../2026-10-08/wsl-signal/recovery-invocation.txt  |  1 +
+ .../2026-10-08/wsl-signal/signals.jsonl            |  1 +
+ .../wsl-signal/supervisor-evidence/allocation.txt  |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../wsl-signal/supervisor-evidence/cli-version.txt |  1 +
+ .../wsl-signal/supervisor-evidence/download-0.txt  |  0
+ .../wsl-signal/supervisor-evidence/execute.txt     |  0
+ .../wsl-signal/supervisor-evidence/exit-code.txt   |  1 +
+ .../wsl-signal/supervisor-evidence/failure.txt     |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-signal/supervisor-evidence/stages.jsonl    | 27 ++++++
+ .../wsl-signal/supervisor-evidence/status.txt      |  1 +
+ .../wsl-signal/supervisor-evidence/stop-0.txt      |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../wsl-signal/supervisor-evidence/upload-000.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-001.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-002.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-003.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-004.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-005.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-006.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-007.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-008.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-009.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-010.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-011.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-012.txt  |  0
+ .../wsl-signal/supervisor-evidence/upload-013.txt  |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../wsl-signal/supervisor-evidence/usage-after.txt |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/wsl-systemd-timeout/MOCK_ONLY.json  |  1 +
+ .../2026-10-08/wsl-systemd-timeout/calls           | 26 ++++++
+ .../2026-10-08/wsl-systemd-timeout/events.jsonl    | 26 ++++++
+ .../2026-10-08/wsl-systemd-timeout/exec-pid.json   |  1 +
+ .../2026-10-08/wsl-systemd-timeout/invocation.txt  |  0
+ .../wsl-systemd-timeout/launcher/client.txt        |  2 +
+ .../wsl-systemd-timeout/launcher/journal.txt       |  5 ++
+ .../wsl-systemd-timeout/launcher/launcher-exit.txt |  1 +
+ .../wsl-systemd-timeout/launcher/launcher-used.sh  | 52 ++++++++++++
+ .../wsl-systemd-timeout/launcher/launcher.sha256   |  1 +
+ .../wsl-systemd-timeout/launcher/service-after.txt |  6 ++
+ .../wsl-systemd-timeout/launcher/service-start.txt |  7 ++
+ .../wsl-systemd-timeout/launcher/supervisor.txt    |  1 +
+ .../wsl-systemd-timeout/launcher/unit.txt          |  1 +
+ .../wsl-systemd-timeout/recovery-invocation.txt    |  1 +
+ .../2026-10-08/wsl-systemd-timeout/signals.jsonl   |  1 +
+ .../supervisor-evidence/allocation.txt             |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../supervisor-evidence/download-0.txt             |  0
+ .../supervisor-evidence/execute.txt                |  0
+ .../supervisor-evidence/exit-code.txt              |  1 +
+ .../supervisor-evidence/failure.txt                |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-verification.txt    |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../supervisor-evidence/stages.jsonl               | 27 ++++++
+ .../supervisor-evidence/status.txt                 |  1 +
+ .../supervisor-evidence/stop-0.txt                 |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../supervisor-evidence/upload-000.txt             |  0
+ .../supervisor-evidence/upload-001.txt             |  0
+ .../supervisor-evidence/upload-002.txt             |  0
+ .../supervisor-evidence/upload-003.txt             |  0
+ .../supervisor-evidence/upload-004.txt             |  0
+ .../supervisor-evidence/upload-005.txt             |  0
+ .../supervisor-evidence/upload-006.txt             |  0
+ .../supervisor-evidence/upload-007.txt             |  0
+ .../supervisor-evidence/upload-008.txt             |  0
+ .../supervisor-evidence/upload-009.txt             |  0
+ .../supervisor-evidence/upload-010.txt             |  0
+ .../supervisor-evidence/upload-011.txt             |  0
+ .../supervisor-evidence/upload-012.txt             |  0
+ .../supervisor-evidence/upload-013.txt             |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../2026-10-08/wsl-timeout/MOCK_ONLY.json          |  1 +
+ docs/maintenance/2026-10-08/wsl-timeout/calls      | 25 ++++++
+ .../2026-10-08/wsl-timeout/events.jsonl            | 25 ++++++
+ .../2026-10-08/wsl-timeout/exec-pid.json           |  1 +
+ .../2026-10-08/wsl-timeout/invocation.txt          |  0
+ .../2026-10-08/wsl-timeout/launcher/client.txt     |  2 +
+ .../2026-10-08/wsl-timeout/launcher/journal.txt    |  4 +
+ .../wsl-timeout/launcher/launcher-exit.txt         |  1 +
+ .../wsl-timeout/launcher/launcher-used.sh          | 52 ++++++++++++
+ .../wsl-timeout/launcher/launcher.sha256           |  1 +
+ .../wsl-timeout/launcher/service-after.txt         |  6 ++
+ .../wsl-timeout/launcher/service-start.txt         |  7 ++
+ .../2026-10-08/wsl-timeout/launcher/supervisor.txt |  1 +
+ .../2026-10-08/wsl-timeout/launcher/unit.txt       |  1 +
+ .../2026-10-08/wsl-timeout/recovery-invocation.txt |  1 +
+ .../2026-10-08/wsl-timeout/signals.jsonl           |  1 +
+ .../wsl-timeout/supervisor-evidence/allocation.txt |  0
+ .../supervisor-evidence/bundle-integrity.txt       | 14 ++++
+ .../supervisor-evidence/cli-version.txt            |  1 +
+ .../wsl-timeout/supervisor-evidence/execute.txt    |  0
+ .../wsl-timeout/supervisor-evidence/exit-code.txt  |  1 +
+ .../wsl-timeout/supervisor-evidence/failure.txt    |  1 +
+ .../supervisor-evidence/lifecycle-accounting.json  | 10 +++
+ .../supervisor-evidence/ownership-released.json    |  1 +
+ .../supervisor-evidence/result-missing.txt         |  1 +
+ .../supervisor-evidence/sessions-after-0.txt       |  1 +
+ .../supervisor-evidence/sessions-before.txt        |  1 +
+ .../supervisor-evidence/source-integrity.txt       |  1 +
+ .../wsl-timeout/supervisor-evidence/stages.jsonl   | 25 ++++++
+ .../wsl-timeout/supervisor-evidence/status.txt     |  1 +
+ .../wsl-timeout/supervisor-evidence/stop-0.txt     |  0
+ .../supervisor-evidence/supervisor-process.json    |  1 +
+ .../wsl-timeout/supervisor-evidence/upload-000.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-001.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-002.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-003.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-004.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-005.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-006.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-007.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-008.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-009.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-010.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-011.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-012.txt |  0
+ .../wsl-timeout/supervisor-evidence/upload-013.txt |  0
+ .../supervisor-evidence/usage-active.txt           |  3 +
+ .../supervisor-evidence/usage-after.txt            |  3 +
+ .../supervisor-evidence/usage-before.txt           |  3 +
+ .../m5-gpu/scripts/check-wsl-supervision.sh        | 27 +-----
+ experiments/m5-gpu/scripts/l4-recovery.py          | 59 ++++++++++---
+ experiments/m5-gpu/scripts/launch-l4-recovery.sh   | 59 +++++++++----
+ .../m5-gpu/scripts/launch-wsl-supervised.ps1       | 36 ++++++++
+ experiments/m5-gpu/scripts/supervision-fixture.py  | 49 +++++++++++
+ experiments/m5-gpu/scripts/test-recovery.py        | 42 +++++++++-
+ experiments/m5-gpu/scripts/test-supervision.py     | 75 +++++++++++++++++
+ 1112 files changed, 5263 insertions(+), 51 deletions(-)

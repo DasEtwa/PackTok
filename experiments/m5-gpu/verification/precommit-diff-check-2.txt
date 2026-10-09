@@ -1,0 +1,12 @@
+experiments/m5-gpu/provenance/licenses/cuda_cccl-LICENSE:1608: space before tab in indent.
++ 	are permitted provided that the following conditions are met:
+experiments/m5-gpu/provenance/licenses/cuda_cudart-LICENSE:1608: space before tab in indent.
++ 	are permitted provided that the following conditions are met:
+experiments/m5-gpu/provenance/licenses/cuda_nvcc-LICENSE:1608: space before tab in indent.
++ 	are permitted provided that the following conditions are met:
+experiments/m5-gpu/provenance/licenses/cuda_nvrtc-LICENSE:1608: space before tab in indent.
++ 	are permitted provided that the following conditions are met:
+experiments/m5-gpu/provenance/licenses/libcublas-LICENSE:1608: space before tab in indent.
++ 	are permitted provided that the following conditions are met:
+experiments/m5-gpu/provenance/licenses/libcurand-LICENSE:1608: space before tab in indent.
++ 	are permitted provided that the following conditions are met:

@@ -1,0 +1,2 @@
+COMMAND: cargo +1.85.0 fmt --all --check
+START: 2026-10-08T16:57:05.813848+00:00

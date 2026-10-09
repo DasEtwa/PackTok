@@ -1,0 +1,6 @@
+results/
+results/exit-code.txt
+results/runtime-libraries.txt
+results/integrity-policy.txt
+results/frozen-source.json
+results/environment.txt

@@ -1,0 +1,1 @@
+Bundle/source/data hashes verified on local WSL before upload; checkpoint hashes are computed on WSL after release.

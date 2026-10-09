@@ -1,0 +1,60 @@
+[
+  {
+    "start_utc": "2026-10-08T17:14:42.6846463Z",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "seconds": 1.310734,
+    "exit": 0
+  },
+  {
+    "start_utc": "2026-10-08T17:14:44.0653578Z",
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "seconds": 1.5940804,
+    "exit": 0
+  },
+  {
+    "start_utc": "2026-10-08T17:14:45.6910253Z",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace"
+    ],
+    "seconds": 10.910157,
+    "exit": 0
+  },
+  {
+    "start_utc": "2026-10-08T17:14:56.6273316Z",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--release"
+    ],
+    "seconds": 3.3495563,
+    "exit": 0
+  },
+  {
+    "start_utc": "2026-10-08T17:15:00.0039089Z",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "--workspace"
+    ],
+    "seconds": 0.3465282,
+    "exit": 0
+  }
+]

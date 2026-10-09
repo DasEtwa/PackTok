@@ -1,0 +1,31 @@
+{
+  "source_commit": "5e77c36ff2dd78b076677c45866971beef734f9d",
+  "variant": "A-C-pilot-partial",
+  "seed": 20261008,
+  "configuration_sha256": {
+    "pilot-2k-v1.json": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+    "pilot-config": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8"
+  },
+  "dataset_sha256": {
+    "corpus_manifest": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+    "A_test_sequence_sha256": "d82168e96a56d59cb85b521da503f3a19570ee2c072d67ebdcdf743417df1ccb",
+    "A_train_sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+    "A_validation_sequence_sha256": "34a99f414c346cffad3fa818c4911f9399384be1fcb1f37b772e0ffa1da651b3",
+    "C_test_sequence_sha256": "2f2eea0814faec257f0a494deaf795de82ea7c2178c0e52972ae860cb3a90ff7",
+    "C_train_sequence_sha256": "f558ecf674382cd7aa69980560b56718a7be69d917a1396405fa208a3b27939b",
+    "C_validation_sequence_sha256": "3d995cc1d32e8686615a4b4c400918c8ec36899dbc07ebdea4f37a0a5e753245"
+  },
+  "tokenizer_sha256": {
+    "A": "f20cb1db1c47484bda335e9a0032de92aae96cf54265f190cf8ed23060534da1",
+    "C": "04285c24bb4181871148b64c79251273c07cda6e57812175021d75fbf8b386e6"
+  },
+  "kind": "diagnostic-archive",
+  "run_id": "m5-diagnostic-archive-f99432b0f0e64c51a178559529b3a74f",
+  "artifact": "pilot-partial-evidence.tar.gz",
+  "bytes": 8660,
+  "sha256": "35143d29b46b7bb0b76f656f8ee5effb83fa8c039a411db37d2237f89db08945",
+  "status": "COMPLETE_VERIFIED",
+  "exact_training_resume": false,
+  "remote_namespace": "packtok-drive-own:PackTok/M5/preflight/m5-diagnostic-archive-f99432b0f0e64c51a178559529b3a74f",
+  "verification": "full-download SHA-256 and size; local source rehashed"
+}

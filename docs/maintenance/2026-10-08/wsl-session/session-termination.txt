@@ -1,0 +1,1 @@
+Only verified disposable logind session 11 was terminated.

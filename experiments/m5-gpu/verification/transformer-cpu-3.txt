@@ -1,0 +1,20 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.69s
+     Running unittests src/lib.rs (experiments/m5-gpu/target/debug/deps/packtok_m5-fa56264ab159247d)
+
+running 12 tests
+test corpus::tests::gutenberg_extraction_keeps_body_bytes ... ok
+test data::tests::normalization_excludes_unscored_bytes ... ok
+test corpus::tests::leakage_checks_exact_and_near ... ok
+test corpus::tests::rolling_matches_direct_windows ... ok
+test model::tests::primary_parameters_and_layout ... ok
+test data::tests::adapters_exact_mapping_and_prompt_preservation ... ok
+test data::tests::sequence_format_roundtrip_rejects_invalid ... ok
+test model::tests::causal_mask_and_initialization ... ok
+test runner::tests::evaluation_scores_every_target_and_no_unrepresented_bytes ... ok
+test model::tests::all_parameter_families_get_gradients_and_adam_updates ... ok
+test runner::tests::paired_seed_training_is_reproducible ... ok
+test model::tests::checkpoint_roundtrip_and_tiny_overfit ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37s
+

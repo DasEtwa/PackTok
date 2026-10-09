@@ -1,0 +1,10 @@
+{
+  "allocation_count_this_invocation": 1,
+  "endpoint": "fixture",
+  "request_epoch": 1791479821.1523588,
+  "cleanup_verified": true,
+  "request_to_cleanup_seconds": 2.3048033714294434,
+  "cleanup_end_utc": "2026-10-08T17:17:03Z",
+  "total_cap_seconds": 1800,
+  "abrupt_host_failure_cleanup_guaranteed": false
+}

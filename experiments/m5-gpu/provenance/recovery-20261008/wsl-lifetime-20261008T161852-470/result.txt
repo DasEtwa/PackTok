@@ -1,0 +1,1 @@
+PASS: foreground WSL lifetime retained for 40 seconds; GPU calls=0

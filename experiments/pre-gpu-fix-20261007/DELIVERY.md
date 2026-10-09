@@ -38,3 +38,7 @@ No research experiment was retrained, no methodology/tokenizer changed and no
 directly related unresolved correctness issue remains. M5 was not started.
 
 `READY_FOR_M5_GPU`
+
+## Maintenance navigation note (2026-10-08)
+
+A later M5 documentation-only follow-up restored a missing DELIVERY.md navigation target referenced by the unchanged root PRE_GPU_CODE_REVIEW.md. This note records that repair; it is not a new audit or reconstructed raw log. Original evidence remains in the files listed above, and the exact CPU freeze remains f3b6c3fb41f46c93e701b585d859b0b9071d65a5.

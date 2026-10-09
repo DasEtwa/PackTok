@@ -1,0 +1,14 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.67s
+     Running unittests src/lib.rs (experiments/m5-gpu/target/debug/deps/packtok_m5-39e35dcd0f4f16b7)
+
+running 6 tests
+test domains::tests::domain_aggregation_rejects_real_nll_and_counter_mismatches ... ok
+test domains::tests::stratified_category_aggregation_reconciles_exactly ... ok
+test domains::tests::tokens_crossing_units_keep_domain_and_crossing_categories_are_mixed ... ok
+test domains::tests::per_domain_forward_scoring_matches_global_byte_score ... ok
+test domains::tests::heldout_manifest_reports_structured_as_unavailable_and_covers_bytes ... ok
+test domains::tests::large_domain_aggregation_allows_only_fp64_ordering_error ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.78s
+

@@ -1,0 +1,38 @@
+{
+  "claim_limit": "T is matched by target-token positions; B is matched by actual represented target bytes, not FLOPs",
+  "config_revision": "m5-paired-pilot-2k-v1",
+  "config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+  "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+  "parameters": 14681984,
+  "schedule": {
+    "decay": "constant",
+    "total_updates": 2000,
+    "warmup_updates": 0
+  },
+  "variants": [
+    {
+      "B_exact_pair_match": null,
+      "T_raw_target_bytes_by_seed": [
+        {
+          "raw_target_bytes": 7575564,
+          "seed": 20261008
+        }
+      ],
+      "T_target_positions": 4096000,
+      "T_updates": 2000,
+      "variant": "A"
+    },
+    {
+      "B_exact_pair_match": null,
+      "T_raw_target_bytes_by_seed": [
+        {
+          "raw_target_bytes": 6946291,
+          "seed": 20261008
+        }
+      ],
+      "T_target_positions": 4096000,
+      "T_updates": 2000,
+      "variant": "C"
+    }
+  ]
+}

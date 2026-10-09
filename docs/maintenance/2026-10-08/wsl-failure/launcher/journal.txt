@@ -1,0 +1,4 @@
+2026-10-08T19:17:10.488090+02:00 DESKTOP-FGES40P systemd[413]: Started packtok-supervised-20261008T171710-656.service - /usr/bin/python3 /home/dasetwa/projects/PackTok/experiments/m5-gpu/scripts/l4-recovery.py --preflight --root /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-failure/experiments/m5-gpu --work-seconds 20.
+2026-10-08T19:17:12.411928+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171710-656.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-08T19:17:12.412255+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171710-656.service: Failed with result 'exit-code'.
+2026-10-08T19:17:12.412856+02:00 DESKTOP-FGES40P systemd[413]: packtok-supervised-20261008T171710-656.service: Consumed 1.440s CPU time, 512.0K memory peak, 0B memory swap peak.

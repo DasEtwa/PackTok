@@ -1,0 +1,16 @@
+/target/
+/data/
+/checkpoints/
+/bundle/
+*.tar.gz
+
+/target-cuda/
+
+*.safetensors
+
+*.safetensors.tmp
+
+bundle-*/
+
+# External orchestration bytecode, never scientific provenance.
+__pycache__/

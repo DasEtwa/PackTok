@@ -1,0 +1,50 @@
+{
+  "A_initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+  "C_initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+  "allocation_marker_created": false,
+  "approval_transport": "PACKTOK_M5_GPU_APPROVAL forwarded as Colab --env and Rust argument; fixture-tested",
+  "binary_sha256": "df9b9cc1ff76e89a6c3814b97cf5aa81d7a062172bfb10737826481fad3eb459",
+  "branch": "m5-gpu-transformer",
+  "bridge_transport_tests": "4 passed",
+  "bundle_id": "pilot-2k-v1-l4-20261009T130752Z",
+  "bundle_sha256": "04d6e883389d2fdb0479d623df2121109079ba8b4c261099560cda90c03ce227",
+  "config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+  "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+  "cuda_runtime_libraries_in_bundle": [
+    "libnvrtc.so.12",
+    "libnvrtc-builtins.so.12.4",
+    "libcurand.so.10",
+    "libcublas.so.12",
+    "libcublasLt.so.12"
+  ],
+  "e2e_intentional_failure": {
+    "A_reached": true,
+    "C_reached": false,
+    "argv_and_approval_verified": true,
+    "bridge_returncode": 9,
+    "exit_code_archive": "9",
+    "results_archive_sha256": "1369d9ffee018258ce8d727670942af1d3bdf8c3e375cc26ace82bc444341ca6",
+    "scenario": "failure",
+    "stdout_stderr_archived": true
+  },
+  "e2e_success": {
+    "A_reached": true,
+    "C_reached": true,
+    "argv_and_approval_verified": true,
+    "bridge_returncode": 0,
+    "exit_code_archive": "0",
+    "results_archive_sha256": "254ac643b0d23a4e0c771c3a828ef2589a2ee5bf584fa56b3af3b0cc1c2d2fd0",
+    "scenario": "success",
+    "stdout_stderr_archived": true
+  },
+  "gpu_allocated": false,
+  "host_driver_library": "libcuda.so.1 (Colab L4 host; not bundled)",
+  "loader_list_exit_code": 0,
+  "paired_seed": 20261008,
+  "pilot_runner_sha256": "194325eb9dd54007a2f705dc7c8d48a3074fbea9a54dc278849349be0916fbbf",
+  "plan_updates_per_variant": 2000,
+  "source_commit": "b0e964eefcca260de452a7ee81be012ed6a4e032",
+  "status": "READY_FOR_EXPLICIT_GPU_AUTHORIZATION",
+  "target_positions_per_variant": 4096000,
+  "test_doubles_only": true
+}

@@ -314,3 +314,56 @@ M4 is a factorization ablation, not tokenizer redesign. Read M4_ABLATION.md and
 M4_ABLATION_BENCHMARK.md before changing its corpus, mappings, metrics or runs.
 Preserve lexical-v1, historical artifacts and failed/preflight outputs. Do not
 use held-out outcomes to change grouping, allocation, schedule or splits.
+
+## 23. M5 GPU conservation
+
+Read M5_GPU_TRANSFORMER.md and M5_GPU_BENCHMARK.md before M5 changes/runs. Use only
+local WSL Ubuntu-24.04 for CPU work; do not use Ubuntu/MOOS. Colab allocation is
+only NVIDIA L4, only after CPU readiness. First preflight is capped at 20 minutes.
+Always stop and verify the owned session immediately after GPU work/errors,
+before analysis/edits/replies. Full multi-seed runs require explicit approval of
+the measured runtime/compute-unit budget. Never fall back to another accelerator.
+## 24. Compute Resource Selection Policy
+
+### Primary principle
+
+Optimize for total time-to-result, not minimum GPU consumption. PackTok is a
+research project. Compute resources exist to accelerate experiments, not to
+remain unused.
+
+### GPU-preferred workloads
+
+- Neural-network training and fine-tuning.
+- Full-model forward/backward passes and gradient diagnostics.
+- Large-model overfitting tests.
+- GPU inference and performance benchmarks.
+- Computationally expensive tensor operations.
+- Experiments that execute substantially faster on GPU.
+
+### CPU-preferred workloads
+
+- Rust unit and integration tests.
+- Compilation and static analysis.
+- Tokenizer implementation and deterministic reference tests.
+- Corpus parsing and metadata processing.
+- Hash and artifact verification.
+- Small numerical correctness fixtures.
+- Workloads where GPU startup overhead exceeds the expected benefit.
+
+### Decision rules
+
+1. Prefer GPU when it provides a substantial end-to-end speed advantage.
+2. Never execute expensive full-model CPU experiments solely to conserve Compute Units.
+3. Include provisioning, transfer, execution and cleanup time when comparing alternatives.
+4. Use the simplest reliable implementation that answers the research question.
+5. Do not introduce unnecessary infrastructure to avoid small, authorized GPU costs.
+6. Preserve deterministic CPU reference tests when numerical verification requires them.
+7. Keep experiment configurations, scientific integrity and reproducibility intact.
+8. GPU use still requires an explicit approved allocation and bounded budget.
+9. Never automatically retry GPU allocations, terminate unrelated sessions or bypass ownership and resource-cleanup checks.
+10. When GPU authorization is absent, prepare the experiment on CPU and request approval instead of launching expensive full-model CPU training as a workaround.
+
+**Priority:** Reliable research progress and developer time over artificial Compute Unit conservation.
+
+This policy applies to future PackTok experiments, including M5, later larger
+models and eventual LIV research conducted inside this repository.

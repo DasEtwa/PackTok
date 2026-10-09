@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "historical_document_prefix_preserved": {
+    "M5_GPU_BENCHMARK.md": true,
+    "M5_GPU_TRANSFORMER.md": true,
+    "README.md": true,
+    "experiments/m5-gpu/provenance/RECOVERY_STORAGE.md": true,
+    "experiments/m5-gpu/verification/SELF_REVIEW.md": true
+  },
+  "native_diff_check": "PASS",
+  "new_commits": 0,
+  "new_pushes": 0
+}

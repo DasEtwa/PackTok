@@ -208,3 +208,18 @@ global to original M2 addresses. Full maps are regenerated from retained
 tokenizer artifacts before use, not trusted as reinterpretations of other artifacts.
 Parameter artifacts contain the actual permuted B embedding weights; mapping
 and tokenizer files must accompany them for raw-text use. No Adam resume is added.
+
+## M5 experimental staging and checkpoints
+
+Tokenizer v2/v3, CPU PTLM and M4 mapping encodings remain frozen. M5's separate
+workspace owns a staging sequence, not a new tokenizer format: eight-byte magic
+`PTM5SEQ` plus byte `01`, then little-endian u64 token count N, then N pairs of
+little-endian u32 canonical global model ID and u32 represented raw-byte length.
+Complete size is exactly 16+8*N, checked for overflow/truncation. IDs must be below
+512 and byte lengths positive. Empty encoding is allowed; scoring requires at
+least two tokens and a positive batch. Artifact-derived lengths must sum to the
+original raw bytes during CPU preparation. Frozen raw/tokenizer/mapping/sequence
+hashes bind staging files to their provenance. Checkpoints use standard Candle
+FP32 safetensors, externally bound to the frozen M5 config/source hash. They
+contain weights only; no optimizer-resume contract is implied. See
+M5_GPU_TRANSFORMER.md and experiments/m5-gpu/provenance/CPU_PREPARATION.md.

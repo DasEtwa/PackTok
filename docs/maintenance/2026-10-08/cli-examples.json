@@ -1,0 +1,126 @@
+{
+  "release_cli": "/home/dasetwa/projects/PackTok/target/release/packtok",
+  "commands": [
+    {
+      "arguments": [
+        "encode",
+        "Hi"
+      ],
+      "stdout": "65535:72 65535:105\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "decode",
+        "65535:72 65535:105"
+      ],
+      "stdout": "Hi",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "help"
+      ],
+      "stdout": "Usage:\n  packtok encode <text>\n  packtok encode --artifact <artifact-path> <text>\n  packtok decode <pack_id:local_id ...>\n  packtok decode --artifact <artifact-path> <local_id ...>\n  packtok init <artifact-path>\n  packtok train-bpe <corpus-file-or-directory> <artifact-path> [--target-vocab N] [--max-merges N] [--min-frequency N]\n  packtok train-packs <corpus-file-or-directory> <artifact-path> [--target-vocab N] [--max-merges N] [--min-frequency N]\n  packtok route <text>\n  packtok validate <artifact-path>\n  packtok inspect <artifact-path>\n  packtok inspect-pack <artifact-path> <pack-name-or-id>\n  packtok inspect-token <artifact-path> <local-id | pack:local>\n  packtok inspect-merges <artifact-path> [pack-name-or-id] [limit]\n  packtok stats <artifact-path>\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "train-bpe",
+        "fixtures/m1_bpe_corpus.txt",
+        "target/maintenance-cli-bpe.packtok"
+      ],
+      "stdout": "trained 84 learned merges (vocabulary 340); corpus 712 bytes across 1 files; wrote target/maintenance-cli-bpe.packtok\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "inspect",
+        "target/maintenance-cli-bpe.packtok"
+      ],
+      "stdout": "PackTok artifact v2\nbyte fallback pack: 65535\npack 0: FLAT_BPE (340 local IDs)\npack 65535: BYTE_FALLBACK (256 local IDs)\nflat byte-level BPE vocabulary: 340 tokens\nlearned merges: 84\nmetadata bpe.algorithm=flat-byte-level-bpe-v1\nmetadata bpe.byte_token_count=256\nmetadata bpe.encoder_order=ascending merge rank; replace all non-overlapping matches left-to-right\nmetadata bpe.max_merges=256\nmetadata bpe.merge_count=84\nmetadata bpe.merge_id_order=result token ID = 256 + zero-based merge rank\nmetadata bpe.min_pair_frequency=2\nmetadata bpe.normalization=none\nmetadata bpe.target_vocab_size=512\nmetadata bpe.tie_break=highest frequency, then ascending (left_id, right_id)\nmetadata bpe.vocabulary_size=340\nmetadata corpus.file.000000=fixtures/m1_bpe_corpus.txt\nmetadata corpus.file_count=1\nmetadata corpus.fnv1a64=3bafa3aa89541485\nmetadata corpus.input=fixtures/m1_bpe_corpus.txt\nmetadata corpus.preprocessing=raw bytes; no UTF-8 validation or normalization; file contents concatenated without separators\nmetadata corpus.total_bytes=712\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "validate",
+        "target/maintenance-cli-bpe.packtok"
+      ],
+      "stdout": "valid PackTok artifact v2: 2 packs, 0 special tokens, 17 metadata entries\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "encode",
+        "--artifact",
+        "target/maintenance-cli-bpe.packtok",
+        "S\u00e4mtliche H\u00e4user"
+      ],
+      "stdout": "83 278 109 315 105 99 284 72 278 117 115 257\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "decode",
+        "--artifact",
+        "target/maintenance-cli-bpe.packtok",
+        "83 278 109 315 105 99 284 72 278 117 115 257"
+      ],
+      "stdout": "S\u00e4mtliche H\u00e4user",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "route",
+        "Hello 123!"
+      ],
+      "stdout": "router: lexical-v1\nTEXT       \"Hello\"\nSTRUCTURE  \" \"\nNUMBER     \"123\"\nSTRUCTURE  \"!\"\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "train-packs",
+        "fixtures/benchmark/train.txt",
+        "target/maintenance-cli-packs.packtok"
+      ],
+      "stdout": "trained factorized BPE with router lexical-v1; shared byte tokens=256; total vocabulary=512; corpus 1640 bytes across 1 files; wrote target/maintenance-cli-packs.packtok\n  pack BYTE_FALLBACK: 0 spans, 0 routed bytes, 0 learned tokens\n  pack TEXT: 206 spans, 1278 routed bytes, 243 learned tokens\n  pack NUMBER: 14 spans, 40 routed bytes, 3 learned tokens\n  pack STRUCTURE: 212 spans, 322 routed bytes, 10 learned tokens\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "inspect-pack",
+        "target/maintenance-cli-packs.packtok",
+        "TEXT"
+      ],
+      "stdout": "Pack: TEXT\nPack ID: 0\nLocal token count: 243\nLearned merges: 243\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "inspect-token",
+        "target/maintenance-cli-packs.packtok",
+        "TEXT:0"
+      ],
+      "stdout": "Pack: TEXT\nPack ID: 0\nLocal ID: 0\nBytes: [101, 110]\nEscaped bytes: \"en\"\nUTF-8 display: \"en\"\nCreated by local merge rank: 0\nParents: BYTE(101) + BYTE(110)\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "inspect-merges",
+        "target/maintenance-cli-packs.packtok",
+        "TEXT"
+      ],
+      "stdout": "TEXT rank 0: BYTE(101) + BYTE(110) -> TEXT:0\nTEXT rank 1: BYTE(101) + BYTE(114) -> TEXT:1\nTEXT rank 2: BYTE(105) + BYTE(110) -> TEXT:2\nTEXT rank 3: BYTE(227) + BYTE(129) -> TEXT:3\nTEXT rank 4: BYTE(99) + BYTE(104) -> TEXT:4\nTEXT rank 5: BYTE(101) + BYTE(100) -> TEXT:5\nTEXT rank 6: BYTE(97) + BYTE(108) -> TEXT:6\nTEXT rank 7: BYTE(97) + BYTE(110) -> TEXT:7\nTEXT rank 8: BYTE(108) + BYTE(101) -> TEXT:8\nTEXT rank 9: BYTE(115) + BYTE(116) -> TEXT:9\nTEXT rank 10: BYTE(97) + BYTE(114) -> TEXT:10\nTEXT rank 11: BYTE(105) + BYTE(103) -> TEXT:11\nTEXT rank 12: BYTE(111) + BYTE(114) -> TEXT:12\nTEXT rank 13: BYTE(116) + LOCAL(1) -> TEXT:13\nTEXT rank 14: BYTE(119) + BYTE(101) -> TEXT:14\nTEXT rank 15: BYTE(97) + BYTE(116) -> TEXT:15\nTEXT rank 16: BYTE(97) + BYTE(117) -> TEXT:16\nTEXT rank 17: BYTE(101) + BYTE(115) -> TEXT:17\nTEXT rank 18: BYTE(104) + BYTE(101) -> TEXT:18\nTEXT rank 19: BYTE(104) + BYTE(116) -> TEXT:19\nTEXT rank 20: BYTE(117) + BYTE(110) -> TEXT:20\nTEXT rank 21: BYTE(97) + BYTE(100) -> TEXT:21\nTEXT rank 22: BYTE(100) + BYTE(101) -> TEXT:22\nTEXT rank 23: BYTE(105) + BYTE(101) -> TEXT:23\nTEXT rank 24: BYTE(105) + BYTE(108) -> TEXT:24\nTEXT rank 25: BYTE(111) + BYTE(112) -> TEXT:25\nTEXT rank 26: BYTE(114) + BYTE(101) -> TEXT:26\nTEXT rank 27: BYTE(115) + LOCAL(4) -> TEXT:27\nTEXT rank 28: BYTE(195) + BYTE(164) -> TEXT:28\nTEXT rank 29: BYTE(240) + BYTE(159) -> TEXT:29\nTEXT rank 30: LOCAL(2) + BYTE(103) -> TEXT:30\nTEXT rank 31: LOCAL(11) + LOCAL(19) -> TEXT:31\nTEXT rank 32: LOCAL(14) + LOCAL(31) -> TEXT:32\nTEXT rank 33: BYTE(97) + BYTE(104) -> TEXT:33\nTEXT rank 34: BYTE(98) + BYTE(101) -> TEXT:34\nTEXT rank 35: BYTE(99) + LOCAL(25) -> TEXT:35\nTEXT rank 36: BYTE(100) + BYTE(117) -> TEXT:36\nTEXT rank 37: BYTE(100) + LOCAL(0) -> TEXT:37\nTEXT rank 38: BYTE(103) + LOCAL(0) -> TEXT:38\nTEXT rank 39: BYTE(105) + BYTE(99) -> TEXT:39\nTEXT rank 40: BYTE(105) + BYTE(118) -> TEXT:40\nTEXT rank 41: BYTE(105) + LOCAL(5) -> TEXT:41\nTEXT rank 42: BYTE(105) + LOCAL(27) -> TEXT:42\nTEXT rank 43: BYTE(108) + BYTE(100) -> TEXT:43\nTEXT rank 44: BYTE(109) + BYTE(101) -> TEXT:44\nTEXT rank 45: BYTE(111) + BYTE(116) -> TEXT:45\nTEXT rank 46: BYTE(111) + LOCAL(43) -> TEXT:46\nTEXT rank 47: BYTE(114) + BYTE(97) -> TEXT:47\nTEXT rank 48: BYTE(115) + BYTE(104) -> TEXT:48\nTEXT rank 49: BYTE(115) + LOCAL(0) -> TEXT:49\nshowing 50 of 243 merges\n",
+      "exit": 0
+    },
+    {
+      "arguments": [
+        "stats",
+        "target/maintenance-cli-packs.packtok"
+      ],
+      "stdout": "PackTok artifact v3 statistics\ncorpus.file.000000=fixtures/benchmark/train.txt\ncorpus.file_count=1\ncorpus.fnv1a64=4d0cc0a94cc66e49\ncorpus.input=fixtures/benchmark/train.txt\ncorpus.preprocessing=raw UTF-8 bytes; no normalization; files concatenated without inserted separators before lexical-v1 routing\ncorpus.total_bytes=1640\nexperiment.train_eval_boundary=trainer reads only the supplied training input; held-out fixture files are not opened\nm2.algorithm=factorized-byte-level-bpe-v1\nm2.byte_token_count=256\nm2.max_learned_tokens=256\nm2.merge_order=global merge rank order; each selected pack assigns its next contiguous local ID; only the selected pack state is updated\nm2.min_pair_frequency=2\nm2.normalization=none\nm2.pack.0.learned_merges=243\nm2.pack.0.local_vocab_size=243\nm2.pack.0.name=TEXT\nm2.pack.0.routed_bytes=1278\nm2.pack.0.spans=206\nm2.pack.1.learned_merges=3\nm2.pack.1.local_vocab_size=3\nm2.pack.1.name=NUMBER\nm2.pack.1.routed_bytes=40\nm2.pack.1.spans=14\nm2.pack.2.learned_merges=10\nm2.pack.2.local_vocab_size=10\nm2.pack.2.name=STRUCTURE\nm2.pack.2.routed_bytes=322\nm2.pack.2.spans=212\nm2.pack.65535.learned_merges=0\nm2.pack.65535.local_vocab_size=0\nm2.pack.65535.name=BYTE_FALLBACK\nm2.pack.65535.routed_bytes=0\nm2.pack.65535.spans=0\nm2.router_policy_id=lexical-v1\nm2.routing_boundaries=merge only within each contiguous lexical-v1 routed span\nm2.target_vocab_size=512\nm2.tie_break=higher frequency, then ascending pack_id, then ascending (left SymbolRef, right SymbolRef); SymbolRef order is Byte(u8) before Local(u32)\nm2.total_learned_tokens=256\nm2.total_logical_vocab_size=512\n",
+      "exit": 0
+    }
+  ],
+  "historical_m1_sha256": "cef973a354422c88e6fef54d0b6eee09495980df4e5bd0b7e5adc37896e7d907"
+}

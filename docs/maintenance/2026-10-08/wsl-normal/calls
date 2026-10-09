@@ -1,0 +1,25 @@
+sessions
+version
+usage
+new -s packtok-m5 --gpu L4
+status -s packtok-m5
+usage
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part000 content/packtok-m5-bundle.tar.gz.part000
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part001 content/packtok-m5-bundle.tar.gz.part001
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part002 content/packtok-m5-bundle.tar.gz.part002
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part003 content/packtok-m5-bundle.tar.gz.part003
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part004 content/packtok-m5-bundle.tar.gz.part004
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part005 content/packtok-m5-bundle.tar.gz.part005
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part006 content/packtok-m5-bundle.tar.gz.part006
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part007 content/packtok-m5-bundle.tar.gz.part007
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part008 content/packtok-m5-bundle.tar.gz.part008
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part009 content/packtok-m5-bundle.tar.gz.part009
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part010 content/packtok-m5-bundle.tar.gz.part010
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part011 content/packtok-m5-bundle.tar.gz.part011
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part012 content/packtok-m5-bundle.tar.gz.part012
+upload -s packtok-m5 /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/bundle-v4/packtok-m5-bundle.tar.gz.part013 content/packtok-m5-bundle.tar.gz.part013
+exec -s packtok-m5 -f /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/scripts/remote-recovery.py --timeout 1050
+download -s packtok-m5 content/packtok-m5-results.tar.gz /home/dasetwa/projects/PackTok/docs/maintenance/2026-10-08/wsl-normal/experiments/m5-gpu/provenance/l4-recovery-2cefb3a7867c4605a71923da9ca26c4d/results.tar.gz
+stop -s packtok-m5
+sessions
+usage

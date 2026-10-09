@@ -1,0 +1,17 @@
+data/cuda-downloads/cuda_nvcc-linux-x86_64-12.4.131-archive.tar.xz: OK
+data/cuda-downloads/cuda_cudart-linux-x86_64-12.4.127-archive.tar.xz: OK
+data/cuda-downloads/cuda_cccl-linux-x86_64-12.4.127-archive.tar.xz: OK
+data/cuda-downloads/cuda_nvrtc-linux-x86_64-12.4.127-archive.tar.xz: OK
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  446M    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  5  446M    5 23.8M    0     0  18.6M      0  0:00:23  0:00:01  0:00:22 18.6M 14  446M   14 62.6M    0     0  27.4M      0  0:00:16  0:00:02  0:00:14 27.4M 19  446M   19 87.0M    0     0  26.5M      0  0:00:16  0:00:03  0:00:13 26.5M 26  446M   26  116M    0     0  27.2M      0  0:00:16  0:00:04  0:00:12 27.2M 34  446M   34  155M    0     0  28.7M      0  0:00:15  0:00:05  0:00:10 31.5M 41  446M   41  184M    0     0  29.4M      0  0:00:15  0:00:06  0:00:09 32.2M 49  446M   49  219M    0     0  30.1M      0  0:00:14  0:00:07  0:00:07 31.3M 56  446M   56  251M    0     0  30.3M      0  0:00:14  0:00:08  0:00:06 32.8M 62  446M   62  280M    0     0  30.2M      0  0:00:14  0:00:09  0:00:05 32.7M 69  446M   69  310M    0     0  30.1M      0  0:00:14  0:00:10  0:00:04 31.6M 76  446M   76  339M    0     0  30.1M      0  0:00:14  0:00:11  0:00:03 30.9M 84  446M   84  378M    0     0  30.8M      0  0:00:14  0:00:12  0:00:02 31.8M 91  446M   91  407M    0     0  30.7M      0  0:00:14  0:00:13  0:00:01 31.3M 99  446M   99  446M    0     0  31.2M      0  0:00:14  0:00:14 --:--:-- 33.1M100  446M  100  446M    0     0  31.2M      0  0:00:14  0:00:14 --:--:-- 34.1M
+data/cuda-downloads/libcublas-linux-x86_64-12.4.5.8-archive.tar.xz: OK
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 77.9M    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 19 77.9M   19 15.0M    0     0  9165k      0  0:00:08  0:00:01  0:00:07 9165k 63 77.9M   63 49.5M    0     0  18.9M      0  0:00:04  0:00:02  0:00:02 18.9M100 77.9M  100 77.9M    0     0  22.7M      0  0:00:03  0:00:03 --:--:-- 22.8M
+data/cuda-downloads/libcurand-linux-x86_64-10.3.5.147-archive.tar.xz: OK
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2024 NVIDIA Corporation
+Built on Thu_Mar_28_02:18:24_PDT_2024
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0

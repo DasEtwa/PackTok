@@ -1,0 +1,149 @@
+[
+  {
+    "label": "root-fmt-msrv-v2",
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "start_utc": "2026-10-08T16:57:59.646545+00:00",
+    "seconds": 1.572259530000025,
+    "exit": 0
+  },
+  {
+    "label": "root-clippy-msrv-v2",
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "clippy",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "start_utc": "2026-10-08T16:58:01.219168+00:00",
+    "seconds": 0.7175977539999963,
+    "exit": 0
+  },
+  {
+    "label": "root-tests-msrv-v2",
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "test",
+      "--workspace"
+    ],
+    "start_utc": "2026-10-08T16:58:01.937112+00:00",
+    "seconds": 11.909804614999985,
+    "exit": 0
+  },
+  {
+    "label": "root-release-tests-msrv-v2",
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "test",
+      "--workspace",
+      "--release"
+    ],
+    "start_utc": "2026-10-08T16:58:13.847310+00:00",
+    "seconds": 1.519960965999985,
+    "exit": 0
+  },
+  {
+    "label": "root-release-build-msrv-v2",
+    "command": [
+      "cargo",
+      "+1.85.0",
+      "build",
+      "--release",
+      "--workspace"
+    ],
+    "start_utc": "2026-10-08T16:58:15.367643+00:00",
+    "seconds": 0.06478603299999008,
+    "exit": 0
+  },
+  {
+    "label": "m5-fmt-v2",
+    "command": [
+      "cargo",
+      "+stable",
+      "fmt",
+      "--manifest-path",
+      "experiments/m5-gpu/Cargo.toml",
+      "--all",
+      "--check"
+    ],
+    "start_utc": "2026-10-08T16:58:15.432852+00:00",
+    "seconds": 0.968707701999989,
+    "exit": 0
+  },
+  {
+    "label": "m5-clippy-v2",
+    "command": [
+      "cargo",
+      "+stable",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "experiments/m5-gpu/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "start_utc": "2026-10-08T16:58:16.401968+00:00",
+    "seconds": 3.497350406999999,
+    "exit": 0
+  },
+  {
+    "label": "m5-tests-v2",
+    "command": [
+      "cargo",
+      "+stable",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "experiments/m5-gpu/Cargo.toml"
+    ],
+    "start_utc": "2026-10-08T16:58:19.899934+00:00",
+    "seconds": 6.822525745999997,
+    "exit": 0
+  },
+  {
+    "label": "m5-release-tests-v2",
+    "command": [
+      "cargo",
+      "+stable",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "experiments/m5-gpu/Cargo.toml",
+      "--release"
+    ],
+    "start_utc": "2026-10-08T16:58:26.722865+00:00",
+    "seconds": 3.4779325330000006,
+    "exit": 0
+  },
+  {
+    "label": "m5-release-build-v2",
+    "command": [
+      "cargo",
+      "+stable",
+      "build",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "experiments/m5-gpu/Cargo.toml",
+      "--example",
+      "recover_weights"
+    ],
+    "start_utc": "2026-10-08T16:58:30.201280+00:00",
+    "seconds": 0.11492124000000103,
+    "exit": 0
+  }
+]

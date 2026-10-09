@@ -1,0 +1,43 @@
+{
+  "config": {
+    "batch": 8,
+    "byte_budget": 8388608,
+    "evaluation_every": 500,
+    "model": {
+      "context": 256,
+      "ffn": 1536,
+      "heads": 6,
+      "hidden": 384,
+      "layers": 8,
+      "vocab": 512
+    },
+    "precision": "FP32",
+    "seeds": [
+      20261008,
+      20261009,
+      20261010
+    ],
+    "steps": 2000
+  },
+  "parameters": 14681984,
+  "variants": [
+    {
+      "B_raw_target_bytes": 8389892,
+      "B_steps": 2166,
+      "B_targets": 4435968,
+      "T_steps": 2000,
+      "T_targets": 4096000,
+      "train_raw_bytes": 34632012,
+      "variant": "A"
+    },
+    {
+      "B_raw_target_bytes": 8390513,
+      "B_steps": 2544,
+      "B_targets": 5210112,
+      "T_steps": 2000,
+      "T_targets": 4096000,
+      "train_raw_bytes": 34632012,
+      "variant": "C"
+    }
+  ]
+}

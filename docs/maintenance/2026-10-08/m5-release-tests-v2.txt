@@ -1,0 +1,39 @@
+COMMAND: cargo +stable test --locked --manifest-path experiments/m5-gpu/Cargo.toml --release
+START: 2026-10-08T16:58:26.722865+00:00
+    Finished `release` profile [optimized] target(s) in 0.86s
+     Running unittests src/lib.rs (experiments/m5-gpu/target/release/deps/packtok_m5-5666375ca13a2714)
+
+running 18 tests
+test corpus::tests::gutenberg_extraction_keeps_body_bytes ... ok
+test corpus::tests::leakage_checks_exact_and_near ... ok
+test corpus::tests::short_source_files_share_one_split_counter ... ok
+test corpus::tests::rolling_matches_direct_windows ... ok
+test data::tests::normalization_excludes_unscored_bytes ... ok
+test data::tests::adapters_exact_mapping_and_prompt_preservation ... ok
+test model::tests::primary_parameters_and_layout ... ok
+test runner::tests::evaluation_rejects_empty_single_token_and_zero_batch ... ok
+test model::tests::causal_mask_and_initialization ... ok
+test runner::tests::evaluation_scores_every_target_and_no_unrepresented_bytes ... ok
+test runner::tests::final_job_rejects_undeclared_seed_before_allocating_or_writing ... ok
+test model::tests::gradient_gate_rejects_one_missing_projection_even_when_family_is_active ... ok
+test model::tests::all_parameter_families_get_gradients_and_adam_updates ... ok
+test model::tests::gradients_match_finite_differences ... ok
+test runner::tests::paired_seed_training_is_reproducible ... ok
+test data::tests::sequence_format_roundtrip_rejects_invalid ... ok
+test model::tests::checkpoint_roundtrip_and_tiny_overfit ... ok
+test runner::tests::checkpoint_retains_complete_image_with_an_interrupted_temporary ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running unittests src/main.rs (experiments/m5-gpu/target/release/deps/packtok_m5-c3d8eaa5c230065b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests packtok_m5
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

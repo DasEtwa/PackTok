@@ -1,0 +1,16 @@
+{
+  "source_commit": "1412541f40f6d11a2fdb674c2d832318473cac0e",
+  "variant": "infrastructure-fixture",
+  "seed": 20261008,
+  "kind": "preflight-fixture",
+  "configuration_sha256": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+  "dataset_sha256": {
+    "train": "d84c640e29b20f2c042d2910d0504efc2d64fb195476bfb3adfc591d523210ce",
+    "validation": "72b840ddcb9f471078e377dfeca85667798a27ddbc055bbe4525376e33853135",
+    "test": "62e3397fbc737fadafc236c6d3e1f25dfd73c61d66a9372a48af5450fbffd3ac"
+  },
+  "tokenizer_sha256": {
+    "A": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec",
+    "C": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf"
+  }
+}

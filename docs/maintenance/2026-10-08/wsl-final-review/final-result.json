@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "worker_seconds": 310.115170708,
+  "request_to_release_seconds": 311.8022871017456,
+  "service_after": "Result=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nActiveState=inactive\nSubState=dead\n",
+  "descendant_pid": 515,
+  "descendant_alive": false,
+  "worker_start_utc": "2026-10-08T17:48:23Z",
+  "worker_end_utc": "2026-10-08T17:53:33Z",
+  "initiating_shell_exited": true,
+  "real_gpu_calls": 0
+}

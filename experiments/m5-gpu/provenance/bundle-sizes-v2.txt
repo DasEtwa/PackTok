@@ -1,0 +1,3 @@
+456605835 experiments/m5-gpu/bundle-v2/packtok-m5-bundle.tar.gz
+ 15066728 experiments/m5-gpu/target-cuda/release/packtok-m5
+471672563 total

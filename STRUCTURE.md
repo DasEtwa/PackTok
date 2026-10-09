@@ -426,3 +426,22 @@ permutations. It still depends only on core. Benchmark m4/m4_corpus modules own
 artifact-derived grouping, corpus preparation and experimental orchestration.
 No new crate, service or external dependency is required. M4 is the factorial
 ablation in M4_ABLATION.md; the earlier M4+ research list is future work.
+
+## M5 isolated GPU experiment
+
+`experiments/m5-gpu/` owns the causal Transformer, corpus preparation, adapters,
+CUDA correctness gate and Colab lifecycle. It is an independent Cargo workspace
+with pinned Candle and an optional CUDA feature, so the historical root Rust 1.85
+workspace does not acquire CUDA dependencies. Existing tokenizer/model mapping
+libraries are consumed by path; no frozen crate responsibilities change.
+Protocol and resource conservation are in M5_GPU_TRANSFORMER.md.
+
+## Documentation navigation (repository maintenance, 2026-10-08)
+
+`docs/README.md` now indexes architecture, milestone, research and development
+guidance. `docs/research/results.md` is the current synthesis of M1–M5 evidence.
+The existing root protocols/specifications/reports and experiment paths remain
+in place because their paths, raw bytes and hashes are reproduction inputs.
+No crate responsibility, dependency or scientific configuration changed.
+The inventory and preservation decisions are in
+[the maintenance plan](docs/maintenance/2026-10-08/PLAN.md).
