@@ -1,0 +1,10 @@
+M5 FP64 validation-domain aggregation regression
+
+Production error from the L4 run: `domain/category aggregation does not reconcile to global score`.
+Old condition: byte totals equal, token totals equal, and absolute NLL-sum difference <= 1e-9.
+
+Deterministic local summation reproduction (800,000 entries): each NLL is `9 * ln(2) + (((i * 2654435761) & 0xffff) / 65535) * 1e-6`; global sum is accumulated in input order while per-domain sums use two interleaved domain groups (`i % 7 == 0` and all others). Each contribution increments global and exactly one domain, so byte and token counts reconcile exactly. Observed global NLL: 4,990,660.100032396; combined domain NLL: 4,990,660.100032379; difference: -1.6763806343078613e-8. The old threshold rejects this mathematically reconciled input.
+
+Regression command with temporary old comparison: `cargo test --locked --manifest-path experiments/m5-gpu/Cargo.toml --lib domains::tests::large_domain_aggregation_allows_only_fp64_ordering_error`; exit 1, test failed with `domain/category aggregation does not reconcile to global score`.
+
+After restoring production source and applying the relative FP64 tolerance `1e-12 * max(abs(global_nll), abs(domain_nll), 1)`, command `cargo test --locked --manifest-path experiments/m5-gpu/Cargo.toml --lib domains::tests` exited 0: 5 passed, 0 failed. This is CPU arithmetic/regression evidence; the corrected CUDA binary has not been built or run.

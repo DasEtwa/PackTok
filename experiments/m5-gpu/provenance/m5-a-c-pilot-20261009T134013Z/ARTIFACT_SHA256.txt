@@ -1,0 +1,17 @@
+3029e36a2eb993e6a620def53ef4b21703d14508f392b4aff6bd1f2d35b892a8  results.tar.gz
+0b3682f138939008df15e4277a8a1a2b342ebca8ba4a35b03f47e59a6fdafe95  results-extracted/results/A/metrics.jsonl
+e9e0ce15b9bf3ba9085cff184ab33eb1b5018e8c1a764103486103213f4d027a  results-extracted/results/A/console.txt
+da3b08bfda2bc991992a4487f4659c7b406b2af5f2abe62789bef8d80e50655a  results-extracted/results/A/latest.resume.safetensors
+7c3c2f098b08b3015d1645a3d86bc4b5018b371543682d6ce1105eee26bfa570  results-extracted/results/input-sha256.txt
+718eff9300f90d8085967b8c809c011ad4c9af9d622aca71d5532527a34153aa  results-extracted/results/pilot-plan.json
+5444bd075e08521a199f976716d17a85811a689cf1c531e270e463f191b5454b  results-extracted/results/frozen-source.json
+1b8057817269dfd5b55ad7979df13ee5ae809f52eaae997b5595610aa47b74f1  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/PILOT_ATTEMPT.md
+db7245a9291c771dec3e102f3b0d103e8bf45d1d90bb3a35b4fd1dfd7432c259  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/domain-aggregation-regression.log
+a09533aac92a84d0d226bf90450a9cc24c2ecf6922a434dd4b80adc33d46bef4  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/DRIVE_READBACK_VERIFIED.json
+b21eb54cc181cbdcf7b259e4bf299b000cab901f12096ceac5bf5e2432f1c164  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/execute.txt
+4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/remote-exit-code.txt
+2ae44f16ff21868fb4dda0cc48c8cc53c97aa46a9c419e887dacd97a714e487d  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/release-verification.txt
+bfe6b8756538df7d117f6ff9c836be8d6963915804b7eae4d60d0113d18958f4  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/usage-before.txt
+579c753fbaebe5c52cdd50fcd3764dcc2a4f202fc61c627f462c47d9d470a068  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/usage-after.txt
+69641d13d389caa0a498e823ca12b2b993ad8865fc18eef9b090aaf7328a4b38  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/results-extracted/results/gpu-samples.csv
+4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865  /home/dasetwa/projects/PackTok/experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/results-extracted/results/exit-code.txt

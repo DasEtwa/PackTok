@@ -225,9 +225,13 @@ fn report(split: &str, totals: Totals, seconds: f64) -> Result<Report> {
         a.tokens += c.tokens;
         a
     });
+    // The global and per-domain NLL sums visit the same token losses in a
+    // different order. Allow a tight relative FP64 accumulation tolerance;
+    // byte and token accounting must still reconcile exactly.
+    let nll_tolerance = 1e-12 * global.nll.abs().max(cat.nll.abs()).max(1.0);
     let consistent = cat.bytes == global.bytes
         && cat.tokens == global.tokens
-        && (cat.nll - global.nll).abs() <= 1e-9;
+        && (cat.nll - global.nll).abs() <= nll_tolerance;
     if !consistent {
         return Err("domain/category aggregation does not reconcile to global score".into());
     }
@@ -375,6 +379,24 @@ mod tests {
         );
         Ok(())
     }
+    #[test]
+    fn large_domain_aggregation_allows_only_fp64_ordering_error() -> Result<()> {
+        let mut totals = Totals::default();
+        for i in 0_u64..800_000 {
+            let jitter = ((i.wrapping_mul(2_654_435_761) & 0xffff) as f64) / 65_535.0 * 1e-6;
+            let nll = std::f64::consts::LN_2 * 9.0 + jitter;
+            let domain = if i % 7 == 0 {
+                "german-prose"
+            } else {
+                "english-literature"
+            };
+            add(&mut totals, domain, i / BLOCK_BYTES, nll, 1);
+        }
+        let result = report("validation", totals, 0.0)?;
+        assert!(result.aggregation_matches_global);
+        Ok(())
+    }
+
     #[test]
     fn per_domain_forward_scoring_matches_global_byte_score() -> Result<()> {
         use crate::runner::{evaluate as global_evaluate, tiny_config};

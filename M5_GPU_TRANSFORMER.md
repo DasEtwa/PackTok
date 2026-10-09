@@ -1,19 +1,24 @@
 # M5 — GPU Transformer scale probe
 
-Status: CPU preparation complete; initial L4 runtime preflight failed before Rust
-started and was immediately released. No GPU model/quality result exists. M5 begins at the exact CPU
-freeze `f3b6c3fb41f46c93e701b585d859b0b9071d65a5`. M4's subsequent delivery-only
-commit `3b304d2dfdbae8111da7b6cf714569fff353d030` was pushed to its existing PR
-before branching. Branch `m5-gpu-transformer` targets `m4-factorization-ablation`.
-M0–M4 source contracts, results, raw failures and artifact encodings are frozen.
+Status: CPU preparation complete; L4 CUDA correctness/overfit diagnostics passed.
+The first Transformer pilot attempt ran A for 2,000 updates and validation scoring,
+then failed in final floating-point domain-score reconciliation before C started.
+The session was released; this is partial training evidence, not an A/C comparison.
+M5 begins at the exact CPU freeze `f3b6c3fb41f46c93e701b585d859b0b9071d65a5`.
+M4's delivery-only commit `3b304d2dfdbae8111da7b6cf714569fff353d030` was pushed
+to its existing PR before branching. Branch `m5-gpu-transformer` targets
+`m4-factorization-ablation`. M0–M4 contracts, results, failures and encodings remain
+frozen.
 
-Current status (2026-10-09): the real L4 CUDA correctness/overfit diagnostics
-passed and are documented in the preserved `M5_OVERFIT_DIAGNOSTIC_L4.md`. One
-user-authorized A/C 2,000-update pilot allocation was later consumed, but the
-remote orchestration exited before any Rust training update; its archive contains
-only exit code 1. No A/C model comparison exists. The session was released and
-its failure evidence is preserved in
-[`PILOT_ATTEMPT.md`](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
+Current status (2026-10-09): the L4 A run reached all 2,000 updates and recorded
+validation BPB from 4.82560 at step 1 to 2.57296 at step 2,000. It exposed TEST
+for final-only scoring but did not preserve the TEST score; validation-domain
+aggregation then exited with code 1 before C. The strict FP64 NLL equality check
+was reproduced as too tight and corrected with a narrow relative tolerance while
+retaining exact byte/token equality. A targeted regression and all five domain
+tests pass. The correction is post-bundle and needs a fresh package before any
+future GPU run. The exact result and limits are in
+[`PILOT_ATTEMPT.md`](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/PILOT_ATTEMPT.md).
 
 ## Question and controls
 
