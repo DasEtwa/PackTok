@@ -2,6 +2,7 @@
 """CPU-only regression for the Colab transport -> remote child handoff."""
 import importlib.util
 import io
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -68,6 +69,36 @@ class RemoteBridgeTests(unittest.TestCase):
             self.assertIn(b"child-stdout", files["results/bootstrap-console.txt"])
             self.assertIn(b"child-stderr", files["results/bootstrap-console.txt"])
             self.assertEqual(files["results/remote-exit-fixture.txt"], b"7\n")
+
+    def test_colab_cli_receives_approval_env_without_changing_transport_args(self):
+        helper = BRIDGE.with_name("colab-exec-pilot.sh")
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            capture = root / "capture.json"
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            colab = fake_bin / "colab"
+            colab.write_text(
+                "#!/usr/bin/env python3\nimport json, os, sys\n"
+                f"open({str(capture)!r}, 'w').write(json.dumps({{'argv':sys.argv[1:],'approval':os.environ.get('PACKTOK_M5_GPU_APPROVAL')}}))\n"
+            )
+            colab.chmod(0o755)
+            env = os.environ.copy()
+            env["PATH"] = str(fake_bin) + os.pathsep + env["PATH"]
+            missing = subprocess.run(["bash", str(helper), "packtok-m5", "bridge.py", "1200"], env=env,
+                                     capture_output=True, text=True, check=False)
+            self.assertNotEqual(missing.returncode, 0)
+            self.assertIn("required PACKTOK_M5_GPU_APPROVAL is missing", missing.stderr)
+            self.assertFalse(capture.exists())
+            env["PACKTOK_M5_GPU_APPROVAL"] = "approval-reference-fixture"
+            ok = subprocess.run(["bash", str(helper), "packtok-m5", "bridge.py", "1200"], env=env,
+                                capture_output=True, text=True, check=False)
+            self.assertEqual(ok.returncode, 0, ok.stderr)
+            recorded = json.loads(capture.read_text())
+            self.assertEqual(recorded["approval"], "approval-reference-fixture")
+            self.assertEqual(recorded["argv"], ["exec", "-s", "packtok-m5", "-f", "bridge.py",
+                                                 "--timeout", "1200", "--env",
+                                                 "PACKTOK_M5_GPU_APPROVAL=approval-reference-fixture"])
 
 
 if __name__ == "__main__":
