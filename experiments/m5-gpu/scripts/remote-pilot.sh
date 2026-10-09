@@ -12,7 +12,7 @@ finish() {
   fi
   printf '%s\n' "$rc" > results/exit-code.txt
   if test -f bootstrap-console.txt; then cp bootstrap-console.txt results/; fi
-  tar -czf /content/packtok-m5-results.tar.gz results
+  tar -czf "${PACKTOK_M5_RESULTS_ARCHIVE:-/content/packtok-m5-results.tar.gz}" results
   exit "$rc"
 }
 trap finish EXIT
@@ -39,9 +39,15 @@ nvidia-smi --query-gpu=name --format=csv,noheader | grep -qx 'NVIDIA L4'
 ./runtime/ld-linux-x86-64.so.2 --library-path "$libpath" ./packtok-m5 \
   plan-extended configs/pilot-2k-v1.json data/prepared-v2 results/pilot-plan.json
 
+mkdir -p results/A
+cp recovered-A/metrics.jsonl results/A/metrics.jsonl
+cp recovered-A/latest.resume.safetensors results/A/latest.resume.safetensors
+cp recovered-A/training-console.txt results/A/prior-training-console.txt
+sha256sum recovered-A/metrics.jsonl recovered-A/latest.resume.safetensors > results/recovered-A-input-sha256.txt
+
 for variant in A C; do
   out="results/$variant"
-  mkdir "$out"
+  mkdir -p "$out"
   printf '%s %s\n' "$variant" "$(date -u +%FT%TZ)" >> results/execution-order.txt
   timeout --signal=TERM --kill-after=10 690 env PACKTOK_M5_GPU_APPROVAL="$PACKTOK_M5_GPU_APPROVAL" \
     ./runtime/ld-linux-x86-64.so.2 --library-path "$libpath" ./packtok-m5 \
