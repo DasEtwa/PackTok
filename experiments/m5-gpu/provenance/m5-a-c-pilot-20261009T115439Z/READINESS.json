@@ -1,0 +1,13 @@
+{
+  "status": "CPU_READY",
+  "source_commit": "fb5d0990922b2f50cd8cd2c64e9504fad43bc9fd",
+  "package_id": "pilot-2k-v1-l4-20261009T115439Z",
+  "binary_sha256": "df9b9cc1ff76e89a6c3814b97cf5aa81d7a062172bfb10737826481fad3eb459",
+  "config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+  "package_tar_sha256": "ea7a0f64912d2557a29848b11e24d4bf0d97c700738dda7f24450dc845fa7e2a",
+  "package_member_count": 85,
+  "cpu_mock_regressions_passed": 3,
+  "cuda_build": "cargo build --locked --release --features cuda succeeded",
+  "remote_runner": "colab-exec-pilot.sh forwards PACKTOK_M5_GPU_APPROVAL via repeatable Colab --env option",
+  "drive_write_pending": "results after GPU release"
+}

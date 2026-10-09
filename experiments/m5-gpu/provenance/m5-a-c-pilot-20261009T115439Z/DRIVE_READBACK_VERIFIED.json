@@ -1,0 +1,7 @@
+{
+  "status": "COMPLETE_VERIFIED",
+  "remote": "packtok-drive-own:PackTok/M5/pilot/m5-a-c-pilot-evidence-20261009T115439Z-verified.tar.gz",
+  "bytes": 45476,
+  "archive_sha256": "fbe902d2948a19cadca8fede5f9aa6c6b611dfd19b071ad3c5c42ead254fad53",
+  "full_readback_sha256": "fbe902d2948a19cadca8fede5f9aa6c6b611dfd19b071ad3c5c42ead254fad53"
+}

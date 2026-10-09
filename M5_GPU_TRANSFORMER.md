@@ -345,3 +345,10 @@ introduced. See the [maintenance report](docs/maintenance/2026-10-08/REPORT.md),
 [WSL design](docs/development/gpu-colab.md) and
 [OAuth decision](docs/development/oauth.md). M5 GPU preflight remains incomplete;
 the next allocation is a separately authorized task, not an automatic retry.
+
+
+## Launch recovery — 2026-10-09 (no model result)
+
+The first 20261009 A/C launch omitted the required approval environment flag; its archived remote stderr is absent, so the exact failure cause remains unconfirmed. The next one-allocation attempt passed the approval through Colab `--env` but failed before Rust because the bridge pre-created `results/` and the shell then used `mkdir results` under `set -e`. Its downloaded archive records exit 1 and the exact bootstrap stderr. The bridge now defers result-directory creation until the child exits and archives stdout, stderr and the actual child exit code. A CPU-only mock covers missing approval, successful handoff and nonzero status; four cases pass.
+
+That allocation was released after 386 seconds (397 seconds request-to-cleanup), with displayed CU 167.24 to 167.15 and zero active assignments afterward. A and C each completed zero verified updates. No training, validation or final TEST metric, step throughput, VRAM peak or checkpoint exists. The one-allocation authorization is consumed; no retry was made. See the [attempt evidence](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T115439Z/PILOT_ATTEMPT.md). This launch failure provides no support for or against the tokenizer hypothesis or the longer study.

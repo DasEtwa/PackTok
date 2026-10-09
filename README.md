@@ -8,7 +8,7 @@ round-trips and no implicit normalization.
 
 The project is a research implementation. Current results support narrow,
 corpus-dependent observations; they do not establish general superiority over
-flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence. M5 CUDA overfit diagnostics passed on an NVIDIA L4, but the first A/C Transformer pilot attempt exited before any Rust training update and yielded no comparison metrics. The pilot remains incomplete; see the [M5 attempt report](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md). This maintenance work is not M6.
+flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence. M5 CUDA overfit diagnostics passed on an NVIDIA L4. Two separately archived A/C Transformer launch attempts have exited before any Rust training update; the latest bootstrap cause is fixed and covered by CPU mocks, but no comparison metrics exist. The single allocation authorized for this recovery was consumed, so the pilot remains incomplete; see the [latest M5 attempt report](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T115439Z/PILOT_ATTEMPT.md) and [launch regression tests](experiments/m5-gpu/scripts/test-remote-bridge.py).
 
 ## Research motivation
 

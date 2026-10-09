@@ -401,3 +401,10 @@ console was not included in the downloaded error archive. The single authorized
 allocation is consumed; no retry was made. This attempt provides no evidence for
 or against the tokenizer hypothesis and does not establish readiness for the
 longer five-seed study.
+
+
+## Second A/C pilot launch attempt — 2026-10-09
+
+A fresh CUDA package was prepared from `fb5d0990922b2f50cd8cd2c64e9504fad43bc9fd`; its executable and package hashes are in `experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T115439Z/READINESS.json`. The one new L4 allocation executed no training update: the bridge created `results/` before the frozen shell's `mkdir results`, yielding archived bootstrap stderr and remote exit code 1. The session lasted 386 seconds and was released; displayed CU changed 167.24 to 167.15, with zero assignments afterward. A/C losses, validation/test bits per byte, step time, throughput, VRAM and checkpoints are unavailable.
+
+The launch code now forwards the required approval variable via Colab's `--env`, records complete bootstrap output/exit status, and no longer pre-creates the shell's result directory. Four CPU-only transport mocks pass. The earlier 20261009T032000Z remote stderr remains missing, so its exact cause is still unconfirmed. The authorized allocation is consumed and no second attempt occurred. Full evidence: [latest pilot attempt](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T115439Z/PILOT_ATTEMPT.md).

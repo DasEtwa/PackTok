@@ -175,3 +175,8 @@ multi-day OAuth validity.
 [recovery evidence](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md),
 [maintenance CPU checks](../maintenance/2026-10-08/REPORT.md).
 New GPU work must be a separate explicitly authorized task.
+
+
+### M5 A/C pilot launch recovery — 2026-10-09
+
+No Transformer comparison was produced. The prior attempt's likely missing approval flag was fixed and locally mocked. The single new L4 attempt then failed in bootstrap because the bridge pre-created the `results` directory before the shell's `mkdir results`; archived stderr confirms this cause. The bridge was corrected and four CPU-only launch regressions pass after the allocation. A/C each have zero verified updates; there are no BPB, checkpoint, throughput or VRAM metrics, and the pilot gives no evidence for the five-seed study. The L4 was released after 386 seconds; displayed CU was 167.24→167.15, with no active assignments. See [attempt evidence](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T115439Z/PILOT_ATTEMPT.md). The earlier failed attempt's stderr remains unavailable, so its precise cause is not asserted.

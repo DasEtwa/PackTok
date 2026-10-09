@@ -1,0 +1,17 @@
+{
+  "status": "M5_A_C_PILOT_PARTIAL",
+  "variant_A_updates": 0,
+  "variant_C_updates": 0,
+  "remote_exit_code": 1,
+  "remote_failure": "remote.sh mkdir results failed because bridge precreated that directory",
+  "l4": "NVIDIA L4",
+  "allocation_request_utc": "2026-10-09T12:11:10Z",
+  "release_verified_utc": "2026-10-09T12:17:36Z",
+  "request_to_release_seconds": 386,
+  "supervisor_interval_seconds": 397,
+  "compute_units_before": 167.24,
+  "compute_units_after": 167.15,
+  "active_gpu_assignments_after": 0,
+  "drive_archive": "pending",
+  "test_scored": false
+}
