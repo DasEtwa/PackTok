@@ -380,6 +380,24 @@ mod tests {
         Ok(())
     }
     #[test]
+    fn domain_aggregation_rejects_real_nll_and_counter_mismatches() {
+        let mut nll_mismatch = Totals::default();
+        add(&mut nll_mismatch, "english-literature", 0, 1.0, 2);
+        nll_mismatch.global.nll += 0.01;
+        assert!(report("validation", nll_mismatch, 0.0).is_err());
+
+        let mut byte_mismatch = Totals::default();
+        add(&mut byte_mismatch, "english-literature", 0, 1.0, 2);
+        byte_mismatch.global.bytes += 1;
+        assert!(report("validation", byte_mismatch, 0.0).is_err());
+
+        let mut token_mismatch = Totals::default();
+        add(&mut token_mismatch, "english-literature", 0, 1.0, 2);
+        token_mismatch.global.tokens += 1;
+        assert!(report("validation", token_mismatch, 0.0).is_err());
+    }
+
+    #[test]
     fn large_domain_aggregation_allows_only_fp64_ordering_error() -> Result<()> {
         let mut totals = Totals::default();
         for i in 0_u64..800_000 {
