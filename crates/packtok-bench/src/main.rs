@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 
+mod audit;
+mod m3;
 mod metrics;
 mod scan;
 
@@ -52,6 +54,22 @@ struct Measurement {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let mut arguments = std::env::args();
+    let _program = arguments.next();
+    let command = arguments.next();
+    if command.as_deref() == Some("audit") {
+        if arguments.next().is_some() {
+            return Err("usage: packtok-bench audit".into());
+        }
+        return audit::run();
+    }
+    if command.as_deref() == Some("m3") {
+        let label = arguments.next().unwrap_or_else(|| "manual".to_owned());
+        if arguments.next().is_some() {
+            return Err("usage: packtok-bench m3 [unique-run-label]".into());
+        }
+        return m3::run(&label);
+    }
     let corpus = load_corpus(Path::new(TRAIN_PATH))?;
     let config = BpeTrainingConfig::default();
     let training_started = Instant::now();

@@ -1,0 +1,23 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src\lib.rs (target\debug\deps\packtok_tokenizer-69857ec66a40a4df.exe)
+
+running 1 test
+test factorized::tests::symbol_workspace_is_bounded_by_longest_routed_span ... FAILED
+
+failures:
+
+---- factorized::tests::symbol_workspace_is_bounded_by_longest_routed_span stdout ----
+
+thread 'factorized::tests::symbol_workspace_is_bounded_by_longest_routed_span' (16728) panicked at crates\packtok-tokenizer\src\factorized.rs:564:9:
+assertion `left == right` failed
+  left: 147456
+ right: 98320
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    factorized::tests::symbol_workspace_is_bounded_by_longest_routed_span
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p packtok-tokenizer --lib`

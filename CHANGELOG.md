@@ -1,5 +1,38 @@
 # Milestone history
 
+## Performance and mathematics audit (2026-10-07)
+
+- Addressed seven prioritized findings in model numerical failures, model
+  loading/evaluation overhead, M2 workspace sizing, and batch/MAC validation.
+- Added transactional Adam failure handling, offset-stable loss, finite inference
+  score checks, pre-allocation body validation, direct weight loading,
+  scalar evaluation loss, and span-sized M2 symbol buffers.
+- Added nine tests, including finite differences across every parameter of small
+  flat/factorized models, and additive `packtok-bench audit` probes.
+- Preserved three before/after performance repetitions, failed regressions,
+  intermediate failures, and a full M3 rerun. All twelve M3 model hashes match
+  the historical run; quality conclusions are unchanged. See
+  [PERFORMANCE_MATH_AUDIT.md](PERFORMANCE_MATH_AUDIT.md).
+
+## M3 — Tiny autoregressive model comparison (2026-10-07)
+
+- Adds a small CPU-only recurrent model boundary with a flat M1 head and a
+  genuinely factorized M2 pack/local head.
+- Adds a new manually authored train/validation/test split that is separate from
+  the frozen M1/M2 tokenizer evaluation samples.
+- Added a small CPU-only causal RNN with an M1 flat head and a teacher-forced
+  M2 pack/local factorized head, Adam training, serialization, and greedy
+  generation smoke tests.
+- Added a fixed synthetic train/validation/test split and two comparison
+  regimes, including a documented analytical-MAC budget.
+- Ran three seeds per regime on the same Windows host; final byte-normalized
+  results, raw logs, model artifacts, hashes, limitations, and Windows/Linux
+  MSRV verification are in [M3_MODEL.md](M3_MODEL.md) and
+  [M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
+- M2 had lower mean bits/byte on this small held-out synthetic split while
+  emitting more tokens. This is a narrow observation, not a general-quality
+  claim or evidence that PackTok is better.
+
 ## M2 — First factorized pack architecture (2026-10-07)
 
 - Added a generic Rust routing contract and the experimental, versioned lexical-v1

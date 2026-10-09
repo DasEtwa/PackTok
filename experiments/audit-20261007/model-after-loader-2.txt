@@ -1,0 +1,35 @@
+   Compiling packtok-model v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.46s
+     Running unittests src\lib.rs (target\debug\deps\packtok_model-e1294f8a2b33fdae.exe)
+
+running 21 tests
+test tests::cross_entropy_is_invariant_to_large_common_offsets ... ok
+test tests::factorized_accuracy_reports_pack_and_gold_pack_local_heads ... ok
+test tests::changing_future_inputs_does_not_change_prior_hidden_states ... ok
+test tests::failed_adam_update_preserves_weights_moments_and_step ... ok
+test tests::invalid_pack_and_local_targets_are_rejected ... ok
+test tests::inference_rejects_overflowing_logits_in_both_heads ... ok
+test tests::mac_estimate_validates_input_ids_and_reports_example_index ... ok
+test tests::byte_fallback_rows_are_valid_factorized_targets ... ok
+test tests::greedy_generation_is_bounded_and_keeps_prompt ... ok
+test tests::adam_update_changes_parameters ... ok
+test tests::flat_and_factorized_cross_entropy_are_finite_and_teacher_forced ... ok
+test tests::parameter_partitions_sum_to_total_for_both_heads ... ok
+test tests::overflowing_adam_moment_is_rejected_without_changing_state ... ok
+test tests::same_local_id_in_different_packs_uses_distinct_embedding_rows ... ok
+test tests::output_shapes_follow_flat_and_factorized_vocabularies ... ok
+test tests::malformed_model_bytes_and_nonfinite_parameters_are_rejected ... ok
+test tests::training_mac_estimate_is_positive_and_changes_with_active_head ... ok
+test tests::same_seed_initializes_identical_parameters ... ok
+test tests::model_serialization_round_trip_preserves_greedy_ids ... ok
+test tests::factorized_model_overfits_the_same_raw_sequence_and_learns_packs ... ok
+test tests::flat_model_overfits_a_small_repeated_sequence ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s
+
+   Doc-tests packtok_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

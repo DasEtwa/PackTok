@@ -1,0 +1,16 @@
+   Compiling packtok-bench v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-bench)
+    Finished `release` profile [optimized] target(s) in 4.02s
+     Running `target\release\packtok-bench.exe audit`
+audit-v1: release; warmup=25ms measurement>=200ms per workload; seed=20261007; model hidden=16 context=16; untrained weights; timings include returned buffer destruction
+flat: targets=63 loss=6.238320160285 parameter_count=17424 artifact_bytes=69742
+flat-evaluate-63-targets: iterations=112 elapsed_ms=200.218 us_per_iteration=1787.659
+flat-train-64-targets-including-clone: iterations=84 elapsed_ms=201.209 us_per_iteration=2395.345
+flat-load: iterations=967 elapsed_ms=200.042 us_per_iteration=206.868
+factorized: targets=63 loss=5.159167829569 parameter_count=17475 artifact_bytes=69958
+factorized-evaluate-63-targets: iterations=210 elapsed_ms=200.230 us_per_iteration=953.477
+factorized-train-64-targets-including-clone: iterations=198 elapsed_ms=200.772 us_per_iteration=1013.999
+factorized-load: iterations=1545 elapsed_ms=200.012 us_per_iteration=129.457
+m2-short-spans: input_bytes=49152 tokens=49152 output_capacity_bytes=393216 temporary_peak_bytes=1966080
+m2-short-spans-encode: iterations=127 elapsed_ms=201.413 us_per_iteration=1585.926
+m2-long-span: input_bytes=49152 tokens=49152 output_capacity_bytes=393216 temporary_peak_bytes=393312
+m2-long-span-encode: iterations=357 elapsed_ms=200.389 us_per_iteration=561.314

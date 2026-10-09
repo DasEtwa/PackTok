@@ -138,3 +138,37 @@ tokens; such artifacts now fail validation. It does not change wire records,
 normalization, ID assignment, or the bytes of artifacts within the bound.
 Future incompatible model sections require a new version or an explicitly
 specified feature extension.
+
+## M3 model parameter format
+
+The M3 experimental neural-model file is separate from tokenizer artifacts; it
+does not change tokenizer format versions 1, 2, or 3. The file begins with an
+eight-byte magic consisting of the ASCII bytes PACKLM3 followed by one NUL
+byte, u16 model-format version 1, one-byte model kind (0 flat, 1 factorized),
+and one zero reserved byte. It continues with little-endian u32 hidden size,
+u32 context length, u64 initialization seed, u32 pack count, then that many
+six-byte descriptors (u16 pack ID, u32 local-token count) in strictly ascending
+pack-ID order. A little-endian u64 parameter count follows, then exactly that
+many little-endian IEEE-754 f32 parameters.
+
+For a flat model, the only descriptor is pack ID 0; its local IDs are the flat
+vocabulary. For a factorized model, every descriptor is an independent local
+namespace. The byte fallback is represented by its ordinary descriptor and is
+not flattened into the pack output head. The parameter vector is ordered:
+
+1. input embedding rows (flat ID order, or pack-ID then local-ID order);
+2. positional embeddings;
+3. row-major recurrent matrix and recurrent bias;
+4. flat output weights and biases; or, for a factorized model, pack output
+   weights and biases followed by all local output weights and biases in
+   pack-ID/local-ID order.
+
+The model reader and writer enforce a 64 MiB file limit, hidden size 2–1,024,
+context length 1–4,096, at most 1,024 packs, no more than 1,000,000 local rows
+per pack or in total, and at most 16,777,216 parameters. The reader rejects
+unknown versions or model kinds, nonzero reserved fields, unsorted or duplicate
+pack IDs, empty or oversized vocabularies, a flat descriptor other than pack
+0, inconsistent parameter counts or byte lengths, non-finite weights, and
+trailing bytes. Model format version 1 stores parameters only; Adam moments and
+training progress are not serialized. This is an experimental M3 format, not a
+stable public model checkpoint contract.

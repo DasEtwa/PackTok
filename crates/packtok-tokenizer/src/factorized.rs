@@ -163,10 +163,15 @@ impl<R: PackRouter> FactorizedTokenizer<R> {
                 requested_tokens: input.len(),
             })?;
         let mut symbols = Vec::new();
+        let longest_span = spans
+            .iter()
+            .map(|span| span.end - span.start)
+            .max()
+            .unwrap_or(0);
         symbols
-            .try_reserve_exact(input.len())
+            .try_reserve_exact(longest_span)
             .map_err(|_| EncodeError::AllocationFailed {
-                requested_tokens: input.len(),
+                requested_tokens: longest_span,
             })?;
         let mut stats = FactorizedEncodeStats::new(self.fallback_pack_id);
 
@@ -547,6 +552,24 @@ mod tests {
         );
         assert!(stats.temporary_peak_bytes > 0);
         assert_eq!(stats.pack_transitions, 3);
+    }
+
+    #[test]
+    fn symbol_workspace_is_bounded_by_longest_routed_span() {
+        let tokenizer = tokenizer();
+        let input = "hi 12!".repeat(1024);
+        let spans = tokenizer.router.route(&input);
+        let longest = spans
+            .iter()
+            .map(|span| span.end - span.start)
+            .max()
+            .unwrap();
+        let (tokens, stats) = tokenizer.encode_with_stats(&input).unwrap();
+        assert_eq!(tokenizer.decode_bytes(&tokens).unwrap(), input.as_bytes());
+        assert_eq!(
+            stats.temporary_peak_bytes,
+            spans.capacity() * size_of::<RoutedSpan>() + longest * size_of::<SymbolRef>()
+        );
     }
 
     #[test]

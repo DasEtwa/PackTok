@@ -1,0 +1,5 @@
+The museum guide unlocks a narrow cabinet and studies a silver compass. A visitor asks which road crosses the northern field.
+The guide points to a paper chart, circles the stone bridge, and notes that bus 18 leaves after the bells ring.
+Lena sammelt alte Karten und ordnet sie nach Jahr. Auf dem Tisch liegen ein grüner Stift, drei Briefe und ein Stück Brot.
+Ein heller Stern erscheint über dem Hügel. Die Kinder zählen leise bis sieben und gehen dann gemeinsam nach Hause.
+The sample script reads a small JSON record: {"status":"ready","count":18}. It prints the result and checks the final line.

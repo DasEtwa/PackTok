@@ -1,0 +1,8 @@
+cargo fmt --all --check: passed
+cargo clippy --workspace --all-targets --all-features -- -D warnings: passed (clippy-1.txt)
+cargo test --workspace: 116 passed, 0 failed (workspace-tests.txt)
+cargo test --release --workspace: 116 passed, 0 failed (release-tests.txt)
+cargo build --release --workspace: passed (release-build.txt)
+git diff --check: passed
+Full M3 rerun: passed; 12/12 model artifacts byte-identical to final-20261007
+Toolchain: Windows x86_64 MSVC, Rust/Cargo 1.98.1; Linux/MSRV not rerun

@@ -1,0 +1,855 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 8435be0..4fe1b82 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,19 @@
+ # Milestone history
+ 
++## Performance and mathematics audit (2026-10-07)
++
++- Addressed seven prioritized findings in model numerical failures, model
++  loading/evaluation overhead, M2 workspace sizing, and batch/MAC validation.
++- Added transactional Adam failure handling, offset-stable loss, finite inference
++  score checks, pre-allocation body validation, direct weight loading,
++  scalar evaluation loss, and span-sized M2 symbol buffers.
++- Added nine tests, including finite differences across every parameter of small
++  flat/factorized models, and additive `packtok-bench audit` probes.
++- Preserved three before/after performance repetitions, failed regressions,
++  intermediate failures, and a full M3 rerun. All twelve M3 model hashes match
++  the historical run; quality conclusions are unchanged. See
++  [PERFORMANCE_MATH_AUDIT.md](PERFORMANCE_MATH_AUDIT.md).
++
+ ## M3 — Tiny autoregressive model comparison (2026-10-07)
+ 
+ - Adds a small CPU-only recurrent model boundary with a flat M1 head and a
+diff --git a/M2_PACKS.md b/M2_PACKS.md
+index 0e140fa..6faead0 100644
+--- a/M2_PACKS.md
++++ b/M2_PACKS.md
+@@ -72,6 +72,12 @@ sequence and concatenates bytes in order. Thus decode is independent of span
+ decisions after IDs have been produced, and decode_bytes(encode(text)) equals
+ the original UTF-8 bytes exactly.
+ 
++The runtime reuses one symbol vector sized to the longest validated routed
++span, since rank-ordered merges only shrink the current sequence. The output
++token vector reserves the input-byte upper bound; router spans remain
++materialized. The change from whole-input symbol reservation and its capacity
++and timing measurements are recorded in [the current audit](PERFORMANCE_MATH_AUDIT.md).
++
+ ## Training and deterministic allocation
+ 
+ Training consumes the supplied corpus bytes as valid UTF-8, routes the corpus,
+diff --git a/M2_PACKS_BENCHMARK.md b/M2_PACKS_BENCHMARK.md
+index f188582..83082ee 100644
+--- a/M2_PACKS_BENCHMARK.md
++++ b/M2_PACKS_BENCHMARK.md
+@@ -49,6 +49,10 @@ representative corpus.
+ 
+ ## Artifacts and training allocation
+ 
++These historical measurements precede the span-sized workspace fix. The
++[current audit](PERFORMANCE_MATH_AUDIT.md) records its capacity and timing
++effects separately; the tokenizer IDs and artifact formats remain unchanged.
++
+ M2 release training was run twice and complete serialized byte arrays were
+ compared. They were identical, 4,492 bytes, SHA-256
+ `debc3f36e3a8baff1f7599a3dddad498250620bda7b1230d663f9668e3e6d065`.
+diff --git a/M3_MODEL.md b/M3_MODEL.md
+index 6dd5e60..933394a 100644
+--- a/M3_MODEL.md
++++ b/M3_MODEL.md
+@@ -44,6 +44,15 @@ same target/toolchain, but bit-identical updates across different CPUs or Rust
+ versions are not promised. Softmax normalization accumulates in `f64`; stored
+ parameters and gradients use `f32`.
+ 
++Cross-entropy computes maximum-minus-target before adding log normalization,
++preserving loss at large common finite logit offsets. Evaluation uses scalar
++loss without probability/gradient buffers; training still forms gradients.
++Adam preflights every proposed weight and moment before committing state or
++step, preserving the entire model on an error. Greedy inference rejects
++non-finite logits before argmax. Numerical regressions, finite differences,
++performance effects, and compatibility evidence are in
++[the current audit](PERFORMANCE_MATH_AUDIT.md).
++
+ The M3 run uses hidden size 16 and context length 16. Adam uses learning rate
+ 0.01, beta1 0.9, beta2 0.999, epsilon 1e-8, and global gradient clipping at
+ L2 norm 1.0. Weight decay, warmup, dropout, and mixed precision are disabled.
+@@ -196,6 +205,11 @@ parameters to 16,777,216, and a serialized model to 64 MiB. These safety limits
+ are enforced before allocation. Greedy generation limits the returned
+ prompt-plus-continuation sequence to 4,096 tokens.
+ 
++Loading verifies that the shared dimension-derived parameter layout matches
++the body before allocating parameter vectors. Valid weights are read directly;
++loading does not generate seeded weights only to overwrite them. Loaded Adam
++moments remain zero; model files still do not provide optimizer resume.
++
+ `greedy_generate` accepts an already tokenized non-empty prompt, predicts a pack
+ then local token for factorized M2 (or one flat token for M1), and returns the
+ prompt plus generated IDs. The benchmark smoke test tokenizes a raw prompt,
+diff --git a/M3_MODEL_BENCHMARK.md b/M3_MODEL_BENCHMARK.md
+index fba8528..0381596 100644
+--- a/M3_MODEL_BENCHMARK.md
++++ b/M3_MODEL_BENCHMARK.md
+@@ -6,6 +6,11 @@ flat-BPE control; M2 artifacts and routing were consumed without changes.
+ 
+ ## Protocol and provenance
+ 
++The following tables preserve the original M3 observations. The later
++[performance/mathematics audit](PERFORMANCE_MATH_AUDIT.md) records numerical
++fixes and separate timings; its full rerun produced identical hashes for all
++twelve model artifacts and retained the reported quality conclusions.
++
+ - Branch: `m3-tiny-model`, based on M2 commit
+   `bb018b9e01bcae47bdc982533822fd5d86001054`. The implementation tested by the
+   final run is commit `2603f9613b947e7933c11daba5fa168eeda1905c`.
+diff --git a/README.md b/README.md
+index e73f870..767f3c7 100644
+--- a/README.md
++++ b/README.md
+@@ -12,6 +12,9 @@ does not establish general quality or presuppose that factorization wins.
+ 
+ M3 model architecture and experiment results: [M3_MODEL.md](M3_MODEL.md) and
+ [M3_MODEL_BENCHMARK.md](M3_MODEL_BENCHMARK.md).
++The [current performance and mathematics audit](PERFORMANCE_MATH_AUDIT.md)
++records prioritized fixes, numerical gradient checks, and preserved before/after
++measurements. Run its focused probes with `cargo run --release -p packtok-bench -- audit`.
+ 
+ ```text
+ cargo run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/m1.packtok
+diff --git a/STRUCTURE.md b/STRUCTURE.md
+index 638a762..2fc7c33 100644
+--- a/STRUCTURE.md
++++ b/STRUCTURE.md
+@@ -402,6 +402,13 @@ does not imply that factorization improves tokenization.
+ 
+ ## M3 model boundary
+ 
++The additive `packtok-bench audit` mode owns focused model loading, evaluation,
++training, and M2 workspace probes inside the existing benchmark crate. Numerical
++guards and direct model parameter loading remain in `packtok-model`; workspace
++sizing remains in `packtok-tokenizer`. No crate responsibility or dependency
++direction changed. Details and reproducible evidence are in
++[PERFORMANCE_MATH_AUDIT.md](PERFORMANCE_MATH_AUDIT.md).
++
+ M3 adds `packtok-model` as the CPU-only owner of the causal recurrent reference
+ model, flat and pack-factorized heads, model parameter serialization, and
+ deterministic training/evaluation contracts. It depends on `packtok-core` for
+diff --git a/crates/packtok-bench/src/main.rs b/crates/packtok-bench/src/main.rs
+index e3ca7cc..f6e1a69 100644
+--- a/crates/packtok-bench/src/main.rs
++++ b/crates/packtok-bench/src/main.rs
+@@ -1,5 +1,6 @@
+ #![forbid(unsafe_code)]
+ 
++mod audit;
+ mod m3;
+ mod metrics;
+ mod scan;
+@@ -55,7 +56,14 @@ struct Measurement {
+ fn main() -> Result<(), Box<dyn Error>> {
+     let mut arguments = std::env::args();
+     let _program = arguments.next();
+-    if arguments.next().as_deref() == Some("m3") {
++    let command = arguments.next();
++    if command.as_deref() == Some("audit") {
++        if arguments.next().is_some() {
++            return Err("usage: packtok-bench audit".into());
++        }
++        return audit::run();
++    }
++    if command.as_deref() == Some("m3") {
+         let label = arguments.next().unwrap_or_else(|| "manual".to_owned());
+         if arguments.next().is_some() {
+             return Err("usage: packtok-bench m3 [unique-run-label]".into());
+diff --git a/crates/packtok-model/src/lib.rs b/crates/packtok-model/src/lib.rs
+index 6098525..4097a6d 100644
+--- a/crates/packtok-model/src/lib.rs
++++ b/crates/packtok-model/src/lib.rs
+@@ -238,6 +238,15 @@ impl CausalLm {
+         config: ModelConfig,
+         vocabulary_size: u32,
+         seed: u64,
++    ) -> Result<Self, ModelError> {
++        Self::flat_model(config, vocabulary_size, seed, None)
++    }
++
++    fn flat_model(
++        config: ModelConfig,
++        vocabulary_size: u32,
++        seed: u64,
++        parameter_bytes: Option<&[u8]>,
+     ) -> Result<Self, ModelError> {
+         let config = config.validate()?;
+         if !(256..=MAX_LOCAL_VOCABULARY).contains(&vocabulary_size) {
+@@ -250,6 +259,7 @@ impl CausalLm {
+                     .map_err(|_| ModelError::LengthOverflow)?,
+             },
+             seed,
++            parameter_bytes,
+         )
+     }
+ 
+@@ -258,9 +268,18 @@ impl CausalLm {
+     /// Pack declarations are sorted by numeric ID before parameter assignment;
+     /// duplicate IDs, empty packs, or oversized total vocabularies are rejected.
+     pub fn new_factorized(
++        config: ModelConfig,
++        packs: Vec<PackVocabulary>,
++        seed: u64,
++    ) -> Result<Self, ModelError> {
++        Self::factorized_model(config, packs, seed, None)
++    }
++
++    fn factorized_model(
+         config: ModelConfig,
+         mut packs: Vec<PackVocabulary>,
+         seed: u64,
++        parameter_bytes: Option<&[u8]>,
+     ) -> Result<Self, ModelError> {
+         let config = config.validate()?;
+         if packs.is_empty() || packs.len() > MAX_PACK_COUNT {
+@@ -291,10 +310,20 @@ impl CausalLm {
+                 return Err(ModelError::InvalidVocabulary);
+             }
+         }
+-        Self::build(config, HeadKind::Factorized { packs: layouts }, seed)
++        Self::build(
++            config,
++            HeadKind::Factorized { packs: layouts },
++            seed,
++            parameter_bytes,
++        )
+     }
+ 
+-    fn build(config: ModelConfig, kind: HeadKind, seed: u64) -> Result<Self, ModelError> {
++    fn build(
++        config: ModelConfig,
++        kind: HeadKind,
++        seed: u64,
++        parameter_bytes: Option<&[u8]>,
++    ) -> Result<Self, ModelError> {
+         let rows = match &kind {
+             HeadKind::Flat { vocabulary_size } => *vocabulary_size,
+             HeadKind::Factorized { packs } => packs
+@@ -332,44 +361,61 @@ impl CausalLm {
+         if cursor > MAX_PARAMETER_COUNT {
+             return Err(ModelError::ModelTooLarge);
+         }
++        // The shared layout calculation must agree with the serialized body
++        // before weights or Adam moments are allocated.
++        if parameter_bytes.is_some_and(|bytes| bytes.len() != cursor * 4) {
++            return Err(ModelError::MalformedArtifact(
++                "parameter count does not match dimensions",
++            ));
++        }
+         let mut weights = vec![0.0_f32; cursor];
+-        let mut rng = SeededRng::new(seed);
+-        let scale = 0.15_f32 / (hidden as f32).sqrt();
+-        fill_uniform(
+-            &mut weights[embedding..embedding + rows * hidden],
+-            &mut rng,
+-            scale,
+-        );
+-        fill_uniform(
+-            &mut weights[position..position + config.context_length * hidden],
+-            &mut rng,
+-            scale,
+-        );
+-        for row in 0..hidden {
+-            for col in 0..hidden {
+-                let value = if row == col { 0.5 } else { 0.0 };
+-                weights[recurrent + row * hidden + col] = value + rng.signed() * 0.01;
++        if let Some(bytes) = parameter_bytes {
++            for (weight, bytes) in weights.iter_mut().zip(bytes.chunks_exact(4)) {
++                let value = f32::from_le_bytes(bytes.try_into().expect("exact four-byte chunk"));
++                if !value.is_finite() {
++                    return Err(ModelError::MalformedArtifact("parameter is not finite"));
++                }
++                *weight = value;
+             }
+-        }
+-        match &kind {
+-            HeadKind::Flat { vocabulary_size } => {
+-                fill_uniform(
+-                    &mut weights[flat_output..flat_output + *vocabulary_size * hidden],
+-                    &mut rng,
+-                    scale,
+-                );
++        } else {
++            let mut rng = SeededRng::new(seed);
++            let scale = 0.15_f32 / (hidden as f32).sqrt();
++            fill_uniform(
++                &mut weights[embedding..embedding + rows * hidden],
++                &mut rng,
++                scale,
++            );
++            fill_uniform(
++                &mut weights[position..position + config.context_length * hidden],
++                &mut rng,
++                scale,
++            );
++            for row in 0..hidden {
++                for col in 0..hidden {
++                    let value = if row == col { 0.5 } else { 0.0 };
++                    weights[recurrent + row * hidden + col] = value + rng.signed() * 0.01;
++                }
+             }
+-            HeadKind::Factorized { packs } => {
+-                fill_uniform(
+-                    &mut weights[pack_output..pack_output + packs.len() * hidden],
+-                    &mut rng,
+-                    scale,
+-                );
+-                fill_uniform(
+-                    &mut weights[local_output..local_output + rows * hidden],
+-                    &mut rng,
+-                    scale,
+-                );
++            match &kind {
++                HeadKind::Flat { vocabulary_size } => {
++                    fill_uniform(
++                        &mut weights[flat_output..flat_output + *vocabulary_size * hidden],
++                        &mut rng,
++                        scale,
++                    );
++                }
++                HeadKind::Factorized { packs } => {
++                    fill_uniform(
++                        &mut weights[pack_output..pack_output + packs.len() * hidden],
++                        &mut rng,
++                        scale,
++                    );
++                    fill_uniform(
++                        &mut weights[local_output..local_output + rows * hidden],
++                        &mut rng,
++                        scale,
++                    );
++                }
+             }
+         }
+         Ok(Self {
+@@ -503,6 +549,7 @@ impl CausalLm {
+         match &self.kind {
+             HeadKind::Flat { vocabulary_size } => {
+                 let logits = self.flat_logits(last, *vocabulary_size);
++                validate_logits(&logits)?;
+                 let local = argmax(&logits);
+                 Ok(TokenId::new(
+                     0,
+@@ -511,9 +558,11 @@ impl CausalLm {
+             }
+             HeadKind::Factorized { packs } => {
+                 let pack_logits = self.pack_logits(last, packs.len());
++                validate_logits(&pack_logits)?;
+                 let selected = argmax(&pack_logits);
+                 let pack = packs.get(selected).ok_or(ModelError::InvalidVocabulary)?;
+                 let local_logits = self.local_logits(last, pack);
++                validate_logits(&local_logits)?;
+                 let local = argmax(&local_logits);
+                 Ok(TokenId::new(
+                     pack.pack_id,
+@@ -561,6 +610,7 @@ impl CausalLm {
+         let mut macs = 0_u64;
+         for (example_index, example) in batch.iter().enumerate() {
+             validate_example(example_index, *example, self.config.context_length)?;
++            self.validate_context(example.inputs)?;
+             let input_len =
+                 u64::try_from(example.inputs.len()).map_err(|_| ModelError::LengthOverflow)?;
+             let recurrent_products = input_len
+@@ -618,11 +668,15 @@ impl CausalLm {
+         if batch.is_empty() {
+             return Err(ModelError::EmptyBatch);
+         }
+-        let target_count = batch.iter().try_fold(0_usize, |sum, example| {
+-            validate_example(0, *example, self.config.context_length)?;
+-            sum.checked_add(example.targets.len())
+-                .ok_or(ModelError::LengthOverflow)
+-        })?;
++        let target_count =
++            batch
++                .iter()
++                .enumerate()
++                .try_fold(0_usize, |sum, (index, example)| {
++                    validate_example(index, *example, self.config.context_length)?;
++                    sum.checked_add(example.targets.len())
++                        .ok_or(ModelError::LengthOverflow)
++                })?;
+         if target_count == 0 {
+             return Err(ModelError::EmptyBatch);
+         }
+@@ -789,7 +843,7 @@ impl CausalLm {
+                             });
+                         }
+                         let logits = self.flat_logits(state, *vocabulary_size);
+-                        let (loss, _) = softmax_cross_entropy(&logits, target.local as usize, 1.0)?;
++                        let loss = softmax_loss(&logits, target.local as usize)?;
+                         loss_sum += loss;
+                         primary_loss += loss;
+                         correct_tokens += usize::from(argmax(&logits) == target.local as usize);
+@@ -809,7 +863,7 @@ impl CausalLm {
+                             });
+                         }
+                         let pack_logits = self.pack_logits(state, packs.len());
+-                        let (pack_ce, _) = softmax_cross_entropy(&pack_logits, pack_index, 1.0)?;
++                        let pack_ce = softmax_loss(&pack_logits, pack_index)?;
+                         let predicted_pack = argmax(&pack_logits);
+                         let row = &mut pack_rows[pack_index];
+                         row.targets += 1;
+@@ -820,8 +874,7 @@ impl CausalLm {
+                         }
+                         primary_loss += pack_ce;
+                         let local_logits = self.local_logits(state, pack);
+-                        let (local_ce, _) =
+-                            softmax_cross_entropy(&local_logits, target.local as usize, 1.0)?;
++                        let local_ce = softmax_loss(&local_logits, target.local as usize)?;
+                         let local_correct = argmax(&local_logits) == target.local as usize;
+                         if local_correct {
+                             correct_locals += 1;
+@@ -980,11 +1033,12 @@ impl CausalLm {
+                 "parameter byte length does not match header",
+             ));
+         }
+-        let mut model = match kind {
++        let parameter_bytes = cursor.read_exact(expected_remaining)?;
++        let model = match kind {
+             0 if pack_count == 1 && packs[0].pack_id == 0 => {
+-                Self::new_flat(config, packs[0].token_count, seed)?
++                Self::flat_model(config, packs[0].token_count, seed, Some(parameter_bytes))?
+             }
+-            1 => Self::new_factorized(config, packs, seed)?,
++            1 => Self::factorized_model(config, packs, seed, Some(parameter_bytes))?,
+             0 => {
+                 return Err(ModelError::MalformedArtifact(
+                     "flat model must have only pack 0",
+@@ -992,23 +1046,6 @@ impl CausalLm {
+             }
+             _ => return Err(ModelError::MalformedArtifact("unknown model kind")),
+         };
+-        if declared_params != model.weights.len() {
+-            return Err(ModelError::MalformedArtifact(
+-                "parameter count does not match dimensions",
+-            ));
+-        }
+-        for weight in &mut model.weights {
+-            let value = f32::from_le_bytes(
+-                cursor
+-                    .read_exact(4)?
+-                    .try_into()
+-                    .map_err(|_| ModelError::MalformedArtifact("truncated parameter"))?,
+-            );
+-            if !value.is_finite() {
+-                return Err(ModelError::MalformedArtifact("parameter is not finite"));
+-            }
+-            *weight = value;
+-        }
+         if cursor.remaining() != 0 {
+             return Err(ModelError::MalformedArtifact("trailing bytes"));
+         }
+@@ -1263,26 +1300,45 @@ impl CausalLm {
+         gradients: &[f32],
+         optimizer: OptimizerConfig,
+     ) -> Result<(), ModelError> {
+-        self.optimizer_step = self
++        let next_step = self
+             .optimizer_step
+             .checked_add(1)
+             .ok_or(ModelError::LengthOverflow)?;
+-        let step = self.optimizer_step as f32;
++        let step = next_step as f32;
+         let correction1 = 1.0 - optimizer.beta1.powf(step);
+         let correction2 = 1.0 - optimizer.beta2.powf(step);
++        // Preflight every proposed value before committing any state. Recompute
++        // on commit to keep the existing arithmetic and avoid three scratch vectors.
++        let proposed = |index: usize, gradient: f32| {
++            let moment1 =
++                optimizer.beta1 * self.first_moment[index] + (1.0 - optimizer.beta1) * gradient;
++            let moment2 = optimizer.beta2 * self.second_moment[index]
++                + (1.0 - optimizer.beta2) * gradient * gradient;
++            let first = moment1 / correction1;
++            let second = moment2 / correction2;
++            let weight = self.weights[index]
++                - optimizer.learning_rate * first / (second.sqrt() + optimizer.epsilon);
++            (moment1, moment2, weight)
++        };
++        for (index, gradient) in gradients.iter().copied().enumerate() {
++            let (first, second, weight) = proposed(index, gradient);
++            if !first.is_finite() || !second.is_finite() || !weight.is_finite() {
++                return Err(ModelError::NonFiniteComputation);
++            }
++        }
+         for (index, gradient) in gradients.iter().copied().enumerate() {
+-            self.first_moment[index] =
++            let moment1 =
+                 optimizer.beta1 * self.first_moment[index] + (1.0 - optimizer.beta1) * gradient;
+-            self.second_moment[index] = optimizer.beta2 * self.second_moment[index]
++            let moment2 = optimizer.beta2 * self.second_moment[index]
+                 + (1.0 - optimizer.beta2) * gradient * gradient;
+-            let first = self.first_moment[index] / correction1;
+-            let second = self.second_moment[index] / correction2;
++            let first = moment1 / correction1;
++            let second = moment2 / correction2;
+             self.weights[index] -=
+                 optimizer.learning_rate * first / (second.sqrt() + optimizer.epsilon);
+-            if !self.weights[index].is_finite() {
+-                return Err(ModelError::NonFiniteComputation);
+-            }
++            self.first_moment[index] = moment1;
++            self.second_moment[index] = moment2;
+         }
++        self.optimizer_step = next_step;
+         Ok(())
+     }
+ }
+@@ -1329,13 +1385,8 @@ fn softmax_cross_entropy(
+     scale: f32,
+ ) -> Result<(f64, Vec<f32>), ModelError> {
+     let target_logit = logits.get(target).ok_or(ModelError::InvalidVocabulary)?;
+-    if logits.is_empty() || !target_logit.is_finite() {
+-        return Err(ModelError::NonFiniteComputation);
+-    }
++    validate_logits(logits)?;
+     let maximum = logits.iter().copied().fold(f32::NEG_INFINITY, f32::max);
+-    if !maximum.is_finite() || logits.iter().any(|value| !value.is_finite()) {
+-        return Err(ModelError::NonFiniteComputation);
+-    }
+     let mut probabilities: Vec<f64> = logits
+         .iter()
+         .map(|value| (f64::from(*value) - f64::from(maximum)).exp())
+@@ -1347,7 +1398,7 @@ fn softmax_cross_entropy(
+     for probability in &mut probabilities {
+         *probability /= denominator;
+     }
+-    let loss = f64::from(maximum) + denominator.ln() - f64::from(*target_logit);
++    let loss = (f64::from(maximum) - f64::from(*target_logit)) + denominator.ln();
+     let gradient = probabilities
+         .into_iter()
+         .enumerate()
+@@ -1356,6 +1407,25 @@ fn softmax_cross_entropy(
+     Ok((loss, gradient))
+ }
+ 
++fn validate_logits(logits: &[f32]) -> Result<(), ModelError> {
++    if logits.is_empty() || logits.iter().any(|value| !value.is_finite()) {
++        return Err(ModelError::NonFiniteComputation);
++    }
++    Ok(())
++}
++
++// Evaluation needs neither normalized probabilities nor output gradients.
++fn softmax_loss(logits: &[f32], target: usize) -> Result<f64, ModelError> {
++    let target_logit = logits.get(target).ok_or(ModelError::InvalidVocabulary)?;
++    validate_logits(logits)?;
++    let maximum = logits.iter().copied().fold(f32::NEG_INFINITY, f32::max);
++    let denominator = logits
++        .iter()
++        .map(|value| (f64::from(*value) - f64::from(maximum)).exp())
++        .sum::<f64>();
++    Ok((f64::from(maximum) - f64::from(*target_logit)) + denominator.ln())
++}
++
+ fn validate_example(
+     index: usize,
+     example: TrainingExample<'_>,
+@@ -2031,4 +2101,255 @@ mod tests {
+                 < flat.estimate_training_macs(&flat_batch).unwrap()
+         );
+     }
++
++    #[test]
++    fn cross_entropy_is_invariant_to_large_common_offsets() {
++        for offset in [0.0_f32, 1.0e20, -1.0e20, f32::MAX, -f32::MAX] {
++            let (loss, gradient) = softmax_cross_entropy(&[offset, offset], 0, 1.0).unwrap();
++            assert!(
++                (loss - std::f64::consts::LN_2).abs() < 1.0e-12,
++                "offset={offset} loss={loss}"
++            );
++            assert_eq!(gradient, [-0.5, 0.5]);
++            assert_eq!(softmax_loss(&[offset, offset], 0).unwrap(), loss);
++        }
++    }
++
++    #[test]
++    fn loss_only_matches_training_loss_on_extreme_and_invalid_logits() {
++        for logits in [
++            vec![0.0],
++            vec![-1000.0, 1000.0, 0.0],
++            vec![-f32::MAX, f32::MAX],
++            vec![f32::NAN],
++            vec![f32::INFINITY],
++            vec![f32::NEG_INFINITY],
++        ] {
++            for target in 0..=logits.len() {
++                assert_eq!(
++                    softmax_loss(&logits, target),
++                    softmax_cross_entropy(&logits, target, 1.0).map(|(loss, _)| loss)
++                );
++            }
++        }
++    }
++
++    #[test]
++    fn recurrent_and_both_head_gradients_match_finite_differences() {
++        let config = ModelConfig {
++            hidden_size: 2,
++            context_length: 3,
++        };
++        let flat = CausalLm::new_flat(config, 256, 19).unwrap();
++        let factorized = CausalLm::new_factorized(
++            config,
++            vec![
++                PackVocabulary {
++                    pack_id: 1,
++                    token_count: 2,
++                },
++                PackVocabulary {
++                    pack_id: 7,
++                    token_count: 3,
++                },
++            ],
++            19,
++        )
++        .unwrap();
++        for (mut model, tokens) in [
++            (
++                flat,
++                vec![
++                    TokenId::new(0, 0),
++                    TokenId::new(0, 1),
++                    TokenId::new(0, 2),
++                    TokenId::new(0, 0),
++                ],
++            ),
++            (
++                factorized,
++                vec![
++                    TokenId::new(1, 0),
++                    TokenId::new(7, 1),
++                    TokenId::new(1, 1),
++                    TokenId::new(7, 0),
++                ],
++            ),
++        ] {
++            // One aligned window plus one final-only target tests recurrent
++            // carry and normalization by total targets rather than examples.
++            let examples = [
++                TrainingExample {
++                    inputs: &tokens[..3],
++                    targets: &tokens[1..],
++                },
++                TrainingExample {
++                    inputs: &tokens[1..3],
++                    targets: &tokens[3..],
++                },
++            ];
++            let mut updated = model.clone();
++            let optimizer = OptimizerConfig {
++                gradient_clip_norm: 1000.0,
++                ..OptimizerConfig::default()
++            };
++            let metrics = updated.train_batch(&examples, optimizer).unwrap();
++            assert!(metrics.gradient_norm < f64::from(optimizer.gradient_clip_norm));
++            for index in 0..model.weights.len() {
++                let original = model.weights[index];
++                model.weights[index] = original + 1.0e-3;
++                let plus = model.evaluate(&examples).unwrap().loss_per_token;
++                let positive_weight = model.weights[index];
++                model.weights[index] = original - 1.0e-3;
++                let minus = model.evaluate(&examples).unwrap().loss_per_token;
++                let negative_weight = model.weights[index];
++                model.weights[index] = original;
++                let numerical =
++                    (plus - minus) / (f64::from(positive_weight) - f64::from(negative_weight));
++                let analytical = f64::from(updated.first_moment[index] / (1.0 - optimizer.beta1));
++                assert!(
++                    (numerical - analytical).abs() < 2.0e-5 + 0.01 * analytical.abs(),
++                    "parameter={index} numerical={numerical} analytical={analytical}"
++                );
++            }
++            // The documented MAC formula must hold for both target shapes.
++            let rows = match &model.kind {
++                HeadKind::Flat { vocabulary_size } => examples
++                    .iter()
++                    .map(|e| e.targets.len() * vocabulary_size)
++                    .sum::<usize>(),
++                HeadKind::Factorized { packs } => examples
++                    .iter()
++                    .flat_map(|e| e.targets)
++                    .map(|t| packs.len() + packs[model.pack_index(t.pack).unwrap()].token_count)
++                    .sum(),
++            };
++            assert_eq!(
++                model.estimate_training_macs(&examples).unwrap(),
++                ((3 * 3 - 1 + 3 * 2 - 1) * 4 + 3 * rows * 2) as u64
++            );
++        }
++    }
++
++    #[test]
++    fn compact_header_cannot_allocate_a_large_unrepresented_model() {
++        let mut bytes = CausalLm::new_flat(tiny_config(), 256, 1)
++            .unwrap()
++            .to_bytes()
++            .unwrap();
++        bytes[12..16].copy_from_slice(&512_u32.to_le_bytes());
++        bytes[16..20].copy_from_slice(&16_u32.to_le_bytes());
++        bytes[34..38].copy_from_slice(&8192_u32.to_le_bytes());
++        bytes[38..46].copy_from_slice(&0_u64.to_le_bytes());
++        bytes.truncate(46);
++        assert_eq!(
++            CausalLm::from_bytes(&bytes),
++            Err(ModelError::MalformedArtifact(
++                "parameter count does not match dimensions"
++            ))
++        );
++        assert_eq!(
++            CausalLm::flat_model(
++                ModelConfig {
++                    hidden_size: 512,
++                    context_length: 16
++                },
++                8192,
++                1,
++                Some(&[])
++            ),
++            Err(ModelError::MalformedArtifact(
++                "parameter count does not match dimensions"
++            ))
++        );
++    }
++
++    #[test]
++    fn failed_adam_update_preserves_weights_moments_and_step() {
++        let mut model = CausalLm::new_flat(tiny_config(), 256, 1).unwrap();
++        model.weights[1] = -f32::MAX;
++        let before = model.clone();
++        let mut gradients = vec![0.0; model.weights.len()];
++        gradients[..2].fill(1.0);
++        let optimizer = OptimizerConfig {
++            learning_rate: f32::MAX,
++            ..OptimizerConfig::default()
++        };
++        assert_eq!(
++            model.apply_adam(&gradients, optimizer),
++            Err(ModelError::NonFiniteComputation)
++        );
++        assert_eq!(model, before);
++    }
++
++    #[test]
++    fn overflowing_adam_moment_is_rejected_without_changing_state() {
++        let mut model = CausalLm::new_flat(tiny_config(), 256, 1).unwrap();
++        let before = model.clone();
++        let gradients = vec![1.0e22; model.weights.len()];
++        assert_eq!(
++            model.apply_adam(&gradients, OptimizerConfig::default()),
++            Err(ModelError::NonFiniteComputation)
++        );
++        assert_eq!(model, before);
++    }
++
++    #[test]
++    fn inference_rejects_overflowing_logits_in_both_heads() {
++        let mut flat = CausalLm::new_flat(tiny_config(), 256, 1).unwrap();
++        flat.weights.fill(10.0);
++        flat.weights[flat.layout.flat_output..].fill(f32::MAX);
++        assert_eq!(
++            flat.predict_next(&[TokenId::new(0, 0)]),
++            Err(ModelError::NonFiniteComputation)
++        );
++        let mut factorized = CausalLm::new_factorized(
++            tiny_config(),
++            vec![PackVocabulary {
++                pack_id: 1,
++                token_count: 2,
++            }],
++            1,
++        )
++        .unwrap();
++        factorized.weights.fill(10.0);
++        factorized.weights[factorized.layout.pack_output..].fill(f32::MAX);
++        assert_eq!(
++            factorized.predict_next(&[TokenId::new(1, 0)]),
++            Err(ModelError::NonFiniteComputation)
++        );
++        factorized.weights[factorized.layout.pack_output..factorized.layout.local_output].fill(0.0);
++        assert_eq!(
++            factorized.predict_next(&[TokenId::new(1, 0)]),
++            Err(ModelError::NonFiniteComputation)
++        );
++    }
++
++    #[test]
++    fn mac_estimate_validates_input_ids_and_reports_example_index() {
++        let mut model = CausalLm::new_flat(tiny_config(), 256, 1).unwrap();
++        let invalid = [TokenId::new(0, 256)];
++        let valid = [TokenId::new(0, 0)];
++        assert!(matches!(
++            model.estimate_training_macs(&[TrainingExample {
++                inputs: &invalid,
++                targets: &valid
++            }]),
++            Err(ModelError::InvalidToken { .. })
++        ));
++        let batch = [
++            TrainingExample {
++                inputs: &valid,
++                targets: &valid,
++            },
++            TrainingExample {
++                inputs: &[],
++                targets: &valid,
++            },
++        ];
++        assert!(matches!(
++            model.train_batch(&batch, OptimizerConfig::default()),
++            Err(ModelError::InvalidExample { index: 1, .. })
++        ));
++    }
+ }
+diff --git a/crates/packtok-tokenizer/src/factorized.rs b/crates/packtok-tokenizer/src/factorized.rs
+index 76b8eda..f478609 100644
+--- a/crates/packtok-tokenizer/src/factorized.rs
++++ b/crates/packtok-tokenizer/src/factorized.rs
+@@ -163,10 +163,15 @@ impl<R: PackRouter> FactorizedTokenizer<R> {
+                 requested_tokens: input.len(),
+             })?;
+         let mut symbols = Vec::new();
++        let longest_span = spans
++            .iter()
++            .map(|span| span.end - span.start)
++            .max()
++            .unwrap_or(0);
+         symbols
+-            .try_reserve_exact(input.len())
++            .try_reserve_exact(longest_span)
+             .map_err(|_| EncodeError::AllocationFailed {
+-                requested_tokens: input.len(),
++                requested_tokens: longest_span,
+             })?;
+         let mut stats = FactorizedEncodeStats::new(self.fallback_pack_id);
+ 
+@@ -549,6 +554,24 @@ mod tests {
+         assert_eq!(stats.pack_transitions, 3);
+     }
+ 
++    #[test]
++    fn symbol_workspace_is_bounded_by_longest_routed_span() {
++        let tokenizer = tokenizer();
++        let input = "hi 12!".repeat(1024);
++        let spans = tokenizer.router.route(&input);
++        let longest = spans
++            .iter()
++            .map(|span| span.end - span.start)
++            .max()
++            .unwrap();
++        let (tokens, stats) = tokenizer.encode_with_stats(&input).unwrap();
++        assert_eq!(tokenizer.decode_bytes(&tokens).unwrap(), input.as_bytes());
++        assert_eq!(
++            stats.temporary_peak_bytes,
++            spans.capacity() * size_of::<RoutedSpan>() + longest * size_of::<SymbolRef>()
++        );
++    }
++
+     #[test]
+     fn decoder_rejects_unknown_pack_and_local_id_gap() {
+         let tokenizer = tokenizer();

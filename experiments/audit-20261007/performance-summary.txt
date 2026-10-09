@@ -1,0 +1,8 @@
+factorized-evaluate-63-targets: before median=928,905 range=886,587..953,477; after median=828,502 range=813,921..836,603; time_change=-10,81%
+factorized-load: before median=135,622 range=129,457..140,165; after median=18,691 range=18,497..19,386; time_change=-86,22%
+factorized-train-64-targets-including-clone: before median=1044,021 range=1013,999..1118,597; after median=983,054 range=977,888..1021,945; time_change=-5,84%
+flat-evaluate-63-targets: before median=1635,772 range=1540,797..1787,659; after median=1412,287 range=1371,022..1464,772; time_change=-13,66%
+flat-load: before median=215,073 range=206,868..219,008; after median=89,619 range=85,077..98,970; time_change=-58,33%
+flat-train-64-targets-including-clone: before median=2177,212 range=2041,322..2395,345; after median=2183,793 range=2143,103..2200,649; time_change=0,30%
+m2-long-span-encode: before median=568,010 range=561,314..591,802; after median=559,487 range=555,556..561,364; time_change=-1,50%
+m2-short-spans-encode: before median=1585,926 range=1578,932..1640,559; after median=1619,777 range=1587,787..1624,877; time_change=2,13%
