@@ -147,21 +147,27 @@ causal Transformer.
 workspace uses Candle 0.9.1. Primary three-seed schedules remain proposals subject
 to a successful GPU gate and explicit measured-budget approval.
 
-**Measured result.** CPU correctness/preparation and deterministic input identities
-pass. The first historical L4 attempt ended in loader exit 127 before Rust; the
-next request was interrupted by local user-service SIGTERM after the CLI printed
-READY, again before remote diagnostics or Rust/CUDA work. Owned-session release
-was verified. Two historical requests are preserved. There is no passing GPU
-gate, GPU checkpoint, quality score, synchronized throughput or measured VRAM.
+**Measured result.** The Rust/CUDA gate and 500-step L4 overfit diagnostics passed;
+see the preserved [L4 diagnostic](../../experiments/m5-gpu/provenance/l4-recovery-b573d896abe948138f0221283f85af75/M5_OVERFIT_DIAGNOSTIC_L4.md).
+One later, explicitly authorized A/C 2,000-update pilot allocation was released
+after remote orchestration exited with code 1 before a Rust training update. Its
+160-byte result archive contains only exit code 1. There are no A/C training
+losses, validation/test scores, checkpoints, pilot step times or VRAM measurements.
+The detailed attempt and source/config/package identities are preserved in the
+[pilot report](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
 
-**Interpretation.** Status remains **M5_BLOCKED — INFRASTRUCTURE**, with GPU preflight
-incomplete. WSL supervision and Drive-byte verification are infrastructure
-evidence, not model results. This maintenance task allocated zero GPUs.
+**Interpretation.** CUDA correctness is verified, but the A/C Transformer quality
+comparison remains incomplete. The likely missing approval environment variable
+is an inference from the submitted command and shell contract; remote stderr was
+not retained, so the exact failure cause is unverified. The single pilot
+allocation authorization was consumed; no retry was made.
 
-**Limitations.** Original loader cause is unresolved because its stderr was not
-captured. Corrected diagnostics remain untested on L4. Weights-only safetensors
-cannot resume optimizer/RNG/cursor state. A successful short Drive test does not
-prove multi-day OAuth validity.
+**Limitations.** No result from this attempt supports or rejects the tokenizer
+hypothesis or readiness for a five-seed study. No pilot TEST score was produced.
+The same test examples were included among prepared inputs, so a future revised
+experiment must disclose that exposure. Weights-only safetensors cannot resume
+optimizer/RNG/cursor state. A successful short Drive test does not prove
+multi-day OAuth validity.
 
 **Reproduction reference.** [Frozen Transformer protocol](../../M5_GPU_TRANSFORMER.md),
 [failure/accounting report](../../M5_GPU_BENCHMARK.md),

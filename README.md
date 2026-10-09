@@ -8,9 +8,7 @@ round-trips and no implicit normalization.
 
 The project is a research implementation. Current results support narrow,
 corpus-dependent observations; they do not establish general superiority over
-flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence.
-**M5 GPU preflight is incomplete and remains blocked by infrastructure.** There
-is no completed Transformer quality comparison. This maintenance work is not M6.
+flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence. M5 CUDA overfit diagnostics passed on an NVIDIA L4, but the first A/C Transformer pilot attempt exited before any Rust training update and yielded no comparison metrics. The pilot remains incomplete; see the [M5 attempt report](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md). This maintenance work is not M6.
 
 ## Research motivation
 
@@ -57,7 +55,7 @@ owns tokenizer/model training, runtime and benchmark computation. See
 | [M2](docs/milestones/M2.md) | Independent lexical-v1 pack vocabularies with shared bytes; compression and runtime trade-offs against M1. |
 | [M3](docs/milestones/M3.md) | Tiny CPU RNN comparison changes both tokenizer and output head; a synthetic-corpus signal motivated ablation. |
 | [M4](docs/milestones/M4.md) | A/B/C/D ablation on a fixed sourced mixture. The tokenizer contributed a small tested quality difference. Generic output factorization did not improve same-schedule quality; reduced analytical output work allowed more updates under matched MACs. A strong favorable interaction was not established. |
-| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. CPU preparation passes; GPU correctness, throughput, VRAM and quality remain unverified after preserved infrastructure failures. |
+| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. CPU preparation and L4 CUDA correctness/overfit diagnostics pass; the A/C quality pilot exited before training, so comparison metrics, pilot throughput and VRAM remain unavailable. |
 
 [Research results](docs/research/results.md) explains each hypothesis, experiment,
 measurement, interpretation and limitation, with links to original reports and

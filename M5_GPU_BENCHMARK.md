@@ -1,7 +1,9 @@
 # M5 — Provenance, CPU preparation and GPU measurements
 
-Status: `M5_BLOCKED` at the initial runtime preflight. CPU implementation/data
-preparation complete; the failed L4 was released and no GPU quality result exists.
+Status (2026-10-09): CUDA correctness/overfit diagnostics passed on L4. The first
+authorized A/C pilot allocation was released after remote orchestration exited
+before Rust training; no GPU quality comparison was produced. See the preserved
+[M5 A/C pilot attempt](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
 Design and limits: [M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md).
 
 ## Starting state
@@ -378,3 +380,24 @@ manifest coverage and aggregation regressions pass. No GPU allocation or
 training occurred in this preparation. The pilot's training-only runtime proxy
 is 364.4 s / about 0.1559 CU from historical throughput/rate, excluding setup,
 evaluation, checkpoint and billing uncertainty; it is not a budget approval.
+
+
+## Current status — 2026-10-09 A/C pilot attempt
+
+CUDA correctness and the 500-step fresh/post-18 L4 overfit diagnostics now pass;
+see `provenance/l4-recovery-b573d896abe948138f0221283f85af75/M5_OVERFIT_DIAGNOSTIC_L4.md`.
+One user-authorized L4 allocation was used for the frozen pilot package. Remote
+execution returned exit 1 before any verified Rust training update; its downloaded
+160-byte archive contains only `results/exit-code.txt`. A and C therefore have no
+verified pilot training losses, validation or TEST scores, step times, throughput,
+raw-byte exposure, checkpoint, or VRAM result. The detailed source/config/package
+identity, logs, CU display and release proof are in
+`provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md`.
+
+The most likely orchestration error is that `colab exec` did not transfer the
+required `PACKTOK_M5_GPU_APPROVAL` variable; the remote shell uses `set -u` and
+reads it before starting Rust. This is an inference because the remote bootstrap
+console was not included in the downloaded error archive. The single authorized
+allocation is consumed; no retry was made. This attempt provides no evidence for
+or against the tokenizer hypothesis and does not establish readiness for the
+longer five-seed study.

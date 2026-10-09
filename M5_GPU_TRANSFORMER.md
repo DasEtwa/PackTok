@@ -7,6 +7,14 @@ commit `3b304d2dfdbae8111da7b6cf714569fff353d030` was pushed to its existing PR
 before branching. Branch `m5-gpu-transformer` targets `m4-factorization-ablation`.
 M0–M4 source contracts, results, raw failures and artifact encodings are frozen.
 
+Current status (2026-10-09): the real L4 CUDA correctness/overfit diagnostics
+passed and are documented in the preserved `M5_OVERFIT_DIAGNOSTIC_L4.md`. One
+user-authorized A/C 2,000-update pilot allocation was later consumed, but the
+remote orchestration exited before any Rust training update; its archive contains
+only exit code 1. No A/C model comparison exists. The session was released and
+its failure evidence is preserved in
+[`PILOT_ATTEMPT.md`](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
+
 ## Question and controls
 
 Does M4's small C−A byte-normalized gain survive a causal Transformer? A uses
