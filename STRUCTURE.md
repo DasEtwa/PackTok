@@ -367,7 +367,7 @@ Every optimization must preserve deterministic results unless an experiment expl
 - validation-loss and compute comparison
 - reproducible report
 
-### M4+ — Research
+### M5+ — Research after the M4 ablation
 
 Only after M0–M3 provide trustworthy baselines:
 
@@ -418,3 +418,11 @@ both variants on the same raw splits and record comparison metrics. This keeps
 model implementation separate from tokenizer and experiment orchestration.
 
 The BRAIN space [`DasEtwa/BRAIN/PackTok`](https://github.com/DasEtwa/BRAIN/tree/main/PackTok) remains the high-level project map.
+
+## M4 boundary
+
+The existing model crate owns generic bijections and seeded embedding row
+permutations. It still depends only on core. Benchmark m4/m4_corpus modules own
+artifact-derived grouping, corpus preparation and experimental orchestration.
+No new crate, service or external dependency is required. M4 is the factorial
+ablation in M4_ABLATION.md; the earlier M4+ research list is future work.

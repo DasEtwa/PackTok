@@ -1,0 +1,11 @@
+The first managed-sandbox launch failed before the script with
+Wsl/Service/E_ACCESSDENIED (wsl-sandbox-blocker.txt).
+The approved elevated launch completed the requested Linux/MSRV verification.
+While it initially had no visible output/log directory, read-only diagnostics
+confirmed Ubuntu was Running (WSL version 2) and both project directories existed.
+A second direct /bin/bash launch then returned exit 1:
+mkdir: experiments/pre-gpu-fix-20261007/linux-final: File exists
+The log directory already belonged to the first successful launch, and the
+script refused overwrite as designed. No logs were replaced. The first launch
+completed with exit 0 and the message:
+Linux MSRV debug/release checks and compatibility probe passed.

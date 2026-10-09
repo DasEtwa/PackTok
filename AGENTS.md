@@ -307,3 +307,10 @@ Numerical claims must include enough context to reproduce or interpret them.
 Preserve unfavorable and failed experiments when they informed a decision; do not
 delete or replace them because a later run looks better. Update the relevant
 document in the same change as the implementation.
+
+## 22. M4 experimental freeze
+
+M4 is a factorization ablation, not tokenizer redesign. Read M4_ABLATION.md and
+M4_ABLATION_BENCHMARK.md before changing its corpus, mappings, metrics or runs.
+Preserve lexical-v1, historical artifacts and failed/preflight outputs. Do not
+use held-out outcomes to change grouping, allocation, schedule or splits.

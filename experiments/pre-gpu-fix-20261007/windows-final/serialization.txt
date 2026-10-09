@@ -1,0 +1,13 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src\lib.rs (target\debug\deps\packtok_model-e1294f8a2b33fdae.exe)
+
+running 6 tests
+test tests::serialization_constructors_reject_unwritable_boundary_layouts ... ok
+test tests::serialization_size_checked_arithmetic_rejects_overflow ... ok
+test tests::serialization_size_boundary_includes_flat_and_factorized_headers ... ok
+test tests::model_serialization_round_trip_preserves_greedy_ids ... ok
+test tests::serialization_preserves_historical_m3_m4_model_bytes ... ok
+test tests::serialization_constructor_success_obeys_complete_size_rule ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.02s
+

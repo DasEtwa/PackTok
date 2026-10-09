@@ -1,0 +1,21 @@
+platform=windows profile=debug passed=134 failed=0
+platform=windows profile=release passed=134 failed=0
+platform=linux profile=debug passed=135 failed=0
+platform=linux profile=release passed=135 failed=0
+before_windows_after_linux_lines=93 identical=true path_separators_canonicalized=true
+All requested commands passed on both platforms: fmt --all --check, strict
+Clippy --workspace --all-targets --all-features -- -D warnings, workspace tests
+in debug and release, and build --release --workspace. Raw outputs are retained
+in windows-final/ and linux-final/. Both command runners stop at nonzero exits.
+Focused serialization tests: 6 passed per platform.
+Focused generation-validation tests: 4 passed per platform.
+Focused all-parameter gradient test: 1 passed per platform.
+Focused Adam tests, including both atomicity regressions: 3 passed per platform.
+Full suite also includes existing greedy bounds, malformed artifacts and mapping tests.
+Historical manifests: M3 final 20 matched; M3 audit 22 matched; M4 138 matched;
+original review 19 matched (root report checked against preserved before snapshot).
+Compatibility probe: 72 model and 6 tokenizer byte-exact round-trips; all 12
+historical M4 A/D versus M3 pairs identical; 93 before/after structured lines identical.
+No directly related additional correctness issue found in the final scoped self-review.
+No benchmark retraining, tokenizer/methodology/format change or M5 work performed.
+READY_FOR_M5_GPU

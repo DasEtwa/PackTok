@@ -1,0 +1,10 @@
+Retained corpus totals by source; exact original byte composition, no inserted separators.
+austen.txt retained_bytes=752487
+goethe.txt retained_bytes=535924
+rust-vec.rs retained_bytes=143600
+rust-map.rs retained_bytes=109852
+rust-Cargo.toml retained_bytes=3139
+synthetic-json.txt retained_bytes=222772
+synthetic-unicode.txt retained_bytes=259115
+total_bytes=2026889 total_mib=1.93299198150635 train_percent=91.622629556922 validation_percent=4.0941561180706 test_percent=4.28321432500744
+Nominal cached original token/length vector payload lengths (16 B/row on this 64-bit target; not capacities/RSS): M1=15850352 B, M2=18020976 B, combined=33871328 B. Mapped per-run copies add corresponding nominal payload. Parameter arrays are separately estimated; actual peak includes leakage hash sets/training/model/input buffers.

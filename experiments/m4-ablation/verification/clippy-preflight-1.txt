@@ -1,0 +1,29 @@
+    Checking packtok-model v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-model)
+    Checking packtok-bench v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-bench)
+error: unused import: `packtok_format::Artifact`
+ --> crates\packtok-bench\src\m4.rs:8:5
+  |
+8 | use packtok_format::Artifact;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `-D unused-imports` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[allow(unused_imports)]`
+
+error: the loop variable `right` is used to index `splits`
+  --> crates\packtok-bench\src\m4_corpus.rs:10:22
+   |
+10 |         for right in left + 1..splits.len() {
+   |                      ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#needless_range_loop
+   = note: `-D clippy::needless-range-loop` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_range_loop)]`
+help: consider using an iterator and enumerate()
+   |
+10 -         for right in left + 1..splits.len() {
+10 +         for (right, <item>) in splits.iter().enumerate().skip(left + 1) {
+   |
+
+error: could not compile `packtok-bench` (bin "packtok-bench") due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `packtok-bench` (bin "packtok-bench" test) due to 1 previous error

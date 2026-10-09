@@ -1,10 +1,11 @@
 # PackTok
 
-Rust-first tokenizer research implementation. **Current milestone: M3, the tiny
-autoregressive model comparison (completed).** M1 remains the frozen flat
-byte-level BPE control group; M2 is the first factorized pack architecture. M3
-records a first model-level comparison on a small synthetic corpus; the result
-does not establish general quality or presuppose that factorization wins.
+Rust-first tokenizer research implementation. **Current milestone: M4,
+factorization ablation and larger-corpus validation (completed).** M1 remains
+the flat byte-level BPE control; lexical-v1 and M0–M3 results are frozen.
+M4 isolates token sequence from output head on a fixed sourced mixture. It finds
+a small tokenizer-sequence benefit at equal updates and an output-head budget
+benefit through additional training; it does not establish general superiority.
 
 **Canonical project map:** [DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)
 
@@ -15,6 +16,10 @@ M3 model architecture and experiment results: [M3_MODEL.md](M3_MODEL.md) and
 The [current performance and mathematics audit](PERFORMANCE_MATH_AUDIT.md)
 records prioritized fixes, numerical gradient checks, and preserved before/after
 measurements. Run its focused probes with `cargo run --release -p packtok-bench -- audit`.
+
+The [final pre-GPU correctness pass](PRE_GPU_CODE_REVIEW.md) records the two
+model-contract fixes, scoped regressions and CPU baseline freeze verification.
+Tokenizer behavior, M3/M4 results and artifact encodings remain frozen.
 
 ```text
 cargo run --release -p packtok-cli -- train-bpe fixtures/m1_bpe_corpus.txt target/m1.packtok
@@ -59,3 +64,11 @@ of the previous findings, and extended repetition benchmarks.
 Verify with `cargo fmt --all --check`,
 `cargo clippy --workspace --all-targets --all-features -- -D warnings`,
 `cargo test --workspace`, and `cargo build --release --workspace`.
+
+## M4 factorization ablation
+
+M4 adds the unchanged-tokenizer A/B/C/D CPU experiment and fixed sourced mixed
+corpus. Design: [M4_ABLATION.md](M4_ABLATION.md); durable results:
+[M4_ABLATION_BENCHMARK.md](M4_ABLATION_BENCHMARK.md). Run preparation with
+`cargo run --release -p packtok-bench -- m4-corpus` and comparisons with
+`cargo run --release -p packtok-bench -- m4 tiny|large unique-label`.

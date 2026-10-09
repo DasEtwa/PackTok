@@ -1,0 +1,15 @@
+   Compiling packtok-bench v0.1.0 (C:\Users\DasEtwa\PackTok\crates\packtok-bench)
+    Finished `release` profile [optimized] target(s) in 4.68s
+     Running `target\release\packtok-bench.exe m4-corpus`
+M4 corpus preparation v2; block=4096 extended through next LF; source block index modulo20:18 validation,19 test,others train. No inserted bytes or normalization. Drop whole held-out blocks with shared128bytes; train priority, then validation. Exact final guard includes concatenation boundaries.
+source raw_bytes body_bytes train_bytes validation_bytes test_bytes
+austen.txt 772386 752487 677995 37273 37219
+goethe.txt 555695 535924 486468 24837 24619
+rust-vec.rs 147744 147744 139464 0 4136
+rust-map.rs 118108 118108 109852 0 0
+rust-Cargo.toml 3139 3139 3139 0 0
+synthetic-json.txt 222772 222772 206044 8380 8348
+synthetic-unicode.txt 259115 259115 234127 12494 12494
+split=train bytes=1857089 removed_leaking_bytes=0
+split=validation bytes=82984 removed_leaking_bytes=8252
+split=test bytes=86816 removed_leaking_bytes=4148

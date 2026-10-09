@@ -172,3 +172,39 @@ pack IDs, empty or oversized vocabularies, a flat descriptor other than pack
 trailing bytes. Model format version 1 stores parameters only; Adam moments and
 training progress are not serialized. This is an experimental M3 format, not a
 stable public model checkpoint contract.
+
+### CPU baseline size and prompt validation (pre-M5 fix)
+
+The existing parameter-v1 encoding is unchanged. Its complete byte size is
+`40 + 6 * pack_count + 4 * parameter_count`: the fixed 40 bytes include magic,
+version, kind/reserved, dimensions, seed, pack count and parameter count; every
+pack declaration has a u16 ID and u32 row count; every parameter is f32.
+Flat models have one declaration too. All dynamic multiplications and additions
+are checked. Constructor, loader and writer use one canonical calculation and
+reject a complete size above 67,108,864 bytes (64 MiB). Construction checks this
+before weights or Adam moments are allocated. The independent parameter cap
+still applies, but is not itself sufficient to guarantee a serializable model.
+
+Greedy generation rejects an empty prompt, overflowing prompt-plus-continuation
+length and a returned length above 4,096 IDs. It then validates every supplied
+prompt ID using the same pack/local lookup as inference, before copying or
+truncating it. Zero-continuation requests validate IDs too. Valid long prompts
+still use only the trailing context for prediction. This changes validation,
+not parameter encoding, tokenization, valid-prompt generation or model training.
+The fixes, regressions, archived pre-fix evidence and CPU freeze verification
+are recorded in [PRE_GPU_CODE_REVIEW.md](PRE_GPU_CODE_REVIEW.md).
+
+## M4 model-side mapping version 1
+
+Tokenizer v1/v2/v3 and M3 parameter version 1 are unchanged. A separate mapping
+file is required to retain B/C address semantics without altering historic
+model/tokenizer bytes. Its eight magic bytes are hex 50 54 4d 41 50 34 00 01
+(PTMAP4, NUL, version 1), followed by little-endian u32 row count, then row-count
+records (u16 pack, u32 local), in original global ID order. Counts must be
+1..=1000000, <=1024 distinct packs, IDs unique and local domains contiguous
+from zero; exact length is 12+6*rows, no trailing bytes. Maximum is 6000012 bytes.
+B records original M1 global to synthetic addresses; C records canonical M2
+global to original M2 addresses. Full maps are regenerated from retained
+tokenizer artifacts before use, not trusted as reinterpretations of other artifacts.
+Parameter artifacts contain the actual permuted B embedding weights; mapping
+and tokenizer files must accompany them for raw-text use. No Adam resume is added.

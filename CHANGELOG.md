@@ -1,5 +1,18 @@
 # Milestone history
 
+## Final pre-GPU correctness pass (2026-10-07)
+
+- Enforce complete model-parameter-v1 artifact size during construction,
+  loading and writing through one checked calculation, before allocating model
+  state. Keep the existing size limits and exact wire encoding.
+- Validate the whole greedy-generation prompt with the canonical model ID
+  lookup, including prefixes outside the context and zero-continuation requests.
+- Add nine scoped regressions for wire boundaries/overflow, constructors,
+  historical wire identity, prompt validation and valid generation behavior.
+- Preserve the original pre-fix review, probes and raw logs. Resolution and CPU
+  baseline freeze evidence: [PRE_GPU_CODE_REVIEW.md](PRE_GPU_CODE_REVIEW.md).
+
+
 ## Performance and mathematics audit (2026-10-07)
 
 - Addressed seven prioritized findings in model numerical failures, model
@@ -108,3 +121,10 @@
   exact raw-byte fallback encoding/decoding.
 - M0 benchmark results remain in
   [M0_BENCHMARK_BASELINE.md](M0_BENCHMARK_BASELINE.md); M1 does not overwrite them.
+
+## M4 — Factorization ablation (2026-10-07)
+
+Adds artifact-only balanced M1 grouping, bijective M2 flattening, equivalent
+input-row control, four-variant CPU harness, sourced corpus preparation and
+preserved preflight/final evidence. M0–M3 results remain frozen. Design and
+results are in M4_ABLATION.md and M4_ABLATION_BENCHMARK.md.

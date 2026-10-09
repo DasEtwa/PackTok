@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src\lib.rs (target\debug\deps\packtok_model-e1294f8a2b33fdae.exe)
+
+running 3 tests
+test tests::failed_adam_update_preserves_weights_moments_and_step ... ok
+test tests::overflowing_adam_moment_is_rejected_without_changing_state ... ok
+test tests::adam_update_changes_parameters ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.00s
+

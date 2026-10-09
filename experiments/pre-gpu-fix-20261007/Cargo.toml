@@ -1,0 +1,16 @@
+[package]
+name = "packtok-cpu-freeze-compatibility"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "cpu-freeze-compatibility"
+path = "compatibility.rs"
+
+[dependencies]
+packtok-core = { path = "../../crates/packtok-core" }
+packtok-model = { path = "../../crates/packtok-model" }
+packtok-format = { path = "../../crates/packtok-format" }

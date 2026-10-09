@@ -1,0 +1,10 @@
+All commands completed successfully, exit code 0, on Windows Rust/Cargo 1.98.1:
+cargo fmt --all --check (no output)
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace (125 unit/integration tests; doc tests zero)
+cargo build --release --workspace
+Each command was guarded by a nonzero-exit stop before the next command.
+Final code changes after measured source 8ae3df4 were only the canonical-path
+expression extraction and direct frozen-artifact regression, with no model,
+mapping, tokenizer, optimizer, sampling or scoring semantic change.
+Result/verification snapshot commit: 009dcef40d2125ac81c992f9917ad4cd08ef2c0c.

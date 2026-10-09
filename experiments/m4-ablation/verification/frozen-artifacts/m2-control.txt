@@ -1,0 +1,5 @@
+trained factorized BPE with router lexical-v1; shared byte tokens=256; total vocabulary=512; corpus 1640 bytes across 1 files; wrote experiments/m4-ablation/verification/frozen-artifacts/m2-control.packtok
+  pack BYTE_FALLBACK: 0 spans, 0 routed bytes, 0 learned tokens
+  pack TEXT: 206 spans, 1278 routed bytes, 243 learned tokens
+  pack NUMBER: 14 spans, 40 routed bytes, 3 learned tokens
+  pack STRUCTURE: 212 spans, 322 routed bytes, 10 learned tokens

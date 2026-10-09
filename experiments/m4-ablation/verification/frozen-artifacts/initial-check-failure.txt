@@ -1,0 +1,1 @@
+The first ad hoc expected-hash comparison reported m1-legacy-a mismatch because the expected string had been manually transcribed incorrectly. Actual bytes equal the complete 64-digit SHA-256 in M1_BPE_BENCHMARK.md. The corrected check extracts that historical digest directly from the preserved document; no artifact or training behavior changed.
