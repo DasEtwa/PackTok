@@ -1,5 +1,14 @@
 #![forbid(unsafe_code)]
 
+mod factorized;
+
+pub use factorized::reference as factorized_reference;
+pub use factorized::{
+    FactorizedPackTrainingStats, FactorizedTrainingConfig, FactorizedTrainingReport,
+    train_factorized_bpe, train_factorized_bpe_with_provenance,
+    train_factorized_bpe_with_provenance_report, train_factorized_bpe_with_report,
+};
+
 use std::collections::BTreeMap;
 use std::fmt;
 use std::fs;
@@ -11,8 +20,8 @@ use packtok_core::{
     PackRegistry,
 };
 use packtok_format::{
-    Artifact, BpeModelError, FLAT_BPE_PACK_ID, FlatBpeMerge, FlatBpeModel, FormatError,
-    MAX_BPE_TOKEN_BYTES,
+    Artifact, BpeModelError, FLAT_BPE_PACK_ID, FactorizedBpeModelError, FlatBpeMerge, FlatBpeModel,
+    FormatError, MAX_BPE_TOKEN_BYTES,
 };
 
 /// M1's documented default training configuration.
@@ -526,6 +535,10 @@ pub enum TrainingError {
     TooManyProvenanceFiles(usize),
     /// Raw byte count or checksum does not match the supplied corpus.
     InvalidProvenance,
+    /// The M2 training input is not valid UTF-8 text.
+    InvalidUtf8Corpus { valid_up_to: usize },
+    /// A router emitted a pack that is not part of the selected M2 policy.
+    InvalidRouting,
     /// A merge model failed structural validation.
     InvalidModel(BpeModelError),
     /// The model or registry could not be serialized as a valid artifact.
@@ -547,6 +560,13 @@ impl fmt::Display for TrainingError {
             Self::InvalidProvenance => f.write_str(
                 "corpus provenance byte count or checksum does not match the supplied input",
             ),
+            Self::InvalidUtf8Corpus { valid_up_to } => write!(
+                f,
+                "factorized training corpus is not UTF-8 (valid prefix: {valid_up_to} bytes)"
+            ),
+            Self::InvalidRouting => {
+                f.write_str("router emitted a span outside the lexical-v1 packs")
+            }
             Self::InvalidModel(error) => write!(f, "invalid trained BPE model: {error}"),
             Self::InvalidArtifact(error) => write!(f, "cannot create BPE artifact: {error}"),
         }
@@ -566,6 +586,12 @@ impl std::error::Error for TrainingError {
 impl From<BpeModelError> for TrainingError {
     fn from(value: BpeModelError) -> Self {
         Self::InvalidModel(value)
+    }
+}
+
+impl From<FactorizedBpeModelError> for TrainingError {
+    fn from(value: FactorizedBpeModelError) -> Self {
+        Self::InvalidArtifact(FormatError::InvalidFactorizedBpeModel(value))
     }
 }
 

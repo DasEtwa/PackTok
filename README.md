@@ -1,9 +1,10 @@
 # PackTok
 
-Rust-first tokenizer research implementation. **Current milestone: M1, a flat
-byte-level BPE baseline.** It provides a deterministic trainer, exact byte
-round-trips, a versioned artifact, an inspection CLI, and a benchmark against the
-M0 byte-only path. It is not yet PackTok's factorized pack architecture.
+Rust-first tokenizer research implementation. **Current milestone: M2, the first
+factorized pack architecture.** M1 remains the frozen flat byte-level BPE control
+group. M2 routes text deterministically into TEXT, NUMBER, and STRUCTURE local
+vocabularies while sharing one raw-byte fallback pack; it does not establish that
+factorization improves tokenization.
 
 **Canonical project map:** [DasEtwa/BRAIN/PackTok](https://github.com/DasEtwa/BRAIN/tree/main/PackTok)
 
@@ -16,18 +17,27 @@ cargo run --release -p packtok-cli -- encode --artifact target/m1.packtok "Sämt
 cargo run --release -p packtok-cli -- inspect-token target/m1.packtok 256
 cargo run --release -p packtok-cli -- validate target/m1.packtok
 cargo run --release -p packtok-bench
+
+cargo run --release -p packtok-cli -- route "Hello 123!"
+cargo run --release -p packtok-cli -- train-packs fixtures/benchmark/train.txt target/m2.packtok
+cargo run --release -p packtok-cli -- inspect-pack target/m2.packtok TEXT
+cargo run --release -p packtok-cli -- inspect-token target/m2.packtok TEXT:0
+cargo run --release -p packtok-cli -- inspect-merges target/m2.packtok TEXT
+cargo run --release -p packtok-cli -- stats target/m2.packtok
 ```
 
 ## Workspace
 
 - `packtok-core` — token and pack contracts.
-- `packtok-format` — deterministic version-1 and version-2 artifacts.
-- `packtok-tokenizer` — M0 byte fallback and M1 BPE runtime.
-- `packtok-train` — deterministic BPE training, corpus handling, and reference oracle.
+- `packtok-packs` — shared router contract and the experimental `lexical-v1` policy.
+- `packtok-format` — deterministic version-1, version-2, and version-3 artifacts.
+- `packtok-tokenizer` — M0 byte fallback, frozen M1 BPE, and M2 factorized runtime.
+- `packtok-train` — deterministic flat and factorized BPE training, corpus handling, and reference oracles.
 - `packtok-cli` — training, encoding, decoding, validation, and inspection commands.
-- `packtok-bench` — held-out M0/M1 throughput, token counts, memory and sequence lengths.
+- `packtok-bench` — matched held-out M0/M1/M2 throughput, token counts, memory and sequence lengths.
 
-Details: [M1 BPE design](M1_BPE.md) · [artifact format](FORMAT.md) ·
+Details: [M2 factorized design](M2_PACKS.md) · [M2 benchmark](M2_PACKS_BENCHMARK.md) ·
+[M1 BPE control](M1_BPE.md) · [artifact format](FORMAT.md) ·
 [benchmark results](M1_BPE_BENCHMARK.md) · [milestone history](CHANGELOG.md) ·
 [M0 historical benchmark](M0_BENCHMARK_BASELINE.md).
 The [performance and correctness audit](M1_PERFORMANCE_AUDIT.md) records fixes,

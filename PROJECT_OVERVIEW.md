@@ -1,8 +1,8 @@
 # PackTok
 
 > Historical overview preserved from the pre-M0 standalone README. For the
-> current M1 implementation status and baseline, see [README.md](README.md),
-> [M1_BPE.md](M1_BPE.md), and [M1_BPE_BENCHMARK.md](M1_BPE_BENCHMARK.md).
+> current M2 implementation status, see [README.md](README.md),
+> [M2_PACKS.md](M2_PACKS.md), and [M2_PACKS_BENCHMARK.md](M2_PACKS_BENCHMARK.md).
 
 > Experimental factorized tokenization for language models.
 

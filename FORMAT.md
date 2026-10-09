@@ -1,7 +1,8 @@
 # PackTok artifact format
 
 This file is normative for the standalone implementation. M0 version 1 remains
-readable and writable. M1 adds version 2 for a flat byte-level BPE model.
+readable and writable. M1 adds version 2 for flat byte-level BPE. M2 adds
+version 3 for factorized pack-local BPE.
 
 ## Shared encoding rules
 
@@ -70,13 +71,66 @@ Version 2 is the M1 wire contract. Tokenizer training policy and the metadata ke
 set remain experimental. Version 2 does not add normalization, special-token
 semantics, or any factorized-pack behavior.
 
+## Version 3 — M2 factorized pack BPE
+
+Version 3 keeps the exact 20-byte header and shared registry, special-token, and
+metadata sections used by versions 1 and 2. After common metadata it appends:
+
+1. A UTF-8 length-prefixed router policy ID. The only accepted ID is
+   lexical-v1.
+2. A u32 count of specialized merge graphs, bounded at three.
+3. For each graph in ascending u16 pack-ID order: pack ID (u16), merge count
+   (u32), then ordered merge records.
+4. Each merge record is 10 bytes: left SymbolRef, then right SymbolRef.
+   A symbol reference is a one-byte tag followed by a little-endian u32 value.
+   Tag 0 means Byte(value) and requires value <= 255; tag 1 means
+   Local(value) and requires that value be smaller than the current merge
+   rank. Other tags are invalid.
+
+The pack ID list may contain only non-empty lexical-v1 specialized graphs:
+TEXT (0), NUMBER (1), and STRUCTURE (2). Graphs are serialized in that
+order when present. Rank r creates local token ID r; references to Local
+symbols resolve only in that same graph. A merge can therefore combine shared
+bytes and prior tokens from its own pack, but can never refer to another pack's
+local namespace. Duplicate ordered parent pairs in one graph are invalid. The
+byte expansion of every learned token is bounded by MAX_BPE_TOKEN_BYTES.
+
+The version-3 registry must contain exactly the declared specialized graphs
+plus one shared byte-fallback descriptor. Its ID is the reserved default
+65535, its name is BYTE_FALLBACK, and its local IDs are the unchanged byte
+values 0..=255. Specialized descriptor names and local counts must match the
+router registry and graph merge counts. Special-token declarations are rejected
+for this version. Identical byte strings in different packs remain distinct IDs
+because a token address is the pair (pack ID, local ID).
+
+Version 3's router and merge graph are normative runtime data. Metadata remains
+descriptive and does not affect encoding. M2 training records the target and
+realized budget, minimum frequency, tie-break rule, corpus identity, no
+normalization, and per-pack corpus/allocation counts as metadata. The training
+report and exact metadata vocabulary are described in M2_PACKS.md.
+
+The reader rejects unknown routers, unsupported pack IDs, noncanonical graph
+ordering, empty graphs, invalid symbol tags or byte values, forward or
+cross-namespace local references, repeated pairs, descriptor/count mismatches,
+special tokens, malformed or trailing data, and tokens that exceed the
+expansion bound. The artifact-size cap is 16 MiB for both reading and writing;
+graph count is at most three. The parser validates all parent ranks and
+expansion lengths before runtime use.
+
+Version 3 does not reinterpret versions 1 or 2. The version-1 M0 and version-2
+M1 reader/writer paths retain their prior canonical bytes and IDs. The format
+reader supports all three versions without implicit migration. The router
+registry, wire records, token bounds, and metadata conventions in version 3
+are the current M2 experiment contract; changing their runtime meaning requires
+a new artifact version.
+
 ## Limits and compatibility
 
-Both versions are limited to 16 MiB. Pack, special-token, and metadata collections
+All three versions are limited to 16 MiB. Pack, special-token, and metadata collections
 are bounded to 65,536 entries. Version 1 serialization remains byte-for-byte
-unchanged. The reader supports versions 1 and 2; it does not migrate between them.
+unchanged. The reader supports versions 1, 2, and 3; it does not migrate between them.
 Constructors and writers enforce the reader's collection and total-size limits
-in both versions, so accepted artifacts cannot serialize into an oversized or
+in every version, so accepted artifacts cannot serialize into an oversized or
 over-counted file that this reader would reject. The CLI also bounds bytes read
 before parsing, including files that grow while being read.
 The 1 MiB per-token bound tightens acceptance of previously loadable oversized

@@ -10,5 +10,6 @@ workspace = true
 
 [dependencies]
 packtok-format = { path = "../packtok-format" }
+packtok-packs = { path = "../packtok-packs" }
 packtok-tokenizer = { path = "../packtok-tokenizer" }
 packtok-train = { path = "../packtok-train" }

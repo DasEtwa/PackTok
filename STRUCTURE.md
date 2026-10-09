@@ -350,12 +350,11 @@ Every optimization must preserve deterministic results unless an experiment expl
 
 ### M2 — PackTok v0.1
 
-- pack schema
-- local vocabularies
-- canonical packed IDs
-- first deterministic annotation/import path
-- byte fallback
-- PackTok-vs-BPE tokenizer benchmarks
+- shared byte fallback and independent local BPE vocabularies
+- deterministic lexical-v1 routing and one global learned-token budget
+- version-3 artifact section with pack-local byte/local merge references
+- exact mixed-pack runtime encode/decode and CLI inspection
+- held-out comparison against the frozen M1 flat BPE control
 
 ### M3 — Tiny model comparison
 
@@ -380,4 +379,20 @@ Only after M0–M3 provide trustworthy baselines:
 
 If a code change alters a core invariant, artifact format, crate boundary, or experiment definition, update the relevant document in the same change.
 
+## M2 implementation status
+
+The implemented M2 dependency boundary adds `packtok-packs` as the owner of the
+generic routing interface and the versioned `lexical-v1` experimental policy.
+`packtok-train` uses it to route the training corpus and create independent
+pack-local merge graphs; `packtok-tokenizer` uses it to apply the same runtime
+policy. Both consume normative model types from `packtok-format`. Neither format
+nor runtime depends on training. The M2 CLI and benchmark orchestrate these
+library crates. Implementation behavior and measurements are documented in
+[M2_PACKS.md](M2_PACKS.md) and [M2_PACKS_BENCHMARK.md](M2_PACKS_BENCHMARK.md).
+
+M2 now implements a shared byte fallback and independent local BPE vocabularies,
+deterministic `lexical-v1` routing, one global learned-token budget, a version-3
+artifact section, exact mixed-pack encode/decode, inspection commands, and a
+held-out comparison against frozen M1. This describes the current code and
+does not imply that factorization improves tokenization.
 The BRAIN space [`DasEtwa/BRAIN/PackTok`](https://github.com/DasEtwa/BRAIN/tree/main/PackTok) remains the high-level project map.

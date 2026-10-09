@@ -10,3 +10,4 @@ workspace = true
 
 [dependencies]
 packtok-core = { path = "../packtok-core" }
+packtok-packs = { path = "../packtok-packs" }

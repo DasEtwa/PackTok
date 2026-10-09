@@ -1,5 +1,18 @@
 # Milestone history
 
+## M2 — First factorized pack architecture (2026-10-07)
+
+- Added a generic Rust routing contract and the experimental, versioned lexical-v1
+  policy for TEXT, NUMBER, and STRUCTURE spans.
+- Added independent pack-local byte-level BPE graphs sharing the one reserved
+  byte-fallback namespace, with a deterministic global learned-token budget and
+  an independent slow reference implementation.
+- Added artifact format version 3, pack-aware runtime encode/decode, inspection
+  commands, corpus/allocation provenance, and the M1-matched benchmark harness.
+- M0/v1 and M1/v2 artifact paths remain versioned separately. M1 remains the
+  frozen control. M2's design, limitations, and measured result are recorded in
+  [M2_PACKS.md](M2_PACKS.md) and [M2_PACKS_BENCHMARK.md](M2_PACKS_BENCHMARK.md).
+
 ## Post-fix branch audit (2026-10-07)
 
 - Fixed valid repetitive corpora failing training after the per-token size limit:

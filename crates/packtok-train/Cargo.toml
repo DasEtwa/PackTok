@@ -11,6 +11,7 @@ workspace = true
 [dependencies]
 packtok-core = { path = "../packtok-core" }
 packtok-format = { path = "../packtok-format" }
+packtok-packs = { path = "../packtok-packs" }
 
 [dev-dependencies]
 packtok-tokenizer = { path = "../packtok-tokenizer" }
