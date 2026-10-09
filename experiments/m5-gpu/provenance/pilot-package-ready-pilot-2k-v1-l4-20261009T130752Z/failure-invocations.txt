@@ -1,0 +1,2 @@
+/tmp/m5-e2e-package-in6thj1p/packtok-m5|approval-fixture|plan-extended configs/pilot-2k-v1.json data/prepared-v2 results/pilot-plan.json
+/tmp/m5-e2e-package-in6thj1p/packtok-m5|approval-fixture|train-extended configs/pilot-2k-v1.json data/prepared-v2 results/A A T 20261008 approval-fixture

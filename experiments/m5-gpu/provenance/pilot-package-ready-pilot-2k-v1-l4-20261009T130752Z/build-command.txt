@@ -1,0 +1,2 @@
+cargo build --locked --release --features cuda --manifest-path experiments/m5-gpu/Cargo.toml --target-dir experiments/m5-gpu/target-cuda
+exit=0; release profile completed
