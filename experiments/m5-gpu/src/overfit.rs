@@ -11,10 +11,11 @@ use std::{fs, io::Write, path::Path, time::Instant};
 
 pub const UPDATES: usize = 500;
 pub const LOSS_STEPS: [usize; 9] = [0, 1, 10, 25, 50, 100, 200, 350, UPDATES];
-const FIXED_INPUT: [u32; 8] = [1, 2, 3, 4, 1, 2, 3, 4];
-const FIXED_TARGET: [u32; 8] = [2, 3, 4, 1, 2, 3, 4, 1];
-const PRIMARY_SEED: u64 = 20261008;
-const SAMPLER_XOR: u64 = 0xa341316c9e3779b9;
+pub const FIXED_INPUT: [u32; 8] = [1, 2, 3, 4, 1, 2, 3, 4];
+pub const FIXED_TARGET: [u32; 8] = [2, 3, 4, 1, 2, 3, 4, 1];
+pub const PRIMARY_SEED: u64 = 20261008;
+pub const SAMPLER_XOR: u64 = 0xa341316c9e3779b9;
+pub const PRIMARY_UPDATES: usize = 18;
 const DIVERGENCE_FACTOR: f32 = 10.0;
 const DIVERGENCE_ADDEND: f32 = 10.0;
 const STAGNATION_WINDOW: usize = 100;
@@ -46,6 +47,41 @@ pub struct Outcome {
     pub nonfinite_step: Option<usize>,
     pub stagnation_step: Option<usize>,
     pub samples: Vec<Sample>,
+    pub first_update_gradient_l2: Option<f64>,
+    pub first_update_selected_gradient_l2: std::collections::BTreeMap<String, f64>,
+    pub first_update_selected_weight_delta_l2: std::collections::BTreeMap<String, f64>,
+}
+
+const SELECTED_TENSORS: [&str; 4] = [
+    "embedding.weight",
+    "block.0.q.weight",
+    "block.0.up.weight",
+    "head.weight",
+];
+
+fn selected_gradient_diagnostics(
+    model: &Transformer,
+    grads: &candle_core::backprop::GradStore,
+) -> Result<(f64, std::collections::BTreeMap<String, f64>)> {
+    let mut total = 0.0_f64;
+    let mut selected = std::collections::BTreeMap::new();
+    for (name, var) in model.named_vars() {
+        let grad = grads
+            .get(&var)
+            .ok_or("missing gradient during diagnostics")?;
+        let squared = f64::from(grad.sqr()?.sum_all()?.to_scalar::<f32>()?);
+        if !squared.is_finite() {
+            return Err("nonfinite gradient norm during diagnostics".into());
+        }
+        total += squared;
+        if SELECTED_TENSORS.contains(&name.as_str()) {
+            selected.insert(name, squared.sqrt());
+        }
+    }
+    if selected.len() != SELECTED_TENSORS.len() || !total.is_finite() {
+        return Err("selected gradient diagnostic tensor missing".into());
+    }
+    Ok((total.sqrt(), selected))
 }
 
 fn fixed_batch(device: &Device) -> Result<(Tensor, Tensor)> {
@@ -128,6 +164,9 @@ pub fn run(
             nonfinite_step: Some(0),
             stagnation_step: None,
             samples,
+            first_update_gradient_l2: None,
+            first_update_selected_gradient_l2: std::collections::BTreeMap::new(),
+            first_update_selected_weight_delta_l2: std::collections::BTreeMap::new(),
         });
     }
 
@@ -144,6 +183,9 @@ pub fn run(
     let mut stagnation_step = None;
     let mut divergence_step = None;
     let mut nonfinite_step = None;
+    let mut first_update_gradient_l2 = None;
+    let mut first_update_selected_gradient_l2 = std::collections::BTreeMap::new();
+    let mut first_update_selected_weight_delta_l2 = std::collections::BTreeMap::new();
     let start = Instant::now();
     let mut completed = 0;
     let mut final_loss = Some(initial);
@@ -209,8 +251,42 @@ pub fn run(
             final_loss = Some(value);
             break;
         }
+        let selected_before = if update == 1 {
+            let (total, selected) = selected_gradient_diagnostics(model, &gradients)?;
+            first_update_gradient_l2 = Some(total);
+            first_update_selected_gradient_l2 = selected;
+            let vars = model.named_vars();
+            SELECTED_TENSORS
+                .iter()
+                .map(|name| {
+                    Ok((
+                        (*name).to_owned(),
+                        vars.get(*name)
+                            .ok_or("selected parameter missing")?
+                            .as_tensor()
+                            .copy()?,
+                    ))
+                })
+                .collect::<Result<std::collections::BTreeMap<_, _>>>()?
+        } else {
+            std::collections::BTreeMap::new()
+        };
         optimizer.step(&gradients)?;
         device.synchronize()?;
+        if update == 1 {
+            let vars = model.named_vars();
+            for (name, before) in selected_before {
+                let after = vars
+                    .get(&name)
+                    .ok_or("selected parameter missing after update")?;
+                let delta = (after.as_tensor() - &before)?;
+                let squared = f64::from(delta.sqr()?.sum_all()?.to_scalar::<f32>()?);
+                if !squared.is_finite() || squared == 0.0 {
+                    return Err("selected first AdamW update was zero or nonfinite".into());
+                }
+                first_update_selected_weight_delta_l2.insert(name, squared.sqrt());
+            }
+        }
         completed = update;
 
         if LOSS_STEPS.contains(&completed) {
@@ -280,6 +356,9 @@ pub fn run(
         nonfinite_step,
         stagnation_step,
         samples,
+        first_update_gradient_l2,
+        first_update_selected_gradient_l2,
+        first_update_selected_weight_delta_l2,
     })
 }
 
@@ -288,7 +367,7 @@ fn post_primary_state(train: &Sequence, device: &Device) -> Result<(Transformer,
     let initial_hash = runner::init_hash(&model)?;
     let mut optimizer = AdamW::new(model.optimizer_vars(), runner::adam())?;
     let mut sampler = Rng::new(PRIMARY_SEED ^ SAMPLER_XOR);
-    for _ in 0..18 {
+    for _ in 0..PRIMARY_UPDATES {
         let starts: Vec<_> = (0..8)
             .map(|_| (sampler.next_u64() as usize) % (train.tokens.len() - 256))
             .collect();
@@ -372,6 +451,21 @@ mod tests {
             LOSS_STEPS
         );
         assert!(result.final_loss.unwrap() < result.initial_loss);
+        assert!(result.first_update_gradient_l2.unwrap().is_finite());
+        assert_eq!(
+            result.first_update_selected_gradient_l2.len(),
+            SELECTED_TENSORS.len()
+        );
+        assert_eq!(
+            result.first_update_selected_weight_delta_l2.len(),
+            SELECTED_TENSORS.len()
+        );
+        assert!(
+            result
+                .first_update_selected_weight_delta_l2
+                .values()
+                .all(|norm| norm.is_finite() && *norm > 0.0)
+        );
         assert!(result.samples.iter().all(|s| {
             s.loss.is_some_and(f32::is_finite)
                 && s.gradients_finite.is_none_or(|v| v)

@@ -194,6 +194,16 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
         &mut log,
         serde_json::json!({"stage":"cuda","seconds":now.elapsed().as_secs_f64(),"gpu":snapshot,"precision":"FP32"}),
     )?;
+    emit(
+        &mut log,
+        serde_json::json!({"stage":"overfit-protocol","states":["fresh","post-18"],
+            "primary_seed":overfit::PRIMARY_SEED,"primary_A_updates":overfit::PRIMARY_UPDATES,
+            "A_sampler":"xorshift64(seed XOR 0xa341316c9e3779b9), 8 starts per update modulo (A_train_tokens-256)",
+            "primary_adamw":{"lr":0.0003,"beta1":0.9,"beta2":0.999,"epsilon":1e-8,"weight_decay":0.01},
+            "diagnostic":{"batch":1,"input":overfit::FIXED_INPUT,"target":overfit::FIXED_TARGET,
+                "updates":overfit::UPDATES,"learning_rate":0.005,"weight_decay":0.0,
+                "dropout":0.0,"warmup":0,"gradient_clipping":false,"loss_steps":overfit::LOSS_STEPS}}),
+    )?;
     let reference: Reference = serde_json::from_slice(&fs::read(reference_path)?)?;
     let tiny = Transformer::new(reference.config, reference.seed, &device)?;
     let x = Tensor::new(&[[1_u32, 2, 3, 4]], &device)?;
@@ -221,15 +231,32 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
         serde_json::json!({"stage":"cpu-cuda-reference","max_absolute_delta":max,"gradient_families":finite_gradients(&tiny,&grads)?}),
     )?;
     drop((tiny, grads, logits, l));
-    let mut expected_init = None;
-    let mut overfit_passed = true;
+    let fresh_model = Transformer::new(ModelConfig::default(), overfit::PRIMARY_SEED, &device)?;
+    let fresh_outcome = overfit::run(&fresh_model, &device, "fresh", 0.005)?;
+    let fresh_initial_hash = fresh_outcome.starting_weights_hash.clone();
+    overfit::write_outcome(&mut log, &fresh_outcome)?;
+    device.synchronize()?;
+    emit(
+        &mut log,
+        serde_json::json!({"stage":"tiny-overfit-summary","state":"fresh",
+            "initial_loss":fresh_outcome.initial_loss,"final_loss":fresh_outcome.final_loss,
+            "steps":fresh_outcome.completed_updates,"seconds":fresh_outcome.seconds,
+            "passed_original_threshold":fresh_outcome.passed_original_threshold,
+            "first_update_gradient_l2":fresh_outcome.first_update_gradient_l2,
+            "first_update_selected_gradient_l2":fresh_outcome.first_update_selected_gradient_l2,
+            "first_update_selected_weight_delta_l2":fresh_outcome.first_update_selected_weight_delta_l2,
+            "divergence_step":fresh_outcome.divergence_step,"nonfinite_step":fresh_outcome.nonfinite_step,
+            "stagnation_step":fresh_outcome.stagnation_step,"gpu":gpu_snapshot()?}),
+    )?;
+    let mut expected_init = Some(fresh_initial_hash);
+    let mut overfit_passed = fresh_outcome.passed_original_threshold;
     for variant in ["A", "C"] {
         let seq = Sequence::load(&data.join(format!("{variant}-train.seq")))?;
         if seq.tokens.len() < 4097 {
             return Err("insufficient preflight tokens".into());
         }
         let now = Instant::now();
-        let m = Transformer::new(ModelConfig::default(), 20261008, &device)?;
+        let m = Transformer::new(ModelConfig::default(), overfit::PRIMARY_SEED, &device)?;
         device.synchronize()?;
         let seconds = now.elapsed().as_secs_f64();
         let initial = init_hash(&m)?;
@@ -247,8 +274,8 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
         let mut times = Vec::new();
         let mut total_bytes = 0_u64;
         let mut pipeline_start = None;
-        let mut rng = Rng::new(20261008 ^ 0xa341316c9e3779b9);
-        for step in 0..18 {
+        let mut rng = Rng::new(overfit::PRIMARY_SEED ^ overfit::SAMPLER_XOR);
+        for step in 0..overfit::PRIMARY_UPDATES {
             if step == 2 {
                 pipeline_start = Some(Instant::now());
             }
@@ -364,12 +391,15 @@ pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<(
             device.synchronize()?;
             emit(
                 &mut log,
-                serde_json::json!({"stage":"tiny-overfit-summary","initial_loss":outcome.initial_loss,"final_loss":outcome.final_loss,
+                serde_json::json!({"stage":"tiny-overfit-summary","state":"post-18","initial_loss":outcome.initial_loss,"final_loss":outcome.final_loss,
                     "steps":outcome.completed_updates,"seconds":outcome.seconds,"passed_original_threshold":outcome.passed_original_threshold,
+                    "first_update_gradient_l2":outcome.first_update_gradient_l2,
+                    "first_update_selected_gradient_l2":outcome.first_update_selected_gradient_l2,
+                    "first_update_selected_weight_delta_l2":outcome.first_update_selected_weight_delta_l2,
                     "divergence_step":outcome.divergence_step,"nonfinite_step":outcome.nonfinite_step,"stagnation_step":outcome.stagnation_step,
                     "gpu":gpu_snapshot()?}),
             )?;
-            overfit_passed = outcome.passed_original_threshold;
+            overfit_passed &= outcome.passed_original_threshold;
         }
     }
     emit(

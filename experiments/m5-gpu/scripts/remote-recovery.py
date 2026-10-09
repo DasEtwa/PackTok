@@ -13,7 +13,6 @@ import tarfile
 import time
 import traceback
 
-BUNDLE_SHA256 = '05790377fcc9458def42ee083009cdb5fe9c387b3f0cabbd48cb10fc09200040'
 BASE = Path('/content')
 RESULTS = BASE / 'packtok-m5-recovery-results'
 
@@ -40,8 +39,12 @@ def main():
     monitor = None
     try:
         parts = sorted(BASE.glob('packtok-m5-bundle.tar.gz.part[0-9][0-9][0-9]'))
-        if len(parts) != 14:
-            raise RuntimeError('v4 requires exactly fourteen parts')
+        if not parts or [p.name for p in parts] != [
+                f'packtok-m5-bundle.tar.gz.part{i:03d}' for i in range(len(parts))]:
+            raise RuntimeError('bundle parts are missing or out of order')
+        expected = (BASE / 'packtok-m5-expected-sha256.txt').read_text().strip()
+        if len(expected) != 64 or any(c not in '0123456789abcdef' for c in expected):
+            raise RuntimeError('invalid uploaded bundle SHA-256')
         h = hashlib.sha256()
         with (BASE / 'packtok-m5-reassembled.tar.gz').open('xb') as output:
             for i, part in enumerate(parts):
@@ -51,7 +54,7 @@ def main():
                     for block in iter(lambda: f.read(16 * 1024 * 1024), b''):
                         output.write(block)
                         h.update(block)
-        if h.hexdigest() != BUNDLE_SHA256:
+        if h.hexdigest() != expected:
             raise RuntimeError('transport archive SHA-256 mismatch')
         (RESULTS / 'transport-sha256.txt').write_text(h.hexdigest() + '\n')
         if command('unpack', ['tar', '-xzf', str(BASE / 'packtok-m5-reassembled.tar.gz'), '-C', str(BASE)], timeout=90):
@@ -100,8 +103,11 @@ def main():
         samples = (RESULTS / 'gpu-samples.csv').open('xb')
         monitor = subprocess.Popen(['nvidia-smi', '--query-gpu=timestamp,name,memory.used,utilization.gpu',
                                     '--format=csv,noheader,nounits', '--loop-ms=200'], stdout=samples, stderr=subprocess.STDOUT)
+        frozen = json.loads((root / 'frozen-source.json').read_text())
+        if frozen.get('bundle_id') != 'bundle-v5' or frozen.get('mode') != 'fresh-and-post18-overfit-500':
+            raise RuntimeError('unexpected package identity or diagnostic mode')
         status = command('rust-console', [str(loader), '--library-path', libpath, str(exe), 'preflight',
-                         str(root / 'data'), str(root / 'cpu-reference.json'), str(RESULTS / 'gate')], env, timeout=900)
+                         str(root / 'data'), str(root / 'cpu-reference.json'), str(RESULTS / 'gate')], env, timeout=1200)
         if status:
             raise RuntimeError(f'Rust gate exited {status}')
     except BaseException:

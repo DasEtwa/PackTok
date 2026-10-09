@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../../.."
 root=experiments/m5-gpu
 bundle_name=${PACKTOK_M5_BUNDLE_NAME:-bundle}
-case "$bundle_name" in bundle) evidence_tag='';; bundle-v2|bundle-v3|bundle-v4) evidence_tag="-${bundle_name#bundle-}";; *) echo "Unsupported bundle name" >&2; exit 2;; esac
+case "$bundle_name" in bundle) evidence_tag='';; bundle-v2|bundle-v3|bundle-v4|bundle-v5) evidence_tag="-${bundle_name#bundle-}";; *) echo "Unsupported bundle name" >&2; exit 2;; esac
 bundle_root="$root/$bundle_name"
 test ! -e "$bundle_root"
 # Build only locally, with the already prepared compiler. No CUDA operations.
@@ -14,14 +14,14 @@ git diff HEAD --exit-code -- "$root/src" "$root/Cargo.toml" "$root/Cargo.lock" "
 test "$(git branch --show-current)" = m5-gpu-transformer
 test -f "$root/provenance/preparation-v2-metrics.json"
 test -f "$root/provenance/schedule-plan.json"
-test -f "$root/verification/transformer-debug-9.txt"
-test -f "$root/verification/transformer-release-9.txt"
-test -f "$root/verification/transformer-clippy-8.txt"
-grep -q '18 passed; 0 failed' "$root/verification/transformer-debug-9.txt"
-grep -q '18 passed; 0 failed' "$root/verification/transformer-release-9.txt"
-# All source/data checks and both CPU suites precede this packaging step.
-cargo build --locked --release --features cuda --manifest-path "$root/Cargo.toml" --target-dir "$root/target-cuda" > "$root/verification/cuda-build-bundle${evidence_tag}.txt" 2>&1
+cargo build --locked --release --manifest-path "$root/Cargo.toml" > "$root/verification/m5-cpu-build-bundle${evidence_tag}.txt" 2>&1
 "$root/target/release/packtok-m5" verify-prepared > "$root/verification/prepared-integrity-before-bundle${evidence_tag}.txt" 2>&1
+# All source/data checks and both CPU suites precede this packaging step.
+cargo fmt --manifest-path "$root/Cargo.toml" --all --check > "$root/verification/m5-fmt-bundle${evidence_tag}.txt" 2>&1
+cargo clippy --locked --manifest-path "$root/Cargo.toml" --all-targets -- -D warnings > "$root/verification/m5-clippy-bundle${evidence_tag}.txt" 2>&1
+cargo test --locked --manifest-path "$root/Cargo.toml" > "$root/verification/m5-debug-bundle${evidence_tag}.txt" 2>&1
+cargo test --locked --release --manifest-path "$root/Cargo.toml" > "$root/verification/m5-release-bundle${evidence_tag}.txt" 2>&1
+cargo build --locked --release --features cuda --manifest-path "$root/Cargo.toml" --target-dir "$root/target-cuda" > "$root/verification/cuda-build-bundle${evidence_tag}.txt" 2>&1
 # Never replace a failed preflight bundle. Recovery package gets a distinct path.
 mkdir "$bundle_root"
 bundle="$bundle_root/packtok-m5"
@@ -50,8 +50,9 @@ for package in libcurand libcublas; do
 done
 dpkg-query -W libc6 libgcc-s1 libstdc++6 > "$root/provenance/portable-runtime-versions${evidence_tag}.txt"
 commit=$(git rev-parse HEAD)
+binary_sha=$(sha256sum "$bundle/packtok-m5" | awk '{print $1}')
 cat > "$bundle/frozen-source.json" <<EOF
-{"source_commit":"$commit","cpu_freeze":"f3b6c3fb41f46c93e701b585d859b0b9071d65a5","backend":"candle-0.9.1","precision":"FP32","gpu":"NVIDIA L4","compiled_cuda":"12.4.131","compute_capability":"8.9","mode":"preflight-only"}
+{"bundle_id":"$bundle_name","source_commit":"$commit","binary_sha256":"$binary_sha","cpu_freeze":"f3b6c3fb41f46c93e701b585d859b0b9071d65a5","backend":"candle-0.9.1","precision":"FP32","gpu":"NVIDIA L4","compiled_cuda":"12.4.131","compute_capability":"8.9","mode":"fresh-and-post18-overfit-500","primary_seed":20261008,"overfit_updates":500,"overfit_learning_rate":0.005,"overfit_weight_decay":0.0,"overfit_input":[1,2,3,4,1,2,3,4],"overfit_target":[2,3,4,1,2,3,4,1]}
 EOF
 git archive HEAD -- "$root/src" "$root/Cargo.toml" "$root/Cargo.lock" "$root/configs" "$root/scripts" M5_GPU_TRANSFORMER.md | tar -x -C "$bundle/source"
 (cd "$bundle" && find . -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt)
@@ -67,8 +68,9 @@ libpath="$(pwd)/$bundle/runtime:/usr/lib/wsl/lib"
 tar --sort=name --mtime='UTC 2026-10-08' --owner=0 --group=0 --numeric-owner -C "$bundle_root" -cf - packtok-m5 | gzip -n > "$bundle_root/packtok-m5-bundle.tar.gz"
 split -b 33554432 -d -a 3 "$bundle_root/packtok-m5-bundle.tar.gz" "$bundle_root/packtok-m5-bundle.tar.gz.part"
 wc -c "$bundle_root/"*.part??? > "$root/provenance/bundle-chunk-sizes${evidence_tag}.txt"
-printf 'source_commit=%s\nmode=preflight-only\n' "$commit" > "$bundle_root/CPU_READY"
+printf 'source_commit=%s\nmode=fresh-and-post18-overfit-500\n' "$commit" > "$bundle_root/CPU_READY"
 (cd "$bundle_root" && sha256sum CPU_READY packtok-m5-bundle.tar.gz packtok-m5-bundle.tar.gz.part??? > bundle.sha256)
+sha256sum "$bundle_root/packtok-m5-bundle.tar.gz" | awk '{print $1}' > "$bundle_root/packtok-m5-expected-sha256.txt"
 cp "$bundle_root/bundle.sha256" "$root/provenance/bundle-SHA256SUMS${evidence_tag}.txt"
 wc -c "$bundle_root/packtok-m5-bundle.tar.gz" "$root/target-cuda/release/packtok-m5" > "$root/provenance/bundle-sizes${evidence_tag}.txt"
 printf 'CPU bundle ready; no GPU allocated.\n'

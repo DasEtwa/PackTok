@@ -3,6 +3,9 @@
 set -euo pipefail
 cd /home/dasetwa/projects/PackTok
 root=experiments/m5-gpu
+bundle_name=${PACKTOK_M5_BUNDLE_NAME:-bundle-v5}
+readiness=${PACKTOK_M5_READINESS:-}
+work_seconds=${PACKTOK_M5_WORK_SECONDS:-1500}
 if [[ ${1:-} == --cpu-mock ]]; then
   fixture=$(realpath -- "$2")
   # Only the checked-in fake transport may enter this mode. No real Colab PATH.
@@ -12,13 +15,16 @@ if [[ ${1:-} == --cpu-mock ]]; then
   work_seconds="$5" runtime="$6" stop_seconds=5
   run="$fixture/launcher"; mkdir "$run"
   worker_root="$fixture/experiments/m5-gpu"
+  readiness="$worker_root/provenance/l4-overfit-bundle-v5/PREFLIGHT_READY.json"
 else
   test "$#" -eq 0
   export PATH=/home/dasetwa/.local/bin:/home/dasetwa/.cargo/bin:$PATH
-  test -f "$root/provenance/recovery-20261008/PREFLIGHT_READY.json"
-  test ! -e "$root/bundle-v4/preflight-attempted"
-  work_seconds=1620; runtime=1680; stop_seconds=120
-  run="$root/provenance/recovery-20261008/launcher-$(date -u +%Y%m%dT%H%M%S)-$$"
+  test -n "$readiness"
+  runtime=1680; stop_seconds=120
+  test -f "$readiness"
+  test -d "$root/$bundle_name"
+  test ! -e "$root/$bundle_name/preflight-attempted"
+  run="$root/provenance/l4-overfit-bundle-v5/launcher-$(date -u +%Y%m%dT%H%M%S)-$$"
   mkdir "$run"
   worker_root="$PWD/$root"
 fi
@@ -32,6 +38,8 @@ printf 'pid=%s start=%s\n' "$$" "$(date -u +%FT%TZ)" > "$run/client.txt"
 # KillMode=mixed lets the Python parent release ownership on handled TERM;
 # after TimeoutStopSec systemd kills every remaining process in this cgroup.
 set +e
+supervisor_args=(--preflight --root "$worker_root" --work-seconds "$work_seconds" --bundle-name "$bundle_name")
+if [[ -n "$readiness" ]]; then supervisor_args+=(--readiness "$readiness"); fi
 systemd-run --user --wait --unit="$unit" \
   --property="RuntimeMaxSec=$runtime" --property="TimeoutStopSec=$stop_seconds" \
   --property=KillMode=mixed --property=Restart=no \
@@ -39,8 +47,11 @@ systemd-run --user --wait --unit="$unit" \
   --property=StandardError=inherit --setenv="PATH=$PATH" \
   --setenv="MOCK_ROOT=${MOCK_ROOT:-}" --setenv="MOCK_MODE=${MOCK_MODE:-}" \
   --setenv="MOCK_EXEC_SECONDS=${MOCK_EXEC_SECONDS:-0}" \
+  --setenv="PACKTOK_M5_BUNDLE_NAME=${PACKTOK_M5_BUNDLE_NAME:-bundle-v5}" \
+  --setenv="PACKTOK_M5_READINESS=${PACKTOK_M5_READINESS:-}" \
+  --setenv="PACKTOK_M5_WORK_SECONDS=${PACKTOK_M5_WORK_SECONDS:-1500}" \
   --working-directory="$PWD" /usr/bin/python3 "$PWD/$root/scripts/l4-recovery.py" \
-  --preflight --root "$worker_root" --work-seconds "$work_seconds" \
+  "${supervisor_args[@]}" \
   > "$run/service-start.txt" 2>&1
 rc=$?
 set -e

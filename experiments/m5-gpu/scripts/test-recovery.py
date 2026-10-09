@@ -77,21 +77,45 @@ class Lifecycle(unittest.TestCase):
         (self.root/'scripts').mkdir()
         shutil.copyfile(HERE/'check-preflight.py', self.root/'scripts/check-preflight.py')
         (self.root/'scripts/remote-recovery.py').touch()
-        (self.root/'provenance/recovery-20261008').mkdir()
+        (self.root/'provenance/l4-overfit-bundle-v5').mkdir()
         receipt=self.root/'provenance/recovery-20261008/drive-fixture.json'
+        receipt.parent.mkdir(parents=True, exist_ok=True)
         receipt.write_text('{"status":"COMPLETE_VERIFIED","kind":"preflight-fixture"}')
-        ready=dict(status='CPU_AND_DRIVE_READY', drive_completion=str(receipt.relative_to(self.root)),
-                   verified_files={str(receipt.relative_to(self.root)):hashlib.sha256(receipt.read_bytes()).hexdigest()})
-        (receipt.parent/'PREFLIGHT_READY.json').write_text(json.dumps(ready))
-        bundle = self.root/'bundle-v4'
+        (receipt.parent/'completion-readback.json').write_bytes(receipt.read_bytes())
+        bundle = self.root/'bundle-v5'
         bundle.mkdir()
+        payload=bundle/'packtok-m5'; payload.mkdir()
+        binary=payload/'packtok-m5'; binary.write_bytes(b'fixture binary')
+        binary_sha=hashlib.sha256(binary.read_bytes()).hexdigest()
+        archive=bundle/'packtok-m5-bundle.tar.gz'; archive.write_bytes(b'fixture archive')
+        archive_sha=hashlib.sha256(archive.read_bytes()).hexdigest()
+        (bundle/'packtok-m5-expected-sha256.txt').write_text(archive_sha+'\n')
+        frozen=dict(bundle_id='bundle-v5',source_commit='fixture-commit',binary_sha256=binary_sha,primary_seed=20261008,
+                    mode='fresh-and-post18-overfit-500',overfit_updates=500,overfit_learning_rate=0.005,
+                    overfit_weight_decay=0.0,overfit_input=[1,2,3,4,1,2,3,4],overfit_target=[2,3,4,1,2,3,4,1])
+        (payload/'frozen-source.json').write_text(json.dumps(frozen))
+        (bundle/'CPU_READY').write_text('source_commit=fixture-commit\n')
         rows=[]
         for i in range(14):
             name=f'packtok-m5-bundle.tar.gz.part{i:03d}'
             (bundle/name).write_bytes(b'fixture')
-            rows.append(hashlib.sha256(b'fixture').hexdigest()+'  '+name)
-        (bundle/'bundle.sha256').write_text('\n'.join(rows)+'\n')
-        (bundle/'source.sha256').write_text(hashlib.sha256(b'fixture').hexdigest()+'  '+str(bundle/rows[0].split('  ')[1])+'\n')
+            rows.append(name)
+        checksum_paths=[bundle/'CPU_READY',archive,*[bundle/name for name in rows]]
+        (bundle/'bundle.sha256').write_text(''.join(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n' for p in checksum_paths))
+        source=bundle/'source.sha256'
+        source.write_text(f'{binary_sha}  {binary}\n')
+        cpu=self.root/'provenance/l4-overfit-bundle-v5/CPU_CHECKS_PASS.json'
+        cpu.write_text(json.dumps(dict(status='CPU_CHECKS_PASS',source_commit='fixture-commit',verified_files={})))
+        readiness=self.root/'provenance/l4-overfit-bundle-v5/PREFLIGHT_READY.json'
+        ready=dict(status='CPU_AND_DRIVE_READY',bundle_name='bundle-v5',source_commit='fixture-commit',
+                   allocation_authorization_count=1,allocation_cap_seconds=1800,full_training_authorized=False,
+                   bundle_sha256=archive_sha,binary_sha256=binary_sha,
+                   drive_completion=str(receipt.relative_to(self.root)),
+                   verified_files={str(cpu.relative_to(self.root)):hashlib.sha256(cpu.read_bytes()).hexdigest(),
+                                   str(receipt.relative_to(self.root)):hashlib.sha256(receipt.read_bytes()).hexdigest(),
+                                   str((receipt.parent/'completion-readback.json').relative_to(self.root)):hashlib.sha256((receipt.parent/'completion-readback.json').read_bytes()).hexdigest()})
+        readiness.write_text(json.dumps(ready))
+        self.readiness=readiness
         (self.base/'bin').mkdir()
         fake=self.base/'bin/colab'
         fake.write_text(FAKE_COLAB)
@@ -112,7 +136,8 @@ class Lifecycle(unittest.TestCase):
 
     def invoke(self, mode):
         os.environ['MOCK_MODE']=mode
-        p=subprocess.run(['python3',str(HERE/'l4-recovery.py'),'--preflight','--root',str(self.root)],capture_output=True,text=True,timeout=15)
+        p=subprocess.run(['python3',str(HERE/'l4-recovery.py'),'--preflight','--root',str(self.root),
+                          '--bundle-name','bundle-v5','--readiness',str(self.readiness)],capture_output=True,text=True,timeout=15)
         calls=(self.base/'calls').read_text()
         return p,calls
 
@@ -150,17 +175,17 @@ class Lifecycle(unittest.TestCase):
         self.assertNotEqual(p.returncode, 0)
         self.assertNotIn('stop -s', calls)
         self.assertTrue((self.base/'active').exists())
-        self.assertTrue((self.root/'bundle-v4/recovery-owned.json').exists())
+        self.assertTrue((self.root/'bundle-v5/recovery-owned.json').exists())
         self.assertTrue(next((self.root/'provenance').glob('*/release-refused-0.txt')).exists())
 
     def test_unknown_allocation_endpoint_is_not_stopped(self):
         p, calls = self.invoke('unknown')
         self.assertNotEqual(p.returncode, 0)
         self.assertNotIn('stop -s', calls)
-        self.assertTrue((self.root/'bundle-v4/recovery-owned.json').exists())
+        self.assertTrue((self.root/'bundle-v5/recovery-owned.json').exists())
 
     def test_storage_readiness_missing_blocks_allocation(self):
-        (self.root/'provenance/recovery-20261008/PREFLIGHT_READY.json').unlink()
+        self.readiness.unlink()
         p,calls=self.invoke('pass')
         self.assertNotEqual(p.returncode,0)
         self.assertNotIn('new -s',calls)
@@ -190,7 +215,7 @@ class Lifecycle(unittest.TestCase):
 
     def test_stale_owned_release_only(self):
         (self.base/'active').touch()
-        (self.root/'bundle-v4/recovery-owned.json').write_text('{"endpoint":"fixture"}')
+        (self.root/'bundle-v5/recovery-owned.json').write_text('{"endpoint":"fixture"}')
         p,calls=self.invoke('pass')
         self.assertNotEqual(p.returncode,0)
         self.assertNotIn('new -s',calls)
@@ -206,11 +231,11 @@ class Lifecycle(unittest.TestCase):
     def test_endpoint_survives(self):
         p,calls=self.invoke('leak')
         self.assertNotEqual(p.returncode,0)
-        self.assertTrue((self.root/'bundle-v4/recovery-owned.json').exists())
+        self.assertTrue((self.root/'bundle-v5/recovery-owned.json').exists())
 
     def test_watchdog_remote_hang(self):
         os.environ['MOCK_MODE']='timeout'
-        s=recovery.Supervisor(self.root,work_seconds=2)
+        s=recovery.Supervisor(self.root,work_seconds=2,bundle_name='bundle-v5',readiness=self.readiness)
         try:
             s.execute()
             with self.assertRaises((TimeoutError,subprocess.TimeoutExpired)):
@@ -218,8 +243,14 @@ class Lifecycle(unittest.TestCase):
         finally:
             s.release()
         self.assertTrue(s.released)
+
+    def test_consumed_old_package_identity_is_rejected_before_inventory(self):
+        p=subprocess.run(['python3',str(HERE/'l4-recovery.py'),'--preflight','--root',str(self.root),
+                          '--bundle-name','bundle-v4','--readiness',str(self.readiness)],
+                         capture_output=True,text=True,timeout=15)
+        self.assertNotEqual(p.returncode,0)
+        self.assertFalse((self.base/'calls').exists())
         self.assertFalse((self.base/'active').exists())
-        self.assertIn('exec -s', (self.base/'calls').read_text())
 
 
 class Backup(unittest.TestCase):
@@ -300,18 +331,18 @@ class RemoteDiagnostics(unittest.TestCase):
             root=base/'packtok-m5'
             (root/'runtime').mkdir(parents=True)
             (root/'packtok-m5').touch()
-            (root/'frozen-source.json').write_text('{"source_commit":"frozen"}')
+            (root/'frozen-source.json').write_text('{"bundle_id":"bundle-v5","source_commit":"frozen","mode":"fresh-and-post18-overfit-500"}')
             # The fixture unpack is simulated; the transport identity is real.
             archive_bytes=b'transport-fixture'
             for i in range(14):
                 (base/f'packtok-m5-bundle.tar.gz.part{i:03d}').write_bytes(archive_bytes if i==0 else b'')
+            (base/'packtok-m5-expected-sha256.txt').write_text(hashlib.sha256(archive_bytes).hexdigest()+'\n')
             stages=[]
             def command(name,args,env=None,timeout=30):
                 stages.append(name)
                 (base/'results'/f'{name}.txt').write_text('missing libcurand.so.10\n' if name.startswith('loader') else 'fixture\n')
                 return 127 if name=='loader-resolution' else 0
             with patch.object(remote,'BASE',base), patch.object(remote,'RESULTS',base/'results'), \
-                 patch.object(remote,'BUNDLE_SHA256',hashlib.sha256(archive_bytes).hexdigest()), \
                  patch.object(remote,'command',command), \
                  patch.object(remote.subprocess,'check_output',return_value='NVIDIA L4\n'):
                 with self.assertRaisesRegex(RuntimeError,'remote failure 127'):
@@ -328,7 +359,34 @@ class RemoteDiagnostics(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError,'remote failure 1'):
                     remote.main()
             with tarfile.open(base/'packtok-m5-results.tar.gz') as archive:
-                self.assertIn(b'fourteen parts',archive.extractfile('results/failure.txt').read())
+                self.assertIn(b'bundle parts',archive.extractfile('results/failure.txt').read())
+
+
+class ResultVerification(unittest.TestCase):
+    def test_threshold_failure_is_preserved_without_becoming_a_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp)
+            gate=base/'results/gate'; gate.mkdir(parents=True)
+            rows=[dict(stage='tiny-overfit-summary',state=state,passed_original_threshold=False)
+                  for state in ['fresh','post-18']]
+            rows.append(dict(stage='gate',status='FAIL'))
+            (gate/'preflight.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in rows))
+            (base/'results/exit-code.txt').write_text('1\n')
+            archive_path=base/'results.tar.gz'
+            with tarfile.open(archive_path,'w:gz') as archive:
+                archive.add(base/'results',arcname='results')
+            checked=subprocess.run(['python3',str(HERE/'check-preflight.py'),str(archive_path)],
+                                   capture_output=True,text=True,timeout=10)
+            self.assertNotEqual(checked.returncode,0)
+            self.assertIn('Valid CUDA overfit failure preserved',checked.stderr)
+            rows[-1]['status']='PASS'
+            (gate/'preflight.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in rows))
+            (base/'results/exit-code.txt').write_text('0\n')
+            with tarfile.open(archive_path,'w:gz') as archive:
+                archive.add(base/'results',arcname='results')
+            passed=subprocess.run(['python3',str(HERE/'check-preflight.py'),str(archive_path)],
+                                  capture_output=True,text=True,timeout=10)
+            self.assertEqual(passed.returncode,0,passed.stdout+passed.stderr)
 
 
 if __name__=='__main__':

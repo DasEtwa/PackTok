@@ -4,15 +4,9 @@ export PATH=/home/dasetwa/.local/bin:/home/dasetwa/.cargo/bin:$PATH
 cd /home/dasetwa/projects/PackTok
 root=experiments/m5-gpu
 remote=${PACKTOK_M5_DRIVE_REMOTE:-packtok-drive-own}
-win=/mnt/c/Users/DasEtwa/PackTok/experiments/m5-gpu
-mkdir -p "$root/examples"
-for script in install-rclone-recovery.sh authorize-drive-recovery.sh verify-v4-recovery.sh drive-backup.py remote-recovery.py l4-recovery.py test-recovery.py prepare-recovery-cpu.sh; do
-  cp "$win/scripts/$script" "$root/scripts/$script"
-done
-cp "$win/examples/recover_weights.rs" "$root/examples/"
-run="$root/provenance/recovery-20261008/cpu-final-$(date -u +%Y%m%dT%H%M%S)-$$"
+run="$root/provenance/l4-overfit-bundle-v5/cpu-ready-$(date -u +%Y%m%dT%H%M%S)-$$"
+mkdir -p "$(dirname "$run")"
 mkdir "$run"
-printf '%s\n' "$run" > "$root/provenance/recovery-20261008/cpu-final-path.txt"
 {
  date -u
  rclone version
@@ -55,4 +49,28 @@ cargo +1.85.0 fmt --all --check > "$run/root-fmt-msrv.txt" 2>&1
 cargo +1.85.0 clippy --workspace --all-targets --all-features -- -D warnings > "$run/root-clippy-msrv.txt" 2>&1
 cargo +1.85.0 test --workspace > "$run/root-test-msrv.txt" 2>&1
 cargo +1.85.0 build --release --workspace > "$run/root-build-msrv.txt" 2>&1
+python3 - "$run" <<'PY'
+import hashlib, json, pathlib, subprocess, sys
+root = pathlib.Path('experiments/m5-gpu')
+run = pathlib.Path(sys.argv[1])
+paths = list(run.glob('*.txt')) + [
+    root/'scripts/drive-backup.py', root/'scripts/remote-recovery.py',
+    root/'scripts/l4-recovery.py', root/'scripts/test-recovery.py',
+    root/'scripts/prepare-recovery-cpu.sh', root/'scripts/write-recovery-readiness.py',
+    root/'examples/recover_weights.rs', root/'configs/primary.json',
+    root/'artifacts/corpus-v2/A-0.packtok', root/'artifacts/corpus-v2/C-0.packtok',
+    root/'artifacts/corpus-v2/A.mapping', root/'artifacts/corpus-v2/C.mapping',
+    root/'data/prepared-v2/A-train.seq', root/'data/prepared-v2/C-train.seq',
+    root/'verification/m5-cpu-build-bundle-v5.txt',
+    root/'verification/prepared-integrity-before-bundle-v5.txt',
+    root/'verification/m5-fmt-bundle-v5.txt', root/'verification/m5-clippy-bundle-v5.txt',
+    root/'verification/m5-debug-bundle-v5.txt', root/'verification/m5-release-bundle-v5.txt',
+    root/'verification/cuda-build-bundle-v5.txt',
+    root/'verification/portable-loader-runtime-v5.txt', root/'verification/portable-loader-cpu-v5.txt',
+    run/'fixture-metadata.json', run/'storage-fixture.txt',
+]
+hashes = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+record = dict(status='CPU_CHECKS_PASS', source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(), verified_files=hashes)
+(run/'CPU_CHECKS_PASS.json').write_text(json.dumps(record, indent=2)+'\n')
+PY
 printf 'CPU checks and real WSL Drive fixture verified: %s\n' "$run"

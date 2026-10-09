@@ -28,9 +28,19 @@ def inventory(text):
 
 
 class Supervisor:
-    def __init__(self, root, work_seconds=1620):
+    def __init__(self, root, work_seconds=1500, bundle_name='bundle-v5', readiness=None):
         self.root = Path(root).resolve()
-        self.bundle = self.root / 'bundle-v4'
+        if not re.fullmatch(r'bundle(?:-v[2-9][0-9]*)?', bundle_name):
+            raise ValueError('invalid bundle identity')
+        if bundle_name != 'bundle-v5':
+            raise ValueError('this authorized run requires the fresh bundle-v5 package')
+        self.bundle_name = bundle_name
+        self.bundle = self.root / bundle_name
+        if not readiness:
+            raise ValueError('fresh readiness path is required')
+        self.readiness_path = Path(readiness).resolve()
+        if not self.readiness_path.is_relative_to(self.root):
+            raise ValueError('readiness evidence must stay inside the M5 experiment')
         self.run = self.root / 'provenance' / ('l4-recovery-' + uuid.uuid4().hex)
         self.run.mkdir()
         self.marker = self.bundle / 'recovery-owned.json'
@@ -154,13 +164,32 @@ class Supervisor:
         if (self.bundle / 'owned-session').exists():
             raise RuntimeError('Historical ownership marker needs audited recovery; no takeover')
         if (self.bundle / 'preflight-attempted').exists():
-            raise RuntimeError('v4 already attempted; no second allocation')
+            raise RuntimeError(f'{self.bundle_name} already attempted; no second allocation')
 
     def request(self):
-        ready_path = self.root / 'provenance/recovery-20261008/PREFLIGHT_READY.json'
-        ready = json.loads(ready_path.read_text())
+        ready = json.loads(self.readiness_path.read_text())
         if ready.get('status') != 'CPU_AND_DRIVE_READY':
             raise RuntimeError('CPU/Drive readiness is incomplete; no allocation')
+        if ready.get('bundle_name') != self.bundle_name:
+            raise RuntimeError('readiness does not identify the selected fresh bundle')
+        if (ready.get('allocation_authorization_count') != 1
+                or ready.get('allocation_cap_seconds') != 1800
+                or ready.get('full_training_authorized') is not False):
+            raise RuntimeError('readiness does not encode this single bounded diagnostic authorization')
+        frozen = json.loads((self.bundle / 'packtok-m5/frozen-source.json').read_text())
+        expected_bundle_sha = (self.bundle / 'packtok-m5-expected-sha256.txt').read_text().strip()
+        if (frozen.get('bundle_id') != self.bundle_name
+                or frozen.get('mode') != 'fresh-and-post18-overfit-500'
+                or frozen.get('primary_seed') != 20261008
+                or frozen.get('overfit_updates') != 500
+                or frozen.get('overfit_learning_rate') != 0.005
+                or frozen.get('overfit_weight_decay') != 0.0
+                or frozen.get('overfit_input') != [1, 2, 3, 4, 1, 2, 3, 4]
+                or frozen.get('overfit_target') != [2, 3, 4, 1, 2, 3, 4, 1]
+                or ready.get('source_commit') != frozen.get('source_commit')
+                or ready.get('bundle_sha256') != expected_bundle_sha
+                or ready.get('binary_sha256') != hashlib.sha256((self.bundle / 'packtok-m5/packtok-m5').read_bytes()).hexdigest()):
+            raise RuntimeError('fresh bundle identity or binary hash does not match readiness')
         for relative, expected in ready['verified_files'].items():
             path = (self.root / relative).resolve()
             if not path.is_relative_to(self.root):
@@ -174,8 +203,8 @@ class Supervisor:
         # by the main entry point; the scientific source guard remains absolute.
         self.command('source-integrity', ['sha256sum', '-c', str(self.bundle / 'source.sha256')], 90)
         parts = sorted(self.bundle.glob('packtok-m5-bundle.tar.gz.part???'))
-        if [p.name for p in parts] != [f'packtok-m5-bundle.tar.gz.part{i:03d}' for i in range(14)]:
-            raise RuntimeError('invalid fourteen-part ordering')
+        if not parts or [p.name for p in parts] != [f'packtok-m5-bundle.tar.gz.part{i:03d}' for i in range(len(parts))]:
+            raise RuntimeError('invalid bundle-part ordering')
         self.command('cli-version', ['colab', 'version'], 30)
         usage = self.command('usage-before', ['colab', 'usage'], 30)
         if not re.search(r'^Current balance: [0-9]+\.[0-9]+ compute units$', usage, re.M):
@@ -183,7 +212,8 @@ class Supervisor:
         self.start = time.time()
         self.deadline = time.monotonic() + self.work_seconds
         with (self.bundle / 'preflight-attempted').open('x') as f:
-            f.write(json.dumps(dict(request_epoch=self.start, authorization='one recovery, 30 minute total cap'))+'\n')
+            f.write(json.dumps(dict(request_epoch=self.start, run=self.run.name, bundle=self.bundle_name,
+                                    authorization='one NVIDIA L4 overfit diagnostic, 30 minute total cap'))+'\n')
         self.marker.write_text(json.dumps(dict(run=self.run.name, endpoint=None, request_epoch=self.start))+'\n')
         self.allocated = True
         self.requests = 1
@@ -198,13 +228,14 @@ class Supervisor:
             raise RuntimeError('wrong hardware; no fallback')
         self.command('usage-active', ['colab', 'usage'], 20)
         upload_deadline = time.monotonic() + 480
-        for i, part in enumerate(parts):
+        to_upload = [self.bundle / 'packtok-m5-expected-sha256.txt', *parts]
+        for i, part in enumerate(to_upload):
             self.command(f'upload-{i:03d}', ['colab', 'upload', '-s', 'packtok-m5', str(part), 'content/'+part.name],
                          min(120, upload_deadline-time.monotonic()))
         execution_failed = None
         try:
             self.command('execute', ['colab', 'exec', '-s', 'packtok-m5', '-f',
-                                    str(self.root / 'scripts/remote-recovery.py'), '--timeout', '1050'], 1070)
+                                    str(self.root / 'scripts/remote-recovery.py'), '--timeout', '1200'], 1220)
         except Exception as error:
             execution_failed = error
         for attempt in range(2):
@@ -223,11 +254,14 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--preflight', action='store_true', required=True)
     p.add_argument('--root', default='experiments/m5-gpu')
-    p.add_argument('--work-seconds', type=int, default=1620)
+    p.add_argument('--work-seconds', type=int, default=1500)
+    p.add_argument('--bundle-name', default=os.environ.get('PACKTOK_M5_BUNDLE_NAME', 'bundle-v5'))
+    p.add_argument('--readiness', default=os.environ.get('PACKTOK_M5_READINESS'))
     args = p.parse_args()
-    if not 1 <= args.work_seconds <= 1620:
-        p.error('work deadline must be 1..1620 seconds; cleanup reserve cannot be extended')
-    s = Supervisor(args.root, work_seconds=args.work_seconds)
+    if not 1 <= args.work_seconds <= 1500:
+        p.error('work deadline must be 1..1500 seconds; five-minute cleanup reserve is fixed')
+    s = Supervisor(args.root, work_seconds=args.work_seconds, bundle_name=args.bundle_name,
+                   readiness=args.readiness)
     def interrupted(signum, frame):
         raise InterruptedError(f'handled signal {signum}')
     signal.signal(signal.SIGTERM, interrupted)

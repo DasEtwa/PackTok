@@ -3,13 +3,9 @@ set -euo pipefail
 export PATH=/home/dasetwa/.local/bin:/home/dasetwa/.cargo/bin:$PATH
 cd /home/dasetwa/projects/PackTok
 root=experiments/m5-gpu
-win=/mnt/c/Users/DasEtwa/PackTok/experiments/m5-gpu
-mkdir -p "$root/examples"
-for script in drive-backup.py remote-recovery.py l4-recovery.py test-recovery.py check-recovery-cpu.sh; do cp "$win/scripts/$script" "$root/scripts/$script"; done
-cp "$win/examples/recover_weights.rs" "$root/examples/"
-run="$root/provenance/recovery-20261008/checks-$(date -u +%Y%m%dT%H%M%S)-$$"
+run="$root/provenance/l4-overfit-bundle-v5/checks-$(date -u +%Y%m%dT%H%M%S)-$$"
+mkdir -p "$(dirname "$run")"
 mkdir "$run"
-printf '%s\n' "$run" > "$root/provenance/recovery-20261008/affected-checks-path.txt"
 python3 "$root/scripts/test-recovery.py" > "$run/recovery-regressions.txt" 2>&1
 python3 -m py_compile "$root/scripts/drive-backup.py" "$root/scripts/l4-recovery.py" "$root/scripts/remote-recovery.py"
 cargo fmt --manifest-path "$root/Cargo.toml" --all
