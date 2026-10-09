@@ -147,34 +147,13 @@ causal Transformer.
 workspace uses Candle 0.9.1. Primary three-seed schedules remain proposals subject
 to a successful GPU gate and explicit measured-budget approval.
 
-**Measured result.** The Rust/CUDA gate and 500-step L4 overfit diagnostics passed;
-see the preserved [L4 diagnostic](../../experiments/m5-gpu/provenance/l4-recovery-b573d896abe948138f0221283f85af75/M5_OVERFIT_DIAGNOSTIC_L4.md).
-One later, explicitly authorized A/C 2,000-update pilot allocation was released
-after remote orchestration exited with code 1 before a Rust training update. Its
-160-byte result archive contains only exit code 1. There are no A/C training
-losses, validation/test scores, checkpoints, pilot step times or VRAM measurements.
-The detailed attempt and source/config/package identities are preserved in the
-[pilot report](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
+**Measured result.** The first paired A/C pilot completed 2,000 updates each after recovering A's valid checkpoint and training C. Final validation BPB was A 2.572964850 and C 2.597469229 (C-A +0.024504380); target-position budgets matched at 4,096,000 while sampled raw-byte exposure was 7,575,564 versus 6,946,291. Five domain validation metrics show A ahead on English/German/Rust and C ahead on synthetic JSON/Unicode. This is one seed, exploratory evidence, not statistical proof. The frozen runner also scored its TEST split, so those scores are exposed and cannot serve as a fresh independent holdout for revised experiments. See the complete [pilot record](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md).
 
-**Interpretation.** CUDA correctness is verified, but the A/C Transformer quality
-comparison remains incomplete. The likely missing approval environment variable
-is an inference from the submitted command and shell contract; remote stderr was
-not retained, so the exact failure cause is unverified. The single pilot
-allocation authorization was consumed; no retry was made.
+**Interpretation.** Flat BPE performed slightly better overall on the measured pilot. PackTok processed fewer raw training bytes at the same target-position count, emitted more tokens per raw byte on the training split, and showed a mixed domain pattern. The experiment does not isolate raw-byte exposure, tokenization efficiency or domain routing as a cause, and it does not establish a general ranking.
 
-**Limitations.** No result from this attempt supports or rejects the tokenizer
-hypothesis or readiness for a five-seed study. No pilot TEST score was produced.
-The same test examples were included among prepared inputs, so a future revised
-experiment must disclose that exposure. Weights-only safetensors cannot resume
-optimizer/RNG/cursor state. A successful short Drive test does not prove
-multi-day OAuth validity.
+**Limitations.** One paired seed and a small mixed corpus cannot estimate seed variance or establish generalization. M5's test data have already been scored. The historical failed launch attempts and their exact provenance remain documented below and in their original reports; they are not the final pilot outcome. Weights-only safetensors do not by themselves preserve optimizer/RNG/cursor state.
 
-**Reproduction reference.** [Frozen Transformer protocol](../../M5_GPU_TRANSFORMER.md),
-[failure/accounting report](../../M5_GPU_BENCHMARK.md),
-[CPU preparation](../../experiments/m5-gpu/provenance/CPU_PREPARATION.md),
-[recovery evidence](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md),
-[maintenance CPU checks](../maintenance/2026-10-08/REPORT.md).
-New GPU work must be a separate explicitly authorized task.
+**Reproduction reference.** [Frozen Transformer protocol](../../M5_GPU_TRANSFORMER.md), [failure/accounting history](../../M5_GPU_BENCHMARK.md), [complete result and provenance](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md), and [M6 tokenizer analysis/design](../../experiments/m6/RESEARCH_FINDINGS.md). Any new GPU experiment requires separate explicit authorization.
 
 
 ### M5 A/C pilot launch recovery — 2026-10-09

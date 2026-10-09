@@ -1,0 +1,1506 @@
+{
+  "limitations": [
+    "Full-split tokenization metrics are not the unique-byte coverage of stochastic M5 training samples.",
+    "Tokens crossing domain boundaries are classified as mixed-domain, matching the M5 scorer.",
+    "Committed M5 records have aggregate sampled raw-byte exposure only, not domain-stratified sampled exposure.",
+    "The script reads existing local ignored M5 data by path and never copies or modifies those inputs."
+  ],
+  "m5": {
+    "bundle_input_sha256_manifest": "6a116fb4a050426d0a7af69d7b252cc858206a248e7df6888be8c631e997248c",
+    "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+    "domain_raw_bytes": {
+      "english-literature": 13695842,
+      "german-prose": 3804343,
+      "rust-source": 13180989,
+      "structured": 19636,
+      "synthetic-json": 1945549,
+      "synthetic-unicode": 1985653
+    },
+    "pilot_config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+    "pilot_initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+    "pilot_report_sha256": "ad4926dca4fd6a8cf753dd69eec81c5389041f8ee37391e342929c34e1a818cd",
+    "pilot_source_commit": "dd0380396e63d926883f378daf9e6d029538f0f6",
+    "sampled_training_raw_bytes": {
+      "A": 7575564,
+      "C": 6946291
+    },
+    "target_positions_per_variant": 4096000,
+    "train_raw_bytes": 34632012,
+    "train_raw_sha256": "d84c640e29b20f2c042d2910d0504efc2d64fb195476bfb3adfc591d523210ce"
+  },
+  "method": "Read-only analysis of frozen M5 TRAIN bytes and exact PTM5SEQ outputs; no validation/test data or model training.",
+  "schema": "packtok-m6-m5-tokenizer-efficiency-v1",
+  "variants": {
+    "A": {
+      "domains": {
+        "english-literature": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 7141328
+          },
+          "represented_bytes": 13695840,
+          "represented_bytes_per_token": 1.9178281686543455,
+          "token_length_bytes": {
+            "max": 6,
+            "mean": 1.9178281686543455,
+            "median": 2,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 4,
+            "p99": 5
+          },
+          "tokens": 7141328,
+          "tokens_per_represented_byte": 0.5214231474666761
+        },
+        "german-prose": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 2224075
+          },
+          "represented_bytes": 3804341,
+          "represented_bytes_per_token": 1.7105272978654047,
+          "token_length_bytes": {
+            "max": 5,
+            "mean": 1.7105272978654047,
+            "median": 2,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 4
+          },
+          "tokens": 2224075,
+          "tokens_per_represented_byte": 0.5846150489664307
+        },
+        "mixed-domain": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 1
+          },
+          "represented_bytes": 4,
+          "represented_bytes_per_token": 4.0,
+          "token_length_bytes": {
+            "max": 4,
+            "mean": 4.0,
+            "median": 4,
+            "min": 4,
+            "p25": 4,
+            "p75": 4,
+            "p90": 4,
+            "p95": 4,
+            "p99": 4
+          },
+          "tokens": 1,
+          "tokens_per_represented_byte": 0.25
+        },
+        "rust-source": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 6981530
+          },
+          "represented_bytes": 13180989,
+          "represented_bytes_per_token": 1.8879799986535903,
+          "token_length_bytes": {
+            "max": 17,
+            "mean": 1.8879799986535903,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 4,
+            "p99": 10
+          },
+          "tokens": 6981530,
+          "tokens_per_represented_byte": 0.5296666282021781
+        },
+        "structured": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 12899
+          },
+          "represented_bytes": 19636,
+          "represented_bytes_per_token": 1.5222885494999612,
+          "token_length_bytes": {
+            "max": 13,
+            "mean": 1.5222885494999612,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 2,
+            "p95": 3,
+            "p99": 4
+          },
+          "tokens": 12899,
+          "tokens_per_represented_byte": 0.6569056834385822
+        },
+        "synthetic-json": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 1111481
+          },
+          "represented_bytes": 1945549,
+          "represented_bytes_per_token": 1.7504113880489185,
+          "token_length_bytes": {
+            "max": 6,
+            "mean": 1.7504113880489185,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 4,
+            "p95": 5,
+            "p99": 6
+          },
+          "tokens": 1111481,
+          "tokens_per_represented_byte": 0.5712942722079989
+        },
+        "synthetic-unicode": {
+          "pack_token_shares_percent": {
+            "FLAT": 100.0
+          },
+          "pack_tokens": {
+            "FLAT": 1245031
+          },
+          "represented_bytes": 1985653,
+          "represented_bytes_per_token": 1.59486229660145,
+          "token_length_bytes": {
+            "max": 6,
+            "mean": 1.59486229660145,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 6
+          },
+          "tokens": 1245031,
+          "tokens_per_represented_byte": 0.6270133804849085
+        }
+      },
+      "global_token_frequency_top20": [
+        {
+          "count": 331218,
+          "id": 32,
+          "local_id": 32,
+          "pack": "FLAT",
+          "share_percent": 1.7696724440589229
+        },
+        {
+          "count": 309969,
+          "id": 105,
+          "local_id": 105,
+          "pack": "FLAT",
+          "share_percent": 1.6561406620790544
+        },
+        {
+          "count": 291169,
+          "id": 101,
+          "local_id": 101,
+          "pack": "FLAT",
+          "share_percent": 1.5556936998115818
+        },
+        {
+          "count": 279047,
+          "id": 100,
+          "local_id": 100,
+          "pack": "FLAT",
+          "share_percent": 1.4909267808431614
+        },
+        {
+          "count": 278743,
+          "id": 116,
+          "local_id": 116,
+          "pack": "FLAT",
+          "share_percent": 1.4893025320916022
+        },
+        {
+          "count": 266030,
+          "id": 115,
+          "local_id": 115,
+          "pack": "FLAT",
+          "share_percent": 1.4213779453199864
+        },
+        {
+          "count": 250238,
+          "id": 258,
+          "local_id": 258,
+          "pack": "FLAT",
+          "share_percent": 1.3370024970153094
+        },
+        {
+          "count": 246810,
+          "id": 99,
+          "local_id": 99,
+          "pack": "FLAT",
+          "share_percent": 1.3186869551720701
+        },
+        {
+          "count": 245080,
+          "id": 261,
+          "local_id": 261,
+          "pack": "FLAT",
+          "share_percent": 1.3094436974740529
+        },
+        {
+          "count": 243178,
+          "id": 97,
+          "local_id": 97,
+          "pack": "FLAT",
+          "share_percent": 1.2992814569297584
+        },
+        {
+          "count": 242706,
+          "id": 102,
+          "local_id": 102,
+          "pack": "FLAT",
+          "share_percent": 1.296759597026022
+        },
+        {
+          "count": 228494,
+          "id": 109,
+          "local_id": 109,
+          "pack": "FLAT",
+          "share_percent": 1.2208259678906326
+        },
+        {
+          "count": 214053,
+          "id": 112,
+          "local_id": 112,
+          "pack": "FLAT",
+          "share_percent": 1.143668809268049
+        },
+        {
+          "count": 202233,
+          "id": 98,
+          "local_id": 98,
+          "pack": "FLAT",
+          "share_percent": 1.0805154532041379
+        },
+        {
+          "count": 197603,
+          "id": 119,
+          "local_id": 119,
+          "pack": "FLAT",
+          "share_percent": 1.0557777172840104
+        },
+        {
+          "count": 185434,
+          "id": 111,
+          "local_id": 111,
+          "pack": "FLAT",
+          "share_percent": 0.9907596809099213
+        },
+        {
+          "count": 184196,
+          "id": 95,
+          "local_id": 95,
+          "pack": "FLAT",
+          "share_percent": 0.9841451415861376
+        },
+        {
+          "count": 184194,
+          "id": 262,
+          "local_id": 262,
+          "pack": "FLAT",
+          "share_percent": 0.984134455739088
+        },
+        {
+          "count": 178526,
+          "id": 259,
+          "local_id": 259,
+          "pack": "FLAT",
+          "share_percent": 0.9538507652001499
+        },
+        {
+          "count": 175657,
+          "id": 110,
+          "local_id": 110,
+          "pack": "FLAT",
+          "share_percent": 0.9385219176073106
+        }
+      ],
+      "input_sha256": {
+        "mapping": "d2801ed4c0a0b29c4480a068cf01f5ee810d891b4a368a92a41cac873fe0a96f",
+        "sequence": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+        "tokenizer": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec"
+      },
+      "lexical_fragmentation": {
+        "json-keys": {
+          "synthetic-json": {
+            "lexemes": 88530,
+            "mean_tokens_per_lexeme": 2.6666666666666665,
+            "multi_token_percent": 100.0,
+            "piece_histogram": {
+              "2": 29510,
+              "3": 59020
+            }
+          }
+        },
+        "numbers": {
+          "english-literature": {
+            "lexemes": 683,
+            "mean_tokens_per_lexeme": 2.0585651537335283,
+            "multi_token_percent": 68.81405563689604,
+            "piece_histogram": {
+              "1": 213,
+              "2": 249,
+              "3": 189,
+              "4": 32
+            }
+          },
+          "german-prose": {
+            "lexemes": 873,
+            "mean_tokens_per_lexeme": 2.1821305841924397,
+            "multi_token_percent": 68.38487972508591,
+            "piece_histogram": {
+              "1": 276,
+              "2": 306,
+              "3": 147,
+              "4": 144
+            }
+          },
+          "rust-source": {
+            "lexemes": 185716,
+            "mean_tokens_per_lexeme": 1.6491524693618214,
+            "multi_token_percent": 27.35951668138448,
+            "piece_histogram": {
+              "1": 134905,
+              "10": 190,
+              "11": 28,
+              "12": 17,
+              "13": 19,
+              "14": 45,
+              "15": 42,
+              "16": 63,
+              "17": 42,
+              "18": 24,
+              "19": 26,
+              "2": 33379,
+              "20": 23,
+              "21": 3,
+              "22": 4,
+              "23": 6,
+              "24": 6,
+              "25": 2,
+              "27": 1,
+              "28": 9,
+              "29": 3,
+              "3": 7338,
+              "30": 14,
+              "303": 1,
+              "31": 8,
+              "32": 29,
+              "33": 24,
+              "34": 46,
+              "35": 40,
+              "36": 33,
+              "37": 19,
+              "370": 1,
+              "38": 25,
+              "39": 21,
+              "4": 3672,
+              "40": 25,
+              "41": 5,
+              "42": 1,
+              "43": 5,
+              "435": 2,
+              "44": 6,
+              "45": 2,
+              "46": 4,
+              "47": 5,
+              "48": 8,
+              "49": 7,
+              "5": 3882,
+              "50": 7,
+              "51": 3,
+              "52": 2,
+              "54": 3,
+              "55": 1,
+              "56": 6,
+              "57": 8,
+              "58": 8,
+              "59": 13,
+              "6": 899,
+              "60": 19,
+              "61": 17,
+              "62": 2,
+              "63": 12,
+              "64": 2,
+              "66": 1,
+              "68": 1,
+              "7": 254,
+              "70": 2,
+              "720": 1,
+              "722": 1,
+              "723": 3,
+              "725": 1,
+              "729": 1,
+              "731": 1,
+              "732": 1,
+              "738": 1,
+              "739": 1,
+              "741": 1,
+              "776": 1,
+              "8": 186,
+              "854": 1,
+              "9": 196
+            }
+          },
+          "structured": {
+            "lexemes": 238,
+            "mean_tokens_per_lexeme": 1.4285714285714286,
+            "multi_token_percent": 21.84873949579832,
+            "piece_histogram": {
+              "1": 186,
+              "2": 25,
+              "3": 6,
+              "4": 19,
+              "5": 2
+            }
+          },
+          "synthetic-json": {
+            "lexemes": 134857,
+            "mean_tokens_per_lexeme": 3.208346619011249,
+            "multi_token_percent": 78.93768955263724,
+            "piece_histogram": {
+              "1": 28404,
+              "10": 177,
+              "11": 95,
+              "12": 57,
+              "13": 31,
+              "14": 17,
+              "15": 15,
+              "16": 3,
+              "2": 34833,
+              "3": 17614,
+              "4": 15847,
+              "5": 15537,
+              "6": 20439,
+              "7": 957,
+              "8": 542,
+              "9": 289
+            }
+          },
+          "synthetic-unicode": {
+            "lexemes": 119365,
+            "mean_tokens_per_lexeme": 3.241151091190885,
+            "multi_token_percent": 70.86834499225066,
+            "piece_histogram": {
+              "1": 34773,
+              "10": 178,
+              "11": 90,
+              "12": 60,
+              "13": 29,
+              "14": 17,
+              "15": 14,
+              "16": 5,
+              "2": 20421,
+              "3": 10508,
+              "4": 15763,
+              "5": 15698,
+              "6": 20021,
+              "7": 932,
+              "8": 550,
+              "9": 306
+            }
+          }
+        },
+        "rust-identifiers": {
+          "rust-source": {
+            "lexemes": 1422054,
+            "mean_tokens_per_lexeme": 3.350718045868863,
+            "multi_token_percent": 73.11171024447735,
+            "piece_histogram": {
+              "1": 382366,
+              "10": 11604,
+              "11": 7774,
+              "12": 5819,
+              "13": 3989,
+              "14": 3382,
+              "15": 2701,
+              "16": 2099,
+              "17": 1967,
+              "18": 974,
+              "19": 888,
+              "2": 263210,
+              "20": 719,
+              "21": 583,
+              "22": 722,
+              "23": 462,
+              "24": 309,
+              "244": 2,
+              "25": 298,
+              "255": 20,
+              "26": 303,
+              "27": 194,
+              "28": 178,
+              "29": 168,
+              "3": 266745,
+              "30": 144,
+              "31": 122,
+              "32": 92,
+              "33": 137,
+              "34": 73,
+              "35": 69,
+              "36": 47,
+              "37": 49,
+              "38": 42,
+              "39": 39,
+              "4": 199499,
+              "40": 23,
+              "41": 17,
+              "42": 16,
+              "43": 16,
+              "44": 22,
+              "45": 10,
+              "46": 10,
+              "47": 10,
+              "48": 11,
+              "49": 14,
+              "5": 109939,
+              "50": 11,
+              "51": 5,
+              "52": 2,
+              "53": 1,
+              "54": 1,
+              "55": 3,
+              "56": 1,
+              "57": 1,
+              "58": 2,
+              "59": 2,
+              "6": 72963,
+              "60": 2,
+              "61": 3,
+              "7": 38987,
+              "74": 2,
+              "8": 26908,
+              "9": 15283
+            }
+          }
+        },
+        "unicode-words": {
+          "english-literature": {
+            "lexemes": 2420508,
+            "mean_tokens_per_lexeme": 2.628568052656715,
+            "multi_token_percent": 68.00857505945034,
+            "piece_histogram": {
+              "1": 774355,
+              "10": 1982,
+              "11": 319,
+              "12": 108,
+              "13": 14,
+              "14": 88,
+              "16": 2,
+              "18": 1,
+              "19": 1,
+              "2": 532489,
+              "3": 491802,
+              "4": 300702,
+              "5": 175671,
+              "6": 85989,
+              "7": 36691,
+              "8": 14957,
+              "9": 5337
+            }
+          },
+          "german-prose": {
+            "lexemes": 570179,
+            "mean_tokens_per_lexeme": 3.5777168222610793,
+            "multi_token_percent": 90.5836588159157,
+            "piece_histogram": {
+              "1": 53690,
+              "10": 3554,
+              "11": 1721,
+              "12": 834,
+              "13": 268,
+              "14": 140,
+              "15": 46,
+              "16": 20,
+              "17": 10,
+              "18": 5,
+              "19": 7,
+              "2": 160286,
+              "20": 3,
+              "21": 6,
+              "22": 3,
+              "23": 1,
+              "24": 8,
+              "25": 5,
+              "27": 1,
+              "29": 1,
+              "3": 109871,
+              "4": 94450,
+              "5": 59670,
+              "6": 38905,
+              "7": 25990,
+              "8": 13576,
+              "9": 7108
+            }
+          },
+          "synthetic-json": {
+            "lexemes": 204944,
+            "mean_tokens_per_lexeme": 2.1609854399250525,
+            "multi_token_percent": 73.05800608946834,
+            "piece_histogram": {
+              "1": 55216,
+              "10": 1,
+              "2": 63568,
+              "3": 84734,
+              "4": 996,
+              "5": 297,
+              "6": 88,
+              "7": 34,
+              "8": 8,
+              "9": 2
+            }
+          },
+          "synthetic-unicode": {
+            "lexemes": 174368,
+            "mean_tokens_per_lexeme": 2.734498302440815,
+            "multi_token_percent": 68.55845109194348,
+            "piece_histogram": {
+              "1": 54824,
+              "11": 1,
+              "2": 26591,
+              "3": 32904,
+              "4": 44991,
+              "5": 282,
+              "6": 14743,
+              "7": 14,
+              "8": 12,
+              "9": 6
+            }
+          }
+        }
+      },
+      "mixed_domain_tokens": {
+        "represented_bytes": 4,
+        "tokens": 1
+      },
+      "raw_bytes_per_token": 1.8503619162822655,
+      "represented_raw_bytes": 34632012,
+      "single_byte_or_fallback_percent": 47.21492898319624,
+      "single_byte_or_fallback_tokens": 8836909,
+      "token_length_bytes": {
+        "max": 17,
+        "mean": 1.8503619162822655,
+        "median": 2,
+        "min": 1,
+        "p25": 1,
+        "p75": 2,
+        "p90": 3,
+        "p95": 4,
+        "p99": 6
+      },
+      "tokens_per_raw_byte": 0.5404348150491516,
+      "total_tokens": 18716345,
+      "vocabulary": {
+        "allocated_ids_by_pack": {
+          "FLAT": 512
+        },
+        "effective_ids_2_pow_entropy": 236.35098149562623,
+        "entropy_bits_per_token": 7.88478704556895,
+        "logical_ids": 512,
+        "pack_utilization": {
+          "FLAT": {
+            "allocated_id_occupancy_percent": 86.71875,
+            "allocated_ids": 512,
+            "bytes_per_emitted_token": 1.8503619162822655,
+            "emitted_tokens": 18716345,
+            "observed_ids": 444,
+            "pack_id": 0,
+            "represented_bytes": 34632012,
+            "token_share_percent": 100.0
+          }
+        },
+        "unique_ids_observed": 444
+      }
+    },
+    "C": {
+      "domains": {
+        "english-literature": {
+          "pack_token_shares_percent": {
+            "BYTE_FALLBACK": 53.90822852524279,
+            "FLAT": 39.81159616321362,
+            "NUMBER": 6.278954280939226,
+            "TEXT": 0.001221030604361545
+          },
+          "pack_tokens": {
+            "BYTE_FALLBACK": 4547427,
+            "FLAT": 3358306,
+            "NUMBER": 529661,
+            "TEXT": 103
+          },
+          "represented_bytes": 13695840,
+          "represented_bytes_per_token": 1.6235960963533032,
+          "token_length_bytes": {
+            "max": 7,
+            "mean": 1.6235960963533032,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 3,
+            "p99": 4
+          },
+          "tokens": 8435497,
+          "tokens_per_represented_byte": 0.6159167309197537
+        },
+        "german-prose": {
+          "pack_token_shares_percent": {
+            "BYTE_FALLBACK": 55.5126715978786,
+            "FLAT": 39.07936262277505,
+            "NUMBER": 5.404016874190275,
+            "TEXT": 0.003948905156073496
+          },
+          "pack_tokens": {
+            "BYTE_FALLBACK": 1391716,
+            "FLAT": 979729,
+            "NUMBER": 135480,
+            "TEXT": 99
+          },
+          "represented_bytes": 3804341,
+          "represented_bytes_per_token": 1.5174729081173535,
+          "token_length_bytes": {
+            "max": 7,
+            "mean": 1.5174729081173535,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 2,
+            "p95": 3,
+            "p99": 3
+          },
+          "tokens": 2507024,
+          "tokens_per_represented_byte": 0.6589903481312532
+        },
+        "mixed-domain": {
+          "pack_token_shares_percent": {
+            "NUMBER": 100.0
+          },
+          "pack_tokens": {
+            "NUMBER": 1
+          },
+          "represented_bytes": 4,
+          "represented_bytes_per_token": 4.0,
+          "token_length_bytes": {
+            "max": 4,
+            "mean": 4.0,
+            "median": 4,
+            "min": 4,
+            "p25": 4,
+            "p75": 4,
+            "p90": 4,
+            "p95": 4,
+            "p99": 4
+          },
+          "tokens": 1,
+          "tokens_per_represented_byte": 0.25
+        },
+        "rust-source": {
+          "pack_token_shares_percent": {
+            "BYTE_FALLBACK": 55.50345686135855,
+            "FLAT": 29.604931114093294,
+            "NUMBER": 14.376315559353287,
+            "TEXT": 0.5152964651948697
+          },
+          "pack_tokens": {
+            "BYTE_FALLBACK": 4030464,
+            "FLAT": 2149805,
+            "NUMBER": 1043957,
+            "TEXT": 37419
+          },
+          "represented_bytes": 13180989,
+          "represented_bytes_per_token": 1.815151938713611,
+          "token_length_bytes": {
+            "max": 17,
+            "mean": 1.815151938713611,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 4,
+            "p99": 9
+          },
+          "tokens": 7261645,
+          "tokens_per_represented_byte": 0.5509180684393258
+        },
+        "structured": {
+          "pack_token_shares_percent": {
+            "BYTE_FALLBACK": 61.818321078431374,
+            "FLAT": 32.22273284313726,
+            "NUMBER": 5.836397058823529,
+            "TEXT": 0.12254901960784313
+          },
+          "pack_tokens": {
+            "BYTE_FALLBACK": 8071,
+            "FLAT": 4207,
+            "NUMBER": 762,
+            "TEXT": 16
+          },
+          "represented_bytes": 19636,
+          "represented_bytes_per_token": 1.5039828431372548,
+          "token_length_bytes": {
+            "max": 13,
+            "mean": 1.5039828431372548,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 2,
+            "p95": 3,
+            "p99": 4
+          },
+          "tokens": 13056,
+          "tokens_per_represented_byte": 0.6649012018741087
+        },
+        "synthetic-json": {
+          "pack_token_shares_percent": {
+            "BYTE_FALLBACK": 60.551843387040286,
+            "FLAT": 19.221857491293964,
+            "NUMBER": 18.62276853562928,
+            "TEXT": 1.6035305860364732
+          },
+          "pack_tokens": {
+            "BYTE_FALLBACK": 575713,
+            "FLAT": 182757,
+            "NUMBER": 177061,
+            "TEXT": 15246
+          },
+          "represented_bytes": 1945549,
+          "represented_bytes_per_token": 2.046272680134248,
+          "token_length_bytes": {
+            "max": 7,
+            "mean": 2.046272680134248,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 5,
+            "p95": 6,
+            "p99": 7
+          },
+          "tokens": 950777,
+          "tokens_per_represented_byte": 0.48869342278195
+        },
+        "synthetic-unicode": {
+          "pack_token_shares_percent": {
+            "BYTE_FALLBACK": 72.46945601256658,
+            "FLAT": 18.10689452947939,
+            "NUMBER": 8.236707980306157,
+            "TEXT": 1.1869414776478744
+          },
+          "pack_tokens": {
+            "BYTE_FALLBACK": 903318,
+            "FLAT": 225699,
+            "NUMBER": 102669,
+            "TEXT": 14795
+          },
+          "represented_bytes": 1985653,
+          "represented_bytes_per_token": 1.593007033400429,
+          "token_length_bytes": {
+            "max": 7,
+            "mean": 1.593007033400429,
+            "median": 1,
+            "min": 1,
+            "p25": 1,
+            "p75": 2,
+            "p90": 3,
+            "p95": 4,
+            "p99": 7
+          },
+          "tokens": 1246481,
+          "tokens_per_represented_byte": 0.6277436188498192
+        }
+      },
+      "global_token_frequency_top20": [
+        {
+          "count": 3123619,
+          "id": 288,
+          "local_id": 32,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 15.300996385849828
+        },
+        {
+          "count": 366809,
+          "id": 371,
+          "local_id": 115,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.7968078639863536
+        },
+        {
+          "count": 364112,
+          "id": 203,
+          "local_id": 3,
+          "pack": "NUMBER",
+          "share_percent": 1.7835966537674899
+        },
+        {
+          "count": 308005,
+          "id": 372,
+          "local_id": 116,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.508757435469459
+        },
+        {
+          "count": 273864,
+          "id": 353,
+          "local_id": 97,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.3415183075190595
+        },
+        {
+          "count": 258234,
+          "id": 357,
+          "local_id": 101,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.2649550091427746
+        },
+        {
+          "count": 248423,
+          "id": 358,
+          "local_id": 102,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.2168959867262852
+        },
+        {
+          "count": 236369,
+          "id": 356,
+          "local_id": 100,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.1578496656368584
+        },
+        {
+          "count": 224875,
+          "id": 1,
+          "local_id": 1,
+          "pack": "FLAT",
+          "share_percent": 1.10154649535298
+        },
+        {
+          "count": 223484,
+          "id": 355,
+          "local_id": 99,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.0947327046913413
+        },
+        {
+          "count": 221250,
+          "id": 368,
+          "local_id": 112,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.0837894923706364
+        },
+        {
+          "count": 216763,
+          "id": 367,
+          "local_id": 111,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.0618099965411807
+        },
+        {
+          "count": 216111,
+          "id": 351,
+          "local_id": 95,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.0586161852461495
+        },
+        {
+          "count": 205107,
+          "id": 365,
+          "local_id": 109,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 1.004713271917126
+        },
+        {
+          "count": 203487,
+          "id": 3,
+          "local_id": 3,
+          "pack": "FLAT",
+          "share_percent": 0.9967777285153613
+        },
+        {
+          "count": 199743,
+          "id": 361,
+          "local_id": 105,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 0.9784378059868385
+        },
+        {
+          "count": 196692,
+          "id": 375,
+          "local_id": 119,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 0.9634925325801816
+        },
+        {
+          "count": 181951,
+          "id": 354,
+          "local_id": 98,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 0.8912839861077047
+        },
+        {
+          "count": 181044,
+          "id": 359,
+          "local_id": 103,
+          "pack": "BYTE_FALLBACK",
+          "share_percent": 0.8868410614994326
+        },
+        {
+          "count": 178526,
+          "id": 202,
+          "local_id": 2,
+          "pack": "NUMBER",
+          "share_percent": 0.8745066798416281
+        }
+      ],
+      "input_sha256": {
+        "mapping": "255fc797712640ee38a3cd76bd2c7c0b1d6181a5c2f53c70c4b88b863fd96c4f",
+        "sequence": "f558ecf674382cd7aa69980560b56718a7be69d917a1396405fa208a3b27939b",
+        "tokenizer": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf"
+      },
+      "lexical_fragmentation": {
+        "json-keys": {
+          "synthetic-json": {
+            "lexemes": 88530,
+            "mean_tokens_per_lexeme": 1.0,
+            "multi_token_percent": 0.0,
+            "piece_histogram": {
+              "1": 88530
+            }
+          }
+        },
+        "numbers": {
+          "english-literature": {
+            "lexemes": 683,
+            "mean_tokens_per_lexeme": 2.0585651537335283,
+            "multi_token_percent": 68.81405563689604,
+            "piece_histogram": {
+              "1": 213,
+              "2": 249,
+              "3": 189,
+              "4": 32
+            }
+          },
+          "german-prose": {
+            "lexemes": 873,
+            "mean_tokens_per_lexeme": 2.1821305841924397,
+            "multi_token_percent": 68.38487972508591,
+            "piece_histogram": {
+              "1": 276,
+              "2": 306,
+              "3": 147,
+              "4": 144
+            }
+          },
+          "rust-source": {
+            "lexemes": 185716,
+            "mean_tokens_per_lexeme": 1.6491524693618214,
+            "multi_token_percent": 27.35951668138448,
+            "piece_histogram": {
+              "1": 134905,
+              "10": 190,
+              "11": 28,
+              "12": 17,
+              "13": 19,
+              "14": 45,
+              "15": 42,
+              "16": 63,
+              "17": 42,
+              "18": 24,
+              "19": 26,
+              "2": 33379,
+              "20": 23,
+              "21": 3,
+              "22": 4,
+              "23": 6,
+              "24": 6,
+              "25": 2,
+              "27": 1,
+              "28": 9,
+              "29": 3,
+              "3": 7338,
+              "30": 14,
+              "303": 1,
+              "31": 8,
+              "32": 29,
+              "33": 24,
+              "34": 46,
+              "35": 40,
+              "36": 33,
+              "37": 19,
+              "370": 1,
+              "38": 25,
+              "39": 21,
+              "4": 3672,
+              "40": 25,
+              "41": 5,
+              "42": 1,
+              "43": 5,
+              "435": 2,
+              "44": 6,
+              "45": 2,
+              "46": 4,
+              "47": 5,
+              "48": 8,
+              "49": 7,
+              "5": 3882,
+              "50": 7,
+              "51": 3,
+              "52": 2,
+              "54": 3,
+              "55": 1,
+              "56": 6,
+              "57": 8,
+              "58": 8,
+              "59": 13,
+              "6": 899,
+              "60": 19,
+              "61": 17,
+              "62": 2,
+              "63": 12,
+              "64": 2,
+              "66": 1,
+              "68": 1,
+              "7": 254,
+              "70": 2,
+              "720": 1,
+              "722": 1,
+              "723": 3,
+              "725": 1,
+              "729": 1,
+              "731": 1,
+              "732": 1,
+              "738": 1,
+              "739": 1,
+              "741": 1,
+              "776": 1,
+              "8": 186,
+              "854": 1,
+              "9": 196
+            }
+          },
+          "structured": {
+            "lexemes": 238,
+            "mean_tokens_per_lexeme": 1.4285714285714286,
+            "multi_token_percent": 21.84873949579832,
+            "piece_histogram": {
+              "1": 186,
+              "2": 25,
+              "3": 6,
+              "4": 19,
+              "5": 2
+            }
+          },
+          "synthetic-json": {
+            "lexemes": 134857,
+            "mean_tokens_per_lexeme": 3.208346619011249,
+            "multi_token_percent": 78.93768955263724,
+            "piece_histogram": {
+              "1": 28404,
+              "10": 177,
+              "11": 95,
+              "12": 57,
+              "13": 31,
+              "14": 17,
+              "15": 15,
+              "16": 3,
+              "2": 34833,
+              "3": 17614,
+              "4": 15847,
+              "5": 15537,
+              "6": 20439,
+              "7": 957,
+              "8": 542,
+              "9": 289
+            }
+          },
+          "synthetic-unicode": {
+            "lexemes": 119365,
+            "mean_tokens_per_lexeme": 3.241151091190885,
+            "multi_token_percent": 70.86834499225066,
+            "piece_histogram": {
+              "1": 34773,
+              "10": 178,
+              "11": 90,
+              "12": 60,
+              "13": 29,
+              "14": 17,
+              "15": 14,
+              "16": 5,
+              "2": 20421,
+              "3": 10508,
+              "4": 15763,
+              "5": 15698,
+              "6": 20021,
+              "7": 932,
+              "8": 550,
+              "9": 306
+            }
+          }
+        },
+        "rust-identifiers": {
+          "rust-source": {
+            "lexemes": 1422054,
+            "mean_tokens_per_lexeme": 3.1660028381482,
+            "multi_token_percent": 68.68972626918527,
+            "piece_histogram": {
+              "1": 445249,
+              "10": 11030,
+              "11": 7221,
+              "12": 5272,
+              "13": 4002,
+              "14": 2914,
+              "15": 2295,
+              "16": 2037,
+              "17": 1744,
+              "18": 815,
+              "19": 892,
+              "2": 233243,
+              "20": 766,
+              "21": 664,
+              "22": 458,
+              "23": 396,
+              "24": 271,
+              "244": 2,
+              "25": 277,
+              "255": 20,
+              "26": 284,
+              "27": 190,
+              "28": 189,
+              "29": 164,
+              "3": 311355,
+              "30": 130,
+              "31": 171,
+              "32": 94,
+              "33": 84,
+              "34": 72,
+              "35": 65,
+              "36": 42,
+              "37": 48,
+              "38": 44,
+              "39": 38,
+              "4": 153014,
+              "40": 22,
+              "41": 18,
+              "42": 16,
+              "43": 16,
+              "44": 22,
+              "45": 14,
+              "46": 6,
+              "47": 9,
+              "48": 11,
+              "49": 14,
+              "5": 98135,
+              "50": 11,
+              "51": 5,
+              "52": 2,
+              "53": 1,
+              "54": 3,
+              "55": 1,
+              "56": 1,
+              "57": 1,
+              "58": 2,
+              "59": 2,
+              "6": 63506,
+              "60": 2,
+              "61": 3,
+              "7": 36813,
+              "74": 2,
+              "8": 24546,
+              "9": 13318
+            }
+          }
+        },
+        "unicode-words": {
+          "english-literature": {
+            "lexemes": 2420508,
+            "mean_tokens_per_lexeme": 2.4184262146623765,
+            "multi_token_percent": 61.57777623540183,
+            "piece_histogram": {
+              "1": 930013,
+              "10": 1601,
+              "11": 326,
+              "12": 108,
+              "13": 14,
+              "14": 85,
+              "15": 1,
+              "16": 2,
+              "2": 535024,
+              "20": 1,
+              "3": 417660,
+              "4": 275600,
+              "5": 150143,
+              "6": 66549,
+              "7": 26454,
+              "8": 11482,
+              "9": 5445
+            }
+          },
+          "german-prose": {
+            "lexemes": 570179,
+            "mean_tokens_per_lexeme": 3.335836640774213,
+            "multi_token_percent": 85.22130769460117,
+            "piece_histogram": {
+              "1": 84265,
+              "10": 2559,
+              "11": 1058,
+              "12": 498,
+              "13": 194,
+              "14": 72,
+              "15": 23,
+              "16": 13,
+              "17": 13,
+              "18": 5,
+              "19": 3,
+              "2": 145169,
+              "20": 2,
+              "21": 11,
+              "22": 3,
+              "25": 1,
+              "3": 127585,
+              "4": 81043,
+              "5": 54280,
+              "6": 35263,
+              "7": 21196,
+              "8": 11180,
+              "9": 5743
+            }
+          },
+          "synthetic-json": {
+            "lexemes": 204944,
+            "mean_tokens_per_lexeme": 1.232131704270435,
+            "multi_token_percent": 15.82383480365368,
+            "piece_histogram": {
+              "1": 172514,
+              "10": 1,
+              "2": 19619,
+              "3": 11200,
+              "4": 1109,
+              "5": 349,
+              "6": 101,
+              "7": 41,
+              "8": 8,
+              "9": 2
+            }
+          },
+          "synthetic-unicode": {
+            "lexemes": 174368,
+            "mean_tokens_per_lexeme": 1.9857772068269408,
+            "multi_token_percent": 52.15463846577354,
+            "piece_histogram": {
+              "1": 83427,
+              "10": 1,
+              "11": 1,
+              "2": 56226,
+              "3": 18482,
+              "4": 1105,
+              "5": 327,
+              "6": 14760,
+              "7": 22,
+              "8": 12,
+              "9": 5
+            }
+          }
+        }
+      },
+      "mixed_domain_tokens": {
+        "represented_bytes": 4,
+        "tokens": 1
+      },
+      "raw_bytes_per_token": 1.6964434217063857,
+      "represented_raw_bytes": 34632012,
+      "single_byte_or_fallback_percent": 56.120500932646785,
+      "single_byte_or_fallback_tokens": 11456709,
+      "token_length_bytes": {
+        "max": 17,
+        "mean": 1.6964434217063857,
+        "median": 1,
+        "min": 1,
+        "p25": 1,
+        "p75": 2,
+        "p90": 3,
+        "p95": 3,
+        "p99": 7
+      },
+      "tokens_per_raw_byte": 0.5894685240926805,
+      "total_tokens": 20414481,
+      "vocabulary": {
+        "allocated_ids_by_pack": {
+          "BYTE_FALLBACK": 256,
+          "FLAT": 196,
+          "NUMBER": 56,
+          "TEXT": 4
+        },
+        "effective_ids_2_pow_entropy": 146.84112770820244,
+        "entropy_bits_per_token": 7.198112288954242,
+        "logical_ids": 512,
+        "pack_utilization": {
+          "BYTE_FALLBACK": {
+            "allocated_id_occupancy_percent": 73.4375,
+            "allocated_ids": 256,
+            "bytes_per_emitted_token": 1.0,
+            "emitted_tokens": 11456709,
+            "observed_ids": 188,
+            "pack_id": 65535,
+            "represented_bytes": 11456709,
+            "token_share_percent": 56.120500932646785
+          },
+          "FLAT": {
+            "allocated_id_occupancy_percent": 99.48979591836735,
+            "allocated_ids": 196,
+            "bytes_per_emitted_token": 2.408540507844138,
+            "emitted_tokens": 6900503,
+            "observed_ids": 195,
+            "pack_id": 0,
+            "represented_bytes": 16620141,
+            "token_share_percent": 33.80200064846126
+          },
+          "NUMBER": {
+            "allocated_id_occupancy_percent": 100.0,
+            "allocated_ids": 56,
+            "bytes_per_emitted_token": 3.226696341107293,
+            "emitted_tokens": 1989591,
+            "observed_ids": 56,
+            "pack_id": 2,
+            "represented_bytes": 6419806,
+            "token_share_percent": 9.74597884707429
+          },
+          "TEXT": {
+            "allocated_id_occupancy_percent": 100.0,
+            "allocated_ids": 4,
+            "bytes_per_emitted_token": 2.0,
+            "emitted_tokens": 67678,
+            "observed_ids": 4,
+            "pack_id": 1,
+            "represented_bytes": 135356,
+            "token_share_percent": 0.331519571817672
+          }
+        },
+        "unique_ids_observed": 443
+      }
+    }
+  }
+}
