@@ -1,0 +1,1 @@
+PASS: real packaged remote.sh reached A then C with frozen args; success archived. PASS: deliberate C exit 9 and stderr archived with exit 9. GPU and trainer were harmless doubles.

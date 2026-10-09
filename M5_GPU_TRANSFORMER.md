@@ -1,24 +1,21 @@
 # M5 — GPU Transformer scale probe
 
-Status: CPU preparation complete; L4 CUDA correctness/overfit diagnostics passed.
-The first Transformer pilot attempt ran A for 2,000 updates and validation scoring,
-then failed in final floating-point domain-score reconciliation before C started.
-The session was released; this is partial training evidence, not an A/C comparison.
-M5 begins at the exact CPU freeze `f3b6c3fb41f46c93e701b585d859b0b9071d65a5`.
-M4's delivery-only commit `3b304d2dfdbae8111da7b6cf714569fff353d030` was pushed
-to its existing PR before branching. Branch `m5-gpu-transformer` targets
-`m4-factorization-ablation`. M0–M4 contracts, results, failures and encodings remain
-frozen.
+Status (2026-10-09): the frozen A/C Transformer pilot is complete. A's recovered
+2,000-update checkpoint was retained and reevaluated with the corrected domain
+aggregation; C completed its fresh 2,000-update run on the one newly authorized
+NVIDIA L4 allocation. Final validation is A 2.572964850 and C 2.597469229 bits per
+raw byte (C−A +0.024504380 BPB), a small exploratory result favoring A for this
+single seed. Full metrics, domain comparisons, hashes, allocation accounting and
+limitations are in the [pilot result record](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md).
 
-Current status (2026-10-09): the L4 A run reached all 2,000 updates and recorded
-validation BPB from 4.82560 at step 1 to 2.57296 at step 2,000. It exposed TEST
-for final-only scoring but did not preserve the TEST score; validation-domain
-aggregation then exited with code 1 before C. The strict FP64 NLL equality check
-was reproduced as too tight and corrected with a narrow relative tolerance while
-retaining exact byte/token equality. A targeted regression and all five domain
-tests pass. The correction is post-bundle and needs a fresh package before any
-future GPU run. The exact result and limits are in
-[`PILOT_ATTEMPT.md`](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/PILOT_ATTEMPT.md).
+The earlier launch and aggregation failures remain preserved below in the
+historical attempt records. The FP64 NLL comparison now uses a narrow relative
+tolerance while target-byte and token counters remain exact; the regression and
+all six domain tests pass. M5 begins at the exact CPU freeze
+`f3b6c3fb41f46c93e701b585d859b0b9071d65a5`. M4's delivery-only commit
+`3b304d2dfdbae8111da7b6cf714569fff353d030` was pushed to its existing PR before
+branching. Branch `m5-gpu-transformer` targets `m4-factorization-ablation`.
+M0–M4 contracts, results, failures and encodings remain frozen.
 
 ## Question and controls
 

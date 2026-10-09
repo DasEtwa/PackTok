@@ -1,0 +1,20 @@
+{
+  "artifact": "results.tar.gz",
+  "binary_sha256": "c388a182844f5ade1971b7b0dc3ad4e3fb2b2bcd80d6c20ba6ab6f93c180af98",
+  "bytes": 322912151,
+  "completion_manifest_remote": "packtok-drive-own:PackTok/M5/pilot/m5-a-c-pilot-evidence-20261009T154700Z/DRIVE_BACKUP.json",
+  "configuration_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+  "contents": "complete raw remote results archive: logs, metrics, validation and final-only test records, checkpoints, GPU samples, and input provenance",
+  "dataset_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+  "full_readback_sha256": "d7da7a902f2664f562351ec04d19e9aaed5b42478fb19d0f8d57247b8d1c25b4",
+  "package_id": "pilot-2k-v1-l4-20261009T154700Z",
+  "package_sha256": "f241410ec33f477a4568079b00c0e860c79afd90f43be5d049899c45a0930f84",
+  "remote": "packtok-drive-own:PackTok/M5/pilot/m5-a-c-pilot-evidence-20261009T154700Z/results.tar.gz",
+  "sha256": "d7da7a902f2664f562351ec04d19e9aaed5b42478fb19d0f8d57247b8d1c25b4",
+  "source_commit": "dd0380396e63d926883f378daf9e6d029538f0f6",
+  "status": "COMPLETE_VERIFIED",
+  "tokenizer_sha256": {
+    "A": "22d994891a5d0c3697b6bc4eb0259398303cab5cb9375ead9b24dde6804090ec",
+    "C": "334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf"
+  }
+}

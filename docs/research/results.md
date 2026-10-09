@@ -185,3 +185,22 @@ No Transformer comparison was produced. The prior attempt's likely missing appro
 ### M5 A/C first Transformer execution — 2026-10-09 (partial)
 
 The verified single L4 allocation ran A through all 2,000 updates, exposing 4,096,000 target positions and 7,575,564 raw target bytes. Its final validation score was 2.57296485 bits per raw byte; the recorded curve is 4.82559757, 3.16390946, 2.80470130, 2.64190439 and 2.57296485 at steps 1/500/1000/1500/2000. A final-only TEST scoring computation occurred, but its number was not written before the run exited. C started zero updates. The final validation domain aggregate was rejected by a fixed `1e-9` FP64 NLL-sum comparison although independently ordered sums differ from rounding; a deterministic 800,000-token regression reproduced the rejection. A `1e-12` relative NLL tolerance with exact byte/token equality passes the new regression and all five domain tests. Because the code fix followed the immutable package execution and the authorized L4 allocation is consumed, no C run or paired BPB difference is available. The 161,437,114-byte results archive SHA-256 and the final A resume checkpoint hash are in [attempt evidence](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/PILOT_ATTEMPT.md) and its checksum manifest. L4 allocation lifetime was 813 seconds; CU changed 167.15 to 166.92; release was verified.
+
+
+### M5 paired A/C Transformer pilot — 2026-10-09 (complete, exploratory)
+
+Recovered the earlier 2,000-update A checkpoint rather than retraining it, applied
+the corrected FP64 domain aggregation, then completed C's fresh 2,000-update run
+with the same frozen 14.68M FP32 model, seed, configuration, corpus and target
+position budget. Final validation is A 2.572964850 and C 2.597469229 bits per raw
+byte; C−A is +0.024504380 BPB, a small measured result favoring A. Each saw
+4,096,000 training targets, but raw-byte exposure differed: 7,575,564 for A and
+6,946,291 for C. Five validation domains favor A on English, German and Rust;
+synthetic JSON and Unicode favor C. This is one paired seed and is not statistical
+proof. The frozen final-only runner also scored TEST; those exploratory scores are
+not an untouched independent test for any revised study. The L4 was released and
+verified; Drive full readback matched SHA-256. Full curves, metrics, checkpoints,
+provenance, resource accounting and archive hash are in the
+[pilot record](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md).
+The supervisor needed a manual stop because its expected endpoint file was absent;
+the remote experiment itself exited 0 and its archive declares completion.

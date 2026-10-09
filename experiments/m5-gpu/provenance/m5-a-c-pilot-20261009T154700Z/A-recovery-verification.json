@@ -1,0 +1,64 @@
+{
+  "checkpoint_file_sha256": "da3b08bfda2bc991992a4487f4659c7b406b2af5f2abe62789bef8d80e50655a",
+  "checkpoint_state_sha256": "9368fa76d35bab1bee606cc1c0a75bade9664acff7c55955cc4a9e2de6800a78",
+  "final_train_loss": 3.3719987869262695,
+  "identity": {
+    "config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+    "corpus_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+    "regime": "T",
+    "seed": 20261008,
+    "tokenizer_sha256": "f20cb1db1c47484bda335e9a0032de92aae96cf54265f190cf8ed23060534da1",
+    "train_sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+    "variant": "A"
+  },
+  "metrics_sha256": "0b3682f138939008df15e4277a8a1a2b342ebca8ba4a35b03f47e59a6fdafe95",
+  "model": {
+    "context": 256,
+    "ffn": 1536,
+    "heads": 6,
+    "hidden": 384,
+    "layers": 8,
+    "vocab": 512
+  },
+  "optimizer_step": 2000,
+  "raw_target_bytes": 7575564,
+  "recovered_A": "PASS",
+  "safe_resume_expected": "current Rust runner will validate safetensors state and frozen identity; only final evaluation should execute at checkpoint 2000",
+  "targets": 4096000,
+  "test_score_preserved": false,
+  "test_split_accessed_in_previous_final_only_scoring": true,
+  "training_seconds": 212.24931629700058,
+  "validation": [
+    {
+      "bits_per_byte": 4.825597571995479,
+      "step": 1,
+      "target_bytes": 1459714,
+      "targets": 799652
+    },
+    {
+      "bits_per_byte": 3.163909463207198,
+      "step": 500,
+      "target_bytes": 1459714,
+      "targets": 799652
+    },
+    {
+      "bits_per_byte": 2.8047013010144313,
+      "step": 1000,
+      "target_bytes": 1459714,
+      "targets": 799652
+    },
+    {
+      "bits_per_byte": 2.6419043903324844,
+      "step": 1500,
+      "target_bytes": 1459714,
+      "targets": 799652
+    },
+    {
+      "bits_per_byte": 2.5729648496285376,
+      "step": 2000,
+      "target_bytes": 1459714,
+      "targets": 799652
+    }
+  ],
+  "verified_updates": 2000
+}

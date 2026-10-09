@@ -1,0 +1,6 @@
+c388a182844f5ade1971b7b0dc3ad4e3fb2b2bcd80d6c20ba6ab6f93c180af98  experiments/m5-gpu/pilot-2k-v1-l4-20261009T154700Z/packtok-m5/packtok-m5
+dcef4d459a392b01bea9dbe039f4f66be9bfb78bf60212a0ad6b70fd891451b8  experiments/m5-gpu/pilot-2k-v1-l4-20261009T154700Z/packtok-m5/remote.sh
+6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8  experiments/m5-gpu/pilot-2k-v1-l4-20261009T154700Z/packtok-m5/configs/pilot-2k-v1.json
+033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f  experiments/m5-gpu/pilot-2k-v1-l4-20261009T154700Z/packtok-m5/provenance/corpus-v2-manifest.json
+0b3682f138939008df15e4277a8a1a2b342ebca8ba4a35b03f47e59a6fdafe95  experiments/m5-gpu/pilot-2k-v1-l4-20261009T154700Z/packtok-m5/recovered-A/metrics.jsonl
+da3b08bfda2bc991992a4487f4659c7b406b2af5f2abe62789bef8d80e50655a  experiments/m5-gpu/pilot-2k-v1-l4-20261009T154700Z/packtok-m5/recovered-A/latest.resume.safetensors

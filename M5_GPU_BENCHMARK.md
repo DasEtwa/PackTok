@@ -1,9 +1,10 @@
 # M5 — Provenance, CPU preparation and GPU measurements
 
-Status (2026-10-09): CUDA correctness/overfit diagnostics passed on L4. The first
-authorized A/C pilot allocation was released after remote orchestration exited
-before Rust training; no GPU quality comparison was produced. See the preserved
-[M5 A/C pilot attempt](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
+Status (2026-10-09): the exploratory paired A/C pilot has completed 2,000
+updates per variant on the frozen shared Transformer. C−A validation is
++0.024504380 bits per raw byte, favoring Flat BPE slightly in this one-seed run.
+See the [complete result and provenance](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md).
+Earlier failed starts and the recovered A-only result remain recorded below.
 Design and limits: [M5_GPU_TRANSFORMER.md](M5_GPU_TRANSFORMER.md).
 
 ## Starting state

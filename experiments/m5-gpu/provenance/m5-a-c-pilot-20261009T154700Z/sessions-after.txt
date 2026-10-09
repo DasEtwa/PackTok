@@ -1,0 +1,1 @@
+[packtok-m5] gpu-l4-s-kkb-ass1a0-1gw0svdnzkil6 | Hardware: L4 | Shape: Standard | Variant: GPU
