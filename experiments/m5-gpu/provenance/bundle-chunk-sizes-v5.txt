@@ -1,0 +1,15 @@
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part000
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part001
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part002
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part003
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part004
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part005
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part006
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part007
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part008
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part009
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part010
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part011
+ 33554432 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part012
+ 20648423 experiments/m5-gpu/bundle-v5/packtok-m5-bundle.tar.gz.part013
+456856039 total

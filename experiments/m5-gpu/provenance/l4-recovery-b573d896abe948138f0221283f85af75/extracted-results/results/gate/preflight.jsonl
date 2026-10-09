@@ -1,0 +1,71 @@
+{"gpu":"NVIDIA L4, 0, 0","precision":"FP32","seconds":0.280835393,"stage":"cuda"}
+{"A_sampler":"xorshift64(seed XOR 0xa341316c9e3779b9), 8 starts per update modulo (A_train_tokens-256)","diagnostic":{"batch":1,"dropout":0.0,"gradient_clipping":false,"input":[1,2,3,4,1,2,3,4],"learning_rate":0.005,"loss_steps":[0,1,10,25,50,100,200,350,500],"target":[2,3,4,1,2,3,4,1],"updates":500,"warmup":0,"weight_decay":0.0},"primary_A_updates":18,"primary_adamw":{"beta1":0.9,"beta2":0.999,"epsilon":1e-8,"lr":0.0003,"weight_decay":0.01},"primary_seed":20261008,"stage":"overfit-protocol","states":["fresh","post-18"]}
+{"gradient_families":{"attention":0.6277948533456948,"embedding":0.7163382768630981,"ffn":0.6024168690200895,"head":2.1659560948610306,"position":0.7163382768630981,"rmsnorm":0.00031468804110090787},"max_absolute_delta":4.3213367462158203e-7,"stage":"cpu-cuda-reference"}
+{"state":"fresh","learning_rate":0.005,"step":0,"loss":6.246869,"gradients_finite":null,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":1,"loss":6.596126,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":10,"loss":1.3886116,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":25,"loss":1.3275721,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":50,"loss":0.66306794,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":100,"loss":0.19969851,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":200,"loss":0.00015622868,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":350,"loss":0.000084601794,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"state":"fresh","learning_rate":0.005,"step":500,"loss":0.000053373198,"gradients_finite":true,"parameters_finite":true,"stagnated":false,"event":null}
+{"divergence_step":null,"final_loss":0.00005337319817044772,"first_update_gradient_l2":26.993325908125716,"first_update_selected_gradient_l2":{"block.0.q.weight":0.17574299819972972,"block.0.up.weight":6.8231666422082755,"embedding.weight":6.487168778800844,"head.weight":9.299393615642492},"first_update_selected_weight_delta_l2":{"block.0.q.weight":1.9194899235128287,"block.0.up.weight":3.839920369157059,"embedding.weight":0.19595906050787304,"head.weight":2.216911736424057},"gpu":"NVIDIA L4, 298, 48","initial_loss":6.246869087219238,"nonfinite_step":null,"passed_original_threshold":true,"seconds":26.666596159,"stage":"tiny-overfit-summary","stagnation_step":null,"state":"fresh","steps":500}
+{"gpu":"NVIDIA L4, 362, 0","initial_hash":"155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1","parameters":14681984,"seconds":0.054114988,"stage":"initialization","variant":"A"}
+{"families":{"attention":5.769287631621742,"embedding":0.44889554381370544,"ffn":4.165687748463824,"head":0.9767838809639215,"position":0.3495091199874878,"rmsnorm":0.000609166408139572},"stage":"full-gradient-gate","variant":"A"}
+{"gpu":"NVIDIA L4, 2218, 3","loss":6.2626190185546875,"raw_target_bytes":3629,"seconds":0.114758929,"stage":"step","step":1,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":6.10060977935791,"raw_target_bytes":3890,"seconds":0.090542204,"stage":"step","step":2,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":6.043291091918945,"raw_target_bytes":3669,"seconds":0.091928359,"stage":"step","step":3,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.9399919509887695,"raw_target_bytes":3928,"seconds":0.091268057,"stage":"step","step":4,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.894659042358398,"raw_target_bytes":3890,"seconds":0.091105628,"stage":"step","step":5,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.9161577224731445,"raw_target_bytes":3557,"seconds":0.091700059,"stage":"step","step":6,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.813188076019287,"raw_target_bytes":3877,"seconds":0.091936933,"stage":"step","step":7,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.7365522384643555,"raw_target_bytes":3757,"seconds":0.091293702,"stage":"step","step":8,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.873492240905762,"raw_target_bytes":3533,"seconds":0.090999348,"stage":"step","step":9,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.673605442047119,"raw_target_bytes":3818,"seconds":0.091274358,"stage":"step","step":10,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.683932781219482,"raw_target_bytes":3956,"seconds":0.091518006,"stage":"step","step":11,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.644969463348389,"raw_target_bytes":3882,"seconds":0.09137114,"stage":"step","step":12,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.66896915435791,"raw_target_bytes":3863,"seconds":0.090673827,"stage":"step","step":13,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.529144287109375,"raw_target_bytes":3719,"seconds":0.091423234,"stage":"step","step":14,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.501398086547852,"raw_target_bytes":4069,"seconds":0.091269201,"stage":"step","step":15,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.46884298324585,"raw_target_bytes":3944,"seconds":0.091166618,"stage":"step","step":16,"targets":2048,"variant":"A"}
+{"gpu":null,"loss":5.517754077911377,"raw_target_bytes":3834,"seconds":0.091568314,"stage":"step","step":17,"targets":2048,"variant":"A"}
+{"gpu":"NVIDIA L4, 2218, 97","loss":5.431628227233887,"raw_target_bytes":3697,"seconds":0.091652043,"stage":"step","step":18,"targets":2048,"variant":"A"}
+{"mean_step_seconds":0.09138430168750002,"measured_steps":16,"pipeline_seconds":2.58661075,"raw_bytes_per_second":41714.6318307035,"stage":"throughput","tokens_per_second":22410.851340784884,"variant":"A"}
+{"metrics":{"bits_per_byte":4.644069069336523,"loss_per_token":5.505190134048462,"nll":22549.2587890625,"raw_target_bytes":7005,"seconds":0.075007703,"targets":4096},"purpose":"TRAIN-only timing/normalization gate, no held-out scoring","stage":"train-prefix-evaluation","variant":"A"}
+{"bytes":58738000,"seconds":0.197477042,"sha256":"computed locally after download/release","stage":"checkpoint-write","weights":"after-primary-18-updates"}
+{"stage":"checkpoint-reload","status":"PASS","weights":"after-primary-18-updates"}
+{"bits_per_byte":10.944706232112589,"loss_per_token":7.586292266845703,"raw_target_bytes":8,"stage":"checkpoint-reload-byte-normalization","targets":8}
+{"event":null,"gradients_finite":null,"learning_rate":0.005,"loss":7.586292266845703,"parameters_finite":true,"stagnated":false,"state":"post-18","step":0}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":6.567863464355469,"parameters_finite":true,"stagnated":false,"state":"post-18","step":1}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":1.3877027034759521,"parameters_finite":true,"stagnated":false,"state":"post-18","step":10}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":1.3849588632583618,"parameters_finite":true,"stagnated":false,"state":"post-18","step":25}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":1.3424410820007324,"parameters_finite":true,"stagnated":false,"state":"post-18","step":50}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":2.542163133621216,"parameters_finite":true,"stagnated":false,"state":"post-18","step":100}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":0.17385318875312805,"parameters_finite":true,"stagnated":false,"state":"post-18","step":200}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":0.17339357733726501,"parameters_finite":true,"stagnated":false,"state":"post-18","step":350}
+{"event":null,"gradients_finite":true,"learning_rate":0.005,"loss":0.17460820078849792,"parameters_finite":true,"stagnated":false,"state":"post-18","step":500}
+{"divergence_step":null,"final_loss":0.17460820078849792,"first_update_gradient_l2":13.757164659488133,"first_update_selected_gradient_l2":{"block.0.q.weight":0.04981436354945613,"block.0.up.weight":1.176701790516842,"embedding.weight":5.693169084512905,"head.weight":9.907614243970352},"first_update_selected_weight_delta_l2":{"block.0.q.weight":1.9180936131748048,"block.0.up.weight":3.839351835980492,"embedding.weight":0.1959491747704436,"head.weight":2.216892808359232},"gpu":"NVIDIA L4, 522, 50","initial_loss":7.586292266845703,"nonfinite_step":null,"passed_original_threshold":true,"seconds":26.633527806,"stage":"tiny-overfit-summary","stagnation_step":null,"state":"post-18","steps":500}
+{"gpu":"NVIDIA L4, 394, 0","initial_hash":"155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1","parameters":14681984,"seconds":0.056089755,"stage":"initialization","variant":"C"}
+{"families":{"attention":16.750255720918027,"embedding":1.5527293682098389,"ffn":13.250175452209078,"head":3.4039330072700977,"position":0.7979836463928223,"rmsnorm":0.0020559268050419632},"stage":"full-gradient-gate","variant":"C"}
+{"gpu":"NVIDIA L4, 2186, 3","loss":6.285347938537598,"raw_target_bytes":3659,"seconds":0.111472096,"stage":"step","step":1,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.975918769836426,"raw_target_bytes":3629,"seconds":0.088949573,"stage":"step","step":2,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.799776554107666,"raw_target_bytes":3388,"seconds":0.093098745,"stage":"step","step":3,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.506959915161133,"raw_target_bytes":3398,"seconds":0.092649504,"stage":"step","step":4,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.4359283447265625,"raw_target_bytes":3749,"seconds":0.092072461,"stage":"step","step":5,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.54360294342041,"raw_target_bytes":3507,"seconds":0.092838144,"stage":"step","step":6,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.382114410400391,"raw_target_bytes":3458,"seconds":0.09339462,"stage":"step","step":7,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.412623405456543,"raw_target_bytes":3499,"seconds":0.09297281,"stage":"step","step":8,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.102376937866211,"raw_target_bytes":3235,"seconds":0.092594978,"stage":"step","step":9,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.359229564666748,"raw_target_bytes":3754,"seconds":0.092730556,"stage":"step","step":10,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.273848533630371,"raw_target_bytes":3476,"seconds":0.09310561,"stage":"step","step":11,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.10753870010376,"raw_target_bytes":3344,"seconds":0.092940747,"stage":"step","step":12,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.041363716125488,"raw_target_bytes":3363,"seconds":0.092457232,"stage":"step","step":13,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.021254539489746,"raw_target_bytes":3290,"seconds":0.093165572,"stage":"step","step":14,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":4.870532989501953,"raw_target_bytes":3329,"seconds":0.093160556,"stage":"step","step":15,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":5.494163513183594,"raw_target_bytes":3716,"seconds":0.093217506,"stage":"step","step":16,"targets":2048,"variant":"C"}
+{"gpu":null,"loss":4.99500036239624,"raw_target_bytes":3417,"seconds":0.092700256,"stage":"step","step":17,"targets":2048,"variant":"C"}
+{"gpu":"NVIDIA L4, 2186, 96","loss":4.957180976867676,"raw_target_bytes":3571,"seconds":0.093034832,"stage":"step","step":18,"targets":2048,"variant":"C"}
+{"mean_step_seconds":0.0928833830625,"measured_steps":16,"pipeline_seconds":2.599612538,"raw_bytes_per_second":37341.17864404418,"stage":"throughput","tokens_per_second":22049.1538149717,"variant":"C"}
+{"metrics":{"bits_per_byte":4.654860234636842,"loss_per_token":4.881504058837891,"nll":19994.640625,"raw_target_bytes":6197,"seconds":0.07546285,"targets":4096},"purpose":"TRAIN-only timing/normalization gate, no held-out scoring","stage":"train-prefix-evaluation","variant":"C"}
+{"final_gpu":"NVIDIA L4, 490, 0","stage":"gate","status":"PASS","tiny_overfit_passed_original_threshold":true}

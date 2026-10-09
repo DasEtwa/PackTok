@@ -1,0 +1,31 @@
+test_authentication_unavailable (__main__.Backup.test_authentication_unavailable) ... ok
+test_backup_recovery_success (__main__.Backup.test_backup_recovery_success) ... ok
+test_checkpoint_integrity_mismatch (__main__.Backup.test_checkpoint_integrity_mismatch) ... ok
+test_good_checkpoint_retention (__main__.Backup.test_good_checkpoint_retention) ... ok
+test_partial_checkpoint_upload (__main__.Backup.test_partial_checkpoint_upload) ... ok
+test_consumed_old_package_identity_is_rejected_before_inventory (__main__.Lifecycle.test_consumed_old_package_identity_is_rejected_before_inventory) ... ok
+test_endpoint_survives (__main__.Lifecycle.test_endpoint_survives) ... ok
+test_loader_failure_hidden_by_transport (__main__.Lifecycle.test_loader_failure_hidden_by_transport) ... ok
+test_missing_gate_pass (__main__.Lifecycle.test_missing_gate_pass) ... ok
+test_reassigned_alias_is_not_stopped (__main__.Lifecycle.test_reassigned_alias_is_not_stopped) ... ok
+test_stale_owned_release_only (__main__.Lifecycle.test_stale_owned_release_only) ... ok
+test_storage_readiness_missing_blocks_allocation (__main__.Lifecycle.test_storage_readiness_missing_blocks_allocation) ... ok
+test_success_and_unrelated_session (__main__.Lifecycle.test_success_and_unrelated_session) ... ok
+test_success_reaps_transport_descendants (__main__.Lifecycle.test_success_reaps_transport_descendants) ... ok
+test_transfer_failure (__main__.Lifecycle.test_transfer_failure) ... ok
+test_transport_success_without_archive_fails (__main__.Lifecycle.test_transport_success_without_archive_fails) ... ok
+test_unknown_allocation_endpoint_is_not_stopped (__main__.Lifecycle.test_unknown_allocation_endpoint_is_not_stopped) ... ok
+test_unowned_alias_untouched (__main__.Lifecycle.test_unowned_alias_untouched) ... ok
+test_upload_failure (__main__.Lifecycle.test_upload_failure) ... ok
+test_watchdog_remote_hang (__main__.Lifecycle.test_watchdog_remote_hang) ... ok
+test_wrong_hardware (__main__.Lifecycle.test_wrong_hardware) ... ok
+test_early_loader_failure_archived_without_starting_model (__main__.RemoteDiagnostics.test_early_loader_failure_archived_without_starting_model) ... ok
+test_transport_bootstrap_failure_archived (__main__.RemoteDiagnostics.test_transport_bootstrap_failure_archived) ... ok
+test_threshold_failure_is_preserved_without_becoming_a_pass (__main__.ResultVerification.test_threshold_failure_is_preserved_without_becoming_a_pass) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 22.748s
+
+OK
+{"remote_exit": 127, "diagnostic_archive": "/content/packtok-m5-results.tar.gz"}
+{"remote_exit": 1, "diagnostic_archive": "/content/packtok-m5-results.tar.gz"}
