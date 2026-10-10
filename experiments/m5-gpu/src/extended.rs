@@ -17,6 +17,8 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
+const M5_SAMPLER_SEED_XOR: u64 = 0xa341316c9e3779b9;
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct ExtendedPlan {
     pub revision: String,
@@ -48,6 +50,10 @@ impl ExtendedPlan {
                 "pilot-2k-v1.json",
                 "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
             ),
+            "m6-paired-replication-2k-v1" => (
+                "m6-five-seed-2k-v1.json",
+                "50cf36a6c9edf0f4423007b846da28ba3984eb37a8102664b27e165e9ee4954e",
+            ),
             "m5-extended-20k-v1" => (
                 "extended-20k-v1.json",
                 "2943cb456a82d76dc1c0f8371bd946897e151dd344b03de239cf98bb3534f621",
@@ -63,7 +69,7 @@ impl ExtendedPlan {
         {
             return Err("extended config path or frozen bytes do not match revision".into());
         }
-        if !plan.revision.starts_with("m5-")
+        if !(plan.revision.starts_with("m5-") || plan.revision == "m6-paired-replication-2k-v1")
             || !(plan.status.contains("approval") || plan.status.contains("approved"))
             || plan.parameters != 14_681_984
             || plan.architecture != ModelConfig::default()
@@ -145,6 +151,12 @@ impl ExtendedPlan {
                 if plan.updates_per_model == 2000
                     && plan.regimes == ["T"]
                     && plan.paired_seeds == [20261008]
+                    && plan.schedule["warmup_updates"].as_u64() == Some(0)
+                    && plan.schedule["decay"].as_str() == Some("constant") => {}
+            "m6-paired-replication-2k-v1"
+                if plan.updates_per_model == 2000
+                    && plan.regimes == ["T"]
+                    && plan.paired_seeds == [20261008, 20261009, 20261010, 20261011, 20261012]
                     && plan.schedule["warmup_updates"].as_u64() == Some(0)
                     && plan.schedule["decay"].as_str() == Some("constant") => {}
             "m5-extended-20k-v1"
@@ -521,6 +533,7 @@ fn match_input(
     let root = plan_root_from_data(data)?;
     let config_path = root.join("configs").join(match plan.revision.as_str() {
         "m5-paired-pilot-2k-v1" => "pilot-2k-v1.json",
+        "m6-paired-replication-2k-v1" => "m6-five-seed-2k-v1.json",
         "m5-extended-20k-v1" => "extended-20k-v1.json",
         "m5-extended-30k-v1" => "extended-30k-extension-v1.json",
         _ => return Err("unknown frozen extended revision".into()),
@@ -584,6 +597,45 @@ pub fn plan(config_path: &Path, data: &Path, output: &Path) -> Result<()> {
     )?;
     Ok(())
 }
+pub fn initialization_hashes(config_path: &Path, data: &Path, seeds: &[u64]) -> Result<Value> {
+    let plan = ExtendedPlan::load(config_path, data)?;
+    if seeds != plan.paired_seeds {
+        return Err("initialization seed list differs from the frozen M6 manifest".into());
+    }
+    let device = Device::Cpu;
+    let mut pairs = Vec::with_capacity(seeds.len());
+    for &seed in seeds {
+        let model_a = Transformer::new(plan.architecture.clone(), seed, &device)?;
+        let hash_a = runner::init_hash(&model_a)?;
+        drop(model_a);
+        let model_c = Transformer::new(plan.architecture.clone(), seed, &device)?;
+        let hash_c = runner::init_hash(&model_c)?;
+        drop(model_c);
+        if hash_a != hash_c {
+            return Err(format!("paired initialization mismatch for seed {seed}").into());
+        }
+        let sampler_seed = seed ^ M5_SAMPLER_SEED_XOR;
+        pairs.push(serde_json::json!({
+            "seed":seed,
+            "A_initialization_sha256":hash_a,
+            "C_initialization_sha256":hash_c,
+            "initialization_equal":true,
+            "sampling_rng":{"algorithm":"xorshift64-13-7-17",
+                "seed_xor":"0xa341316c9e3779b9","seed":sampler_seed,
+                "initial_state":Rng::new(sampler_seed).state()}
+        }));
+    }
+    Ok(serde_json::json!({
+        "config_revision":plan.revision,
+        "config_sha256":sha_file(config_path)?,
+        "parameters":plan.parameters,
+        "updates_per_variant":plan.updates_per_model,
+        "target_positions_per_variant":plan.updates_per_model * plan.target_positions_per_update,
+        "paired_seeds":pairs,
+        "device":"CPU deterministic initialization reference; no training performed"
+    }))
+}
+
 pub fn train(
     config_path: &Path,
     data: &Path,
@@ -651,6 +703,9 @@ pub fn train(
     let gpu = runner::require_l4()?;
     let device = runner::cuda()?;
     let mut model = Transformer::new(plan.architecture.clone(), seed, &device)?;
+    let initialization_sha256 = runner::init_hash(&model)?;
+    let sampler_seed = seed ^ M5_SAMPLER_SEED_XOR;
+    let sampler_initial_state = Rng::new(sampler_seed).state();
     let identity = match_input(&plan, data, variant, regime, seed)?;
     let checkpoint = out.join("latest.resume.safetensors");
     let metrics = out.join("metrics.jsonl");
@@ -674,7 +729,7 @@ pub fn train(
             } else {
                 0
             },
-            Rng::new(seed ^ 0xa341316c9e3779b9),
+            Rng::new(sampler_seed),
         )
     };
     if !had_checkpoint {
@@ -696,7 +751,7 @@ pub fn train(
         if cursor != expected {
             return Err("T checkpoint sampler cursor mismatch".into());
         }
-        let mut audit_rng = Rng::new(seed ^ 0xa341316c9e3779b9);
+        let mut audit_rng = Rng::new(sampler_seed);
         let mut counted_bytes = 0_u64;
         for _ in 0..step {
             for _ in 0..plan.batch_size {
@@ -717,6 +772,14 @@ pub fn train(
         .create(true)
         .append(true)
         .open(&metrics)?;
+    emit(
+        &mut log,
+        serde_json::json!({"stage":"initialization","step":0,"checkpoint_step":0,
+        "variant":variant,"regime":regime,"seed":seed,"parameters":plan.parameters,
+        "initialization_sha256":initialization_sha256,
+        "sampling_rng":{"algorithm":"xorshift64-13-7-17","seed_xor":"0xa341316c9e3779b9",
+        "seed":sampler_seed,"initial_state":sampler_initial_state}}),
+    )?;
     emit(
         &mut log,
         serde_json::json!({"stage":"resume","variant":variant,"regime":regime,"seed":seed,
@@ -850,7 +913,7 @@ fn deterministic_token_bytes(
     context: usize,
     seed: u64,
 ) -> Result<u64> {
-    let mut rng = Rng::new(seed ^ 0xa341316c9e3779b9);
+    let mut rng = Rng::new(seed ^ M5_SAMPLER_SEED_XOR);
     let mut bytes = 0_u64;
     for _ in 0..updates {
         for _ in 0..batch {
@@ -969,6 +1032,14 @@ mod tests {
         let pilot = ExtendedPlan::load(Path::new("configs/pilot-2k-v1.json"), data)?;
         assert_eq!(pilot.updates_per_model, 2000);
         assert_eq!(pilot.paired_seeds, vec![20261008]);
+        let m6 = ExtendedPlan::load(Path::new("configs/m6-five-seed-2k-v1.json"), data)?;
+        assert_eq!(m6.updates_per_model, 2000);
+        assert_eq!(
+            m6.paired_seeds,
+            vec![20261008, 20261009, 20261010, 20261011, 20261012]
+        );
+        assert_eq!(m6.schedule["warmup_updates"].as_u64(), Some(0));
+        assert_eq!(m6.schedule["decay"].as_str(), Some("constant"));
         let long = ExtendedPlan::load(Path::new("configs/extended-20k-v1.json"), data)?;
         assert_eq!(long.updates_per_model, 20000);
         assert_eq!(long.paired_seeds.len(), 5);

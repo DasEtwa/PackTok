@@ -24,6 +24,12 @@ fn run() -> Result<()> {
         ),
         Some("plan-extended") if args.len() == 4 => extended::plan(
             Path::new(&args[1]),Path::new(&args[2]),Path::new(&args[3])),
+        Some("initialization-hashes") if args.len() >= 4 => {
+            let seeds = args[3..].iter().map(|v| v.parse()).collect::<std::result::Result<Vec<u64>, _>>()?;
+            let report = extended::initialization_hashes(Path::new(&args[1]), Path::new(&args[2]), &seeds)?;
+            println!("{}", serde_json::to_string_pretty(&report)?);
+            Ok(())
+        }
         Some("train-extended") if args.len() == 8 => extended::train(
             Path::new(&args[1]),Path::new(&args[2]),Path::new(&args[3]),&args[4],&args[5],
             args[6].parse()?,&args[7]),
@@ -73,7 +79,7 @@ fn run() -> Result<()> {
             }
             Ok(())
         }
-        _ => Err("usage: packtok-m5 corpus | prepare | verify-prepared | reference | plan | cuda-components JSON | preflight DATA REFERENCE OUT | diagnose-overfit DATA OUT [COMPARISON_LR] | plan-extended CONFIG DATA OUT | train-extended CONFIG DATA OUT VARIANT REGIME SEED APPROVAL_REFERENCE".into()),
+        _ => Err("usage: packtok-m5 corpus | prepare | verify-prepared | reference | plan | cuda-components JSON | preflight DATA REFERENCE OUT | diagnose-overfit DATA OUT [COMPARISON_LR] | plan-extended CONFIG DATA OUT | initialization-hashes CONFIG DATA SEED... | train-extended CONFIG DATA OUT VARIANT REGIME SEED APPROVAL_REFERENCE".into()),
     }
 }
 fn main() {

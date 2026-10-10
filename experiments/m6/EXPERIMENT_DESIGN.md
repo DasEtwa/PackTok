@@ -30,7 +30,7 @@ Compare paired validation BPB at common wall-clock budgets by using the nearest 
 
 ## Paired seeds and statistical protocol
 
-Use five new paired seeds, for example 20261009–20261013; keep pilot seed 20261008 as historical exploratory evidence, not an extra inferential replicate. Within each seed, initialize one canonical model tensor set and load the exact same tensors into A and C. Record a hash of canonical initial weights and prove tensor equality before training. Keep data order/sampling seeds paired wherever implementation permits, while noting tokenizer-specific token-to-byte mapping causes different raw spans.
+The original Slice 1 seed suggestion below is superseded by the Slice 2 amendment at the end: seed 20261008 is reused as a protocol-identical historical pair and four new pairs are run. Within each seed, initialize one canonical model tensor set and load the exact same tensors into A and C. Record a hash of canonical initial weights and prove tensor equality before training. Keep data order/sampling seeds paired wherever implementation permits, while noting tokenizer-specific token-to-byte mapping causes different raw spans.
 
 Primary estimand: mean of five within-seed final validation BPB differences at the predeclared primary horizon. Report all five paired differences, mean, sample SD, median and a two-sided 95% paired-`t` interval; include a paired bootstrap sensitivity interval over seeds if useful, clearly noting n=5 limits. Also report the raw per-seed A/C values and an effect size in BPB and relative to mean A BPB. Do not infer significance from overlapping marginal intervals or choose a favorable domain after viewing results. Domain outcomes are secondary, predeclared, with per-domain denominators and multiplicity acknowledged; show all domains.
 
@@ -48,3 +48,30 @@ These thresholds are operational decision proposals, not known natural constants
 ## Acceptance and limits
 
 A run is usable only with source/config/input hashes, paired init hashes, complete update accounting, raw-byte exposure, validation curve and checkpoint checksums. A partial run remains reportable but cannot answer the full paired estimand. Do not change M5 artifacts or use its exposed TEST outcomes for tuning. This design does not authorize GPU work.
+
+
+## Slice 2 — five paired-seed T replication (frozen proposal)
+
+The replication uses seed pairs **20261008–20261012**. Seed 20261008 is the completed M5 A/C pilot and is reusable as pair 1: the per-variant update count, target-position budget, model/optimizer/schedule, precision, corpus/splits, tokenizer artifacts, validation schedule, and BPB evaluator match this protocol. Its M5 config hash is 6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8; the five-seed config changes only the revision identifier and declared seed list. The aggregation correction was applied consistently to the archived A and C evaluations and did not change the scoring formula or training tensors. Historical source/binary provenance remains recorded with that pair.
+
+This reuse saves two training jobs, but seed 20261008's result has already been observed. Report the five-pair summary as a replication set containing one known historical pair, and always include a sensitivity summary on the four newly run pairs (20261009–20261012). Do not describe the five-pair estimate as blinded or fully independent confirmation. No seed may be excluded after observing its outcome except under the existing technical integrity rules; report all failures/partial runs.
+
+The CPU initialization command constructs A and C separately per seed and hashes the named FP32 tensors. The hashes must match within each pair. The training runner additionally logs the seed-derived xorshift sampler initial state; A/C use the same state within a seed. Seed 20261008's hash is checked against the M5 provenance hash.
+
+Primary per-seed outcome is final validation BPB at update 2000 and delta = C - A. Report all A/C values, deltas, mean, sample standard deviation, median, direction count, relative delta versus A BPB, and a two-sided paired-t 95% confidence interval (mean ± t(0.975, df=n-1) × sample_SD/sqrt(n)). At n=5 this uses t=2.776445; show a separate n=4 sensitivity interval with t=3.182446. Also publish every seed's byte exposure, synchronized training time, wall time, target count, checkpoint hash and validation curve. The interval is preliminary variability evidence, not proof of significance. The M5 TEST set was already exposed; any final-only TEST values from the unchanged runner are exploratory and are not an independent holdout.
+
+Validation is fixed at steps 1, 500, 1000, 1500 and 2000. Each variant receives 4,096,000 target positions. Raw-byte exposure remains a measured, tokenizer-dependent outcome and is never equalized in T.
+
+
+
+## Slice 2 — five paired-seed T replication (frozen proposal)
+
+The replication uses seed pairs **20261008–20261012**. Seed 20261008 is the completed M5 A/C pilot and is reusable as pair 1: the per-variant update count, target-position budget, model/optimizer/schedule, precision, corpus/splits, tokenizer artifacts, validation schedule, and BPB evaluator match this protocol. Its M5 config hash is 6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8; the five-seed config changes only the revision identifier and declared seed list. The aggregation correction was applied consistently to the archived A and C evaluations and did not change the scoring formula or training tensors. Historical source/binary provenance remains recorded with that pair.
+
+This reuse saves two training jobs, but seed 20261008's result has already been observed. Report the five-pair summary as a replication set containing one known historical pair, and always include a sensitivity summary on the four newly run pairs (20261009–20261012). Do not describe the five-pair estimate as blinded or fully independent confirmation. No seed may be excluded after observing its outcome except under the existing technical integrity rules; report all failures/partial runs.
+
+The CPU initialization command constructs A and C separately per seed and hashes the named FP32 tensors. The hashes must match within each pair. The training runner additionally logs the seed-derived xorshift sampler initial state; A/C use the same state within a seed. Seed 20261008's hash is checked against the M5 provenance hash.
+
+Primary per-seed outcome is final validation BPB at update 2000 and delta = C - A. Report all A/C values, deltas, mean, sample standard deviation, median, direction count, relative delta versus A BPB, and a two-sided paired-t 95% confidence interval (mean ± t(0.975, df=n-1) × sample_SD/sqrt(n)). At n=5 this uses t=2.776445; show a separate n=4 sensitivity interval with t=3.182446. Also publish every seed's byte exposure, synchronized training time, wall time, target count, checkpoint hash and validation curve. The interval is preliminary variability evidence, not proof of significance. The M5 TEST set was already exposed; any final-only TEST values from the unchanged runner are exploratory and are not an independent holdout.
+
+Validation is fixed at steps 1, 500, 1000, 1500 and 2000. Each variant receives 4,096,000 target positions. Raw-byte exposure remains a measured, tokenizer-dependent outcome and is never equalized in T.
