@@ -1,0 +1,47 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.82s
+     Running unittests src/lib.rs (target/debug/deps/packtok_m5-39e35dcd0f4f16b7)
+
+running 4 tests
+test resume::tests::review_nonfinite_gradient_is_rejected_without_mutation ... FAILED
+test resume::tests::review_missing_late_gradient_does_not_partially_update ... FAILED
+test extended::tests::review_invalid_metrics_reconciliation_preserves_original ... FAILED
+test extended::tests::review_report_retry_ignores_elapsed_time_only ... FAILED
+
+failures:
+
+---- resume::tests::review_nonfinite_gradient_is_rejected_without_mutation stdout ----
+
+thread 'resume::tests::review_nonfinite_gradient_is_rejected_without_mutation' (12942) panicked at src/resume.rs:438:9:
+assertion failed: optimizer.apply(&model, &grads).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- resume::tests::review_missing_late_gradient_does_not_partially_update stdout ----
+
+thread 'resume::tests::review_missing_late_gradient_does_not_partially_update' (12941) panicked at src/resume.rs:424:9:
+assertion `left == right` failed
+  left: "b4f2f80545ec668568a323b359316ccf611a4cd8830aaf30c6925e11c4bcabf7"
+ right: "2901f7bed186809b4adfaf6c0055ea19a57ce2cf759415d19c8e778d75291928"
+
+---- extended::tests::review_invalid_metrics_reconciliation_preserves_original stdout ----
+
+thread 'extended::tests::review_invalid_metrics_reconciliation_preserves_original' (12939) panicked at src/extended.rs:889:9:
+assertion `left == right` failed
+  left: []
+ right: [123, 34, 115, 116, 97, 103, 101, 34, 58, 34, 116, 114, 97, 105, 110, 34, 44, 34, 115, 116, 101, 112, 34, 58, 50, 125, 10, 123, 34, 112, 97, 114, 116, 105, 97, 108, 34]
+
+---- extended::tests::review_report_retry_ignores_elapsed_time_only stdout ----
+
+thread 'extended::tests::review_report_retry_ignores_elapsed_time_only' (12940) panicked at src/extended.rs:876:9:
+assertion failed: save_report(&path, &retry).is_ok()
+
+
+failures:
+    extended::tests::review_invalid_metrics_reconciliation_preserves_original
+    extended::tests::review_report_retry_ignores_elapsed_time_only
+    resume::tests::review_missing_late_gradient_does_not_partially_update
+    resume::tests::review_nonfinite_gradient_is_rejected_without_mutation
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 35 filtered out; finished in 0.12s
+
+error: test failed, to rerun pass `--lib`

@@ -134,8 +134,13 @@ impl ResumableAdamW {
         let lr = self.config.learning_rate_at(next_step);
         let bc1 = 1.0 / (1.0 - self.config.beta1.powi(i32::try_from(next_step)?));
         let bc2 = 1.0 / (1.0 - self.config.beta2.powi(i32::try_from(next_step)?));
+        let mut staged = Vec::new();
+        let mut checks = Vec::new();
         for (name, var) in model.named_vars() {
             let grad = grads.get(&var).ok_or("resumable AdamW missing gradient")?;
+            if grad.shape() != var.shape() || grad.dtype() != var.dtype() {
+                return Err("resumable AdamW gradient layout mismatch".into());
+            }
             let m = self.first.get(&name).ok_or("missing first moment")?;
             let v = self.second.get(&name).ok_or("missing second moment")?;
             let next_m = ((m * self.config.beta1)? + (grad * (1.0 - self.config.beta1))?)?;
@@ -145,9 +150,24 @@ impl ResumableAdamW {
             let decayed = var.as_tensor() * (1.0 - lr * self.config.weight_decay);
             let update = (m_hat / (v_hat?.sqrt()? + self.config.epsilon)?)? * lr;
             let next_weight = (decayed? - update?)?;
-            self.first.insert(name.clone(), next_m);
-            self.second.insert(name.clone(), next_v);
+            // Validate squared norms in one device-to-host transfer before publishing any state.
+            // Zero gradients are valid; nonfinite gradients/results and FP32 norm overflow are not.
+            for tensor in [grad, &next_m, &next_v, &next_weight] {
+                checks.push(tensor.sqr()?.sum_all()?.reshape((1,))?);
+            }
+            staged.push((name, var, next_m, next_v, next_weight));
+        }
+        if Tensor::cat(&checks, 0)?
+            .to_vec1::<f32>()?
+            .iter()
+            .any(|v| !v.is_finite())
+        {
+            return Err("resumable AdamW nonfinite gradient or candidate state".into());
+        }
+        for (name, var, next_m, next_v, next_weight) in staged {
             var.set(&next_weight)?;
+            self.first.insert(name.clone(), next_m);
+            self.second.insert(name, next_v);
         }
         self.step = next_step;
         Ok(())
@@ -214,6 +234,7 @@ impl ResumableAdamW {
     pub fn load_checkpoint(
         model: &mut Transformer,
         identity: &Identity,
+        expected_schedule: &AdamWConfig,
         path: &Path,
     ) -> Result<(Self, usize, u64, u64)> {
         let bytes = fs::read(path)?;
@@ -227,6 +248,7 @@ impl ResumableAdamW {
         if meta.format != 1
             || meta.model != model.config
             || &meta.identity != identity
+            || &meta.schedule != expected_schedule
             || meta.training_step != meta.optimizer_step
             || meta.rng_state == 0
         {
@@ -410,6 +432,141 @@ mod tests {
             seed: 19,
         }
     }
+    #[test]
+    fn review_corrupt_and_truncated_checkpoint_preserve_destination() -> Result<()> {
+        let source = Transformer::new(tiny_config(), 83, &Device::Cpu)?;
+        let optimizer = ResumableAdamW::new(&source, AdamWConfig::default())?;
+        let id = fixture_identity();
+        let path = std::env::temp_dir().join(format!(
+            "packtok-review-corrupt-{}.safetensors",
+            std::process::id()
+        ));
+        let _ = fs::remove_file(&path);
+        optimizer.save_checkpoint(&source, &id, 55, 0, 0, &path)?;
+        let intact = fs::read(&path)?;
+        let mut changed = intact.clone();
+        *changed.last_mut().unwrap() ^= 1;
+        let mut destination = Transformer::new(tiny_config(), 84, &Device::Cpu)?;
+        let before = crate::runner::init_hash(&destination)?;
+        for image in [intact[..intact.len() - 1].to_vec(), changed, vec![0; 16]] {
+            fs::write(&path, image)?;
+            assert!(
+                ResumableAdamW::load_checkpoint(&mut destination, &id, &optimizer.config, &path)
+                    .is_err()
+            );
+            assert_eq!(crate::runner::init_hash(&destination)?, before);
+        }
+        fs::remove_file(path)?;
+        Ok(())
+    }
+    #[test]
+    fn review_missing_late_gradient_does_not_partially_update() -> Result<()> {
+        let model = Transformer::new(tiny_config(), 71, &Device::Cpu)?;
+        let mut optimizer = ResumableAdamW::new(&model, AdamWConfig::default())?;
+        let before = tensor_hash(&model.named_vars(), &optimizer.first, &optimizer.second)?;
+        let vars = model.named_vars();
+        let mut terms = vars.values().take(vars.len() - 1).map(|v| v.sum_all());
+        let mut objective = terms.next().unwrap()?;
+        for term in terms {
+            objective = (objective + term?)?;
+        }
+        assert!(optimizer.apply(&model, &objective.backward()?).is_err());
+        assert_eq!(optimizer.step_count(), 0);
+        assert_eq!(
+            tensor_hash(&model.named_vars(), &optimizer.first, &optimizer.second)?,
+            before
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn review_nonfinite_gradient_is_rejected_without_mutation() -> Result<()> {
+        let model = Transformer::new(tiny_config(), 72, &Device::Cpu)?;
+        let mut optimizer = ResumableAdamW::new(&model, AdamWConfig::default())?;
+        let before = tensor_hash(&model.named_vars(), &optimizer.first, &optimizer.second)?;
+        let vars = model.named_vars();
+        let mut terms = vars.values().map(|v| v.sum_all());
+        let mut objective = terms.next().unwrap()?;
+        for term in terms {
+            objective = (objective + term?)?;
+        }
+        let grads = (objective * f64::INFINITY)?.backward()?;
+        assert!(optimizer.apply(&model, &grads).is_err());
+        assert_eq!(optimizer.step_count(), 0);
+        assert_eq!(
+            tensor_hash(&model.named_vars(), &optimizer.first, &optimizer.second)?,
+            before
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn review_checkpoint_schedule_mismatch_preserves_destination() -> Result<()> {
+        let source = Transformer::new(tiny_config(), 73, &Device::Cpu)?;
+        let optimizer = ResumableAdamW::new(&source, AdamWConfig::default())?;
+        let path = std::env::temp_dir().join(format!(
+            "packtok-review-schedule-{}.safetensors",
+            std::process::id()
+        ));
+        let _ = fs::remove_file(&path);
+        let id = fixture_identity();
+        optimizer.save_checkpoint(&source, &id, 33, 0, 0, &path)?;
+        let mut destination = Transformer::new(tiny_config(), 74, &Device::Cpu)?;
+        let before = crate::runner::init_hash(&destination)?;
+        for expected in [
+            AdamWConfig {
+                learning_rate: 0.001,
+                ..optimizer.config.clone()
+            },
+            AdamWConfig {
+                total_steps: 30_000,
+                ..optimizer.config.clone()
+            },
+            AdamWConfig {
+                warmup_steps: 200,
+                ..optimizer.config.clone()
+            },
+            AdamWConfig {
+                decay: "constant".into(),
+                ..optimizer.config.clone()
+            },
+        ] {
+            assert!(
+                ResumableAdamW::load_checkpoint(&mut destination, &id, &expected, &path).is_err()
+            );
+            assert_eq!(crate::runner::init_hash(&destination)?, before);
+        }
+        fs::remove_file(path)?;
+        Ok(())
+    }
+
+    #[test]
+    fn review_finite_gradient_overflow_is_atomic_and_zero_gradient_is_valid() -> Result<()> {
+        let model = Transformer::new(tiny_config(), 75, &Device::Cpu)?;
+        let mut optimizer = ResumableAdamW::new(&model, AdamWConfig::default())?;
+        let before = tensor_hash(&model.named_vars(), &optimizer.first, &optimizer.second)?;
+        let vars = model.named_vars();
+        let mut terms = vars.values().map(|v| v.sum_all());
+        let mut objective = terms.next().unwrap()?;
+        for term in terms {
+            objective = (objective + term?)?;
+        }
+        let mut grads = objective.backward()?;
+        for var in vars.values() {
+            grads.insert(var, (var.ones_like()? * 1e30)?);
+        }
+        assert!(optimizer.apply(&model, &grads).is_err());
+        assert_eq!(
+            tensor_hash(&model.named_vars(), &optimizer.first, &optimizer.second)?,
+            before
+        );
+        for var in vars.values() {
+            grads.insert(var, var.zeros_like()?);
+        }
+        optimizer.apply(&model, &grads)?;
+        assert_eq!(optimizer.step_count(), 1);
+        Ok(())
+    }
     fn updates(
         model: &Transformer,
         optimizer: &mut ResumableAdamW,
@@ -472,7 +629,7 @@ mod tests {
 
         let mut resumed = Transformer::new(tiny_config(), 999, &Device::Cpu)?;
         let (mut resumed_opt, step, sample_cursor, rng_state) =
-            ResumableAdamW::load_checkpoint(&mut resumed, &id, &path)?;
+            ResumableAdamW::load_checkpoint(&mut resumed, &id, &first_opt.config, &path)?;
         assert_eq!((step, sample_cursor), (2, 2));
         let mut resumed_rng = Rng::from_state(rng_state)?;
         updates(&resumed, &mut resumed_opt, &mut resumed_rng, 2, &mut cursor)?;
@@ -506,7 +663,9 @@ mod tests {
         let original = crate::runner::init_hash(&other)?;
         let mut bad = id.clone();
         bad.seed += 1;
-        assert!(ResumableAdamW::load_checkpoint(&mut other, &bad, &path).is_err());
+        assert!(
+            ResumableAdamW::load_checkpoint(&mut other, &bad, &optimizer.config, &path).is_err()
+        );
         assert_eq!(crate::runner::init_hash(&other)?, original);
         assert_ne!(before, crate::runner::init_hash(&other)?);
         let _ = fs::remove_file(path);

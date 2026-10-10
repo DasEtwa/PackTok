@@ -1,0 +1,7 @@
+ M5_GPU_BENCHMARK.md                                |   5 +
+ .../recovery-20261008/PREFLIGHT_READY.json         |  14 +-
+ experiments/m5-gpu/src/data.rs                     |  25 +++
+ experiments/m5-gpu/src/domains.rs                  |  34 +++++
+ experiments/m5-gpu/src/extended.rs                 |  68 ++++++++-
+ experiments/m5-gpu/src/resume.rs                   | 167 ++++++++++++++++++++-
+ 6 files changed, 299 insertions(+), 14 deletions(-)

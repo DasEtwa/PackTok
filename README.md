@@ -8,7 +8,11 @@ round-trips and no implicit normalization.
 
 The project is a research implementation. Current results support narrow,
 corpus-dependent observations; they do not establish general superiority over
-flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence. M5 CUDA overfit diagnostics passed on an NVIDIA L4. The first real A/C Transformer pilot reached all 2,000 A updates and validation, then stopped at a reproducible FP64 domain-aggregation check before C started. The session was released; the single allocation is consumed, and there is no paired comparison. See the [pilot attempt report](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/PILOT_ATTEMPT.md).
+flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible evidence. M5's
+first paired Transformer pilot completed 2,000 updates for A and C on one seed;
+Flat BPE had validation 2.572965 BPB and PackTok 2.597469 BPB. This exploratory
+result does not establish statistical significance. See the [M5 pilot record](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md)
+and [M6 research design](experiments/m6/EXPERIMENT_DESIGN.md).
 
 ## Research motivation
 
@@ -55,7 +59,7 @@ owns tokenizer/model training, runtime and benchmark computation. See
 | [M2](docs/milestones/M2.md) | Independent lexical-v1 pack vocabularies with shared bytes; compression and runtime trade-offs against M1. |
 | [M3](docs/milestones/M3.md) | Tiny CPU RNN comparison changes both tokenizer and output head; a synthetic-corpus signal motivated ablation. |
 | [M4](docs/milestones/M4.md) | A/B/C/D ablation on a fixed sourced mixture. The tokenizer contributed a small tested quality difference. Generic output factorization did not improve same-schedule quality; reduced analytical output work allowed more updates under matched MACs. A strong favorable interaction was not established. |
-| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. CPU preparation and L4 CUDA correctness/overfit diagnostics pass; the A/C quality pilot exited before training, so comparison metrics, pilot throughput and VRAM remain unavailable. |
+| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. The exploratory paired A/C pilot completed 2,000 updates each; Flat BPE led by 0.024504 BPB on validation for one seed. See the complete report and limitations. |
 
 [Research results](docs/research/results.md) explains each hypothesis, experiment,
 measurement, interpretation and limitation, with links to original reports and
@@ -128,15 +132,14 @@ tracks milestones. [IDEA.md](IDEA.md), [STRUCTURE.md](STRUCTURE.md) and
 
 ## Roadmap
 
-A successful, separately authorized M5 correctness preflight and measured budget
-are prerequisites for a larger Transformer comparison. Exact training resume
-also needs optimizer, RNG and cursor state; current safetensors store weights only.
+M6 completed a five-paired-seed, 2,000-update A/C Transformer replication. The report at
+[experiments/m6/MULTI_SEED_RESULTS.md](experiments/m6/MULTI_SEED_RESULTS.md) records four new paired seeds, reuses the already observed M5 seed 20261008, and preserves the launch timeout and recovery provenance. Flat BPE had lower validation BPB in all five pairs; the preliminary confidence interval includes zero. This is not independent confirmation and the previously exposed TEST split is exploratory. Exact training resume still requires optimizer, RNG and cursor state; current safetensors store weights only.
 
 Future hypotheses include improved pack routing, learned pack allocations,
 adaptive vocabulary, larger model comparisons, and specialized language or
 reasoning packs. These ideas are not implemented or proven by appearing here.
 Any new experiment must keep byte fallback, controlled comparisons and preserved
-negative results. There is no automatic GPU retry or M6 launch.
+negative results. Future GPU launches still require their own explicit authorization; the completed M6 replication does not create standing allocation authority.
 
 ## License and contributions
 

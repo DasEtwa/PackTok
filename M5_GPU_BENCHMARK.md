@@ -1,5 +1,10 @@
 # M5 — Provenance, CPU preparation and GPU measurements
 
+Current implementation audit (2026-10-10): [M5 bug review](M5_BUG_REVIEW_20261010.md)
+records five new optimizer/checkpoint/recovery findings, corrections and CPU
+regressions. No new GPU allocation or quality run was made; historical results
+and failure records below remain preserved.
+
 Status (2026-10-09): the exploratory paired A/C pilot has completed 2,000
 updates per variant on the frozen shared Transformer. C−A validation is
 +0.024504380 bits per raw byte, favoring Flat BPE slightly in this one-seed run.

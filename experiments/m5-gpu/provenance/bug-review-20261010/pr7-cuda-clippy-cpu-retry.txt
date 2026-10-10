@@ -1,0 +1,57 @@
+   Compiling zerocopy-derive v0.8.61
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling yoke-derive v0.7.5
+   Compiling tracing-attributes v0.1.31
+    Checking generic-array v0.14.7
+   Compiling cudarc v0.16.6
+   Compiling num_enum_derive v0.7.6
+   Compiling zip v1.1.4
+    Checking equivalent v1.0.2
+    Checking indexmap v2.14.2
+   Compiling candle-kernels v0.9.2
+    Checking crc32fast v1.5.2
+    Checking num_enum v0.7.6
+    Checking yoke v0.7.5
+    Checking packtok-packs v0.1.0 (/home/dasetwa/projects/PackTok-m6-research/crates/packtok-packs)
+   Compiling displaydoc v0.2.7
+    Checking packtok-format v0.1.0 (/home/dasetwa/projects/PackTok-m6-research/crates/packtok-format)
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking thiserror v1.0.69
+    Checking byteorder v1.5.0
+    Checking tracing v0.1.44
+    Checking digest v0.10.7
+    Checking cpufeatures v0.2.17
+    Checking packtok-train v0.1.0 (/home/dasetwa/projects/PackTok-m6-research/crates/packtok-train)
+    Checking sha2 v0.10.9
+    Checking packtok-tokenizer v0.1.0 (/home/dasetwa/projects/PackTok-m6-research/crates/packtok-tokenizer)
+    Checking packtok-model v0.1.0 (/home/dasetwa/projects/PackTok-m6-research/crates/packtok-model)
+    Checking zerocopy v0.8.61
+    Checking serde v1.0.228
+    Checking safetensors v0.4.5
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking rand v0.9.5
+    Checking rand_distr v0.5.1
+    Checking half v2.7.1
+    Checking gemm-common v0.18.2
+    Checking gemm-common v0.17.1
+    Checking gemm-f32 v0.18.2
+    Checking gemm-c32 v0.18.2
+    Checking gemm-c64 v0.18.2
+    Checking gemm-f64 v0.18.2
+    Checking gemm-f32 v0.17.1
+    Checking gemm-f64 v0.17.1
+    Checking gemm-c32 v0.17.1
+    Checking gemm-c64 v0.17.1
+    Checking gemm-f16 v0.18.2
+    Checking gemm-f16 v0.17.1
+    Checking gemm v0.18.2
+    Checking ug v0.4.0
+    Checking gemm v0.17.1
+    Checking ug-cuda v0.4.0
+    Checking candle-core v0.9.1
+    Checking candle-nn v0.9.1
+    Checking packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok-m6-research/experiments/m5-gpu)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 54s

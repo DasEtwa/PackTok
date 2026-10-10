@@ -1,0 +1,8 @@
+test_failure (__main__.Rehearsal.test_failure) ... ok
+test_missing_approval (__main__.Rehearsal.test_missing_approval) ... ok
+test_success (__main__.Rehearsal.test_success) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.356s
+
+OK

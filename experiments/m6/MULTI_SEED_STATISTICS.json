@@ -1,0 +1,69 @@
+{
+  "all_pairs": {
+    "A_better_count": 5,
+    "C_better_count": 0,
+    "ci95_paired_t": [
+      -0.003843451742866051,
+      0.10440632331944055
+    ],
+    "mean_delta_bpb": 0.050281435788287254,
+    "median_delta_bpb": 0.04028228345449314,
+    "n": 5,
+    "sample_sd_bpb": 0.04359060878000089,
+    "tie_count": 0
+  },
+  "delta_definition": "C minus A; negative favors C",
+  "interval_method": "two-sided Student paired-t interval on seed-level deltas; descriptive at n=5",
+  "metric": "validation bits per raw byte",
+  "new_seed_sensitivity": {
+    "A_better_count": 4,
+    "C_better_count": 0,
+    "ci95_paired_t": [
+      -0.018864337372429166,
+      0.13231573707321048
+    ],
+    "mean_delta_bpb": 0.056725699850390665,
+    "median_delta_bpb": 0.05019184531545684,
+    "n": 4,
+    "sample_sd_bpb": 0.04750436439318677,
+    "tie_count": 0
+  },
+  "pairs": [
+    {
+      "A_validation_bpb": 2.5729648496285376,
+      "C_validation_bpb": 2.597469229168411,
+      "delta_C_minus_A_bpb": 0.02450437953987361,
+      "relative_delta_percent_of_A": 0.9523791023966511,
+      "seed": 20261008
+    },
+    {
+      "A_validation_bpb": 2.5650197168799758,
+      "C_validation_bpb": 2.5716982229526595,
+      "delta_C_minus_A_bpb": 0.006678506072683721,
+      "relative_delta_percent_of_A": 0.26036860569661757,
+      "seed": 20261009
+    },
+    {
+      "A_validation_bpb": 2.518315761461119,
+      "C_validation_bpb": 2.638156364159084,
+      "delta_C_minus_A_bpb": 0.11984060269796526,
+      "relative_delta_percent_of_A": 4.7587599828400435,
+      "seed": 20261010
+    },
+    {
+      "A_validation_bpb": 2.5258800356976443,
+      "C_validation_bpb": 2.585981442874065,
+      "delta_C_minus_A_bpb": 0.06010140717642054,
+      "relative_delta_percent_of_A": 2.379424451162449,
+      "seed": 20261011
+    },
+    {
+      "A_validation_bpb": 2.5536640335957093,
+      "C_validation_bpb": 2.5939463170502024,
+      "delta_C_minus_A_bpb": 0.04028228345449314,
+      "relative_delta_percent_of_A": 1.5774308180145888,
+      "seed": 20261012
+    }
+  ],
+  "seed_20261008_status": "historical M5 result already observed; not blinded"
+}

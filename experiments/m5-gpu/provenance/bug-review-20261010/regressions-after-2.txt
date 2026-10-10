@@ -1,0 +1,14 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.63s
+     Running unittests src/lib.rs (target/debug/deps/packtok_m5-39e35dcd0f4f16b7)
+
+running 6 tests
+test extended::tests::review_invalid_metrics_reconciliation_preserves_original ... ok
+test resume::tests::review_nonfinite_gradient_is_rejected_without_mutation ... ok
+test resume::tests::review_missing_late_gradient_does_not_partially_update ... ok
+test resume::tests::review_finite_gradient_overflow_is_atomic_and_zero_gradient_is_valid ... ok
+test extended::tests::review_report_retry_ignores_elapsed_time_only ... ok
+test resume::tests::review_checkpoint_schedule_mismatch_preserves_destination ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 35 filtered out; finished in 0.13s
+

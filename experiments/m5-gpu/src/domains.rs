@@ -310,6 +310,40 @@ mod tests {
     use std::path::PathBuf;
 
     #[test]
+    fn review_evaluation_window_and_batch_boundaries_preserve_bytes_and_scores() -> Result<()> {
+        let model = Transformer::new(crate::runner::tiny_config(), 82, &Device::Cpu)?;
+        for len in [2, 8, 9, 16, 17, 24, 25] {
+            let seq = Sequence {
+                tokens: (0..len).map(|i| (i % 31) as u32).collect(),
+                bytes: (0..len).map(|i| (i % 4 + 1) as u32).collect(),
+            };
+            let total = seq.target_bytes(0, len)?;
+            let spans = [
+                Span {
+                    start: 0,
+                    end: 3,
+                    domain: "english-literature".into(),
+                },
+                Span {
+                    start: 3,
+                    end: total,
+                    domain: "german-prose".into(),
+                },
+            ];
+            let stratified = evaluate(&model, &seq, &spans, "test", &Device::Cpu)?;
+            for batch_size in [1, 3, 8] {
+                let global = crate::runner::evaluate(&model, &seq, batch_size, &Device::Cpu)?;
+                assert_eq!(global.targets, (len - 1) as u64);
+                assert_eq!(global.raw_target_bytes, total - u64::from(seq.bytes[0]));
+                assert_eq!(global.targets, stratified.global_tokens);
+                assert_eq!(global.raw_target_bytes, stratified.global_target_bytes);
+                assert!((global.bits_per_byte - stratified.global_bits_per_byte).abs() < 1e-5);
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
     fn tokens_crossing_units_keep_domain_and_crossing_categories_are_mixed() -> Result<()> {
         let spans = vec![
             Span {
