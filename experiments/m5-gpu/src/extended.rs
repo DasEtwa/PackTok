@@ -1040,6 +1040,15 @@ mod tests {
         );
         assert_eq!(m6.schedule["warmup_updates"].as_u64(), Some(0));
         assert_eq!(m6.schedule["decay"].as_str(), Some("constant"));
+        let pilot_json: Value = serde_json::from_slice(&fs::read("configs/pilot-2k-v1.json")?)?;
+        let mut m6_json: Value =
+            serde_json::from_slice(&fs::read("configs/m6-five-seed-2k-v1.json")?)?;
+        m6_json["revision"] = pilot_json["revision"].clone();
+        m6_json["paired_seeds"] = pilot_json["paired_seeds"].clone();
+        assert_eq!(
+            m6_json, pilot_json,
+            "M6 may change only revision and seed list"
+        );
         let long = ExtendedPlan::load(Path::new("configs/extended-20k-v1.json"), data)?;
         assert_eq!(long.updates_per_model, 20000);
         assert_eq!(long.paired_seeds.len(), 5);
