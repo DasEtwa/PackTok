@@ -99,3 +99,8 @@ python3 experiments/m6/scripts/analyze_m5_tokenizer_efficiency.py \
 ```
 
 This is local CPU analysis only. The JSON records the pilot/config/corpus/input identities; [SHA256SUMS.txt](analysis/SHA256SUMS.txt) binds the exact analysis script and JSON output.
+
+
+## Five-seed replication follow-up
+
+The five-pair T-regime replication found lower validation BPB for Flat BPE in all five seeds. Mean paired C-minus-A delta was +0.050281436 BPB (sample SD 0.043590609; paired-t 95% CI -0.003843452 to +0.104406323, n=5). The four new seeds alone averaged +0.056725700 BPB (95% CI -0.018864337 to +0.132315737, n=4). Both intervals include zero, so this small study is descriptive and does not establish statistical significance. PackTok represented 8.4185% fewer raw training bytes at equal target positions. Full data, domain summaries, TEST limitations and provenance are in [MULTI_SEED_RESULTS.md](MULTI_SEED_RESULTS.md).

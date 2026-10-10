@@ -132,15 +132,14 @@ tracks milestones. [IDEA.md](IDEA.md), [STRUCTURE.md](STRUCTURE.md) and
 
 ## Roadmap
 
-M6 is analyzing tokenizer efficiency and designing controlled follow-up
-Transformer experiments; this phase does not authorize GPU training. Exact training resume
-also needs optimizer, RNG and cursor state; current safetensors store weights only.
+M6 completed a five-paired-seed, 2,000-update A/C Transformer replication. The report at
+[experiments/m6/MULTI_SEED_RESULTS.md](experiments/m6/MULTI_SEED_RESULTS.md) records four new paired seeds, reuses the already observed M5 seed 20261008, and preserves the launch timeout and recovery provenance. Flat BPE had lower validation BPB in all five pairs; the preliminary confidence interval includes zero. This is not independent confirmation and the previously exposed TEST split is exploratory. Exact training resume still requires optimizer, RNG and cursor state; current safetensors store weights only.
 
 Future hypotheses include improved pack routing, learned pack allocations,
 adaptive vocabulary, larger model comparisons, and specialized language or
 reasoning packs. These ideas are not implemented or proven by appearing here.
 Any new experiment must keep byte fallback, controlled comparisons and preserved
-negative results. There is no automatic GPU retry or M6 launch.
+negative results. Future GPU launches still require their own explicit authorization; the completed M6 replication does not create standing allocation authority.
 
 ## License and contributions
 

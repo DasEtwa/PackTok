@@ -1,0 +1,7 @@
+# Sizes in bytes. SHA-256 values verified against local archives and complete Drive readbacks.
+# Drive destination: packtok-drive-own:PackTok/M6/multiseed-20261010/
+# Drive names: allocation-1-partial-A09.tar.gz and allocation-2-seven-runs.tar.gz
+c220c11107f5a684d767b9d8f33346ff182c1fbb46d020ea3e4ace5a02431c35  experiments/m5-gpu/provenance/m6-five-seed-run-20261010T020032Z/allocation-1/remote-results.tar.gz
+# size: 161410892
+d8e582b852569ebca00c939f95cacd3d64a9a40172df3d86ed9e779ec75e81c8  experiments/m5-gpu/provenance/m6-five-seed-cont-20261010T022723Z/allocation-2/remote-results.tar.gz
+# size: 1130545701

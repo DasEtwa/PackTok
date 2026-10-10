@@ -36,9 +36,14 @@ def summarize(pairs):
             "all_pairs":stats(rows),"new_seed_sensitivity":stats([r for r in rows if r["seed"] != 20261008]),
             "seed_20261008_status":"historical M5 result already observed; not blinded",
             "pairs":rows,"interval_method":"two-sided Student paired-t interval on seed-level deltas; descriptive at n=5"}
+def extract_pairs(payload):
+    return payload["pairs"] if isinstance(payload,dict) else payload
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("input",type=Path,help="JSON object with pairs:[{seed,A_validation_bpb,C_validation_bpb},...]")
     args=ap.parse_args()
-    print(json.dumps(summarize(json.loads(args.input.read_text())),indent=2,sort_keys=True))
+    payload=json.loads(args.input.read_text())
+    pairs=extract_pairs(payload)
+    print(json.dumps(summarize(pairs),indent=2,sort_keys=True))
 if __name__=="__main__": main()

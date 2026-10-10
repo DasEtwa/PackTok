@@ -1,4 +1,63 @@
 {
+  "actual_execution": {
+    "active_assignments_after_release": 0,
+    "aggregate_lifetime_seconds": 4105,
+    "all_sessions_released": true,
+    "allocation_attempts_authorized": 3,
+    "allocation_attempts_used": 2,
+    "allocation_identities": [
+      {
+        "binary_sha256": "97b25305b455c7b19861b294f8bc5b9a1df2b4ea821a3af3d2a9ec2b4b1859da",
+        "binary_source_commit": "0af19cb6f009e8959ce72644acb8cc200c1aac31",
+        "bundle_sha256": "bf0008208869587ccebdee1117fdd32d6958801a7ccf9a97706b1fbdf04ec67d",
+        "package_id": "m6-five-seed-20261010T020032Z",
+        "source_commit": "0a468d7e1995eae0ddd95db79ebcdb0ef37ed024"
+      },
+      {
+        "binary_sha256": "97b25305b455c7b19861b294f8bc5b9a1df2b4ea821a3af3d2a9ec2b4b1859da",
+        "binary_source_commit": "0af19cb6f009e8959ce72644acb8cc200c1aac31",
+        "bundle_sha256": "b4f110d474a320f02d6f339b337a1235d8b05467b25fa936c2661f03c21ebc0e",
+        "package_id": "m6-five-seed-cont-20261010T022723Z",
+        "remote_script_sha256": "17b0b2453b36a58107856702937e50704e671c4f010ff8fad8269bb67a15e58a",
+        "source_commit": "802aba1da2df6ce46bab32632ebf48e9579f92da"
+      }
+    ],
+    "allocation_lifetimes_seconds": [
+      718,
+      3387
+    ],
+    "archive_hashes": {
+      "allocation_1_partial_A09_sha256": "c220c11107f5a684d767b9d8f33346ff182c1fbb46d020ea3e4ace5a02431c35",
+      "allocation_2_seven_runs_sha256": "d8e582b852569ebca00c939f95cacd3d64a9a40172df3d86ed9e779ec75e81c8"
+    },
+    "compute_unit_snapshots": {
+      "after_allocation_1": 166.24,
+      "after_allocation_2": 164.92,
+      "before": 166.5,
+      "delayed_billing_note": "later idle balance includes delayed accounting",
+      "later_idle_balance": 164.79
+    },
+    "drive_readback": {
+      "allocation_1_partial_A09": {
+        "file": "allocation-1-partial-A09.tar.gz",
+        "sha256": "c220c11107f5a684d767b9d8f33346ff182c1fbb46d020ea3e4ace5a02431c35",
+        "size_bytes": 161410892
+      },
+      "allocation_2_seven_runs": {
+        "file": "allocation-2-seven-runs.tar.gz",
+        "sha256": "d8e582b852569ebca00c939f95cacd3d64a9a40172df3d86ed9e779ec75e81c8",
+        "size_bytes": 1130545701
+      },
+      "checksum_manifest_readback_matches": true,
+      "checksum_manifest_sha256": "e78ff0a304ec57a7ab2b908c8d12e50ed355e70a7f6f4d8229756d3a99833794",
+      "checksum_record": "experiments/m6/MULTI_SEED_ARCHIVE_SHA256SUMS.txt",
+      "destination": "packtok-drive-own:PackTok/M6/multiseed-20261010/",
+      "full_byte_readback": true,
+      "readback_sizes_match_local": true
+    },
+    "report_file": "experiments/m6/MULTI_SEED_RESULTS.md",
+    "result_file": "experiments/m6/MULTI_SEED_RESULTS.json"
+  },
   "analysis": {
     "confidence_interval": "two-sided paired Student t, sample SD, n-1 degrees of freedom; separately summarize 4 new pairs",
     "directional_consistency": "count negative, positive and zero seed deltas",
@@ -57,19 +116,22 @@
     "libcurand.so.10": "dab8074b610b82a863a42eceda788e9b08364b545bab948509306b48c46018cf"
   },
   "future_allocation_plan": {
-    "authorization_required_for_each": true,
-    "controlled_shutdown_from_minute": 55,
-    "estimated_CU_all_four_pairs_proxy": 2.6,
-    "estimated_all_four_pairs_training_only_minutes": 27.28,
-    "estimated_training_only_minutes_per_session": 13.64,
-    "maximum_minutes": 60,
-    "new_runs_per_session": 4,
-    "operational_session_range_minutes": [
-      30,
-      45
+    "active_assignments": 0,
+    "allocation_attempts_authorized": 3,
+    "allocation_attempts_used": 2,
+    "allocation_lifetimes_seconds": [
+      718,
+      3387
     ],
-    "pairs_per_session": 2,
-    "sessions": 2
+    "completed_new_pairs": [
+      20261009,
+      20261010,
+      20261011,
+      20261012
+    ],
+    "remaining_new_pairs": [],
+    "sessions_released": true,
+    "status": "executed"
   },
   "historical_m5_pair": {
     "A_checkpoint_sha256": "da3b08bfda2bc991992a4487f4659c7b406b2af5f2abe62789bef8d80e50655a",
@@ -104,11 +166,11 @@
   "launch": {
     "bridge": "experiments/m5-gpu/scripts/remote-bridge.py",
     "bridge_sha256": "ff390834524154b418903dba1c30f96ce987d241a2d80ab047c8d27242fdceaf",
-    "cpu_rehearsal": "experiments/m5-gpu/scripts/test-remote-m6-multiseed.py",
-    "remote": "experiments/m5-gpu/scripts/remote-m6-multiseed.sh",
-    "remote_sha256": "17b0b2453b36a58107856702937e50704e671c4f010ff8fad8269bb67a15e58a",
     "continuation_start_environment": "PACKTOK_M6_START_AT; validated run-list cursor such as 20261009:C",
-    "per_run_timeout_seconds": 600
+    "cpu_rehearsal": "experiments/m5-gpu/scripts/test-remote-m6-multiseed.py",
+    "per_run_timeout_seconds": 600,
+    "remote": "experiments/m5-gpu/scripts/remote-m6-multiseed.sh",
+    "remote_sha256": "17b0b2453b36a58107856702937e50704e671c4f010ff8fad8269bb67a15e58a"
   },
   "outputs": {
     "execution_order": "results/execution-order.tsv; ascending seed, A then C",
@@ -128,7 +190,7 @@
       2000
     ]
   },
-  "protocol_status": "CPU-ready; GPU not authorized by this task; no allocation made",
+  "protocol_status": "complete: four new paired seeds trained in two sequential authorized L4 allocations; no active allocation remains",
   "schema": "packtok-m6-paired-seed-manifest-v1",
   "seed_policy": {
     "historical_reuse_note": "M5 used same T/2k architecture, update/target budget, AdamW, constant LR, FP32, corpus/splits, tokenizer hashes, validation steps and BPB evaluator. Its result is already observed; report five-pair estimate and four-new-seed sensitivity.",
@@ -159,7 +221,7 @@
           "seed_xor": "0xa341316c9e3779b9"
         },
         "seed": 20261009,
-        "status": "new pair; not run"
+        "status": "completed new pair; both variants verified at 2,000 updates"
       },
       {
         "A_C_equal": true,
@@ -171,7 +233,7 @@
           "seed_xor": "0xa341316c9e3779b9"
         },
         "seed": 20261010,
-        "status": "new pair; not run"
+        "status": "completed new pair; both variants verified at 2,000 updates"
       },
       {
         "A_C_equal": true,
@@ -183,7 +245,7 @@
           "seed_xor": "0xa341316c9e3779b9"
         },
         "seed": 20261011,
-        "status": "new pair; not run"
+        "status": "completed new pair; both variants verified at 2,000 updates"
       },
       {
         "A_C_equal": true,
@@ -195,7 +257,7 @@
           "seed_xor": "0xa341316c9e3779b9"
         },
         "seed": 20261012,
-        "status": "new pair; not run"
+        "status": "completed new pair; both variants verified at 2,000 updates"
       }
     ],
     "new_seed_pairs": [

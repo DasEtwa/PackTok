@@ -12,6 +12,10 @@ class TestSummary(unittest.TestCase):
   self.assertEqual(r["new_seed_sensitivity"]["n"],4)
   self.assertAlmostEqual(r["all_pairs"]["ci95_paired_t"][0],-.01963243087)
   self.assertAlmostEqual(r["all_pairs"]["ci95_paired_t"][1],.01963243087)
+ def test_cli_payload_pairs_wrapper(self):
+  rows=[{"seed":s,"A_validation_bpb":2.0,"C_validation_bpb":2.1} for s in analysis.SEEDS]
+  self.assertEqual(analysis.extract_pairs({"pairs":rows}),rows)
+  self.assertEqual(analysis.extract_pairs(rows),rows)
  def test_rejects_missing_seed_and_nonfinite_metrics(self):
   with self.assertRaises(ValueError): analysis.summarize([])
   rows=[{"seed":s,"A_validation_bpb":2,"C_validation_bpb":2} for s in analysis.SEEDS]

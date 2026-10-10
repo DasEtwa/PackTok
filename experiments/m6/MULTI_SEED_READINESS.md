@@ -1,6 +1,6 @@
 # M6 Slice 2 — multi-seed readiness
 
-Status: CPU-ready; no GPU allocation or neural training was performed. Future GPU work requires explicit approval.
+Status: Complete. Two explicitly authorized sequential NVIDIA L4 allocations completed the four new paired seeds. No allocation remains active.
 
 ## Frozen five-pair study
 
@@ -20,7 +20,7 @@ The local end-to-end rehearsal invokes the real bridge and archived launcher bou
 
 - Rust: 35 tests passed, 0 failed. This includes config freeze equality and the existing M5 regression suite. Log: experiments/m5-gpu/provenance/m6-multiseed-preparation-20261010/rust-tests.log.
 - Remote launch: 3 end-to-end rehearsal cases passed. Log: experiments/m5-gpu/provenance/m6-multiseed-preparation-20261010/remote-rehearsal.log.
-- Statistical summary helper: 2 tests passed. Log: experiments/m5-gpu/provenance/m6-multiseed-preparation-20261010/statistics-tests.log.
+- Statistical summary helper: 3 tests passed, including direct and JSON-object-wrapped pair lists. Log: experiments/m5-gpu/provenance/m6-multiseed-preparation-20261010/statistics-tests.log.
 - cargo fmt --all --check, bash -n on the launcher, Python py_compile, and git diff --check passed.
 - CUDA release executable built locally, not executed on a GPU: target-cuda/release/packtok-m5, SHA-256 97b25305b455c7b19861b294f8bc5b9a1df2b4ea821a3af3d2a9ec2b4b1859da. Source code commit: 0af19cb6f009e8959ce72644acb8cc200c1aac31. CUDA toolkit: 12.4.131; compute capability: 8.9.
 - ldd resolved all binary dependencies with the CUDA 12.4 runtime path; libcuda is supplied by the eventual host driver. Runtime dependency output is preserved beside the build log.
@@ -34,3 +34,10 @@ Observed M5 training-only time was 212.249 s for A plus 196.922 s for C per pair
 ## GitHub
 
 Changes are committed on m6-research and update the existing Draft PR #7 against main. PR remains unmerged.
+
+
+## GPU execution outcome
+
+The two allocations completed all eight new runs. Allocation 1 lasted 718 seconds (166.50 to 166.24 CU) and produced A/20261009; its 300-second variant timeout occurred after the valid step-2000 checkpoint and global validation, before final-only aggregation. That valid A result was reused, not retrained. Allocation 2 lasted 3,387 seconds (166.24 to 164.92 CU) and completed C/20261009 and A/C for 20261010 through 20261012. A delayed idle reading was 164.79 CU. Both owned sessions were confirmed released; active assignments were zero. Two of three authorized allocation attempts were used.
+
+The detailed measurements, identities, per-seed curves, domain results and limitations are in [MULTI_SEED_RESULTS.md](MULTI_SEED_RESULTS.md), with machine-readable records in [MULTI_SEED_RESULTS.json](MULTI_SEED_RESULTS.json). The preserved archives and their complete Drive readback hashes are recorded there and in MULTI_SEED_MANIFEST.json.
