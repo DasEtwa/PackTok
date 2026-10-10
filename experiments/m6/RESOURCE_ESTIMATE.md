@@ -24,20 +24,10 @@ Per-step timings came from one run per variant and one L4. Throughput can change
 ## Recommended staged plan
 
 1. CPU-only audit the source-group splits, exact duplicates/near duplicates, byte normalization and tokenizer identities. Resolve the stale tokenizer hashes in the old extended proposal before using it.
-2. Run five paired 2k T replications (new seeds 20261009–20261013) to learn paired-seed variability at a modest measured training-only cost, after separate GPU budget approval.
+2. Run four new paired 2k T replications (seeds 20261009–20261012), combining them with the protocol-identical but already observed 20261008 M5 pair. Report four-new-seed sensitivity. Require two separately authorized L4 sessions as specified in Slice 2 below.
 3. Run one B sampler dry-run on CPU; then a paired byte-exposure experiment at a frozen budget, explicitly reporting extra positions/updates/time.
 4. Only if the pre-registered 2k decision rule supports further training, run a five-seed 10k stage. Review learning curves and data adequacy before authorizing 20k; consider 30k only after 20k demonstrates continued validation improvement and avoids overfit indicators.
 5. Keep GPU allocations within approved lifetimes; the 20k and 30k projections require staged sessions. This M6 research-design task has used no GPU and authorizes none.
-
-
-## Slice 2 — remaining paired-seed cost
-
-Seed 20261008 is already complete, leaving **four new pairs / eight 2,000-update training runs** (seeds 20261009–20261012). The M5 observed training-only timings project 212.249 s for A and 196.922 s for C per pair: 409.171 s (6.82 min) per pair and 1,636.684 s (27.28 min) for all four pairs. This is training-only; it excludes validation, checkpoint I/O, package/input transfer, startup, final-only evaluation, archive work and shutdown.
-
-A single 60-minute allocation for all four pairs is not supported by the historical evidence with enough margin. Plan **two separately authorized L4 sessions**, each completing two paired seeds (four model runs, about 13.64 minutes projected training-only). Allow roughly 30–45 minutes per session as an operational planning range, with substantial uncertainty; begin controlled shutdown at minute 55 in every future authorized session. If measured startup, evaluation, or run progress makes that range unsafe, preserve complete pairs and stop. No GPU work is authorized by this preparation.
-
-For a rough CU planning proxy only, M5 consumed 0.65 CU over two allocations for one pair; linear scaling to four additional pairs is about 2.6 CU. This includes historical overhead and is not a billing guarantee. A two-session plan may reduce repeated startup cost, but no defensible lower bound is available. Read actual CU balance before/after each future session and report it separately from synchronized training time. No allocation has been made for M6 Slice 2.
-
 
 
 ## Slice 2 — remaining paired-seed cost

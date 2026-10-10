@@ -9,7 +9,7 @@ def write(p,s,x=False):
 def prep(root):
  pkg=root/"packtok-m5"; pkg.mkdir(parents=True); shutil.copy2(REMOTE,pkg/"remote.sh")
  write(pkg/"frozen-source.json",'{"test":"rehearsal"}\\n')
- for f in ["configs/m6-five-seed-2k-v1.json","configs/primary.json","provenance/corpus-v2-manifest.json",
+ for f in ["configs/m6-five-seed-2k-v1.json","configs/primary.json","provenance/corpus-v2-manifest.json","provenance/m6-five-seed-initialization.tsv",
  *[f"data/prepared-v2/{v}-{s}.seq" for v in "AC" for s in ("train","validation","test")],
  "artifacts/corpus-v2/A-0.packtok","artifacts/corpus-v2/C-0.packtok","artifacts/corpus-v2/A.mapping","artifacts/corpus-v2/C.mapping"]:write(pkg/f,"fixture\\n")
  write(pkg/"runtime/ld-linux-x86-64.so.2",'''#!/usr/bin/env bash
@@ -27,7 +27,7 @@ assert os.environ.get("PACKTOK_M5_GPU_APPROVAL")==approval
 pathlib.Path("results/invocations.txt").open("a").write(" ".join(a)+"\\n")
 if os.environ.get("MOCK_FAIL")==f"{seed}:{var}":print("mock error",file=sys.stderr);raise SystemExit(9)
 p=pathlib.Path(out);p.mkdir(parents=True,exist_ok=True)
-rows=[{"stage":"validation","step":s} for s in (1,500,1000,1500,2000)]+[{"stage":"final","updates":2000,"targets":4096000}]
+rows=[{"stage":"initialization","initialization_sha256":"fixture"}]+[{"stage":"validation","step":s} for s in (1,500,1000,1500,2000)]+[{"stage":"final","updates":2000,"targets":4096000}]
 (p/"metrics.jsonl").write_text("".join(json.dumps(r,separators=(",",":"))+"\\n" for r in rows));(p/"latest.resume.safetensors").write_bytes(b"x")
 ''',True)
  bind=root/"bin";write(bind/"nvidia-smi",'''#!/usr/bin/env bash
@@ -52,7 +52,9 @@ class Rehearsal(unittest.TestCase):
    r=Path(t);b=prep(r);self.assertEqual(execute(r,b,"APPROVAL"),0);f=files(r)
    self.assertEqual(f["exit-code.txt"],b"0\n");self.assertIn(b"M6_FOUR_NEW_PAIRED_SEEDS_COMPLETE",f["pilot-status.txt"])
    inv=f["invocations.txt"].decode().splitlines();self.assertEqual(len(inv),8)
-   self.assertIn("configs/m6-five-seed-2k-v1.json",inv[0]);self.assertIn("results/seed-20261009/A A T 20261009 APPROVAL",inv[0])
+   expected=[(str(seed),variant) for seed in (20261009,20261010,20261011,20261012) for variant in ("A","C")]
+   for line,(seed,variant) in zip(inv,expected,strict=True):
+    self.assertIn(f"train-extended configs/m6-five-seed-2k-v1.json data/prepared-v2 results/seed-{seed}/{variant} {variant} T {seed} APPROVAL",line)
  def test_failure(self):
   with tempfile.TemporaryDirectory() as t:
    r=Path(t);b=prep(r);self.assertEqual(execute(r,b,"APPROVAL",{"MOCK_FAIL":"20261009:C"}),9);f=files(r)

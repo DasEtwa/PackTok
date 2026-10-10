@@ -18,7 +18,7 @@ trap 'exit 143' TERM
 : "${PACKTOK_M5_GPU_APPROVAL:?required PACKTOK_M5_GPU_APPROVAL is missing}"
 printf '%s\n' "$PACKTOK_M5_GPU_APPROVAL" > results/approval-reference.txt
 cp frozen-source.json results/
-sha256sum configs/m6-five-seed-2k-v1.json configs/primary.json provenance/corpus-v2-manifest.json data/prepared-v2/*.seq artifacts/corpus-v2/* > results/input-sha256.txt
+sha256sum configs/m6-five-seed-2k-v1.json configs/primary.json provenance/corpus-v2-manifest.json provenance/m6-five-seed-initialization.tsv data/prepared-v2/*.seq artifacts/corpus-v2/* > results/input-sha256.txt
 nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv > results/gpu.txt
 nvidia-smi --query-gpu=timestamp,name,memory.used,utilization.gpu --format=csv,noheader,nounits --loop-ms=200 > results/gpu-samples.csv 2>&1 &
 monitor_pid=$!
@@ -45,6 +45,9 @@ for seed in 20261009 20261010 20261011 20261012; do
     test "$(grep -c '"stage":"validation"' "$out/metrics.jsonl")" -eq 5
     grep '"stage":"final"' "$out/metrics.jsonl" | grep -q '"updates":2000'
     grep '"stage":"final"' "$out/metrics.jsonl" | grep -q '"targets":4096000'
+    expected_init=$(awk -F '\t' -v seed="$seed" '$1 == seed {print $2}' provenance/m6-five-seed-initialization.tsv)
+    actual_init=$(grep '"stage":"initialization"' "$out/metrics.jsonl" | sed -n 's/.*"initialization_sha256":"\([a-f0-9]*\)".*/\1/p')
+    test -n "$expected_init" && test "$actual_init" = "$expected_init"
     sha256sum "$out/latest.resume.safetensors" "$out/metrics.jsonl" > "$out/SHA256SUMS.txt"
   done
 done

@@ -1,0 +1,70 @@
+{
+  "config_revision": "m6-paired-replication-2k-v1",
+  "config_sha256": "50cf36a6c9edf0f4423007b846da28ba3984eb37a8102664b27e165e9ee4954e",
+  "device": "CPU deterministic initialization reference; no training performed",
+  "paired_seeds": [
+    {
+      "A_initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+      "C_initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+      "initialization_equal": true,
+      "sampling_rng": {
+        "algorithm": "xorshift64-13-7-17",
+        "initial_state": 11763738044262404393,
+        "seed": 11763738044262404393,
+        "seed_xor": "0xa341316c9e3779b9"
+      },
+      "seed": 20261008
+    },
+    {
+      "A_initialization_sha256": "9e68742323249ec3286a355fc48b18e871c4b7650b6aff50e47ab9bcccf8b5a3",
+      "C_initialization_sha256": "9e68742323249ec3286a355fc48b18e871c4b7650b6aff50e47ab9bcccf8b5a3",
+      "initialization_equal": true,
+      "sampling_rng": {
+        "algorithm": "xorshift64-13-7-17",
+        "initial_state": 11763738044262404392,
+        "seed": 11763738044262404392,
+        "seed_xor": "0xa341316c9e3779b9"
+      },
+      "seed": 20261009
+    },
+    {
+      "A_initialization_sha256": "16e8319420093d8ac98525fbd30fdd31126f254c028112c903c1317a90ec3957",
+      "C_initialization_sha256": "16e8319420093d8ac98525fbd30fdd31126f254c028112c903c1317a90ec3957",
+      "initialization_equal": true,
+      "sampling_rng": {
+        "algorithm": "xorshift64-13-7-17",
+        "initial_state": 11763738044262404395,
+        "seed": 11763738044262404395,
+        "seed_xor": "0xa341316c9e3779b9"
+      },
+      "seed": 20261010
+    },
+    {
+      "A_initialization_sha256": "b6f78f87b2ed61596f30b157ab3afd3a7309c89222663186228997792839f7ec",
+      "C_initialization_sha256": "b6f78f87b2ed61596f30b157ab3afd3a7309c89222663186228997792839f7ec",
+      "initialization_equal": true,
+      "sampling_rng": {
+        "algorithm": "xorshift64-13-7-17",
+        "initial_state": 11763738044262404394,
+        "seed": 11763738044262404394,
+        "seed_xor": "0xa341316c9e3779b9"
+      },
+      "seed": 20261011
+    },
+    {
+      "A_initialization_sha256": "4588a014d2542fe23cf61d368182a534236c8fa7eff335bee65e08985880e1b2",
+      "C_initialization_sha256": "4588a014d2542fe23cf61d368182a534236c8fa7eff335bee65e08985880e1b2",
+      "initialization_equal": true,
+      "sampling_rng": {
+        "algorithm": "xorshift64-13-7-17",
+        "initial_state": 11763738044262404397,
+        "seed": 11763738044262404397,
+        "seed_xor": "0xa341316c9e3779b9"
+      },
+      "seed": 20261012
+    }
+  ],
+  "parameters": 14681984,
+  "target_positions_per_variant": 4096000,
+  "updates_per_variant": 2000
+}

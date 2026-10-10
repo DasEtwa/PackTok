@@ -1,0 +1,221 @@
+{
+  "analysis": {
+    "confidence_interval": "two-sided paired Student t, sample SD, n-1 degrees of freedom; separately summarize 4 new pairs",
+    "directional_consistency": "count negative, positive and zero seed deltas",
+    "input_schema": "pairs array with seed, A_validation_bpb, C_validation_bpb",
+    "primary": "C minus A validation bits/raw-byte",
+    "reported_raw_byte_exposure": "per variant from final metric, never equalized in T",
+    "script": "experiments/m6/scripts/analyze_m6_multiseed.py",
+    "statistical_limit": "preliminary n=5; one already observed M5 pair; not definitive significance"
+  },
+  "binary": {
+    "build": "cargo build --locked --release --features cuda --target-dir target-cuda",
+    "compute_capability": "8.9",
+    "cuda_toolkit": "12.4.131",
+    "features": [
+      "cuda"
+    ],
+    "path": "experiments/m5-gpu/target-cuda/release/packtok-m5",
+    "sha256": "97b25305b455c7b19861b294f8bc5b9a1df2b4ea821a3af3d2a9ec2b4b1859da"
+  },
+  "configuration": {
+    "architecture": {
+      "ffn": 1536,
+      "heads": 6,
+      "hidden": 384,
+      "layers": 8,
+      "parameters": 14681984,
+      "vocab": 512
+    },
+    "batch_size": 8,
+    "context": 256,
+    "evaluation": "existing BPB evaluator; existing final-only TEST remains exploratory; no tuning on TEST",
+    "invariant": "JSON equals frozen M5 pilot config after reverting revision and paired_seeds; regression test enforces this",
+    "learning_rate": 0.0003,
+    "optimizer": "AdamW",
+    "path": "experiments/m5-gpu/configs/m6-five-seed-2k-v1.json",
+    "precision": "FP32",
+    "regime": "T",
+    "schedule": "constant; no warmup or decay",
+    "sha256": "50cf36a6c9edf0f4423007b846da28ba3984eb37a8102664b27e165e9ee4954e",
+    "target_positions_per_update": 2048,
+    "target_positions_per_variant": 4096000,
+    "updates_per_variant": 2000,
+    "validation_steps": [
+      1,
+      500,
+      1000,
+      1500,
+      2000
+    ],
+    "weight_decay": 0.01
+  },
+  "cuda_runtime_libraries": {
+    "libcublas.so.12": "4cc45526449a95d3985389785e985b7832460ea3db178bc9e9963be2111fbee8",
+    "libcublasLt.so.12": "44a813aa2da08830f9083f81d0eb73f1ae4052a4d9b0b0de480a8f6cd9eb3078",
+    "libcuda": "host driver; not bundled",
+    "libcurand.so.10": "dab8074b610b82a863a42eceda788e9b08364b545bab948509306b48c46018cf"
+  },
+  "future_allocation_plan": {
+    "authorization_required_for_each": true,
+    "controlled_shutdown_from_minute": 55,
+    "estimated_CU_all_four_pairs_proxy": 2.6,
+    "estimated_all_four_pairs_training_only_minutes": 27.28,
+    "estimated_training_only_minutes_per_session": 13.64,
+    "maximum_minutes": 60,
+    "new_runs_per_session": 4,
+    "operational_session_range_minutes": [
+      30,
+      45
+    ],
+    "pairs_per_session": 2,
+    "sessions": 2
+  },
+  "historical_m5_pair": {
+    "A_checkpoint_sha256": "da3b08bfda2bc991992a4487f4659c7b406b2af5f2abe62789bef8d80e50655a",
+    "A_validation_bpb": 2.5729648496285376,
+    "C_checkpoint_sha256": "e7b45ad2bcaf52434aac6d35db06edab0ba92e86d27ca8c46930a2c1c43fc484",
+    "C_validation_bpb": 2.597469229168411,
+    "binary_sha256": "c388a182844f5ade1971b7b0dc3ad4e3fb2b2bcd80d6c20ba6ab6f93c180af98",
+    "config_sha256": "6536d5194bc7d422bdef6e871b58317497794ed1553b197a927e0434aa65c3d8",
+    "delta_C_minus_A_bpb": 0.02450437953987361,
+    "initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+    "package_id": "pilot-2k-v1-l4-20261009T154700Z",
+    "package_sha256": "f241410ec33f477a4568079b00c0e860c79afd90f43be5d049899c45a0930f84",
+    "source_commit": "dd0380396e63d926883f378daf9e6d029538f0f6",
+    "status": "M5_A_C_PILOT_COMPLETE"
+  },
+  "inputs": {
+    "corpus_manifest_sha256": "033bf7a3126ad5e39d3d11e5abd257f9cfaaac2d8f001003830215191b9d494f",
+    "prepared_sequence_sha256": {
+      "A_test_sequence_sha256": "d82168e96a56d59cb85b521da503f3a19570ee2c072d67ebdcdf743417df1ccb",
+      "A_train_sequence_sha256": "a7fdad9cfd7a4f448d1aa1e41c241bf09050cd73938594487fee35a8a274f82d",
+      "A_validation_sequence_sha256": "34a99f414c346cffad3fa818c4911f9399384be1fcb1f37b772e0ffa1da651b3",
+      "C_test_sequence_sha256": "2f2eea0814faec257f0a494deaf795de82ea7c2178c0e52972ae860cb3a90ff7",
+      "C_train_sequence_sha256": "f558ecf674382cd7aa69980560b56718a7be69d917a1396405fa208a3b27939b",
+      "C_validation_sequence_sha256": "3d995cc1d32e8686615a4b4c400918c8ec36899dbc07ebdea4f37a0a5e753245"
+    },
+    "primary_config_sha256": "8dde6647e5bdddf00ba99ce0c147d523206d89f29bb16d5615814821aa07b601",
+    "tokenizer_sha256": {
+      "A": "f20cb1db1c47484bda335e9a0032de92aae96cf54265f190cf8ed23060534da1",
+      "C": "04285c24bb4181871148b64c79251273c07cda6e57812175021d75fbf8b386e6"
+    }
+  },
+  "launch": {
+    "bridge": "experiments/m5-gpu/scripts/remote-bridge.py",
+    "bridge_sha256": "ff390834524154b418903dba1c30f96ce987d241a2d80ab047c8d27242fdceaf",
+    "cpu_rehearsal": "experiments/m5-gpu/scripts/test-remote-m6-multiseed.py",
+    "remote": "experiments/m5-gpu/scripts/remote-m6-multiseed.sh",
+    "remote_sha256": "d8da48872423f020a046f1393812e6a214c08520a71971bbad66a402c95fdce8"
+  },
+  "outputs": {
+    "execution_order": "results/execution-order.tsv; ascending seed, A then C",
+    "overwrite_policy": "remote script refuses an existing run output path",
+    "per_run": [
+      "console.txt",
+      "metrics.jsonl",
+      "latest.resume.safetensors",
+      "SHA256SUMS.txt"
+    ],
+    "root": "results/seed-<seed>/<A|C>",
+    "validation_steps": [
+      1,
+      500,
+      1000,
+      1500,
+      2000
+    ]
+  },
+  "protocol_status": "CPU-ready; GPU not authorized by this task; no allocation made",
+  "schema": "packtok-m6-paired-seed-manifest-v1",
+  "seed_policy": {
+    "historical_reuse_note": "M5 used same T/2k architecture, update/target budget, AdamW, constant LR, FP32, corpus/splits, tokenizer hashes, validation steps and BPB evaluator. Its result is already observed; report five-pair estimate and four-new-seed sensitivity.",
+    "historical_reuse_protocol_identical": true,
+    "historical_seed_reused": 20261008,
+    "initialization_hash_tsv": "experiments/m5-gpu/provenance/m6-five-seed-initialization.tsv",
+    "initialization_hash_tsv_sha256": "a7797907bb4f1fc366011fc974f55586268f2d160956c8f608fbc1c454c067d5",
+    "initializations": [
+      {
+        "A_C_equal": true,
+        "initialization_sha256": "155de938a7f469bf3bce65e548e938792bb6ebe0a53ffcda8135d0c65881a0a1",
+        "sampler_rng": {
+          "algorithm": "xorshift64-13-7-17",
+          "initial_state": 11763738044262404393,
+          "seed": 11763738044262404393,
+          "seed_xor": "0xa341316c9e3779b9"
+        },
+        "seed": 20261008,
+        "status": "completed historical M5 pair; result already observed"
+      },
+      {
+        "A_C_equal": true,
+        "initialization_sha256": "9e68742323249ec3286a355fc48b18e871c4b7650b6aff50e47ab9bcccf8b5a3",
+        "sampler_rng": {
+          "algorithm": "xorshift64-13-7-17",
+          "initial_state": 11763738044262404392,
+          "seed": 11763738044262404392,
+          "seed_xor": "0xa341316c9e3779b9"
+        },
+        "seed": 20261009,
+        "status": "new pair; not run"
+      },
+      {
+        "A_C_equal": true,
+        "initialization_sha256": "16e8319420093d8ac98525fbd30fdd31126f254c028112c903c1317a90ec3957",
+        "sampler_rng": {
+          "algorithm": "xorshift64-13-7-17",
+          "initial_state": 11763738044262404395,
+          "seed": 11763738044262404395,
+          "seed_xor": "0xa341316c9e3779b9"
+        },
+        "seed": 20261010,
+        "status": "new pair; not run"
+      },
+      {
+        "A_C_equal": true,
+        "initialization_sha256": "b6f78f87b2ed61596f30b157ab3afd3a7309c89222663186228997792839f7ec",
+        "sampler_rng": {
+          "algorithm": "xorshift64-13-7-17",
+          "initial_state": 11763738044262404394,
+          "seed": 11763738044262404394,
+          "seed_xor": "0xa341316c9e3779b9"
+        },
+        "seed": 20261011,
+        "status": "new pair; not run"
+      },
+      {
+        "A_C_equal": true,
+        "initialization_sha256": "4588a014d2542fe23cf61d368182a534236c8fa7eff335bee65e08985880e1b2",
+        "sampler_rng": {
+          "algorithm": "xorshift64-13-7-17",
+          "initial_state": 11763738044262404397,
+          "seed": 11763738044262404397,
+          "seed_xor": "0xa341316c9e3779b9"
+        },
+        "seed": 20261012,
+        "status": "new pair; not run"
+      }
+    ],
+    "new_seed_pairs": [
+      20261009,
+      20261010,
+      20261011,
+      20261012
+    ],
+    "new_training_runs": 8,
+    "paired_seeds": [
+      20261008,
+      20261009,
+      20261010,
+      20261011,
+      20261012
+    ],
+    "rng": "xorshift64-13-7-17 with seed XOR 0xa341316c9e3779b9; identical start state for A/C within seed",
+    "target_positions_per_variant_per_seed": 4096000
+  },
+  "source": {
+    "branch": "m6-research",
+    "commit": "0af19cb6f009e8959ce72644acb8cc200c1aac31",
+    "repository": "DasEtwa/PackTok"
+  }
+}
