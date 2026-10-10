@@ -50,11 +50,18 @@ class Rehearsal(unittest.TestCase):
  def test_success(self):
   with tempfile.TemporaryDirectory() as t:
    r=Path(t);b=prep(r);self.assertEqual(execute(r,b,"APPROVAL"),0);f=files(r)
-   self.assertEqual(f["exit-code.txt"],b"0\n");self.assertIn(b"M6_FOUR_NEW_PAIRED_SEEDS_COMPLETE",f["pilot-status.txt"])
+   self.assertEqual(f["exit-code.txt"],b"0\n");self.assertIn(b"M6_RUN_SEQUENCE_COMPLETE; start_at=20261009:A; runs=8",f["pilot-status.txt"])
    inv=f["invocations.txt"].decode().splitlines();self.assertEqual(len(inv),8)
    expected=[(str(seed),variant) for seed in (20261009,20261010,20261011,20261012) for variant in ("A","C")]
    for line,(seed,variant) in zip(inv,expected,strict=True):
     self.assertIn(f"train-extended configs/m6-five-seed-2k-v1.json data/prepared-v2 results/seed-{seed}/{variant} {variant} T {seed} APPROVAL",line)
+
+ def test_continuation_skips_completed_A(self):
+  with tempfile.TemporaryDirectory() as t:
+   r=Path(t);b=prep(r);self.assertEqual(execute(r,b,"APPROVAL",{"PACKTOK_M6_START_AT":"20261009:C"}),0);f=files(r)
+   inv=f["invocations.txt"].decode().splitlines();self.assertEqual(len(inv),7)
+   self.assertIn("train-extended configs/m6-five-seed-2k-v1.json data/prepared-v2 results/seed-20261009/C C T 20261009 APPROVAL",inv[0])
+   self.assertEqual(f["start-at.txt"],b"20261009:C\n")
  def test_failure(self):
   with tempfile.TemporaryDirectory() as t:
    r=Path(t);b=prep(r);self.assertEqual(execute(r,b,"APPROVAL",{"MOCK_FAIL":"20261009:C"}),9);f=files(r)

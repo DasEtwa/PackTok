@@ -30,14 +30,27 @@ export LD_LIBRARY_PATH="$libpath" NVIDIA_TF32_OVERRIDE=0
 ./runtime/ld-linux-x86-64.so.2 --library-path "$libpath" --list ./packtok-m5 > results/runtime-libraries.txt 2>&1
 nvidia-smi --query-gpu=name --format=csv,noheader | grep -qx 'NVIDIA L4'
 ./runtime/ld-linux-x86-64.so.2 --library-path "$libpath" ./packtok-m5 plan-extended configs/m6-five-seed-2k-v1.json data/prepared-v2 results/experiment-plan.json
+start_at=20261009:A
+if printenv PACKTOK_M6_START_AT >/dev/null; then start_at="$(printenv PACKTOK_M6_START_AT)"; fi
+case "$start_at" in
+  20261009:A|20261009:C|20261010:A|20261010:C|20261011:A|20261011:C|20261012:A|20261012:C) ;;
+  *) echo "invalid PACKTOK_M6_START_AT: $start_at" >&2; exit 2 ;;
+esac
+printf "%s\n" "$start_at" > results/start-at.txt
+start_found=0
+run_count=0
 printf 'seed\tvariant\tstart_utc\toutput\n' > results/execution-order.tsv
 for seed in 20261009 20261010 20261011 20261012; do
   for variant in A C; do
+    if [[ "$start_found" = 0 ]]; then
+      if [[ "$seed:$variant" != "$start_at" ]]; then continue; fi
+      start_found=1
+    fi
     out="results/seed-$seed/$variant"
     test ! -e "$out" || { echo "refusing to overwrite existing output: $out" >&2; exit 73; }
     mkdir -p "$out"
     printf '%s\t%s\t%s\t%s\n' "$seed" "$variant" "$(date -u +%FT%TZ)" "$out" >> results/execution-order.tsv
-    timeout --signal=TERM --kill-after=10 300 env PACKTOK_M5_GPU_APPROVAL="$PACKTOK_M5_GPU_APPROVAL" \
+    timeout --signal=TERM --kill-after=10 600 env PACKTOK_M5_GPU_APPROVAL="$PACKTOK_M5_GPU_APPROVAL" \
       ./runtime/ld-linux-x86-64.so.2 --library-path "$libpath" ./packtok-m5 \
       train-extended configs/m6-five-seed-2k-v1.json data/prepared-v2 "$out" "$variant" T "$seed" "$PACKTOK_M5_GPU_APPROVAL" \
       > "$out/console.txt" 2>&1
@@ -49,7 +62,9 @@ for seed in 20261009 20261010 20261011 20261012; do
     actual_init=$(grep '"stage":"initialization"' "$out/metrics.jsonl" | sed -n 's/.*"initialization_sha256":"\([a-f0-9]*\)".*/\1/p')
     test -n "$expected_init" && test "$actual_init" = "$expected_init"
     sha256sum "$out/latest.resume.safetensors" "$out/metrics.jsonl" > "$out/SHA256SUMS.txt"
+    run_count=$((run_count + 1))
   done
 done
-printf 'M6_FOUR_NEW_PAIRED_SEEDS_COMPLETE; historical seed 20261008 reused from M5\n' > results/pilot-status.txt
+test "$start_found" = 1
+printf "M6_RUN_SEQUENCE_COMPLETE; start_at=%s; runs=%s; historical seed 20261008 reused from M5\n" "$start_at" "$run_count" > results/pilot-status.txt
 

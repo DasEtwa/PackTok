@@ -106,7 +106,9 @@
     "bridge_sha256": "ff390834524154b418903dba1c30f96ce987d241a2d80ab047c8d27242fdceaf",
     "cpu_rehearsal": "experiments/m5-gpu/scripts/test-remote-m6-multiseed.py",
     "remote": "experiments/m5-gpu/scripts/remote-m6-multiseed.sh",
-    "remote_sha256": "d8da48872423f020a046f1393812e6a214c08520a71971bbad66a402c95fdce8"
+    "remote_sha256": "17b0b2453b36a58107856702937e50704e671c4f010ff8fad8269bb67a15e58a",
+    "continuation_start_environment": "PACKTOK_M6_START_AT; validated run-list cursor such as 20261009:C",
+    "per_run_timeout_seconds": 600
   },
   "outputs": {
     "execution_order": "results/execution-order.tsv; ascending seed, A then C",
