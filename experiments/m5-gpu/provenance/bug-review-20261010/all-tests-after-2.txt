@@ -1,0 +1,52 @@
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/projects/PackTok/experiments/m5-gpu)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.07s
+     Running unittests src/lib.rs (target/debug/deps/packtok_m5-39e35dcd0f4f16b7)
+
+running 44 tests
+test corpus::tests::gutenberg_extraction_keeps_body_bytes ... ok
+test corpus::tests::short_source_files_share_one_split_counter ... ok
+test data::tests::normalization_excludes_unscored_bytes ... ok
+test corpus::tests::leakage_checks_exact_and_near ... ok
+test domains::tests::domain_aggregation_rejects_real_nll_and_counter_mismatches ... ok
+test corpus::tests::rolling_matches_direct_windows ... ok
+test domains::tests::stratified_category_aggregation_reconciles_exactly ... ok
+test domains::tests::tokens_crossing_units_keep_domain_and_crossing_categories_are_mixed ... ok
+test extended::tests::extended_gpu_runner_refuses_execution_without_explicit_approval ... ok
+test domains::tests::per_domain_forward_scoring_matches_global_byte_score ... ok
+test extended::tests::paired_byte_prefix_selects_equal_actual_exposure ... ok
+test data::tests::adapters_exact_mapping_and_prompt_preservation ... ok
+test extended::tests::review_invalid_metrics_reconciliation_preserves_original ... ok
+test data::tests::review_adapter_roundtrips_empty_all_bytes_and_repeated_boundaries ... ok
+test extended::tests::variable_b_batch_masks_padding_and_preserves_all_real_targets ... ok
+test data::tests::sequence_format_roundtrip_rejects_invalid ... ok
+test model::tests::all_parameter_families_get_gradients_and_adam_updates ... ok
+test model::tests::causal_mask_and_initialization ... ok
+test model::tests::gradient_gate_rejects_one_missing_projection_even_when_family_is_active ... ok
+test domains::tests::review_evaluation_window_and_batch_boundaries_preserve_bytes_and_scores ... ok
+test model::tests::model_safetensors_save_load_roundtrip_is_independent_cpu ... ok
+test model::tests::primary_parameters_and_layout ... ok
+test overfit::tests::diagnostic_threshold_keeps_the_historical_value_and_detects_divergence ... ok
+test extended::tests::review_report_retry_ignores_elapsed_time_only ... ok
+test model::tests::gradients_match_finite_differences ... ok
+test domains::tests::heldout_manifest_reports_structured_as_unavailable_and_covers_bytes ... ok
+test extended::tests::resume_metrics_rewind_to_atomic_checkpoint_and_restore_timing ... ok
+test resume::tests::resumable_adamw_matches_pinned_candle_adamw_update ... ok
+test resume::tests::checkpoint_rejects_wrong_identity_without_mutating_model ... ok
+test resume::tests::review_finite_gradient_overflow_is_atomic_and_zero_gradient_is_valid ... ok
+test resume::tests::review_missing_late_gradient_does_not_partially_update ... ok
+test resume::tests::review_nonfinite_gradient_is_rejected_without_mutation ... ok
+test domains::tests::large_domain_aggregation_allows_only_fp64_ordering_error ... ok
+test runner::tests::evaluation_rejects_empty_single_token_and_zero_batch ... ok
+test runner::tests::evaluation_scores_every_target_and_no_unrepresented_bytes ... ok
+test runner::tests::final_job_rejects_undeclared_seed_before_allocating_or_writing ... ok
+test runner::tests::paired_seed_training_is_reproducible ... ok
+test resume::tests::review_checkpoint_schedule_mismatch_preserves_destination ... ok
+test model::tests::checkpoint_roundtrip_and_tiny_overfit ... ok
+test resume::tests::review_corrupt_and_truncated_checkpoint_preserve_destination ... ok
+test resume::tests::checkpoint_resume_matches_uninterrupted_cpu_updates_exactly ... ok
+test runner::tests::checkpoint_retains_complete_image_with_an_interrupted_temporary ... ok
+test overfit::tests::fixed_batch_diagnostic_reports_all_required_steps_and_learns ... ok
+test extended::tests::frozen_configs_recheck_scientific_inputs_and_schedules ... ok
+
+test result: ok. 44 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.24s
+

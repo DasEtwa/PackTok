@@ -345,6 +345,31 @@ pub fn verify_prepared(root: &Path) -> Result<()> {
 mod tests {
     use super::*;
     #[test]
+    fn review_adapter_roundtrips_empty_all_bytes_and_repeated_boundaries() -> Result<()> {
+        let samples = [
+            Vec::new(),
+            (0_u8..=255).collect(),
+            " äöüß🙂12\r\n{}\t東京 ".repeat(33).into_bytes(),
+            vec![0xff; 257],
+            b"a1 a12_\r\nb123\t{} ".repeat(41),
+        ];
+        for name in ["m1-flat-v2", "m2-factorized-v3"] {
+            let artifact = Artifact::from_bytes(&fs::read(format!(
+                "../../experiments/m3-model/artifacts/{name}.packtok"
+            ))?)?;
+            let adapter = Adapter::new(artifact)?;
+            for raw in &samples {
+                let first = adapter.encode(raw)?;
+                let second = adapter.encode(raw)?;
+                assert_eq!(first.tokens, second.tokens);
+                assert_eq!(first.bytes, second.bytes);
+                assert_eq!(adapter.decode_global(&first.tokens)?, *raw);
+                assert_eq!(first.target_bytes(0, first.tokens.len())?, raw.len() as u64);
+            }
+        }
+        Ok(())
+    }
+    #[test]
     fn adapters_exact_mapping_and_prompt_preservation() -> Result<()> {
         for name in ["m1-flat-v2", "m2-factorized-v3"] {
             let a = Artifact::from_bytes(&fs::read(format!(

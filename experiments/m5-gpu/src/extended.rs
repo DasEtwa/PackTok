@@ -479,12 +479,28 @@ fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgr
     if bytes.last().is_some_and(|b| *b != b'\n') {
         changed = true;
     }
+    let progress = if checkpoint_step == 0 {
+        saved_progress.unwrap_or_default()
+    } else {
+        saved_progress.ok_or("metrics log has no progress record for checkpoint")?
+    };
     if changed {
         let parent = path
             .parent()
             .filter(|p| !p.as_os_str().is_empty())
             .unwrap_or(Path::new("."));
         let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+        // Retain interrupted/ahead-of-checkpoint evidence before rewinding the working log.
+        let archive = path.with_extension(format!(
+            "jsonl.before-reconcile-{}-{nonce}",
+            std::process::id()
+        ));
+        let mut prior = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(archive)?;
+        prior.write_all(&bytes)?;
+        prior.sync_all()?;
         let temporary = path.with_extension(format!("jsonl.tmp-{}-{nonce}", std::process::id()));
         let mut file = fs::OpenOptions::new()
             .write(true)
@@ -496,16 +512,20 @@ fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgr
         fs::rename(&temporary, path)?;
         fs::File::open(parent)?.sync_all()?;
     }
-    if checkpoint_step == 0 {
-        Ok(saved_progress.unwrap_or_default())
-    } else {
-        saved_progress.ok_or_else(|| "metrics log has no progress record for checkpoint".into())
-    }
+    Ok(progress)
 }
 fn save_report(path: &Path, report: &impl serde::Serialize) -> Result<()> {
     let bytes = serde_json::to_vec_pretty(report)?;
     if path.exists() {
-        if fs::read(path)? == bytes {
+        let mut prior: Value = serde_json::from_slice(&fs::read(path)?)?;
+        let mut candidate: Value = serde_json::from_slice(&bytes)?;
+        // A recovered final evaluation has a new elapsed time, but the same scientific report.
+        for value in [&mut prior, &mut candidate] {
+            if let Some(object) = value.as_object_mut() {
+                object.remove("seconds");
+            }
+        }
+        if prior == candidate {
             return Ok(());
         }
         return Err(format!("refusing to replace existing report {}", path.display()).into());
@@ -718,7 +738,7 @@ pub fn train(
     let had_checkpoint = checkpoint.exists();
     let (mut optimizer, mut step, mut cursor, mut rng) = if had_checkpoint {
         let (optimizer, step, cursor, rng_state) =
-            ResumableAdamW::load_checkpoint(&mut model, &identity, &checkpoint)?;
+            ResumableAdamW::load_checkpoint(&mut model, &identity, &total_scheduler, &checkpoint)?;
         (optimizer, step, cursor, Rng::from_state(rng_state)?)
     } else {
         (
@@ -927,6 +947,40 @@ fn deterministic_token_bytes(
 mod tests {
     use super::*;
     use crate::runner::tiny_config;
+
+    #[test]
+    fn review_report_retry_ignores_elapsed_time_only() -> Result<()> {
+        let path =
+            std::env::temp_dir().join(format!("packtok-review-report-{}.json", std::process::id()));
+        let _ = fs::remove_file(&path);
+        let first = serde_json::json!({"seconds":1.0,"nll":3.0,"tokens":4,"bytes":5});
+        save_report(&path, &first)?;
+        let original = fs::read(&path)?;
+        let retry = serde_json::json!({"seconds":2.0,"nll":3.0,"tokens":4,"bytes":5});
+        assert!(save_report(&path, &retry).is_ok());
+        assert_eq!(fs::read(&path)?, original);
+        assert!(
+            save_report(
+                &path,
+                &serde_json::json!({"seconds":2.0,"nll":4.0,"tokens":4,"bytes":5})
+            )
+            .is_err()
+        );
+        fs::remove_file(path)?;
+        Ok(())
+    }
+
+    #[test]
+    fn review_invalid_metrics_reconciliation_preserves_original() -> Result<()> {
+        let path =
+            std::env::temp_dir().join(format!("packtok-review-log-{}.jsonl", std::process::id()));
+        let original = b"{\"stage\":\"train\",\"step\":2}\n{\"partial\"";
+        fs::write(&path, original)?;
+        assert!(reconcile_metrics(&path, 1).is_err());
+        assert_eq!(fs::read(&path)?, original);
+        fs::remove_file(path)?;
+        Ok(())
+    }
 
     #[test]
     fn resume_metrics_rewind_to_atomic_checkpoint_and_restore_timing() -> Result<()> {
