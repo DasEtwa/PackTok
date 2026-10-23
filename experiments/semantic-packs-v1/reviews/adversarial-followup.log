@@ -1,0 +1,12 @@
+   Compiling packtok-packs v0.1.0 (/workspace/PackTok/crates/packtok-packs)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running tests/adversarial_followup_tmp.rs (target/debug/deps/adversarial_followup_tmp-5aa91281efc71398)
+
+running 4 tests
+test every_vertical_separator_blocks_context_and_phrase_matching ... ok
+test exhausted_context_never_fabricates_unquoted_or_quoted_key_boundary ... ok
+test quoted_aliases_do_not_reopen_intra_word_matches ... ok
+test focused_utf8_and_context_stress_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+

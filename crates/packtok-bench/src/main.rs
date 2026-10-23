@@ -6,6 +6,7 @@ mod m4;
 mod m4_corpus;
 mod metrics;
 mod scan;
+mod semantic;
 
 use std::error::Error;
 use std::hint::black_box;
@@ -59,6 +60,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut arguments = std::env::args();
     let _program = arguments.next();
     let command = arguments.next();
+    if command.as_deref() == Some("semantic") {
+        let label = arguments
+            .next()
+            .ok_or("usage: packtok-bench semantic <unique-label>")?;
+        if arguments.next().is_some() {
+            return Err("unexpected argument".into());
+        }
+        return semantic::run(&label);
+    }
     if command.as_deref() == Some("m4-corpus") {
         return m4_corpus::run();
     }

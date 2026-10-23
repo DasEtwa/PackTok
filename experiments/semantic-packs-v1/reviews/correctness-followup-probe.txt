@@ -1,0 +1,12 @@
+"xlanguage:                                                                                                                       fr": [SemanticAnnotation { start: 129, end: 131, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: InsufficientContext }]
+"xlanguage:                                                                                                                      fr": [SemanticAnnotation { start: 128, end: 130, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: InsufficientContext }]
+"fr\u{b}bro": [SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: InsufficientContext }]
+"fr\u{c}bro": [SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: InsufficientContext }]
+"language: 'fr'": [SemanticAnnotation { start: 11, end: 13, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }]
+"'language': \"fr\"": [SemanticAnnotation { start: 13, end: 15, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }]
+"\"language\": \"fr\"": [SemanticAnnotation { start: 13, end: 15, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }]
+4000 generated UTF8 invariants + canonical sidecar roundtrips passed
+11844 near-limit metadata prefix/context probes passed
+All 7 vertical separator families rejected as phrase/context whitespace
+Simple quote delimiters accepted; intra-word apostrophe protections preserved
+Registry identity collision and disabled wrapper checks passed

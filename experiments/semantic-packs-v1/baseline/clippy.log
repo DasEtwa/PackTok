@@ -1,0 +1,9 @@
+    Checking packtok-core v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-core)
+    Checking packtok-packs v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-packs)
+    Checking packtok-model v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-model)
+    Checking packtok-format v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-format)
+    Checking packtok-tokenizer v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-tokenizer)
+    Checking packtok-train v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-train)
+    Checking packtok-bench v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-bench)
+    Checking packtok-cli v0.1.0 (/tmp/packtok-semantic-baseline/crates/packtok-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.54s
