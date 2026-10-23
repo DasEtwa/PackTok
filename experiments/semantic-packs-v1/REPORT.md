@@ -119,8 +119,10 @@ critical/high/medium finding remains. Documented coverage limitations remain.
 Branch: `feat/semantic-packs-v1`, based on original main `2423342`.
 Implementation commit `21c3c9c`; benchmark/review/source commit `fcb4c43`.
 All work remains on the feature branch; no merge or edit to an existing branch.
-Final evidence/documentation commits and the Draft PR are reported in the delivery
-message and PR metadata. Re-run the benchmark at the source commit above for the
+Evidence commit `66039684b5ad056da6e86b5902acd9050aa1379e` preserves the final
+run and all five verification logs. Draft PR: [#8](https://github.com/DasEtwa/PackTok/pull/8).
+The PR remains a draft; no merge was performed. The final delivery commit adds
+this PR link/documentation only and is reported in the delivery message. Re-run the benchmark at the source commit above for the
 exact measured implementation; later commits contain only records/docs.
 
 ## Initial observations (before independent review fixes)
