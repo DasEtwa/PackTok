@@ -153,3 +153,13 @@ f3b6c3f; M4 delivery/provenance was pushed before branching. CPU-first dedicated
 WSL preparation and strictly bounded L4 lifecycle are documented in the M5 design
 and benchmark record. Historical tokenization, models and results remain frozen.
 No final GPU quality result exists at this preparation stage.
+
+## Semantic Packs v1 (experimental)
+
+- Optional deterministic English/German concept annotations with stable semantic
+  IDs, conservative context resolution and original byte spans.
+- Separate versioned sidecars; lexical token IDs/artifact formats unchanged.
+- CLI semantic inspection, matched BPE benchmark, adversarial/regression tests
+  and independent correctness/architecture/semantic reviews.
+- No compression or model-quality advantage claimed; see
+  [experiment record](experiments/semantic-packs-v1/REPORT.md).

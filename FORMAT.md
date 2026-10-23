@@ -223,3 +223,12 @@ hashes bind staging files to their provenance. Checkpoints use standard Candle
 FP32 safetensors, externally bound to the frozen M5 config/source hash. They
 contain weights only; no optimizer-resume contract is implied. See
 M5_GPU_TRANSFORMER.md and experiments/m5-gpu/provenance/CPU_PREPARATION.md.
+
+## Optional Semantic Packs sidecar v1
+
+Semantic annotation uses a separate `SPACKS\0\0` version-1 binary sidecar;
+lexical artifact versions 1/2/3 and token IDs are unchanged. Its sparse original
+byte spans refer to a separate semantic registry namespace. Loading binds input
+and registry fingerprints and regenerates canonical decisions. The exact wire
+layout, limits and compatibility contract are in
+[Semantic Packs v1](docs/architecture/semantic-packs-v1.md#independent-versioned-sidecar).

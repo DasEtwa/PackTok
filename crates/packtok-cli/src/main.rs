@@ -8,8 +8,11 @@ use std::process::ExitCode;
 
 use packtok_core::TokenId;
 use packtok_format::{Artifact, FlatBpeModel, MAX_ARTIFACT_BYTES, SymbolRef};
+use packtok_packs::semantic::{SEMANTIC_POLICY_ID, SemanticRegistry};
 use packtok_packs::{LEXICAL_V1_ROUTER_ID, LexicalV1Router, PackRouter, lexical_pack_name};
-use packtok_tokenizer::{BpeTokenizer, ByteFallbackTokenizer, FactorizedTokenizer, Tokenizer};
+use packtok_tokenizer::{
+    BpeTokenizer, ByteFallbackTokenizer, FactorizedTokenizer, Tokenizer, encode_with_semantics,
+};
 use packtok_train::{
     BpeTrainingConfig, FactorizedTrainingConfig, load_corpus, train_bpe_with_provenance,
     train_factorized_bpe_with_provenance_report,
@@ -18,6 +21,7 @@ use packtok_train::{
 const USAGE: &str = "Usage:
   packtok encode <text>
   packtok encode --artifact <artifact-path> <text>
+  packtok semantic [--artifact <artifact-path>] <text>
   packtok decode <pack_id:local_id ...>
   packtok decode --artifact <artifact-path> <local_id ...>
   packtok init <artifact-path>
@@ -52,6 +56,7 @@ fn run() -> Result<(), String> {
 
     match command.as_str() {
         "encode" => encode_command(&arguments),
+        "semantic" => semantic_command(&arguments),
         "decode" => decode_command(&arguments),
         "init" => {
             let path = one_path(&arguments, "artifact path")?;
@@ -84,6 +89,80 @@ fn run() -> Result<(), String> {
         }
         _ => Err(USAGE.to_owned()),
     }
+}
+
+fn semantic_command(arguments: &[String]) -> Result<(), String> {
+    let (tokenizer, input): (Box<dyn Tokenizer>, String) = if arguments
+        .first()
+        .is_some_and(|argument| argument == "--artifact")
+    {
+        if arguments.len() < 3 {
+            return Err(format!("missing semantic artifact or text\n{USAGE}"));
+        }
+        let artifact = read_artifact(Path::new(&arguments[1]))?;
+        let tokenizer: Box<dyn Tokenizer> = if artifact.factorized_bpe().is_some() {
+            Box::new(
+                FactorizedTokenizer::from_artifact(&artifact).map_err(|error| error.to_string())?,
+            )
+        } else if artifact.flat_bpe().is_some() {
+            Box::new(BpeTokenizer::from_artifact(&artifact).map_err(|error| error.to_string())?)
+        } else {
+            Box::new(ByteFallbackTokenizer::from_registry(artifact.registry()))
+        };
+        (tokenizer, arguments[2..].join(" "))
+    } else {
+        if arguments.is_empty() {
+            return Err(format!("missing semantic text\n{USAGE}"));
+        }
+        (
+            Box::new(ByteFallbackTokenizer::default()),
+            arguments.join(" "),
+        )
+    };
+    let registry = SemanticRegistry::builtin();
+    let encoding = encode_with_semantics(tokenizer.as_ref(), &input, Some(registry))
+        .map_err(|error| error.to_string())?;
+    println!(
+        "Lexical tokens: {}",
+        encoding
+            .lexical_tokens
+            .iter()
+            .map(|token| format!("{}:{}", token.pack, token.local))
+            .collect::<Vec<_>>()
+            .join(" ")
+    );
+    let annotations = encoding.semantic_annotations.unwrap_or_default();
+    println!(
+        "Semantic registry: {} revision={} policy={} fingerprint={:016x}",
+        registry.namespace(),
+        registry.revision(),
+        SEMANTIC_POLICY_ID,
+        registry.fingerprint()
+    );
+    println!("Semantic annotations: {}", annotations.len());
+    for annotation in annotations {
+        let candidates = annotation
+            .candidates
+            .iter()
+            .map(|id| {
+                let name = registry
+                    .concept(*id)
+                    .map_or("<unknown>", |concept| concept.name.as_str());
+                format!("{}:{name}", id.0)
+            })
+            .collect::<Vec<_>>()
+            .join(", ");
+        println!(
+            "{}..{} {:?} -> {:?} [{}] reason={:?}",
+            annotation.start,
+            annotation.end,
+            &input[annotation.start..annotation.end],
+            annotation.decision,
+            candidates,
+            annotation.reason
+        );
+    }
+    Ok(())
 }
 
 fn encode_command(arguments: &[String]) -> Result<(), String> {

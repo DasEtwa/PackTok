@@ -445,3 +445,16 @@ in place because their paths, raw bytes and hashes are reproduction inputs.
 No crate responsibility, dependency or scientific configuration changed.
 The inventory and preservation decisions are in
 [the maintenance plan](docs/maintenance/2026-10-08/PLAN.md).
+
+## Semantic Packs v1 boundary
+
+The optional semantic-v1 experiment adds no crate/dependency or lexical artifact
+version. `packtok-packs::semantic` owns bounded stable concept IDs, registry,
+matching and context decisions; `packtok-format::semantic` owns a separate v1
+binary byte-span sidecar. `packtok-tokenizer::encode_with_semantics` adds optional
+annotations around any unchanged Tokenizer implementation. CLI `semantic` is a
+separate debug surface; bench `semantic` owns matched baseline/annotation
+measurements and the agent-authored development corpus. Model/training/frozen M4
+and M5 interfaces remain unchanged. See
+[architecture](docs/architecture/semantic-packs-v1.md) and
+[experiment](experiments/semantic-packs-v1/REPORT.md).

@@ -2,6 +2,7 @@
 
 mod bpe;
 mod factorized;
+mod semantic;
 
 use std::fmt;
 
@@ -12,6 +13,7 @@ pub use factorized::{
 pub use packtok_core::{
     ByteFallback, DEFAULT_BYTE_FALLBACK_PACK_ID, LocalTokenId, PackId, PackRegistry, TokenId,
 };
+pub use semantic::{SemanticEncoding, encode_with_semantics};
 
 /// Text-to-token and token-to-byte operations shared by runtime tokenizers.
 pub trait Tokenizer {

@@ -1,4 +1,5 @@
 #![forbid(unsafe_code)]
+pub mod semantic;
 
 use packtok_core::PackId;
 
