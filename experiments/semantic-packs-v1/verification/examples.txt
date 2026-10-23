@@ -1,0 +1,22 @@
+$ ['target/release/packtok', 'semantic', 'ong idk bro']
+Lexical tokens: 65535:111 65535:110 65535:103 65535:32 65535:105 65535:100 65535:107 65535:32 65535:98 65535:114 65535:111
+Semantic registry: packtok.semantic revision=1 policy=semantic-rules-v1.1 fingerprint=968116fed83aa979
+Semantic annotations: 2
+0..3 "ong" -> Resolved [3:SWEARING_EMPHASIS] reason=KnownVariant
+4..7 "idk" -> Resolved [1:UNCERTAINTY] reason=KnownVariant
+
+$ ['target/release/packtok', 'semantic', '--artifact', 'experiments/semantic-packs-v1/final-20261023/m1.packtok', 'ong idk bro']
+Lexical tokens: 0:111 0:110 0:103 0:32 0:105 0:100 0:107 0:283 0:114 0:111
+Semantic registry: packtok.semantic revision=1 policy=semantic-rules-v1.1 fingerprint=968116fed83aa979
+Semantic annotations: 2
+0..3 "ong" -> Resolved [3:SWEARING_EMPHASIS] reason=KnownVariant
+4..7 "idk" -> Resolved [1:UNCERTAINTY] reason=KnownVariant
+
+$ ['target/release/packtok', 'semantic', 'language: fr\nfr bro\nKA']
+Lexical tokens: 65535:108 65535:97 65535:110 65535:103 65535:117 65535:97 65535:103 65535:101 65535:58 65535:32 65535:102 65535:114 65535:10 65535:102 65535:114 65535:32 65535:98 65535:114 65535:111 65535:10 65535:75 65535:65
+Semantic registry: packtok.semantic revision=1 policy=semantic-rules-v1.1 fingerprint=968116fed83aa979
+Semantic annotations: 3
+10..12 "fr" -> Resolved [5:FRENCH_LANGUAGE] reason=LanguageContext
+13..15 "fr" -> Resolved [4:AGREEMENT_EMPHASIS] reason=SlangContext
+20..22 "KA" -> Ambiguous [1:UNCERTAINTY] reason=CaseAmbiguity
+

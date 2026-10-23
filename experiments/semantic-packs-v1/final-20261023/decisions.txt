@@ -1,0 +1,132 @@
+slang-01 "ong idk bro"
+gold=[Gold { start: 0, end: 3, concept: Some(SemanticId(3)) }, Gold { start: 4, end: 7, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 0, end: 3, candidates: [SemanticId(3)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 4, end: 7, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+slang-02 "ngl tbh dunno"
+gold=[Gold { start: 0, end: 3, concept: Some(SemanticId(2)) }, Gold { start: 4, end: 7, concept: Some(SemanticId(2)) }, Gold { start: 8, end: 13, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 0, end: 3, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 4, end: 7, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 8, end: 13, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+slang-03 "fr bro"
+gold=[Gold { start: 0, end: 2, concept: Some(SemanticId(4)) }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(4)], decision: Resolved, reason: SlangContext }]
+
+en-01 "I don't know."
+gold=[Gold { start: 0, end: 12, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 0, end: 12, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+en-02 "don't know"
+gold=[Gold { start: 0, end: 10, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 0, end: 10, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+en-03 "to be honest, not gonna lie"
+gold=[Gold { start: 0, end: 12, concept: Some(SemanticId(2)) }, Gold { start: 14, end: 27, concept: Some(SemanticId(2)) }]
+actual=[SemanticAnnotation { start: 0, end: 12, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 14, end: 27, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }]
+
+en-04 "on God, for real"
+gold=[Gold { start: 0, end: 6, concept: Some(SemanticId(3)) }, Gold { start: 8, end: 16, concept: Some(SemanticId(4)) }]
+actual=[SemanticAnnotation { start: 0, end: 6, candidates: [SemanticId(3)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 8, end: 16, candidates: [SemanticId(4)], decision: Resolved, reason: KnownVariant }]
+
+de-01 "keine Ahnung, wirklich."
+gold=[Gold { start: 0, end: 12, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 0, end: 12, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+de-02 "Ich habe keine Ahnung."
+gold=[Gold { start: 9, end: 21, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 9, end: 21, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+amb-01 "fr"
+gold=[Gold { start: 0, end: 2, concept: None }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: InsufficientContext }]
+
+amb-02 "KA"
+gold=[Gold { start: 0, end: 2, concept: None }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(1)], decision: Ambiguous, reason: CaseAmbiguity }]
+
+amb-03 "ka"
+gold=[Gold { start: 0, end: 2, concept: None }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(1)], decision: Ambiguous, reason: InsufficientContext }]
+
+amb-04 "language: fr"
+gold=[Gold { start: 10, end: 12, concept: Some(SemanticId(5)) }]
+actual=[SemanticAnnotation { start: 10, end: 12, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }]
+
+amb-05 "lang: fr"
+gold=[Gold { start: 6, end: 8, concept: Some(SemanticId(5)) }]
+actual=[SemanticAnnotation { start: 6, end: 8, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }]
+
+amb-06 "sprache: fr"
+gold=[Gold { start: 9, end: 11, concept: Some(SemanticId(5)) }]
+actual=[SemanticAnnotation { start: 9, end: 11, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }]
+
+normal-01 "Today the weather is pleasant."
+gold=[]
+actual=[]
+
+normal-02 "Die Häuser stehen an der Straße."
+gold=[]
+actual=[]
+
+unknown-01 "qzxv blorf 12345 🧪"
+gold=[]
+actual=[]
+
+unknown-02 "Friday frank framework kaffee"
+gold=[]
+actual=[]
+
+bound-01 "xidk idk2 idk_name"
+gold=[]
+actual=[]
+
+unicode-01 "✨ idk 🦦"
+gold=[Gold { start: 4, end: 7, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 4, end: 7, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+unicode-02 "äöüß keine Ahnung 👩🏽\u{200d}💻"
+gold=[Gold { start: 9, end: 21, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 9, end: 21, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+space-01 "idk\tngl\r\ntbh"
+gold=[Gold { start: 0, end: 3, concept: Some(SemanticId(1)) }, Gold { start: 4, end: 7, concept: Some(SemanticId(2)) }, Gold { start: 9, end: 12, concept: Some(SemanticId(2)) }]
+actual=[SemanticAnnotation { start: 0, end: 3, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 4, end: 7, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 9, end: 12, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }]
+
+space-02 "  idk\u{a0}dunno  "
+gold=[Gold { start: 2, end: 5, concept: Some(SemanticId(1)) }, Gold { start: 7, end: 12, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 2, end: 5, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 7, end: 12, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }]
+
+empty-01 ""
+gold=[]
+actual=[]
+
+nul-01 "idk\0ngl"
+gold=[Gold { start: 0, end: 3, concept: Some(SemanticId(1)) }, Gold { start: 4, end: 7, concept: Some(SemanticId(2)) }]
+actual=[SemanticAnnotation { start: 0, end: 3, candidates: [SemanticId(1)], decision: Resolved, reason: KnownVariant }, SemanticAnnotation { start: 4, end: 7, candidates: [SemanticId(2)], decision: Resolved, reason: KnownVariant }]
+
+ctx-01 "language: fr\nfr bro"
+gold=[Gold { start: 10, end: 12, concept: Some(SemanticId(5)) }, Gold { start: 13, end: 15, concept: Some(SemanticId(4)) }]
+actual=[SemanticAnnotation { start: 10, end: 12, candidates: [SemanticId(5)], decision: Resolved, reason: LanguageContext }, SemanticAnnotation { start: 13, end: 15, candidates: [SemanticId(4)], decision: Resolved, reason: SlangContext }]
+
+ctx-02 "fr\nbro"
+gold=[Gold { start: 0, end: 2, concept: None }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: InsufficientContext }]
+
+ka-01 "ka warum das so ist"
+gold=[Gold { start: 0, end: 2, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(1)], decision: Resolved, reason: SlangContext }]
+
+ka-02 "ich ka"
+gold=[Gold { start: 4, end: 6, concept: Some(SemanticId(1)) }]
+actual=[SemanticAnnotation { start: 4, end: 6, candidates: [SemanticId(1)], decision: Resolved, reason: SlangContext }]
+
+ka-03 "KA warum"
+gold=[Gold { start: 0, end: 2, concept: None }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(1)], decision: Ambiguous, reason: CaseAmbiguity }]
+
+fr-case "FR bro"
+gold=[Gold { start: 0, end: 2, concept: None }]
+actual=[SemanticAnnotation { start: 0, end: 2, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: CaseAmbiguity }]
+
+fr-conflict "language: fr bro"
+gold=[Gold { start: 10, end: 12, concept: None }]
+actual=[SemanticAnnotation { start: 10, end: 12, candidates: [SemanticId(4), SemanticId(5)], decision: Ambiguous, reason: ConflictingContext }]
+
