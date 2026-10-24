@@ -76,6 +76,9 @@ def checkpoint(root: Path, *, verify_payloads: bool, frozen_pointer: dict | None
     index = read_json(index_path)
     if index.get("format") != 1 or not isinstance(index.get("identity"), str) or not index["identity"]:
         raise ValueError("Invalid checkpoint generation identity")
+    step = index.get("step")
+    if type(step) is not int or step < 0 or step != int(name.split("-")[1]):
+        raise ValueError("Invalid checkpoint step or generation/step mismatch")
     shards = index.get("shards")
     if not isinstance(shards, list) or not 1 <= len(shards) <= 4096:
         raise ValueError("Invalid checkpoint shard count")
@@ -137,19 +140,32 @@ def copy_metadata(source: Path, destination: Path) -> None:
             copy_file(path, target)
 
 
+def destination_pointer(destination: Path, pointer: dict | None, index: dict | None,
+                        *, verify_payloads: bool = False) -> dict | None:
+    """Reject known stale/divergent writers; this is not a distributed lock."""
+    if not (destination / "latest.json").exists():
+        return None
+    previous, old_index = checkpoint(destination, verify_payloads=verify_payloads)
+    if pointer is None or index is None:
+        raise ValueError("Remote checkpoint exists but local run has no complete checkpoint")
+    if old_index["identity"] != index["identity"]:
+        raise ValueError("Destination checkpoint belongs to another run identity")
+    if old_index["step"] > index["step"]:
+        raise ValueError("Destination checkpoint is newer; refusing stale backup")
+    if old_index["step"] == index["step"] and previous != pointer:
+        raise ValueError("Destination checkpoint diverges at the same step")
+    return previous
+
+
 def transfer_checkpoint(source: Path, destination: Path, *, force_verify: bool = False,
                         remove_previous: bool = False, frozen_pointer: dict | None = None) -> bool:
     if frozen_pointer is None and not (source / "latest.json").exists():
         return False
     pointer, index = checkpoint(source, verify_payloads=False, frozen_pointer=frozen_pointer)
     destination.mkdir(parents=True, exist_ok=True)
-    previous = None
-    if (destination / "latest.json").exists():
-        previous, old_index = checkpoint(destination, verify_payloads=force_verify)
-        if old_index["identity"] != index["identity"]:
-            raise ValueError("Destination checkpoint belongs to another run identity")
-        if previous == pointer:
-            return True
+    previous = destination_pointer(destination, pointer, index, verify_payloads=force_verify)
+    if previous == pointer:
+        return True
     completed = destination / pointer["directory"]
     if not completed.exists():
         temporary = destination / (pointer["directory"] + ".copy-" + uuid.uuid4().hex + ".tmp")
@@ -182,6 +198,12 @@ def transfer_checkpoint(source: Path, destination: Path, *, force_verify: bool =
                     raise ValueError("Existing generation is corrupt")
         finally:
             probe.rmdir()
+    observed = read_json(destination / "latest.json") if (destination / "latest.json").exists() else None
+    if observed != previous:
+        # Do not overwrite another runtime's publication or remove its files.
+        # Drive/FUSE offers no atomic compare-and-swap: concurrent writers are
+        # unsupported even with these defensive change checks.
+        raise ValueError("Destination checkpoint changed during copy; refusing publication")
     atomic_json(destination / "latest.json", pointer)
     # Publication is last; no restore can see a pointer to a partial copy.
     verified, verified_index = checkpoint(destination, verify_payloads=force_verify)
@@ -237,6 +259,12 @@ class Mirror:
             copy_metadata(self.drive, self.local)
             transfer_checkpoint(root, local_root, force_verify=True, frozen_pointer=pointer)
         else:
+            local_root = self.local / "checkpoints"
+            if (local_root / "latest.json").exists():
+                # A failed first backup may have copied only old metadata. Keep
+                # the local checkpoint and its newer metrics together on retry.
+                checkpoint(local_root, verify_payloads=True)
+                return
             copy_metadata(self.drive, self.local)
 
     def sync(self, final: bool = False) -> bool:
@@ -247,8 +275,12 @@ class Mirror:
         # pointer afterward would pair checkpoint N+1 with only N's metric log.
         source = self.local / "checkpoints"
         frozen = read_json(source / "latest.json") if (source / "latest.json").exists() else None
+        index = None
         if frozen is not None:
-            checkpoint(source, verify_payloads=False, frozen_pointer=frozen)
+            _, index = checkpoint(source, verify_payloads=False, frozen_pointer=frozen)
+        # Check before touching logs too: stale metadata can invalidate a newer
+        # backup even when its weights/pointer are never replaced.
+        destination_pointer(self.drive / "checkpoints", frozen, index)
         copy_metadata(self.local, self.drive)
         copied = transfer_checkpoint(source, self.drive / "checkpoints", force_verify=final,
                                      remove_previous=True, frozen_pointer=frozen) if frozen is not None else False

@@ -1,0 +1,1 @@
+{"drive_step_before": 2, "drive_step_after": 2, "newer_checkpoint_preserved": true, "stale_mirror_verified": false, "error": "ValueError: Destination checkpoint is newer; refusing stale backup"}

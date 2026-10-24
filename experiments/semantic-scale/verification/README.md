@@ -3,7 +3,9 @@
 The scale workspace is experimental. All checks below ran on the available
 Linux CPU environment with Rust1.90.0; root compatibility used its declared
 Rust1.85.0. No GPU was allocated, and no large model was trained on CPU.
-The exact commands/statuses and complete output are preserved in `final/`.
+The original commands/statuses and complete output are preserved in `final/`.
+The subsequent independent Astra review and regression cycle are preserved in
+`astra-review.md`, `astra-repros/` and `astra-fixes/`.
 
 ## Final local gates
 
@@ -11,12 +13,12 @@ The exact commands/statuses and complete output are preserved in `final/`.
 |---|---|
 | Separate scale workspace rustfmt | pass |
 | Separate scale workspace Clippy, locked/all-targets/warnings denied | pass (CPU feature set) |
-| Separate scale debug tests | 26 passed, 0 failed/ignored |
-| Separate scale release tests | 26 passed, 0 failed/ignored |
+| Separate scale debug tests after Astra fixes | 30 passed, 0 failed/ignored |
+| Separate scale release tests after Astra fixes | 30 passed, 0 failed/ignored |
 | Separate scale release build | pass |
 | Original root Rust1.85 fmt +Clippy all-targets/all-features | pass |
 | Original root debug/release tests | 161 passed each, 0 failed/ignored |
-| Colab/bootstrap/backup standard-library Python tests | 20 passed |
+| Colab/bootstrap/backup standard-library Python tests after Astra fixes | 29 passed |
 | Notebook JSON/AST/compile | 5 cells, 2 executable code cells |
 | Notebook schema, nbformat5.10.4 | pass |
 
@@ -58,6 +60,20 @@ reviewer reran this probe. Logs retain this distinction explicitly.
   settings bounds disagreed with Rust; NB4 a version-pin unit assertion was wrong;
   NB5 checkpoint publication could outrun copied metrics; NB6 the first prepared
   dataset's parent directory was absent. All are fixed and independently retested.
+- [Independent Astra review](astra-review.md): reproduced a timeout hanging on
+  an orphaned child process, stale Drive metadata overwriting local metrics, an
+  omitted cuRAND installation dependency, an incorrect L4/L40 hardware match and
+  an older runtime rolling back the Drive checkpoint. Fixes add process-group
+  cleanup, preservation of complete local state, full CUDA dependency checks,
+  exact hardware matching and stale/divergent publication checks before touching
+  metadata. A destination change during checkpoint copy aborts publication and
+  pruning. Concurrent Drive writers remain unsupported; the local OS lock is not
+  a distributed lock and there is no atomic Drive compare-and-swap.
+- [Targeted runner regressions](runner-bugfix-review.md): a valid final JSONL
+  object without LF no longer merges with the resume marker, and a checkpoint
+  cannot silently resume with missing, duplicated or out-of-order metric steps.
+  Original and archived logs survive rejected recovery. An interrupted initial
+  Git fetch also recovers from a proven empty clone without resetting user work.
 
 The checkpoint/log race now freezes a source pointer before copying metadata and
 copies only that immutable image; a pruned source retries a later snapshot.
@@ -72,9 +88,10 @@ They include pending module files, the original small BF16-construction test
 guard, and an integration fixture that BPE compressed below its chosen context.
 No failed result is presented as a pass or discarded to improve the narrative.
 
-All reproduced review findings are closed. No known reproducible critical/high/
-medium defect remains from these reviews. This is bounded test/review evidence,
-not proof that no bugs exist.
+Reproduced defects in the supported single-writer path are fixed. Defensive
+backup checks close the demonstrated sequential stale-writer rollback; actual
+overlapping writers on Drive/FUSE remain an explicit unsupported case. This is
+bounded test/review evidence, not proof that no bugs exist.
 
 ## Unverified in this environment
 
@@ -92,8 +109,10 @@ is unchanged; this record makes no new M5 result claim.
 
 ## Immutable implementation pin
 
-The released notebook installs and runs source commit `ead9f0a56b2ea382f64626a0a4f2d4c25626e837`.
-That commit contains the exact Rust/installer/transport implementation validated
-above. A following delivery commit replaces only the notebook pin and records
-strict notebook validation. The source snapshot contains an unreleased notebook
-placeholder; open the final delivered notebook linked in the scale README.
+The notebook's `SOURCE_COMMIT` selects the exact Rust/installer/transport
+implementation. After committing implementation fixes, a following delivery
+commit updates that immutable pin and records strict notebook validation.
+Use the delivered notebook linked in the scale README. The original delivery
+pinned `ead9f0a56b2ea382f64626a0a4f2d4c25626e837`; the Astra fix delivery supersedes
+that implementation. A changed source version requires a new run name rather
+than silently resuming an existing run with different code.

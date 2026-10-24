@@ -173,3 +173,8 @@ No final GPU quality result exists at this preparation stage.
   optional verified Drive backup. Historical M0–M5 remain unchanged.
 - CPU/mocked checks and independent reviews are documented; actual CUDA build,
   1B fit/throughput and any learning advantage remain to be measured in Colab.
+- Follow-up Astra review fixes descendant-process timeouts, local/Drive history
+  rollback, missing cuRAND dependencies, L40 admission, malformed resumed JSONL
+  and interrupted first-checkout recovery. Resume validates complete metric
+  history. Backup rejects known stale/divergent writers; overlapping Drive
+  writers remain unsupported. Reproductions and regression logs are retained.

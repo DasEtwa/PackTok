@@ -1,0 +1,148 @@
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c print('hello')
+hello
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c raise SystemExit(3)
+.Installiere CUDA-Entwicklungswerkzeuge aus dem offiziellen NVIDIA-Repository.
+FF...{
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmpo80vsp_i/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmpo80vsp_i/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.0012462540003070899,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+Drive-Sicherung fehlgeschlagen. Lokale Ergebnisse unter /tmp/tmpo80vsp_i/packtok-runs/semantic-tiny-42 bleiben erhalten; Laufzeit nicht automatisch trennen. mock quota failure
+.{
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmpjtac19vd/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmpjtac19vd/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.0013424090002445155,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+..F...$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmp2f_iv_r7/leader.py /tmp/tmp2f_iv_r7/group.txt False
+descendant ready
+F$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmpgnmmgstv/leader.py /tmp/tmpgnmmgstv/group.txt True
+descendant ready
+FCloning into '/tmp/tmp3zv06ic2/checkout'...
+warning: --filter is ignored in local clones; use file:// instead.
+done.
+warning: filtering not recognized by server, ignoring
+From /tmp/tmp3zv06ic2/origin
+ * branch            1a987a0367bfe4a2b854aeb005b99a932d5b85b6 -> FETCH_HEAD
+HEAD is now at 1a987a0 fixture
+warning: filtering not recognized by server, ignoring
+From /tmp/tmp3zv06ic2/origin
+ * branch            1a987a0367bfe4a2b854aeb005b99a932d5b85b6 -> FETCH_HEAD
+HEAD is now at 1a987a0 fixture
+........FF.
+======================================================================
+FAIL: test_cuda_install_includes_locked_candle_link_dependencies (test_colab_bootstrap.BootstrapTests.test_cuda_install_includes_locked_candle_link_dependencies)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_bootstrap.py", line 111, in test_cuda_install_includes_locked_candle_link_dependencies
+    self.assertIn(package, install)
+AssertionError: 'libcurand-dev-12-8' not found in ['apt-get', 'install', '-y', '--no-install-recommends', 'cuda-nvcc-12-8', 'cuda-cudart-dev-12-8', 'cuda-nvrtc-dev-12-8', 'libcublas-dev-12-8', 'cuda-cccl-12-8', 'build-essential', 'pkg-config']
+
+======================================================================
+FAIL: test_cuda_rejects_versions_not_supported_by_locked_cudarc (test_colab_bootstrap.BootstrapTests.test_cuda_rejects_versions_not_supported_by_locked_cudarc)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_bootstrap.py", line 121, in test_cuda_rejects_versions_not_supported_by_locked_cudarc
+    patch.object(module.os, "geteuid", return_value=1000), self.assertRaises(RuntimeError):
+                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+======================================================================
+FAIL: test_official_ubuntu_repository_mapping_and_toolkit_completeness (test_colab_bootstrap.BootstrapTests.test_official_ubuntu_repository_mapping_and_toolkit_completeness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_bootstrap.py", line 83, in test_official_ubuntu_repository_mapping_and_toolkit_completeness
+    self.assertFalse(module.cuda_toolkit_usable(root))
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_watchdog_kills_descendants_even_after_the_leader_exits (test_colab_bootstrap.BootstrapTests.test_watchdog_kills_descendants_even_after_the_leader_exits) (leader_exits_first=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_bootstrap.py", line 197, in test_watchdog_kills_descendants_even_after_the_leader_exits
+    self.assertFalse(thread.is_alive(), "watchdog left a descendant holding stdout")
+AssertionError: True is not false : watchdog left a descendant holding stdout
+
+======================================================================
+FAIL: test_watchdog_kills_descendants_even_after_the_leader_exits (test_colab_bootstrap.BootstrapTests.test_watchdog_kills_descendants_even_after_the_leader_exits) (leader_exits_first=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_bootstrap.py", line 197, in test_watchdog_kills_descendants_even_after_the_leader_exits
+    self.assertFalse(thread.is_alive(), "watchdog left a descendant holding stdout")
+AssertionError: True is not false : watchdog left a descendant holding stdout
+
+======================================================================
+FAIL: test_restore_validates_local_checkpoint_before_preserving_its_logs (test_colab_storage.StorageTests.test_restore_validates_local_checkpoint_before_preserving_its_logs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 176, in test_restore_validates_local_checkpoint_before_preserving_its_logs
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_restore_without_remote_checkpoint_preserves_newer_local_logs (test_colab_storage.StorageTests.test_restore_without_remote_checkpoint_preserves_newer_local_logs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 167, in test_restore_without_remote_checkpoint_preserves_newer_local_logs
+    self.assertEqual((local / "metrics.jsonl").read_text(), metrics)
+AssertionError: '{"step":1}\n' != '{"step":1}\n{"step":2}\n'
+  {"step":1}
++ {"step":2}
+
+
+----------------------------------------------------------------------
+Ran 25 tests in 6.118s
+
+FAILED (failures=7)

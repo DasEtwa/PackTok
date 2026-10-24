@@ -1,0 +1,48 @@
+cudarc v0.16.6
+├── cudarc feature "cublas"
+│   ├── candle-core v0.9.1
+│   │   ├── candle-core feature "cuda"
+│   │   │   ├── packtok-semantic-scale feature "cuda" (command-line)
+│   │   │   └── candle-nn feature "cuda"
+│   │   │       └── packtok-semantic-scale feature "cuda" (command-line)
+│   │   ├── candle-core feature "cudarc"
+│   │   │   └── candle-core feature "cuda" (*)
+│   │   └── candle-core feature "default"
+│   │       ├── candle-nn v0.9.1
+│   │       │   ├── candle-nn feature "cuda" (*)
+│   │       │   └── candle-nn feature "default"
+│   │       │       └── packtok-semantic-scale v0.1.0 (/workspace/PackTok/experiments/semantic-scale)
+│   │       │           ├── packtok-semantic-scale feature "cuda" (command-line)
+│   │       │           └── packtok-semantic-scale feature "default" (command-line)
+│   │       └── packtok-semantic-scale v0.1.0 (/workspace/PackTok/experiments/semantic-scale) (*)
+│   └── ug-cuda v0.4.0
+│       └── ug-cuda feature "default"
+│           └── candle-core v0.9.1 (*)
+├── cudarc feature "cublaslt"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+├── cudarc feature "cuda-version-from-build-system"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+├── cudarc feature "curand"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+├── cudarc feature "driver"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+│   ├── cudarc feature "cublas" (*)
+│   ├── cudarc feature "cublaslt" (*)
+│   └── cudarc feature "curand" (*)
+├── cudarc feature "dynamic-linking"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+├── cudarc feature "f16"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+├── cudarc feature "nvrtc"
+│   ├── candle-core v0.9.1 (*)
+│   └── ug-cuda v0.4.0 (*)
+│   └── cudarc feature "driver" (*)
+└── cudarc feature "std"
+    ├── candle-core v0.9.1 (*)
+    └── ug-cuda v0.4.0 (*)

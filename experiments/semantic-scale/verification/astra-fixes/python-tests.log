@@ -1,0 +1,92 @@
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c print('hello')
+hello
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c raise SystemExit(3)
+.Installiere CUDA-Entwicklungswerkzeuge aus dem offiziellen NVIDIA-Repository.
+.....{
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmp7ptt4k_g/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmp7ptt4k_g/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.001376240999888978,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+Drive-Sicherung fehlgeschlagen. Lokale Ergebnisse unter /tmp/tmp7ptt4k_g/packtok-runs/semantic-tiny-42 bleiben erhalten; Laufzeit nicht automatisch trennen. mock quota failure
+.{
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmp3cem7adf/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmp3cem7adf/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.0015207480000754003,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+......$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmp0g8f7ry8/leader.py /tmp/tmp0g8f7ry8/group.txt False True
+descendant ready
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmp0m91sblq/leader.py /tmp/tmp0m91sblq/group.txt True True
+descendant ready
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmpg8q4u99n/leader.py /tmp/tmpg8q4u99n/group.txt False False
+descendant ready
+.Cloning into '/tmp/tmp7om75j01/checkout'...
+warning: --filter is ignored in local clones; use file:// instead.
+done.
+warning: filtering not recognized by server, ignoring
+From /tmp/tmp7om75j01/origin
+ * branch            b2e8748de3d80dbd8e491ccde56712cec672d9d4 -> FETCH_HEAD
+HEAD is now at b2e8748 fixture
+warning: filtering not recognized by server, ignoring
+From /tmp/tmp7om75j01/origin
+ * branch            b2e8748de3d80dbd8e491ccde56712cec672d9d4 -> FETCH_HEAD
+HEAD is now at b2e8748 fixture
+From /tmp/tmp7om75j01/origin
+ * branch            b2e8748de3d80dbd8e491ccde56712cec672d9d4 -> FETCH_HEAD
+HEAD is now at b2e8748 fixture
+...............
+----------------------------------------------------------------------
+Ran 29 tests in 1.104s
+
+OK

@@ -1,0 +1,5 @@
+{"case": "prior_clone_before_failed_first_fetch", "worktree_entries": [".git"], "index_exists": false}
+From /tmp/tmpt6n59dh6/origin
+ * branch            c729b59688b156746a0b9ef1670b6d949d35df52 -> FETCH_HEAD
+HEAD is now at c729b59 fixture
+{"recovery": "passed", "tracked_file_exists": true}

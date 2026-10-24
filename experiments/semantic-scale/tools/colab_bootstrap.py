@@ -30,6 +30,7 @@ CUDA_VERSION = "12.8"
 REPOSITORY = "https://github.com/DasEtwa/PackTok.git"
 EXPERIMENT = Path("experiments/semantic-scale")
 SPLITS = ("train", "validation", "test")
+_TERMINATION_GRACE_SECONDS = 15
 
 
 @dataclass(frozen=True)
@@ -112,7 +113,7 @@ class Commands:
         self.cancel_event: threading.Event | None = None
 
     def __call__(self, arguments: Sequence[str | Path], *, cwd: Path | None = None,
-                 timeout: int | None = None, label: str = "command") -> str:
+                 timeout: float | None = None, label: str = "command") -> str:
         if self.cancel_event is not None and self.cancel_event.is_set():
             raise RuntimeError("Drive-Backup fehlgeschlagen; GPU-Arbeit wird gestoppt und lokale Ergebnisse bleiben erhalten.")
         self.counter += 1
@@ -120,6 +121,7 @@ class Commands:
         logfile = self.log_directory / f"{self.counter:02d}-{label}.log"
         print("$ " + " ".join(args), flush=True)
         expired = threading.Event()
+        termination_lock = threading.Lock()
         forced: threading.Timer | None = None
         with logfile.open("x", encoding="utf-8") as log:
             log.write(json.dumps({"argv": args, "cwd": str(cwd) if cwd else None,
@@ -133,24 +135,25 @@ class Commands:
 
             def terminate() -> None:
                 nonlocal forced
-                expired.set()
-                if process.poll() is None:
+                with termination_lock:
+                    if expired.is_set():
+                        return
+                    expired.set()
                     try:
                         os.killpg(process.pid, signal.SIGTERM)
                     except ProcessLookupError:
                         return
-                    # Only this subprocess's own session is targeted. A partial
-                    # checkpoint cannot publish a complete generation manifest.
-                    forced = threading.Timer(15, kill)
+                    # Descendants can outlive their leader and retain its output
+                    # pipe. Signal the owned group even after poll() reports exit.
+                    forced = threading.Timer(_TERMINATION_GRACE_SECONDS, kill)
                     forced.daemon = True
                     forced.start()
 
             def kill() -> None:
-                if process.poll() is None:
-                    try:
-                        os.killpg(process.pid, signal.SIGKILL)
-                    except ProcessLookupError:
-                        pass
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
             timer = threading.Timer(timeout, terminate) if timeout else None
             if timer:
@@ -176,18 +179,28 @@ class Commands:
             except BaseException:
                 terminate()
                 try:
-                    process.wait(timeout=16)
+                    process.wait(timeout=_TERMINATION_GRACE_SECONDS + 1)
                 except subprocess.TimeoutExpired:
                     kill()
                     process.wait()
+                # wait() covers only the leader. An interrupted caller must not
+                # cancel the group's watchdog while live descendants remain.
+                kill()
                 raise
             finally:
                 cancellation_done.set()
                 cancellation.join()
                 if timer:
                     timer.cancel()
+                    timer.join()
+                if expired.is_set():
+                    # The pipe may close as soon as the leader exits, before the
+                    # grace timer fires. Still clean up descendants that closed
+                    # their own stdout and ignored SIGTERM.
+                    kill()
                 if forced:
                     forced.cancel()
+                    forced.join()
                 if process.stdout:
                     process.stdout.close()
             if expired.is_set():
@@ -218,10 +231,14 @@ def ubuntu_cuda_repository(os_release: str) -> str:
 
 def cuda_toolkit_usable(root: Path) -> bool:
     includes = (root / "include", root / "targets/x86_64-linux/include")
-    return (root / "bin/nvcc").is_file() and any(
-        (directory / "cuda_runtime.h").is_file() and (directory / "cublas_v2.h").is_file()
-        for directory in includes
-    )
+    libraries = (root / "lib64", root / "targets/x86_64-linux/lib")
+    # The locked Candle/cudarc CUDA features link all five toolkit libraries.
+    # Require unversioned linker files, resolving symlinks to catch partial installs.
+    return ((root / "bin/nvcc").is_file()
+            and all(any((directory / header).is_file() for directory in includes)
+                    for header in ("cuda_runtime.h", "cublas_v2.h", "curand.h", "nvrtc.h"))
+            and all(any((directory / f"lib{library}.so").is_file() for directory in libraries)
+                    for library in ("cudart", "cublas", "cublasLt", "curand", "nvrtc")))
 
 
 def ensure_system_packages(run: Callable[..., str], environment: Mapping[str, str]) -> None:
@@ -242,7 +259,8 @@ def ensure_cuda(run: Callable[..., str], environment: dict[str, str],
     ) if cuda_toolkit_usable(candidate)), None)
     if root is not None:
         version = run([root / "bin/nvcc", "--version"], label="nvcc")
-        if "release 12." not in version:
+        # cudarc 0.16.6 has no bindings for CUDA 12.7 or CUDA 13.x.
+        if re.search(r"release 12\.(?:0|1|2|3|4|5|6|8|9),", version) is None:
             root = None
     if root is None:
         if os.geteuid() != 0:
@@ -256,11 +274,11 @@ def ensure_cuda(run: Callable[..., str], environment: dict[str, str],
         run(["apt-get", "update", "-qq"], timeout=300, label="apt-update")
         run(["apt-get", "install", "-y", "--no-install-recommends",
              "cuda-nvcc-12-8", "cuda-cudart-dev-12-8", "cuda-nvrtc-dev-12-8",
-             "libcublas-dev-12-8", "cuda-cccl-12-8", "build-essential", "pkg-config"],
+             "libcublas-dev-12-8", "libcurand-dev-12-8", "cuda-cccl-12-8", "build-essential", "pkg-config"],
             timeout=900, label="cuda-toolkit")
         root = Path("/usr/local/cuda-12.8")
         if not cuda_toolkit_usable(root):
-            raise RuntimeError("CUDA-Installation unvollständig: nvcc/Runtime/cuBLAS-Header fehlen.")
+            raise RuntimeError("CUDA-Installation unvollständig: nvcc oder Runtime/cuBLAS/cuRAND/NVRTC-Header bzw. Linker-Bibliotheken fehlen.")
     environment["CUDA_ROOT"] = str(root)
     environment["CUDA_PATH"] = str(root)
     environment["CUDA_COMPUTE_CAP"] = "89"

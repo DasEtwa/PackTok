@@ -1,10 +1,13 @@
 """CPU-only tests for installation plans, provenance, and notebook structure."""
 import importlib.util
 import json
+import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -76,7 +79,47 @@ class BootstrapTests(unittest.TestCase):
             (root / "include/cuda_runtime.h").touch()
             self.assertFalse(module.cuda_toolkit_usable(root))
             (root / "include/cublas_v2.h").touch()
+            self.assertFalse(module.cuda_toolkit_usable(root))
+            for header in ("curand.h", "nvrtc.h"):
+                (root / "include" / header).touch()
+            (root / "lib64").mkdir()
+            for library in ("cudart", "cublas", "cublasLt", "nvrtc"):
+                (root / "lib64" / f"lib{library}.so").touch()
+            self.assertFalse(module.cuda_toolkit_usable(root))
+            (root / "lib64/libcurand.so").touch()
             self.assertTrue(module.cuda_toolkit_usable(root))
+            (root / "lib64/libcurand.so").unlink()
+            (root / "lib64/libcurand.so").symlink_to("missing-curand.so.10")
+            self.assertFalse(module.cuda_toolkit_usable(root))
+
+    def test_cuda_install_includes_locked_candle_link_dependencies(self):
+        recorded = []
+        def run(args, **kwargs):
+            recorded.append([str(value) for value in args])
+            return "Cuda compilation tools, release 12.8, V12.8.93"
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(module, "cuda_toolkit_usable", side_effect=[False, False, True]), \
+                 patch.object(module.os, "geteuid", return_value=0), \
+                 patch.object(module.urllib.request, "urlretrieve"), \
+                 patch.object(module, "ubuntu_cuda_repository", return_value="ubuntu2204"):
+                environment = {"PATH": "/usr/bin"}
+                module.ensure_cuda(run, environment, Path(directory))
+        install = next(args for args in recorded if args[:2] == ["apt-get", "install"])
+        for package in ("cuda-nvcc-12-8", "cuda-cudart-dev-12-8", "cuda-nvrtc-dev-12-8",
+                        "libcublas-dev-12-8", "libcurand-dev-12-8", "cuda-cccl-12-8"):
+            self.assertIn(package, install)
+        self.assertNotIn("cuda-drivers", install)
+
+    def test_cuda_rejects_versions_not_supported_by_locked_cudarc(self):
+        for version in ("12.7", "13.0"):
+            recorded = []
+            def run(args, **kwargs):
+                recorded.append([str(value) for value in args])
+                return f"Cuda compilation tools, release {version}, V{version}.0"
+            with patch.object(module, "cuda_toolkit_usable", return_value=True), \
+                 patch.object(module.os, "geteuid", return_value=1000), self.assertRaises(RuntimeError):
+                module.ensure_cuda(run, {"PATH": "/usr/bin"})
+            self.assertEqual(recorded[0][-1], "--version")
 
     def test_system_install_plan_is_conditional_and_never_installs_a_driver(self):
         recorded = []
@@ -117,6 +160,60 @@ class BootstrapTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 commands([sys.executable, "-c", "raise SystemExit(3)"], timeout=5, label="failed")
             self.assertTrue((Path(directory) / "02-failed.log").is_file())
+
+    @unittest.skipUnless(hasattr(os, "fork") and Path("/proc").is_dir(), "Colab regression requires Linux")
+    def test_watchdog_kills_descendants_even_after_the_leader_exits(self):
+        for leader_exits_first, child_keeps_pipe in ((False, True), (True, True), (False, False)):
+            with self.subTest(leader_exits_first=leader_exits_first, child_keeps_pipe=child_keeps_pipe), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                state = root / "group.txt"
+                script = root / "leader.py"
+                script.write_text("""import os, signal, sys, time
+from pathlib import Path
+state = Path(sys.argv[1])
+if os.fork() == 0:
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    state.write_text(str(os.getpgrp()))
+    state.with_suffix('.child').write_text(str(os.getpid()))
+    print('descendant ready', flush=True)
+    if sys.argv[3] == 'False':
+        os.close(1)
+        os.close(2)
+    while True: time.sleep(1)
+elif sys.argv[2] == 'True':
+    while not state.exists(): time.sleep(.01)
+else:
+    while True: time.sleep(1)
+""")
+                results = []
+                def run():
+                    try:
+                        module.Commands(root / "logs")(
+                            [sys.executable, script, state, str(leader_exits_first), str(child_keeps_pipe)], timeout=.25)
+                    except BaseException as error:
+                        results.append(error)
+                with patch.object(module, "_TERMINATION_GRACE_SECONDS", .1, create=True):
+                    thread = threading.Thread(target=run, daemon=True)
+                    thread.start()
+                    try:
+                        thread.join(timeout=3)
+                        self.assertFalse(thread.is_alive(), "watchdog left a descendant holding stdout")
+                        self.assertEqual(len(results), 1)
+                        self.assertIsInstance(results[0], TimeoutError)
+                        child_stat = Path("/proc") / state.with_suffix(".child").read_text() / "stat"
+                        for _ in range(100):
+                            if not child_stat.exists() or child_stat.read_text().split()[2] == "Z":
+                                break
+                            threading.Event().wait(.01)
+                        else:
+                            self.fail("descendant survived timeout")
+                    finally:
+                        if state.exists():
+                            try:
+                                os.killpg(int(state.read_text()), signal.SIGKILL)
+                            except ProcessLookupError:
+                                pass
+                        thread.join(timeout=2)
 
     def pipeline_mock(self, content, *, fail_backup=False):
         from contextlib import ExitStack

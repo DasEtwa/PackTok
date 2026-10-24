@@ -151,6 +151,103 @@ class StorageTests(unittest.TestCase):
                 mirror.restore()
             self.assertEqual(storage.read_json(local / "config.json"), {"version": "local"})
 
+    def test_restore_without_remote_checkpoint_preserves_newer_local_logs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            local, drive = root / "local", root / "drive"
+            local.mkdir()
+            mirror = storage.Mirror(local, drive, "run-a")
+            (local / "metrics.jsonl").write_text('{"step":1}\n')
+            mirror.sync()  # Metadata copied, but no first complete checkpoint yet.
+            _, pointer = generation(local / "checkpoints", 2)
+            metrics = '{"step":1}\n{"step":2}\n'
+            (local / "metrics.jsonl").write_text(metrics)
+            mirror.restore()
+            self.assertEqual(storage.read_json(local / "checkpoints/latest.json"), pointer)
+            self.assertEqual((local / "metrics.jsonl").read_text(), metrics)
+
+    def test_restore_validates_local_checkpoint_before_preserving_its_logs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            local, drive = root / "local", root / "drive"
+            shard_directory, _ = generation(local / "checkpoints", 2)
+            mirror = storage.Mirror(local, drive, "run-a")
+            (shard_directory / "tensor-000001.safetensors").write_bytes(b"corrupt")
+            with self.assertRaises(ValueError):
+                mirror.restore()
+
+    def test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata(self):
+        for source_step in (1, 2):
+            with self.subTest(source_step=source_step), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                local, drive = root / "local", root / "drive"
+                remote_generation, pointer = generation(drive / "checkpoints", 2)
+                # Simulate a different runtime: a distinct generation at step 2
+                # is divergent even when the plan identity and step are equal.
+                if source_step == 2:
+                    moved = remote_generation.with_name("step-000000000002-999-777")
+                    remote_generation.rename(moved)
+                    pointer["directory"] = moved.name
+                    storage.atomic_json(drive / "checkpoints/latest.json", pointer)
+                storage.atomic_json(drive / storage.MARKER, {
+                    "format": 1, "run_name": "run-a", "owner": "packtok-semantic-scale-colab"})
+                generation(local / "checkpoints", source_step)
+                (local / "metrics.jsonl").write_text("stale-local-metrics\n")
+                (drive / "metrics.jsonl").write_text("newer-remote-metrics\n")
+                mirror = storage.Mirror(local, drive, "run-a")
+                with self.assertRaises(ValueError):
+                    mirror.sync(final=True)
+                self.assertFalse(mirror.verified)
+                self.assertEqual(storage.read_json(drive / "checkpoints/latest.json"), pointer)
+                self.assertEqual((drive / "metrics.jsonl").read_text(), "newer-remote-metrics\n")
+                self.assertEqual(storage.checkpoint(drive / "checkpoints", verify_payloads=True)[1]["step"], 2)
+
+    def test_metadata_only_mirror_cannot_replace_a_complete_remote_run(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            local, drive = root / "local", root / "drive"
+            local.mkdir()
+            mirror = storage.Mirror(local, drive, "run-a")
+            _, pointer = generation(drive / "checkpoints", 2)
+            (local / "metrics.jsonl").write_text("stale-local\n")
+            (drive / "metrics.jsonl").write_text("newer-remote\n")
+            with self.assertRaises(ValueError):
+                mirror.sync(final=True)
+            self.assertEqual((drive / "metrics.jsonl").read_text(), "newer-remote\n")
+            self.assertEqual(storage.read_json(drive / "checkpoints/latest.json"), pointer)
+
+    def test_destination_change_during_copy_never_publishes_or_prunes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            local, remote = root / "local", root / "remote"
+            first, _ = generation(remote, 1)
+            generation(local, 2)
+            original = storage.copy_file
+            concurrent = []
+            def publish_newer_while_copying(source, destination):
+                original(source, destination)
+                if not concurrent:
+                    concurrent.append(generation(remote, 3)[1])
+            with patch.object(storage, "copy_file", side_effect=publish_newer_while_copying):
+                with self.assertRaises(ValueError):
+                    storage.transfer_checkpoint(local, remote, remove_previous=True)
+            self.assertEqual(storage.read_json(remote / "latest.json"), concurrent[0])
+            self.assertEqual(storage.checkpoint(remote, verify_payloads=True)[1]["step"], 3)
+            self.assertTrue(first.is_dir(), "a failed publication must not prune its predecessor")
+
+    def test_checkpoint_rejects_malformed_or_inconsistent_step(self):
+        for step in (None, True, -1, "2", 1.5, 3):
+            with self.subTest(step=step), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                checkpoint_directory, pointer = generation(root, 2)
+                index = storage.read_json(checkpoint_directory / "index.json")
+                index["step"] = step
+                storage.atomic_json(checkpoint_directory / "index.json", index)
+                pointer["index_sha256"] = storage.digest(checkpoint_directory / "index.json")
+                storage.atomic_json(root / "latest.json", pointer)
+                with self.assertRaises(ValueError):
+                    storage.checkpoint(root, verify_payloads=True)
+
     def notebook_functions(self):
         path = Path(__file__).resolve().parents[3] / "notebooks/PackTok_Semantic_Scale_Colab.ipynb"
         notebook = json.loads(path.read_text())
@@ -178,6 +275,25 @@ class StorageTests(unittest.TestCase):
             checkout(destination, commit, str(origin))
             self.assertEqual((destination / "example.txt").read_text(), "first")
             checkout(destination, commit, str(origin))
+            interrupted = root / "interrupted"
+            subprocess.run(["git", "clone", "--no-checkout", str(origin), str(interrupted)],
+                           check=True, capture_output=True)
+            self.assertFalse((interrupted / ".git/index").exists())
+            checkout(interrupted, commit, str(origin))
+            self.assertEqual((interrupted / "example.txt").read_text(), "first")
+            incomplete_with_notes = root / "incomplete-with-notes"
+            subprocess.run(["git", "clone", "--no-checkout", str(origin), str(incomplete_with_notes)],
+                           check=True, capture_output=True)
+            (incomplete_with_notes / "notes.txt").write_text("user work")
+            with self.assertRaises(subprocess.CalledProcessError):
+                checkout(incomplete_with_notes, commit, str(origin))
+            self.assertEqual((incomplete_with_notes / "notes.txt").read_text(), "user work")
+            wrong_origin = root / "wrong-origin"
+            subprocess.run(["git", "clone", "--no-checkout", str(origin), str(wrong_origin)],
+                           check=True, capture_output=True)
+            with self.assertRaises(RuntimeError):
+                checkout(wrong_origin, commit, str(root / "different-origin"))
+            self.assertFalse((wrong_origin / "example.txt").exists())
             (destination / "example.txt").write_text("user change")
             with self.assertRaises(subprocess.CalledProcessError):
                 checkout(destination, commit, str(origin))

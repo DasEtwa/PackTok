@@ -171,6 +171,9 @@ fn hardware() -> Result<Hardware> {
         return Err("nvidia-smi failed; select an NVIDIA L4 Colab GPU runtime".into());
     }
     let text = std::str::from_utf8(&result.stdout)?;
+    parse_hardware(text)
+}
+fn parse_hardware(text: &str) -> Result<Hardware> {
     let lines: Vec<_> = text
         .lines()
         .filter(|line| !line.trim().is_empty())
@@ -179,7 +182,7 @@ fn hardware() -> Result<Hardware> {
         return Err("this single-device experiment requires exactly one visible GPU".into());
     }
     let values: Vec<_> = lines[0].split(',').map(str::trim).collect();
-    if values.len() != 4 || !values[0].contains("L4") {
+    if values.len() != 4 || !matches!(values[0], "NVIDIA L4" | "NVIDIA L4 GPU") {
         return Err(
             "this notebook targets NVIDIA L4; hardware is never silently substituted".into(),
         );
@@ -422,6 +425,7 @@ fn reconcile_metrics(path: &Path, step: usize, identity: &str) -> Result<()> {
     let temporary = path.with_extension("reconciled.tmp");
     let mut output = fs::File::create(&temporary)?;
     let mut input = BufReader::new(fs::File::open(path)?);
+    let mut canonical_train_step = 0_u64;
     loop {
         let mut line = Vec::new();
         let read = input
@@ -446,13 +450,33 @@ fn reconcile_metrics(path: &Path, step: usize, identity: &str) -> Result<()> {
         {
             return Err("metrics belong to another run identity".into());
         }
-        let row_step = row
-            .get("step")
-            .or_else(|| row.get("completed_steps"))
-            .and_then(|v| v.as_u64());
+        let row_step = if row.get("stage").and_then(|v| v.as_str()) == Some("train") {
+            let row_step = row
+                .get("step")
+                .and_then(|v| v.as_u64())
+                .filter(|&n| n > 0)
+                .ok_or("train metrics need a positive integer step")?;
+            if row_step <= step as u64 {
+                if row_step != canonical_train_step + 1 {
+                    return Err("train metrics must contain each step through the checkpoint exactly once and in order".into());
+                }
+                canonical_train_step = row_step;
+            }
+            Some(row_step)
+        } else {
+            row.get("step")
+                .or_else(|| row.get("completed_steps"))
+                .and_then(|v| v.as_u64())
+        };
         if row_step.is_none_or(|n| n <= step as u64) {
             output.write_all(&line)?;
+            if !line.ends_with(b"\n") {
+                output.write_all(b"\n")?;
+            }
         }
+    }
+    if canonical_train_step != step as u64 {
+        return Err("checkpoint needs complete train metrics through its saved step; restore the complete run directory".into());
     }
     writeln!(
         output,
@@ -773,6 +797,61 @@ fn evaluate(plan: &TrainPlan, output: &Path, cpu: bool) -> Result<()> {
 mod tests {
     use super::*;
     #[test]
+    fn hardware_parser_accepts_only_the_two_l4_device_names() {
+        for name in ["NVIDIA L4", "NVIDIA L4 GPU"] {
+            let gpu = parse_hardware(&format!("{name}, GPU-test, 23034, 21000\n")).unwrap();
+            assert_eq!(gpu.name, name);
+            assert_eq!(gpu.total_mib, 23034);
+            assert_eq!(gpu.free_mib, 21000);
+        }
+        for text in [
+            "NVIDIA L40, GPU-test, 46068, 42000\n",
+            "NVIDIA L40S, GPU-test, 46068, 42000\n",
+            "Not NVIDIA L4, GPU-test, 23034, 21000\n",
+            "NVIDIA L4, GPU-test, 23034, 21000\nNVIDIA L4, GPU-other, 23034, 21000\n",
+            "NVIDIA L4, GPU-test, 23034\n",
+            "NVIDIA L4, GPU-test, NaN, 21000\n",
+            "NVIDIA L4, GPU-test, 23034, -1\n",
+            "",
+        ] {
+            assert!(parse_hardware(text).is_err(), "accepted {text:?}");
+        }
+    }
+
+    #[test]
+    fn resume_metrics_separates_valid_unterminated_last_row_from_boundary() {
+        let dir = std::env::temp_dir().join(format!(
+            "scale-metrics-no-newline-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("metrics.jsonl");
+        let original = b"{\"stage\":\"train\",\"step\":1}\n{\"stage\":\"train\",\"step\":2}";
+        fs::write(&path, original).unwrap();
+        reconcile_metrics(&path, 2, "test").unwrap();
+        let text = fs::read_to_string(&path).unwrap();
+        let rows: Vec<serde_json::Value> = text
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(rows.len(), 3);
+        assert_eq!(rows[0]["step"], 1);
+        assert_eq!(rows[1]["step"], 2);
+        assert_eq!(rows[2]["stage"], "resume_boundary");
+        let archive = fs::read_dir(&dir)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .find(|file| file != &path)
+            .unwrap();
+        assert_eq!(fs::read(archive).unwrap(), original);
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
     fn resume_metrics_archive_abandoned_tail_and_keep_canonical_steps() {
         let dir = std::env::temp_dir().join(format!(
             "scale-metrics-{}-{}",
@@ -790,6 +869,116 @@ mod tests {
         assert!(!text.contains("\"step\":3"));
         assert!(text.contains("resume_boundary"));
         assert_eq!(fs::read_dir(&dir).unwrap().count(), 2);
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn resume_metrics_rejects_incomplete_or_invalid_training_history_without_mutation() {
+        let dir = std::env::temp_dir().join(format!(
+            "scale-metrics-history-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        for (case, (checkpoint_step, rows)) in [
+            (2, vec![json!({"stage":"train", "step":1})]),
+            (2, vec![json!({"stage":"train", "step":2})]),
+            (
+                3,
+                vec![
+                    json!({"stage":"train", "step":1}),
+                    json!({"stage":"train", "step":3}),
+                ],
+            ),
+            (
+                2,
+                vec![
+                    json!({"stage":"train", "step":1}),
+                    json!({"stage":"train", "step":1}),
+                    json!({"stage":"train", "step":2}),
+                ],
+            ),
+            (
+                2,
+                vec![
+                    json!({"stage":"train", "step":2}),
+                    json!({"stage":"train", "step":1}),
+                ],
+            ),
+            (2, vec![json!({"stage":"train", "step":"1"})]),
+            (2, vec![json!({"stage":"train", "step":-1})]),
+            (2, vec![json!({"stage":"train", "step":1.5})]),
+            (2, vec![json!({"stage":"train", "step":null})]),
+            (2, vec![json!({"stage":"train"})]),
+            (0, vec![json!({"stage":"train", "step":0})]),
+            (2, vec![]),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let case_dir = dir.join(case.to_string());
+            fs::create_dir_all(&case_dir).unwrap();
+            let path = case_dir.join("metrics.jsonl");
+            let original = rows
+                .iter()
+                .map(|row| format!("{row}\n"))
+                .collect::<String>();
+            fs::write(&path, &original).unwrap();
+            assert!(
+                reconcile_metrics(&path, checkpoint_step, "test").is_err(),
+                "case {case} accepted invalid history {original:?}"
+            );
+            assert_eq!(fs::read_to_string(&path).unwrap(), original);
+            let archive = fs::read_dir(&case_dir)
+                .unwrap()
+                .map(|entry| entry.unwrap().path())
+                .find(|file| {
+                    file.file_name()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .starts_with("metrics-before-resume-")
+                })
+                .unwrap();
+            assert_eq!(fs::read_to_string(archive).unwrap(), original);
+        }
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn resume_metrics_allows_other_stages_and_filters_abandoned_train_tail_at_zero() {
+        let dir = std::env::temp_dir().join(format!(
+            "scale-metrics-zero-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("metrics.jsonl");
+        let other_row = json!({"stage":"custom", "step":"external-value"});
+        fs::write(
+            &path,
+            format!(
+                "{}\n{other_row}\n{}\n{}\n",
+                json!({"stage":"start", "step":0}),
+                json!({"stage":"train", "step":1}),
+                json!({"stage":"train", "step":2}),
+            ),
+        )
+        .unwrap();
+        reconcile_metrics(&path, 0, "test").unwrap();
+        let text = fs::read_to_string(&path).unwrap();
+        let rows: Vec<serde_json::Value> = text
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(rows.len(), 3);
+        assert_eq!(rows[1], other_row);
+        assert_eq!(rows[2]["stage"], "resume_boundary");
         fs::remove_dir_all(dir).unwrap();
     }
 

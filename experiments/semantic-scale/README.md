@@ -25,6 +25,10 @@ pinned repository commit, Rust 1.90.0 and the committed Cargo.lock. It checks CU
 and installs missing development tools from NVIDIA's official repository, builds
 the Rust executable and checks the allocated GPU. No GPU is allocated by this
 repository or during development here. It targets L4; it does not retry allocations.
+Toolkit admission checks the runtime, cuBLAS, cuRAND and NVRTC headers/linker
+libraries required by the locked dependencies. The fallback installs CUDA 12.8,
+including `libcurand-dev-12-8`; existing CUDA 12.x installations must have a
+minor version supported by locked cuDARC 0.16.6 (12.7 and 13.x are not accepted).
 
 The default is a bounded `tiny`/semantic demonstration on explicitly generated
 English/German smoke-test data. Choose `100m` or `1b` explicitly. With demonstration
@@ -39,18 +43,37 @@ positional embedding counts and are reported by the planner.
 The notebook exposes model preset, baseline/semantic variant, context, microbatch,
 accumulation, update count, seed, wall-time limit, data source and run name.
 The configuration is bound to the run directory and an OS file lock prevents
-concurrent writers; locks release on process exit, including termination. Use a new run name when changing
-it. Re-running the same plan can restore its complete optimizer/sampler state.
+concurrent Rust writers on the same local filesystem; locks release on process
+exit, including termination. Use a new run name when changing the configuration.
+Re-running the same plan can restore its complete optimizer/sampler state.
 `train.txt`, `validation.txt`, `test.txt` are required for an external corpus.
 No large external corpus or pretrained weights are downloaded automatically.
 
 Checkpoints are written locally, outside Google Drive's FUSE mount. Optional
 Drive backup copies completed, hash-verified checkpoint generations and publishes
 `latest.json` last. The notebook restores the complete run before resuming.
+Resume requires a complete ordered training metric history through the restored
+checkpoint step; damaged history is rejected while the original log is archived.
+If a first backup failed before publishing any checkpoint, retry keeps a complete
+newer local checkpoint and its logs together.
 Only completed images of the same owned run are eligible for retention; logs and
 failed/incomplete images are preserved. A local runtime alone is ephemeral.
 Disconnect/recycle of Colab loses unbacked-up local state. Runtime disconnection
 must occur only after verified preservation or explicit disposal of local output.
+
+**Use only one active notebook/runtime per Drive `RUN_NAME`.** Different runtimes
+do not share the local OS lock. Backup refuses known older/divergent checkpoints
+before copying metadata and detects a changed destination pointer before
+publication. These checks cannot provide an atomic distributed compare-and-swap
+on Drive/FUSE: simultaneous writers are unsupported and can still race. Use
+distinct run names for parallel experiments, and stop an older session before
+resuming its name elsewhere.
+
+Command timeouts signal the owned process group and escalate to SIGKILL after
+15 seconds even when its leader exits first; unrelated sessions are not targeted.
+An interrupted initial source fetch can resume only an empty `--no-checkout`
+worktree with no index and the expected Git origin. Existing user changes remain
+protected by the dirty-worktree checks.
 
 Large checkpoints are a material storage requirement. A BF16 1b checkpoint contains
 BF16 model weights, FP32 master weights and two FP32 Adam moments: approximately

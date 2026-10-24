@@ -1,0 +1,2 @@
+{"case": "real_checkpoint_with_rolled_back_metrics", "resume_exit_code": 0, "checkpoint_step": 2, "canonical_train_steps": [1, 2], "summary_completed_steps": 2}
+{"case": "l40_passes_l4_gate", "exit_code": 1, "stderr": "error: this notebook targets NVIDIA L4; hardware is never silently substituted", "advanced_past_hardware_gate": false}

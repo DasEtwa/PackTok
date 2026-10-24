@@ -21,3 +21,5 @@ experiments/m5-gpu/provenance/** -text whitespace=-trailing-space,-blank-at-eof,
 experiments/m5-gpu/verification/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
 # Maintenance raw evidence retains captured Windows/Linux bytes.
 docs/maintenance/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
+# Semantic scale review/validation logs preserve the exact captured output.
+experiments/semantic-scale/verification/**/*.log -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
