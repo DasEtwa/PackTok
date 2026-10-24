@@ -1,0 +1,17 @@
+    Checking packtok-semantic-scale v0.1.0 (/workspace/PackTok/experiments/semantic-scale)
+warning: unused import: `sha256`
+ --> src/runner.rs:2:41
+  |
+2 | use crate::{Result, config::{TrainPlan, sha256}, data::{self, Dataset}, model::{self, Transformer}, optim::{AdamConfig, CheckpointProgres...
+  |                                         ^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `PathBuf`
+ --> src/runner.rs:7:83
+  |
+7 | use std::{collections::BTreeMap, fs::{self, OpenOptions}, io::Write, path::{Path, PathBuf}, process::Command, time::Instant};
+  |                                                                                   ^^^^^^^
+
+warning: `packtok-semantic-scale` (lib) generated 2 warnings (run `cargo fix --lib -p packtok-semantic-scale` to apply 2 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.82s

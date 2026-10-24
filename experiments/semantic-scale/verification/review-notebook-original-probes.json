@@ -1,0 +1,21 @@
+{
+  "source_sha256": "c90beb9aa3eef596f3dda6885ca636cc8f9044e446c51a8db0cd6d6c3701e18f",
+  "probes": [
+    {
+      "mount_drive": false,
+      "error": "ValueError:F\u00fcr automatisches Trennen bitte Drive aktivieren, damit Ergebnisse erhalten bleiben.",
+      "runtime_calls": [
+        "unassign"
+      ],
+      "stdout": "PackTok-Lauf gestoppt: F\u00fcr automatisches Trennen bitte Drive aktivieren, damit Ergebnisse erhalten bleiben.\nDie eigene Colab-Laufzeit wird jetzt getrennt.\n"
+    },
+    {
+      "mount_drive": true,
+      "error": "RuntimeError:simulated Drive permission failure",
+      "runtime_calls": [
+        "unassign"
+      ],
+      "stdout": "PackTok-Lauf gestoppt: simulated Drive permission failure\nDie eigene Colab-Laufzeit wird jetzt getrennt.\n"
+    }
+  ]
+}

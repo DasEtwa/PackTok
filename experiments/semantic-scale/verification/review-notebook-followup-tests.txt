@@ -1,0 +1,102 @@
+test_commands_use_argument_vectors_log_success_and_report_failures (test_colab_bootstrap.BootstrapTests.test_commands_use_argument_vectors_log_success_and_report_failures) ... $ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c print('hello')
+hello
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c raise SystemExit(3)
+ok
+test_demo_is_deterministic_distinct_and_never_replaces_modified_input (test_colab_bootstrap.BootstrapTests.test_demo_is_deterministic_distinct_and_never_replaces_modified_input) ... ok
+test_gpu_gate_requires_one_l4_and_compute_89 (test_colab_bootstrap.BootstrapTests.test_gpu_gate_requires_one_l4_and_compute_89) ... ok
+test_input_provenance_rejects_changes_and_identical_splits (test_colab_bootstrap.BootstrapTests.test_input_provenance_rejects_changes_and_identical_splits) ... ok
+test_mock_pipeline_backup_failure_never_sets_preservation_success (test_colab_bootstrap.BootstrapTests.test_mock_pipeline_backup_failure_never_sets_preservation_success) ... {
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmp9u_ot8yk/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmp9u_ot8yk/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.0019329829992784653,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+Drive-Sicherung fehlgeschlagen. Lokale Ergebnisse unter /tmp/tmp9u_ot8yk/packtok-runs/semantic-tiny-42 bleiben erhalten; Laufzeit nicht automatisch trennen. mock quota failure
+ok
+test_mock_pipeline_local_writer_drive_backup_and_resume_commands (test_colab_bootstrap.BootstrapTests.test_mock_pipeline_local_writer_drive_backup_and_resume_commands) ... {
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmprt5bd2kc/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmprt5bd2kc/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.0015475139989575837,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+ok
+test_notebook_json_and_all_code_cells_compile_without_colab (test_colab_bootstrap.BootstrapTests.test_notebook_json_and_all_code_cells_compile_without_colab) ... ok
+test_official_ubuntu_repository_mapping_and_toolkit_completeness (test_colab_bootstrap.BootstrapTests.test_official_ubuntu_repository_mapping_and_toolkit_completeness) ... ok
+test_rust_install_is_pinned_and_preserves_proxy_environment (test_colab_bootstrap.BootstrapTests.test_rust_install_is_pinned_and_preserves_proxy_environment) ... ok
+test_settings_are_bounded_and_demo_1b_is_preflight_only (test_colab_bootstrap.BootstrapTests.test_settings_are_bounded_and_demo_1b_is_preflight_only) ... ok
+test_system_install_plan_is_conditional_and_never_installs_a_driver (test_colab_bootstrap.BootstrapTests.test_system_install_plan_is_conditional_and_never_installs_a_driver) ... ok
+test_actual_fresh_no_checkout_clone_and_existing_dirty_checkout (test_colab_storage.StorageTests.test_actual_fresh_no_checkout_clone_and_existing_dirty_checkout) ... Cloning into '/tmp/tmpyyoygmqc/checkout'...
+warning: --filter is ignored in local clones; use file:// instead.
+done.
+warning: filtering not recognized by server, ignoring
+From /tmp/tmpyyoygmqc/origin
+ * branch            eba1b099c3134a4a5cce1a86c07d00ebd44c37b8 -> FETCH_HEAD
+HEAD is now at eba1b09 fixture
+warning: filtering not recognized by server, ignoring
+From /tmp/tmpyyoygmqc/origin
+ * branch            eba1b099c3134a4a5cce1a86c07d00ebd44c37b8 -> FETCH_HEAD
+HEAD is now at eba1b09 fixture
+ok
+test_backup_freezes_checkpoint_before_copying_matching_metrics (test_colab_storage.StorageTests.test_backup_freezes_checkpoint_before_copying_matching_metrics) ... ok
+test_copy_verify_restore_and_keep_only_previous_managed_generation (test_colab_storage.StorageTests.test_copy_verify_restore_and_keep_only_previous_managed_generation) ... ok
+test_corrupt_drive_payload_cannot_restore_or_disconnect_as_verified (test_colab_storage.StorageTests.test_corrupt_drive_payload_cannot_restore_or_disconnect_as_verified) ... ok
+test_disconnect_requires_gpu_phase_and_preservation_or_explicit_discard (test_colab_storage.StorageTests.test_disconnect_requires_gpu_phase_and_preservation_or_explicit_discard) ... ok
+test_mirror_failure_cancels_owned_process_and_cannot_report_verified (test_colab_storage.StorageTests.test_mirror_failure_cancels_owned_process_and_cannot_report_verified) ... ok
+test_partial_copy_or_pruned_source_never_replaces_old_pointer (test_colab_storage.StorageTests.test_partial_copy_or_pruned_source_never_replaces_old_pointer) ... ok
+test_restore_never_rolls_back_newer_local_checkpoint_or_configuration (test_colab_storage.StorageTests.test_restore_never_rolls_back_newer_local_checkpoint_or_configuration) ... ok
+test_unsafe_paths_symlinks_and_unmanaged_directories_are_rejected (test_colab_storage.StorageTests.test_unsafe_paths_symlinks_and_unmanaged_directories_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.107s
+
+OK

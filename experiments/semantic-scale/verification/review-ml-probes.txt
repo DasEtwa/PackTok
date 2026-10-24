@@ -1,0 +1,37 @@
+Temporary probe dir=/tmp/packtok-scale-ml-review-_cg9ecmq
+
+$ ('prepare', '--input', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/raw'), '--output', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/prepared'))
+exit=0
+
+$ ('plan', '--data', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/prepared'), '--out', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/plan.json'), '--preset', 'tiny', '--context', '8', '--batch', '1', '--accum', '1', '--dtype', 'f32', '--steps', '4', '--max-seconds', '60', '--checkpoint-every', '2')
+exit=0
+{"config":"/tmp/packtok-scale-ml-review-_cg9ecmq/plan.json","estimate_is_not_measured":true,"estimated_training_bytes":2150325248,"identity":"885506d2622e3814cf15d3ed69da61f5b4f3ab69c45bb841bbf9c9468779a22f","parameters":166720}
+
+$ ('preflight', '--config', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/plan.json'), '--output', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/run'), '--cpu')
+exit=0
+{"version":1,"config_identity":"885506d2622e3814cf15d3ed69da61f5b4f3ab69c45bb841bbf9c9468779a22f","passed":true,"parameters":166720,"hardware":null,"steps":2,"seconds":0.650201657,"checkpoint_weights_equal":true,"cuda_runtime_tested":false}
+
+$ ('train', '--config', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/plan.json'), '--output', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/run'), '--cpu')
+exit=0
+{"accumulation":1,"checkpointing":true,"cursor":0,"hardware":null,"identity":"885506d2622e3814cf15d3ed69da61f5b4f3ab69c45bb841bbf9c9468779a22f","parameters":166720,"precision":"f32","source_commit":"55442dab1acf9b8a622123d83b8265ae68250961","stage":"start","step":0}
+{"active_wall_seconds":0.133647938,"cursor":8,"learning_rate":0.00025606601717798207,"loss_per_token":6.230053901672363,"sampled_gpu":null,"stage":"train","step":1,"target_bytes_seen":84,"tokens_per_second":62.83320547037826,"tokens_seen":8,"update_seconds":0.127321214}
+{"active_wall_seconds":0.273411192,"cursor":16,"learning_rate":0.00015,"loss_per_token":6.150448799133301,"sampled_gpu":null,"stage":"train","step":2,"target_bytes_seen":164,"tokens_per_second":57.27069761221996,"tokens_seen":16,"update_seconds":0.13968749}
+{"active_wall_seconds":0.365278562,"stage":"checkpoint","step":2}
+{"active_wall_seconds":0.512487634,"cursor":24,"learning_rate":0.000043933982822017876,"loss_per_token":6.071885108947754,"sampled_gpu":null,"stage":"train","step":3,"target_bytes_seen":244,"tokens_per_second":54.361526151736754,"tokens_seen":24,"update_seconds":0.147162903}
+{"active_wall_seconds":0.648301554,"cursor":32,"learning_rate":0.0,"loss_per_token":6.116955280303955,"sampled_gpu":null,"stage":"train","step":4,"target_bytes_seen":335,"tokens_per_second":58.948154044819326,"tokens_seen":32,"update_seconds":0.135712477}
+{"active_wall_seconds":0.744347737,"stage":"checkpoint","step":4}
+{"active_wall_seconds":0.74438293,"checkpoint_time_can_exceed_deadline":true,"complete":true,"completed_steps":4,"config_identity":"885506d2622e3814cf15d3ed69da61f5b4f3ab69c45bb841bbf9c9468779a22f","requested_steps":4,"target_bytes_seen":335,"tokens_seen":32,"version":1,"wall_limit_soft_between_microbatches":true}
+
+$ ('train', '--config', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/plan.json'), '--output', PosixPath('/tmp/packtok-scale-ml-review-_cg9ecmq/run'), '--cpu', '--resume')
+exit=0
+{"accumulation":1,"checkpointing":true,"cursor":16,"hardware":null,"identity":"885506d2622e3814cf15d3ed69da61f5b4f3ab69c45bb841bbf9c9468779a22f","parameters":166720,"precision":"f32","source_commit":"55442dab1acf9b8a622123d83b8265ae68250961","stage":"start","step":2}
+{"active_wall_seconds":0.306875746,"cursor":24,"learning_rate":0.000043933982822017876,"loss_per_token":6.071885108947754,"sampled_gpu":null,"stage":"train","step":3,"target_bytes_seen":244,"tokens_per_second":64.04550304900626,"tokens_seen":24,"update_seconds":0.12491119}
+{"active_wall_seconds":0.429400117,"cursor":32,"learning_rate":0.0,"loss_per_token":6.116955280303955,"sampled_gpu":null,"stage":"train","step":4,"target_bytes_seen":335,"tokens_per_second":65.32855227412324,"tokens_seen":32,"update_seconds":0.122457941}
+{"active_wall_seconds":0.521049038,"stage":"checkpoint","step":4}
+{"active_wall_seconds":0.521081877,"checkpoint_time_can_exceed_deadline":true,"complete":true,"completed_steps":4,"config_identity":"885506d2622e3814cf15d3ed69da61f5b4f3ab69c45bb841bbf9c9468779a22f","requested_steps":4,"target_bytes_seen":335,"tokens_seen":32,"version":1,"wall_limit_soft_between_microbatches":true}
+
+observed train step history=[1, 2, 3, 4]
+
+context-versus-split-length probe: {'test': 5325, 'train': 825, 'validation': 6025}
+plan exit=1
+error: train needs at least context+1 lexical tokens

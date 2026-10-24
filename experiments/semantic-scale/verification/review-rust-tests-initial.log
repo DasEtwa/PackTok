@@ -1,0 +1,37 @@
+warning: unused import: `PathBuf`
+  --> src/runner.rs:17:18
+   |
+17 |     path::{Path, PathBuf},
+   |                  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: `packtok-semantic-scale` (lib test) generated 1 warning (run `cargo fix --lib -p packtok-semantic-scale --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (experiments/semantic-scale/target/debug/deps/packtok_semantic_scale-2d00e9cfa133fc2f)
+
+running 21 tests
+test config::tests::planning_one_billion_never_allocates_tensors_and_bounds_memory ... ok
+test data::tests::malformed_prepared_data_is_rejected_even_with_updated_container_hash ... ok
+test data::tests::bounded_lines_preserve_all_bytes_and_reject_large_lines ... ok
+test data::tests::semantic_events_wait_for_observed_delimiter_and_ignore_future_context ... ok
+test data::tests::semantic_features_are_prefix_causal_for_fixed_lexical_boundaries ... ok
+test data::tests::prepared_data_is_deterministic_seekable_and_resumable ... ok
+test model::tests::baseline_zero_features_still_produce_a_complete_checkpoint_gradient_set ... ok
+test model::tests::checkpointed_gradients_match_full_graph_for_every_parameter ... ok
+test model::tests::detached_inference_preserves_logits_and_invalid_inputs_return_errors ... ok
+test model::tests::deterministic_initialization_and_exact_parameter_count ... ok
+test model::tests::presets_account_without_allocating_large_models ... ok
+test model::tests::zero_semantic_feature_is_neutral_and_attention_is_causal ... ok
+test model::tests::checkpointed_microbatch_accumulation_matches_full_batch_mean ... ok
+test optim::tests::corrupted_shard_and_wrong_identity_do_not_change_model ... ok
+test optim::tests::first_adamw_step_matches_scalar_reference_with_global_clipping ... ok
+test optim::tests::incomplete_generations_do_not_replace_latest_and_files_are_sharded ... ok
+test optim::tests::bf16_checkpoints_preserve_unrounded_master_weights ... ok
+test optim::tests::invalid_gradients_and_schedule_are_rejected_before_updates ... ok
+test runner::tests::hashes_bind_ordered_bytes ... ok
+test runner::tests::invalid_cli_options_fail_without_allocating_model ... ok
+test optim::tests::interrupted_optimizer_matches_uninterrupted_weights ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+

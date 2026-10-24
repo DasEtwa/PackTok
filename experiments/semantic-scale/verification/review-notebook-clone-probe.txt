@@ -1,0 +1,3 @@
+Independent offline fresh-clone reproduction; one tracked file; no network/GPU.
+['git', 'diff', '--quiet'] -> exit 0
+['git', 'diff', '--cached', '--quiet'] -> exit 1

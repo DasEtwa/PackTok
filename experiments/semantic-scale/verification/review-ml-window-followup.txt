@@ -1,0 +1,13 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (experiments/semantic-scale/target/debug/deps/packtok_semantic_scale-2d00e9cfa133fc2f)
+
+running 6 tests
+test data::tests::batch_semantics_see_exact_input_window_and_never_the_target_delimiter ... ok
+test data::tests::malformed_prepared_data_is_rejected_even_with_updated_container_hash ... ok
+test data::tests::bounded_lines_preserve_all_bytes_and_reject_large_lines ... ok
+test data::tests::semantic_events_wait_for_observed_delimiter_and_ignore_future_context ... ok
+test data::tests::semantic_features_are_prefix_causal_for_fixed_lexical_boundaries ... ok
+test data::tests::prepared_data_is_deterministic_seekable_and_resumable ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.02s
+

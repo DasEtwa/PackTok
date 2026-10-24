@@ -1,0 +1,13 @@
+$ ['prepare', '--input', '/tmp/scale-rust-review-f_wd7crg/raw', '--output', '/tmp/scale-rust-review-f_wd7crg/prepared']
+exit=0
+
+
+$ ['plan', '--data', '/tmp/scale-rust-review-f_wd7crg/prepared', '--out', '/tmp/scale-rust-review-f_wd7crg/plan.json', '--preset', 'tiny', '--context', '4', '--batch', '1', '--accum', '1', '--dtype', 'f32', '--variant', 'semantic', '--steps', '1', '--max-seconds', '60']
+exit=0
+{"config":"/tmp/scale-rust-review-f_wd7crg/plan.json","estimate_is_not_measured":true,"estimated_training_bytes":2150232576,"identity":"69b1a51aa75a01d9e997fdc7f05c5a798083f87c819f54d71ff3d2449a0615fe","parameters":166464}
+
+
+$ ['preflight', '--config', '/tmp/scale-rust-review-f_wd7crg/plan.json', '--output', '/tmp/scale-rust-review-f_wd7crg/run', '--cpu']
+exit=1
+
+error: preflight optimizer failed to update model weights

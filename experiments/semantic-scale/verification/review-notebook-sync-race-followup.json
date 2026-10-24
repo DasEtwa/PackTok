@@ -1,0 +1,7 @@
+{
+  "first_frozen_snapshot_step": 1,
+  "first_frozen_metrics": "{\"stage\":\"train\",\"step\":1}\n",
+  "next_complete_snapshot_step": 2,
+  "next_metrics": "{\"stage\":\"train\",\"step\":1}\n{\"stage\":\"train\",\"step\":2}\n",
+  "verified": true
+}

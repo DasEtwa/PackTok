@@ -163,3 +163,13 @@ No final GPU quality result exists at this preparation stage.
   and independent correctness/architecture/semantic reviews.
 - No compression or model-quality advantage claimed; see
   [experiment record](experiments/semantic-packs-v1/REPORT.md).
+
+## Semantic Scale / Colab (experimental)
+
+- Separate Rust/Candle training workspace with ~100M/~1B plans, BF16 and
+  layer-recompute gradients, direct microbatch accumulation, streaming datasets,
+  causal semantic embeddings and sharded optimizer/sampler resume.
+- Self-installing pinned Colab notebook with hardware preflight, bounded runs and
+  optional verified Drive backup. Historical M0–M5 remain unchanged.
+- CPU/mocked checks and independent reviews are documented; actual CUDA build,
+  1B fit/throughput and any learning advantage remain to be measured in Colab.

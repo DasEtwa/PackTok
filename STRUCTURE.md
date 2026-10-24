@@ -458,3 +458,14 @@ measurements and the agent-authored development corpus. Model/training/frozen M4
 and M5 interfaces remain unchanged. See
 [architecture](docs/architecture/semantic-packs-v1.md) and
 [experiment](experiments/semantic-packs-v1/REPORT.md).
+
+## Semantic Scale / Colab boundary
+
+`experiments/semantic-scale/` is an independent Rust/Candle workspace for the
+unfrozen semantic-input scale experiment. M5's fixed architecture/protocol cannot
+own 1B configurations or new semantic features without changing its controls.
+The new workspace owns model/recompute gradients, FP32-master optimizer, bounded
+streaming datasets, sharded resume and run metrics. It reuses unchanged root BPE
+and semantic-registry crates. `notebooks/PackTok_Semantic_Scale_Colab.ipynb` and the
+experiment's Python tools are external installation/process/backup orchestration;
+Python does not own training. See [scale contract](experiments/semantic-scale/README.md).

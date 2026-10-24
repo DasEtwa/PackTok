@@ -1,0 +1,108 @@
+    Checking libm v0.2.16
+    Checking cfg-if v1.0.5
+    Checking libc v0.2.191
+    Checking num-traits v0.2.19
+    Checking bytemuck v1.25.2
+    Checking zerocopy v0.8.63
+    Checking getrandom v0.3.4
+    Checking rand_core v0.9.5
+    Checking crossbeam-utils v0.8.23
+    Checking crossbeam-epoch v0.9.21
+    Checking num-complex v0.4.6
+    Checking reborrow v0.5.5
+    Checking crossbeam-deque v0.8.8
+    Checking once_cell v1.21.4
+    Checking rayon-core v1.13.0
+    Checking either v1.19.0
+    Checking rayon v1.12.0
+    Checking bitflags v2.13.2
+    Checking dyn-stack v0.13.2
+    Checking raw-cpuid v11.6.0
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking rand v0.9.5
+    Checking rand_distr v0.5.1
+    Checking pulp v0.21.5
+    Checking half v2.7.1
+    Checking bitflags v1.3.2
+    Checking raw-cpuid v10.7.0
+    Checking pulp v0.18.22
+    Checking gemm-common v0.18.2
+    Checking dyn-stack v0.10.0
+    Checking num-integer v0.1.47
+    Checking gemm-common v0.17.1
+    Checking serde_core v1.0.228
+    Checking num-bigint v0.4.8
+    Checking gemm-f32 v0.18.2
+    Checking ryu v1.0.23
+    Checking memchr v2.8.3
+    Checking typenum v1.20.1
+    Checking itoa v1.0.18
+    Checking stable_deref_trait v1.2.1
+    Checking serde_json v1.0.145
+    Checking generic-array v0.14.7
+    Checking serde v1.0.228
+    Checking thiserror v1.0.69
+    Checking gemm-f16 v0.18.2
+    Checking num-rational v0.4.2
+    Checking zerofrom v0.1.8
+    Checking gemm-f32 v0.17.1
+    Checking num-iter v0.1.46
+    Checking gemm-c64 v0.18.2
+    Checking gemm-f64 v0.18.2
+    Checking gemm-c32 v0.18.2
+    Checking tracing-core v0.1.36
+    Checking pin-project-lite v0.2.17
+    Checking equivalent v1.0.3
+    Checking hashbrown v0.17.1
+    Checking packtok-core v0.1.0 (/workspace/PackTok/crates/packtok-core)
+    Checking packtok-packs v0.1.0 (/workspace/PackTok/crates/packtok-packs)
+    Checking indexmap v2.14.2
+    Checking gemm v0.18.2
+    Checking tracing v0.1.44
+    Checking gemm-f16 v0.17.1
+    Checking num v0.4.3
+    Checking yoke v0.7.5
+    Checking safetensors v0.4.5
+    Checking crc32fast v1.5.3
+    Checking memmap2 v0.9.12
+    Checking gemm-c64 v0.17.1
+    Checking gemm-f64 v0.17.1
+    Checking gemm-c32 v0.17.1
+    Checking num_cpus v1.17.0
+    Checking libloading v0.8.9
+    Checking zip v1.3.1
+    Checking gemm v0.17.1
+    Checking ug v0.4.0
+    Checking packtok-format v0.1.0 (/workspace/PackTok/crates/packtok-format)
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking byteorder v1.5.0
+    Checking digest v0.10.7
+    Checking cpufeatures v0.2.17
+    Checking sha2 v0.10.9
+    Checking packtok-tokenizer v0.1.0 (/workspace/PackTok/crates/packtok-tokenizer)
+    Checking candle-core v0.9.1
+    Checking packtok-train v0.1.0 (/workspace/PackTok/crates/packtok-train)
+    Checking candle-nn v0.9.1
+    Checking packtok-semantic-scale v0.1.0 (/workspace/PackTok/experiments/semantic-scale)
+error[E0583]: file not found for module `data`
+ --> src/lib.rs:4:1
+  |
+4 | pub mod data;
+  | ^^^^^^^^^^^^^
+  |
+  = help: to create the module `data`, create file "src/data.rs" or "src/data/mod.rs"
+  = note: if there is a `mod data` elsewhere in the crate already, import it with `use crate::...` instead
+
+error[E0583]: file not found for module `runner`
+ --> src/lib.rs:7:1
+  |
+7 | pub mod runner;
+  | ^^^^^^^^^^^^^^^
+  |
+  = help: to create the module `runner`, create file "src/runner.rs" or "src/runner/mod.rs"
+  = note: if there is a `mod runner` elsewhere in the crate already, import it with `use crate::...` instead
+
+For more information about this error, try `rustc --explain E0583`.
+error: could not compile `packtok-semantic-scale` (lib) due to 2 previous errors

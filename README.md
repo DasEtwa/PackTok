@@ -159,3 +159,12 @@ See [architecture](docs/architecture/semantic-packs-v1.md),
 [measurements](experiments/semantic-packs-v1/REPORT.md) and
 [independent reviews](experiments/semantic-packs-v1/REVIEWS.md).
 This experiment does not establish better compression or model learning.
+
+## Colab scale experiment
+
+The [self-installing Colab notebook](notebooks/PackTok_Semantic_Scale_Colab.ipynb)
+provides a separate Rust training path with tiny, about100M and about1B presets,
+BF16, layer recomputation, causal semantic inputs, streaming data and complete
+resume. It starts with a bounded smoke test; actual CUDA/1B readiness is checked
+on the Colab L4 rather than inferred from CPU tests. See
+[setup, storage requirements and limitations](experiments/semantic-scale/README.md).

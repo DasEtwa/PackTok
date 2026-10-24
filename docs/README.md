@@ -37,3 +37,6 @@ use the results overview for current evidence. See the
   sparse concept annotations, context decisions and separate versioned sidecar.
 - [Semantic experiment and measurements](../experiments/semantic-packs-v1/REPORT.md)
   and [independent review/fix record](../experiments/semantic-packs-v1/REVIEWS.md).
+- [Semantic Scale and Google Colab](../experiments/semantic-scale/README.md):
+  independent Rust BF16/recompute training, 1B configuration, streaming data and
+  complete sharded checkpoints; actual GPU preflight runs in Colab.
