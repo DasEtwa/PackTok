@@ -89,3 +89,11 @@ The notebook performs the first GPU checks and records actual outcomes. It never
 substitutes a CPU pass for a CUDA PASS. Rust's admission formulas and checkpoint
 sizes are algebraic estimates until measured. The original frozen M5 experiment
 is unchanged; this record makes no new M5 result claim.
+
+## Immutable implementation pin
+
+The released notebook installs and runs source commit `ead9f0a56b2ea382f64626a0a4f2d4c25626e837`.
+That commit contains the exact Rust/installer/transport implementation validated
+above. A following delivery commit replaces only the notebook pin and records
+strict notebook validation. The source snapshot contains an unreleased notebook
+placeholder; open the final delivered notebook linked in the scale README.
