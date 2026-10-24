@@ -110,8 +110,9 @@ is unchanged; this record makes no new M5 result claim.
 ## Immutable implementation pin
 
 The notebook's `SOURCE_COMMIT` selects the exact Rust/installer/transport
-implementation. After committing implementation fixes, a following delivery
-commit updates that immutable pin and records strict notebook validation.
+implementation: `45b9e84f9b1437c3aba5ad6c7b6eb1d8e305ce8a` includes the Astra fixes.
+The following delivery commit updates that immutable pin and records strict
+notebook validation without changing the reviewed implementation.
 Use the delivered notebook linked in the scale README. The original delivery
 pinned `ead9f0a56b2ea382f64626a0a4f2d4c25626e837`; the Astra fix delivery supersedes
 that implementation. A changed source version requires a new run name rather
