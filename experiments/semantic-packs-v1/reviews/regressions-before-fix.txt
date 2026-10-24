@@ -1,0 +1,51 @@
+   Compiling packtok-packs v0.1.0 (/workspace/PackTok/crates/packtok-packs)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+     Running unittests src/lib.rs (target/debug/deps/packtok_packs-45cc4c27fe79ecbf)
+
+running 4 tests
+test semantic::tests::regression_context_budget_never_fabricates_a_key_boundary ... FAILED
+test semantic::tests::regression_lowercase_rule_is_independent_of_spacing_and_apostrophe_style ... FAILED
+test semantic::tests::regression_quoted_metadata_keeps_apostrophe_word_protection ... FAILED
+test semantic::tests::regression_vertical_separators_cannot_supply_context_or_phrase_spaces ... FAILED
+
+failures:
+
+---- semantic::tests::regression_context_budget_never_fabricates_a_key_boundary stdout ----
+
+thread 'semantic::tests::regression_context_budget_never_fabricates_a_key_boundary' panicked at crates/packtok-packs/src/semantic.rs:711:17:
+assertion `left == right` failed: "xlanguage:                                                                                                                       fr"
+  left: Some(SemanticId(5))
+ right: None
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- semantic::tests::regression_lowercase_rule_is_independent_of_spacing_and_apostrophe_style stdout ----
+
+thread 'semantic::tests::regression_lowercase_rule_is_independent_of_spacing_and_apostrophe_style' panicked at crates/packtok-packs/src/semantic.rs:746:13:
+assertion `left == right` failed: don't  know
+  left: None
+ right: Some(SemanticId(1))
+
+---- semantic::tests::regression_quoted_metadata_keeps_apostrophe_word_protection stdout ----
+
+thread 'semantic::tests::regression_quoted_metadata_keeps_apostrophe_word_protection' panicked at crates/packtok-packs/src/semantic.rs:732:13:
+assertion `left == right` failed: language: 'fr'
+  left: 0
+ right: 1
+
+---- semantic::tests::regression_vertical_separators_cannot_supply_context_or_phrase_spaces stdout ----
+
+thread 'semantic::tests::regression_vertical_separators_cannot_supply_context_or_phrase_spaces' panicked at crates/packtok-packs/src/semantic.rs:721:17:
+assertion `left == right` failed: "fr\u{b}bro"
+  left: Some(SemanticId(4))
+ right: None
+
+
+failures:
+    semantic::tests::regression_context_budget_never_fabricates_a_key_boundary
+    semantic::tests::regression_lowercase_rule_is_independent_of_spacing_and_apostrophe_style
+    semantic::tests::regression_quoted_metadata_keeps_apostrophe_word_protection
+    semantic::tests::regression_vertical_separators_cannot_supply_context_or_phrase_spaces
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p packtok-packs --lib`

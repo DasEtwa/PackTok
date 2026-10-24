@@ -1,0 +1,20 @@
+Semantic Packs v1: same flat BPE tokens, optional semantic sidecar
+train=fixtures/benchmark/train.txt; train_fnv1a64=4d0cc0a94cc66e49; train_bytes=1640; target_vocab=512; max_merges=256; min_frequency=2
+eval=fixtures/semantic-v1/eval.tsv; eval_fnv1a64=e155c795642f05dc; cases=33; raw_text_bytes=472; no normalization; no model training
+artifact_fnv1a64=82e886f6b18cb4c9; artifact_bytes=3951; vocabulary_size=512
+semantic_registry_namespace=packtok.semantic; revision=1; policy=semantic-rules-v1.1; fingerprint=968116fed83aa979; sidecar_format_version=1
+timing: trials=7; warmup_ms=25; minimum_measurement_ms=100; repeat_batch=64; batch_bytes=32320; batch_fnv1a64=2510f1b412197725; A/B order alternates; parse/serialization excluded
+A encode: median=35.974831 MiB/s; min=34.674784; max=36.893881
+A decode: median=414.561712 MiB/s; min=388.847178; max=429.911821
+B encode: median=22.897059 MiB/s; min=20.299943; max=23.089577
+B decode: median=412.954337 MiB/s; min=389.887160; max=424.728511
+shared_lexical_batch_encode: allocation_requests=3; peak_buffer_bytes=1494016; shared_lexical_batch_decode: allocation_requests=2; peak_buffer_bytes=32336
+lexical buffer stats: same production BPE operation in A/B, measured once outside timings; vector growth requests and peak simultaneous working/output vector capacities; excludes additional semantic allocations, immutable tokenizer, caller input and allocator overhead
+lexical_tokens_total=367; lexical_output_capacity_bytes_total=2936; A/B lexical IDs and sequence lengths identical
+B extra: serialized_sidecar_bytes_total=2224; annotation_output_capacity_bytes_total=5348; registry_identity_namespace_capacity_bytes_total=528; empty sidecars included; sidecar bytes exclude lexical stream
+memory estimates include annotation vector capacities, nested candidate vectors and separate owned registry-identity namespace String capacities; exclude outer/identity stack structs, allocator metadata, immutable registry, stack and runtime temporaries; not peak additional RSS
+process_peak_rss_bytes=4521984; scope=whole paired benchmark including training and A/B; cannot isolate semantic overhead
+accuracy=Accuracy { expected_spans: 37, actual_spans: 37, matching_spans: 37, expected_resolved: 30, actual_resolved: 30, correct_resolved: 30, expected_ambiguous: 7, correctly_ambiguous: 7, false_resolutions_of_ambiguity: 0, unknown_cases: 6, unknown_cases_with_annotations: 0 }
+span_precision=1.000000; span_recall=1.000000; resolved_precision=1.000000; resolved_recall=1.000000
+All case/batch roundtrips, optional-off differentials, repeated outputs and sidecar serialization roundtrips passed. Accuracy counts exact byte spans and concept IDs, not approximate meanings.
+Limitations: agent-authored synthetic development conformance corpus, no held-out statistical generalization claim; tiny registry, rule heuristics, no compression/learning improvement established; decoder ignores sidecar and shares identical implementation in A/B.

@@ -1,0 +1,14 @@
+[
+  {
+    "mount": false,
+    "error": "simulated GPU setup failure",
+    "unassign_calls": [],
+    "stdout": "PackTok-Lauf gestoppt: simulated GPU setup failure\nLokaler Fehlerbericht: /tmp/tmpd_4r9p2c/failures/1792800564666776565.json\nLaufzeit bleibt verbunden: keine best\u00e4tigte Sicherung. Lokale Ergebnisse zuerst sichern und anschlie\u00dfend in Colab trennen.\n"
+  },
+  {
+    "mount": true,
+    "error": "simulated Drive permission failure",
+    "unassign_calls": [],
+    "stdout": "PackTok-Lauf gestoppt: simulated Drive permission failure\nLokaler Fehlerbericht: /tmp/tmpd_4r9p2c/failures/1792800564668572175.json\nLaufzeit bleibt verbunden: keine best\u00e4tigte Sicherung. Lokale Ergebnisse zuerst sichern und anschlie\u00dfend in Colab trennen.\n"
+  }
+]

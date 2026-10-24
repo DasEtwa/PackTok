@@ -1,0 +1,27 @@
+Cloning into '/tmp/tmprj7e7xja/checkout'...
+warning: --filter is ignored in local clones; use file:// instead.
+done.
+warning: filtering not recognized by server, ignoring
+From /tmp/tmprj7e7xja/origin
+ * branch            c9d74f55bbd0d3cbea16f0c126096e2d0d14021c -> FETCH_HEAD
+HEAD is now at c9d74f5 fixture
+warning: filtering not recognized by server, ignoring
+From /tmp/tmprj7e7xja/origin
+ * branch            c9d74f55bbd0d3cbea16f0c126096e2d0d14021c -> FETCH_HEAD
+HEAD is now at c9d74f5 fixture
+E..........
+======================================================================
+ERROR: test_actual_fresh_no_checkout_clone_and_existing_dirty_checkout (test_colab_storage.StorageTests.test_actual_fresh_no_checkout_clone_and_existing_dirty_checkout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 210, in test_actual_fresh_no_checkout_clone_and_existing_dirty_checkout
+    checkout(interrupted, commit, str(origin))
+  File "notebook-functions", line 22, in checkout_source
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'diff', '--cached', '--quiet']' returned non-zero exit status 1.
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.087s
+
+FAILED (errors=1)

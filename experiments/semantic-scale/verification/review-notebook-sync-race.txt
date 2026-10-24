@@ -1,0 +1,2 @@
+Deterministic copy_metadata/transfer_checkpoint interleaving reproduction:
+Drive pointer step=2, Drive metrics only step=1; source train step2 was flushed before pointer2 published.

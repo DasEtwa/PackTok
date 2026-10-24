@@ -1,0 +1,109 @@
+Cloning into '/tmp/tmpvtupk6qw/checkout'...
+warning: --filter is ignored in local clones; use file:// instead.
+done.
+warning: filtering not recognized by server, ignoring
+From /tmp/tmpvtupk6qw/origin
+ * branch            ab092ec969890162b10f819a56c67b07e1b52858 -> FETCH_HEAD
+HEAD is now at ab092ec fixture
+warning: filtering not recognized by server, ignoring
+From /tmp/tmpvtupk6qw/origin
+ * branch            ab092ec969890162b10f819a56c67b07e1b52858 -> FETCH_HEAD
+HEAD is now at ab092ec fixture
+From /tmp/tmpvtupk6qw/origin
+ * branch            ab092ec969890162b10f819a56c67b07e1b52858 -> FETCH_HEAD
+HEAD is now at ab092ec fixture
+..FFFFFF..F.F.....FF.
+======================================================================
+FAIL: test_checkpoint_rejects_malformed_or_inconsistent_step (test_colab_storage.StorageTests.test_checkpoint_rejects_malformed_or_inconsistent_step) (step=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 248, in test_checkpoint_rejects_malformed_or_inconsistent_step
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_checkpoint_rejects_malformed_or_inconsistent_step (test_colab_storage.StorageTests.test_checkpoint_rejects_malformed_or_inconsistent_step) (step=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 248, in test_checkpoint_rejects_malformed_or_inconsistent_step
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_checkpoint_rejects_malformed_or_inconsistent_step (test_colab_storage.StorageTests.test_checkpoint_rejects_malformed_or_inconsistent_step) (step=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 248, in test_checkpoint_rejects_malformed_or_inconsistent_step
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_checkpoint_rejects_malformed_or_inconsistent_step (test_colab_storage.StorageTests.test_checkpoint_rejects_malformed_or_inconsistent_step) (step='2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 248, in test_checkpoint_rejects_malformed_or_inconsistent_step
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_checkpoint_rejects_malformed_or_inconsistent_step (test_colab_storage.StorageTests.test_checkpoint_rejects_malformed_or_inconsistent_step) (step=1.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 248, in test_checkpoint_rejects_malformed_or_inconsistent_step
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_checkpoint_rejects_malformed_or_inconsistent_step (test_colab_storage.StorageTests.test_checkpoint_rejects_malformed_or_inconsistent_step) (step=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 248, in test_checkpoint_rejects_malformed_or_inconsistent_step
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_destination_change_during_copy_never_publishes_or_prunes (test_colab_storage.StorageTests.test_destination_change_during_copy_never_publishes_or_prunes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 232, in test_destination_change_during_copy_never_publishes_or_prunes
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_metadata_only_mirror_cannot_replace_a_complete_remote_run (test_colab_storage.StorageTests.test_metadata_only_mirror_cannot_replace_a_complete_remote_run)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 214, in test_metadata_only_mirror_cannot_replace_a_complete_remote_run
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata (test_colab_storage.StorageTests.test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata) (source_step=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 198, in test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata (test_colab_storage.StorageTests.test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata) (source_step=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/tools/test_colab_storage.py", line 198, in test_stale_or_divergent_mirror_cannot_replace_remote_weights_or_metadata
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.129s
+
+FAILED (failures=10)

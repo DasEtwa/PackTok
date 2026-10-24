@@ -1,0 +1,4 @@
+{"case": "restore_without_remote_checkpoint", "checkpoint_step": 2, "before": "{\"stage\":\"train\",\"step\":1}\n{\"stage\":\"train\",\"step\":2}\n", "after": "{\"stage\":\"train\",\"step\":1}\n{\"stage\":\"train\",\"step\":2}\n", "lost_checkpoint_step_metric": false}
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmpamsdzio8/leader.py /tmp/tmpamsdzio8/child.json
+descendant ready
+{"case": "descendant_watchdog", "timeout_seconds": 1, "forced_kill_grace_seconds": 15, "observed_after_seconds": 18, "still_blocked": false, "child_alive": true, "command_result": ["TimeoutError"]}

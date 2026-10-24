@@ -1,0 +1,9 @@
+   Compiling packtok-semantic-scale v0.1.0 (/workspace/PackTok/experiments/semantic-scale)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.30s
+     Running tests/cli.rs (experiments/semantic-scale/target/debug/deps/cli-ac324e043e01518b)
+
+running 1 test
+test tiny_cli_prepare_plan_preflight_train_resume_evaluate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.25s
+

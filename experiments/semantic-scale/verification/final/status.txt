@@ -1,0 +1,9 @@
+scale-fmt=0
+scale-clippy=0
+scale-debug=0
+scale-release=0
+scale-build=0
+root-fmt=0
+root-clippy=0
+root-debug=0
+root-release=0

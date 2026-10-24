@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 
+pub mod semantic;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 

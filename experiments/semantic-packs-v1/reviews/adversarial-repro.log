@@ -1,0 +1,10 @@
+   Compiling packtok-packs v0.1.0 (/workspace/PackTok/crates/packtok-packs)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running tests/adversarial_review_tmp.rs (target/debug/deps/adversarial_review_tmp-a325d39b42cc0e1a)
+
+running 2 tests
+test adversarial_reproduce_truncated_metadata_and_vertical_context ... ok
+test adversarial_large_random_unicode_and_dense_annotations_do_not_panic ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+

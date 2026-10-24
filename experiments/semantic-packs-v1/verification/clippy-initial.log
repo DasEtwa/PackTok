@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on build directory
+    Checking packtok-packs v0.1.0 (/workspace/PackTok/crates/packtok-packs)
+    Checking packtok-format v0.1.0 (/workspace/PackTok/crates/packtok-format)
+    Checking packtok-tokenizer v0.1.0 (/workspace/PackTok/crates/packtok-tokenizer)
+    Checking packtok-train v0.1.0 (/workspace/PackTok/crates/packtok-train)
+    Checking packtok-cli v0.1.0 (/workspace/PackTok/crates/packtok-cli)
+    Checking packtok-bench v0.1.0 (/workspace/PackTok/crates/packtok-bench)
+    Checking packtok-model v0.1.0 (/workspace/PackTok/crates/packtok-model)
+    Checking packtok-core v0.1.0 (/workspace/PackTok/crates/packtok-core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.35s

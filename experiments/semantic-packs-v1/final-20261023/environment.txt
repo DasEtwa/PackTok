@@ -1,0 +1,30 @@
+command: cargo +1.85.0 run --release -p packtok-bench -- semantic <unique-label>
+$ rustc --version --verbose
+rustc 1.85.0 (4d91de4e4 2025-02-17)
+binary: rustc
+commit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688
+commit-date: 2025-02-17
+host: x86_64-unknown-linux-gnu
+release: 1.85.0
+LLVM version: 19.1.7
+$ cargo --version
+cargo 1.85.0 (d73d2caf9 2024-12-31)
+$ git rev-parse HEAD
+fcb4c4312688a1190615b386d9d640f6fa571888
+$ git status --short
+?? experiments/semantic-packs-v1/verification/build-release.log
+?? experiments/semantic-packs-v1/verification/clippy.log
+?? experiments/semantic-packs-v1/verification/fmt.log
+?? experiments/semantic-packs-v1/verification/status.txt
+?? experiments/semantic-packs-v1/verification/test-debug.log
+?? experiments/semantic-packs-v1/verification/test-release.log
+$ uname -a
+Linux e617d605a965 6.18.55 #1 SMP Wed Oct 14 19:45:18 UTC 2026 x86_64 GNU/Linux
+model name	: AMD EPYC 9V74 80-Core Processor
+source_fnv1a64 6d3f5f9a27cd1b40 Cargo.lock
+source_fnv1a64 99dd825c2f60b1e1 crates/packtok-bench/src/semantic.rs
+source_fnv1a64 5d8335309caf3a06 crates/packtok-tokenizer/src/semantic.rs
+source_fnv1a64 6bde08ef0eaa9361 crates/packtok-packs/src/semantic.rs
+source_fnv1a64 5c09a2dfafa92131 crates/packtok-format/src/semantic.rs
+source_fnv1a64 e155c795642f05dc fixtures/semantic-v1/eval.tsv
+source_fnv1a64 4d0cc0a94cc66e49 fixtures/benchmark/train.txt

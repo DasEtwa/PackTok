@@ -153,3 +153,28 @@ f3b6c3f; M4 delivery/provenance was pushed before branching. CPU-first dedicated
 WSL preparation and strictly bounded L4 lifecycle are documented in the M5 design
 and benchmark record. Historical tokenization, models and results remain frozen.
 No final GPU quality result exists at this preparation stage.
+
+## Semantic Packs v1 (experimental)
+
+- Optional deterministic English/German concept annotations with stable semantic
+  IDs, conservative context resolution and original byte spans.
+- Separate versioned sidecars; lexical token IDs/artifact formats unchanged.
+- CLI semantic inspection, matched BPE benchmark, adversarial/regression tests
+  and independent correctness/architecture/semantic reviews.
+- No compression or model-quality advantage claimed; see
+  [experiment record](experiments/semantic-packs-v1/REPORT.md).
+
+## Semantic Scale / Colab (experimental)
+
+- Separate Rust/Candle training workspace with ~100M/~1B plans, BF16 and
+  layer-recompute gradients, direct microbatch accumulation, streaming datasets,
+  causal semantic embeddings and sharded optimizer/sampler resume.
+- Self-installing pinned Colab notebook with hardware preflight, bounded runs and
+  optional verified Drive backup. Historical M0–M5 remain unchanged.
+- CPU/mocked checks and independent reviews are documented; actual CUDA build,
+  1B fit/throughput and any learning advantage remain to be measured in Colab.
+- Follow-up Astra review fixes descendant-process timeouts, local/Drive history
+  rollback, missing cuRAND dependencies, L40 admission, malformed resumed JSONL
+  and interrupted first-checkout recovery. Resume validates complete metric
+  history. Backup rejects known stale/divergent writers; overlapping Drive
+  writers remain unsupported. Reproductions and regression logs are retained.

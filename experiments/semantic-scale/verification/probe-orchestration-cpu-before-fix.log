@@ -1,0 +1,16 @@
+$ git rev-parse HEAD
+55442dab1acf9b8a622123d83b8265ae68250961
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale prepare --input /tmp/packtok-orchestration-cpu-jwh8mwas/content/packtok-demo-input --output /tmp/packtok-orchestration-cpu-jwh8mwas/content/packtok-prepared/cpu-orchestration-reference
+error: No such file or directory (os error 2)
+Traceback (most recent call last):
+  File "/workspace/PackTok/experiments/semantic-scale/verification/probe-orchestration-cpu.py", line 41, in <module>
+    result=bootstrap.execute_pipeline(REPO,drive,settings,content=content,preservation=preservation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/PackTok/experiments/semantic-scale/tools/colab_bootstrap.py", line 395, in execute_pipeline
+    commands([binary, "prepare", "--input", input_directory, "--output", prepared],
+  File "/workspace/PackTok/experiments/semantic-scale/verification/probe-orchestration-cpu.py", line 27, in __call__
+    return super().__call__(args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/PackTok/experiments/semantic-scale/tools/colab_bootstrap.py", line 196, in __call__
+    raise RuntimeError(f"{label}: Exit {returncode}; Log: {logfile}")
+RuntimeError: prepare: Exit 1; Log: /tmp/packtok-orchestration-cpu-jwh8mwas/content/packtok-runs/cpu-orchestration-reference/notebook-attempts/1792800675325213478/02-prepare.log

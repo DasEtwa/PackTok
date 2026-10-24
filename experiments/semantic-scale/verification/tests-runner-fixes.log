@@ -1,0 +1,12 @@
+   Compiling packtok-semantic-scale v0.1.0 (/workspace/PackTok/experiments/semantic-scale)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.03s
+     Running unittests src/lib.rs (experiments/semantic-scale/target/debug/deps/packtok_semantic_scale-2d00e9cfa133fc2f)
+
+running 4 tests
+test runner::tests::concurrent_run_lock_is_released_on_handle_drop ... ok
+test runner::tests::hashes_bind_ordered_bytes ... ok
+test runner::tests::invalid_cli_options_fail_without_allocating_model ... ok
+test runner::tests::resume_metrics_archive_abandoned_tail_and_keep_canonical_steps ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.00s
+

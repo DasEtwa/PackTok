@@ -1,0 +1,34 @@
+# case_id	category	gold byte spans start:end:ID or start:end:?; - means none	escaped original text
+slang-01	slang	0:3:3;4:7:1	ong idk bro
+slang-02	slang	0:3:2;4:7:2;8:13:1	ngl tbh dunno
+slang-03	context	0:2:4	fr bro
+en-01	en	0:12:1	I don't know.
+en-02	en	0:10:1	don't know
+en-03	en	0:12:2;14:27:2	to be honest, not gonna lie
+en-04	en	0:6:3;8:16:4	on God, for real
+de-01	de	0:12:1	keine Ahnung, wirklich.
+de-02	de	9:21:1	Ich habe keine Ahnung.
+amb-01	ambiguous	0:2:?	fr
+amb-02	ambiguous	0:2:?	KA
+amb-03	ambiguous	0:2:?	ka
+amb-04	context	10:12:5	language: fr
+amb-05	context	6:8:5	lang: fr
+amb-06	context	9:11:5	sprache: fr
+normal-01	unknown	-	Today the weather is pleasant.
+normal-02	unknown	-	Die Häuser stehen an der Straße.
+unknown-01	unknown	-	qzxv blorf 12345 🧪
+unknown-02	unknown	-	Friday frank framework kaffee
+bound-01	unknown	-	xidk idk2 idk_name
+unicode-01	unicode	4:7:1	✨ idk 🦦
+unicode-02	unicode	9:21:1	äöüß keine Ahnung 👩🏽‍💻
+space-01	whitespace	0:3:1;4:7:2;9:12:2	idk\tngl\r\ntbh
+space-02	whitespace	2:5:1;7:12:1	  idk dunno  
+empty-01	unknown	-	
+nul-01	whitespace	0:3:1;4:7:2	idk\0ngl
+ctx-01	context	10:12:5;13:15:4	language: fr\nfr bro
+ctx-02	context	0:2:?	fr\nbro
+ka-01	de	0:2:1	ka warum das so ist
+ka-02	de	4:6:1	ich ka
+ka-03	ambiguous	0:2:?	KA warum
+fr-case	ambiguous	0:2:?	FR bro
+fr-conflict	context	10:12:?	language: fr bro

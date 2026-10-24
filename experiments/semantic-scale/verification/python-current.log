@@ -1,0 +1,8 @@
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c print('hello')
+hello
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c raise SystemExit(3)
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.028s
+
+OK

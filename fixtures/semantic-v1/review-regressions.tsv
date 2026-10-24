@@ -1,0 +1,8 @@
+# Independent review regressions; same format as eval.tsv, with additional \v / \f control escapes.
+review-window-language	context	128:130:?	xlanguage                                                                                                                       fr
+review-window-lang	context	128:130:?	xlang                                                                                                                           fr
+review-vertical-tab	context	0:2:?	fr\vbro
+review-form-feed	context	0:2:?	ka\fwas
+review-single-quoted-value	context	10:12:5	language:'fr'
+review-quoted-key-and-value	context	12:14:5	'language':"fr"
+review-apostrophe-boundary	unknown	-	idk's

@@ -1,0 +1,82 @@
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c print('hello')
+hello
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 -c raise SystemExit(3)
+....{
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmpcx93th2o/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmpcx93th2o/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.00218901200014443,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+Drive-Sicherung fehlgeschlagen. Lokale Ergebnisse unter /tmp/tmpcx93th2o/packtok-runs/semantic-tiny-42 bleiben erhalten; Laufzeit nicht automatisch trennen. mock quota failure
+.{
+  "status": "bounded-phases-finished",
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "local_run_directory": "/tmp/tmpjlqf596b/packtok-runs/semantic-tiny-42",
+  "run_directory": "/tmp/tmpjlqf596b/drive/runs/semantic-tiny-42",
+  "gpu": {
+    "name": "fake-unit-test-L4"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.00196650599991699,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 128,
+    "micro_batch": 1,
+    "accumulation": 4,
+    "steps": 2,
+    "train_minutes": 10,
+    "seed": 42,
+    "dtype": "bf16",
+    "demo": true,
+    "resume": true,
+    "run_name": "semantic-tiny-42"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+......Cloning into '/tmp/tmp2qdm7v49/checkout'...
+warning: --filter is ignored in local clones; use file:// instead.
+done.
+warning: filtering not recognized by server, ignoring
+From /tmp/tmp2qdm7v49/origin
+ * branch            88f4efe366c75574fb92f759e5d9c4bc21c6deef -> FETCH_HEAD
+HEAD is now at 88f4efe fixture
+warning: filtering not recognized by server, ignoring
+From /tmp/tmp2qdm7v49/origin
+ * branch            88f4efe366c75574fb92f759e5d9c4bc21c6deef -> FETCH_HEAD
+HEAD is now at 88f4efe fixture
+.........
+----------------------------------------------------------------------
+Ran 20 tests in 0.125s
+
+OK

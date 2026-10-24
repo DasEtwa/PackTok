@@ -1,0 +1,2 @@
+{"case": "prior_clone_before_failed_first_fetch", "worktree_entries": [".git"], "index_exists": false}
+{"recovery": "failed", "argv": ["git", "diff", "--cached", "--quiet"], "returncode": 1}

@@ -1,0 +1,1 @@
+error: invalid versioned scale plan; expected explicit bounded preset/run values

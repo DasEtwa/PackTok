@@ -1,0 +1,2 @@
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 /tmp/tmp5tyjj2vv/leader.py /tmp/tmp5tyjj2vv/state.json
+{"case": "descendant_closes_stdout", "returned": "TimeoutError", "child_state_after_timeout_and_grace": "Z", "survived": false}

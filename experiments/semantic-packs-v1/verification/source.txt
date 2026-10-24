@@ -1,0 +1,3 @@
+source_commit=fcb4c4312688a1190615b386d9d640f6fa571888
+branch=feat/semantic-packs-v1
+initial_final_bpe_artifacts_identical=true

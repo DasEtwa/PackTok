@@ -1,0 +1,167 @@
+$ git rev-parse HEAD
+55442dab1acf9b8a622123d83b8265ae68250961
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale prepare --input /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-demo-input --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-prepared/cpu-orchestration-reference
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale plan --preset tiny --context 8 --batch 1 --accum 2 --dtype f32 --variant semantic --steps 4 --data /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-prepared/cpu-orchestration-reference --seed 42 --max-seconds 60 --out /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/notebook-attempts/1792800716606350295/config.json
+{"config":"/tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/notebook-attempts/1792800716606350295/config.json","estimate_is_not_measured":true,"estimated_training_bytes":2150325248,"identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","parameters":166720}
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale preflight --config /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/config.json --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference --cpu
+{"version":1,"config_identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","passed":true,"parameters":166720,"hardware":null,"steps":2,"binary_sha256":"38c7a0e621fc292354d6b77d87e474d21e2cb5e88bc858511ff7db8818b3fe8e","seconds":0.025496073,"checkpoint_weights_equal":true,"cuda_runtime_tested":false}
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale train --config /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/config.json --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference --resume --cpu
+{"accumulation":2,"checkpointing":true,"cursor":0,"hardware":null,"identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","parameters":166720,"precision":"f32","source_commit":"55442dab1acf9b8a622123d83b8265ae68250961","stage":"start","step":0}
+{"active_wall_seconds":0.015582628,"cursor":16,"learning_rate":0.00025606601717798207,"loss_per_token":6.258767604827881,"sampled_gpu":null,"stage":"train","step":1,"target_bytes_seen":180,"tokens_per_second":1887.1162445914952,"tokens_seen":16,"update_seconds":0.008478545}
+{"active_wall_seconds":0.020825669,"cursor":32,"learning_rate":0.00015,"loss_per_token":6.192328214645386,"sampled_gpu":null,"stage":"train","step":2,"target_bytes_seen":380,"tokens_per_second":3066.1067955657963,"tokens_seen":32,"update_seconds":0.005218344}
+{"active_wall_seconds":0.025753977,"cursor":48,"learning_rate":0.000043933982822017876,"loss_per_token":6.188282489776611,"sampled_gpu":null,"stage":"train","step":3,"target_bytes_seen":598,"tokens_per_second":3259.646312076908,"tokens_seen":48,"update_seconds":0.004908508}
+{"active_wall_seconds":0.030325437,"cursor":64,"learning_rate":0.0,"loss_per_token":6.116521596908569,"sampled_gpu":null,"stage":"train","step":4,"target_bytes_seen":763,"tokens_per_second":3515.5408879377396,"tokens_seen":64,"update_seconds":0.00455122}
+{"active_wall_seconds":0.034643877,"checkpoint_time_can_exceed_deadline":true,"complete":true,"completed_steps":4,"config_identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","requested_steps":4,"target_bytes_seen":763,"tokens_seen":64,"version":1,"wall_limit_soft_between_microbatches":true}
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale evaluate --config /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/config.json --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference --cpu
+{
+  "config_identity": "90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa",
+  "generation_or_generalization_improvement_unproven": true,
+  "hardware": null,
+  "progress": {
+    "cursor": 64,
+    "seed": 42,
+    "target_bytes_seen": 763,
+    "tokens_seen": 64
+  },
+  "reports": {
+    "test": {
+      "bits_per_raw_byte": 6.369370106202987,
+      "full_corpus": false,
+      "nll_per_token": 6.208468496799469,
+      "sampled_windows": 8,
+      "target_raw_bytes": 90,
+      "target_tokens": 64
+    },
+    "validation": {
+      "bits_per_raw_byte": 6.626383018668134,
+      "full_corpus": false,
+      "nll_per_token": 6.243689179420471,
+      "sampled_windows": 8,
+      "target_raw_bytes": 87,
+      "target_tokens": 64
+    }
+  },
+  "same_split_required_for_comparison": true,
+  "step": 4,
+  "version": 1
+}
+{
+  "status": "bounded-phases-finished",
+  "source_commit": "55442dab1acf9b8a622123d83b8265ae68250961",
+  "local_run_directory": "/tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference",
+  "run_directory": "/tmp/packtok-orchestration-cpu-hc1f5i1l/local-drive-fixture/runs/cpu-orchestration-reference",
+  "gpu": {
+    "name": "MOCKED_CPU_REFERENCE_ONLY"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.11567105500216712,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 8,
+    "micro_batch": 1,
+    "accumulation": 2,
+    "steps": 4,
+    "train_minutes": 1,
+    "seed": 42,
+    "dtype": "f32",
+    "demo": true,
+    "resume": true,
+    "run_name": "cpu-orchestration-reference"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+$ git rev-parse HEAD
+55442dab1acf9b8a622123d83b8265ae68250961
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale prepare --input /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-demo-input --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-prepared/cpu-orchestration-reference
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale plan --preset tiny --context 8 --batch 1 --accum 2 --dtype f32 --variant semantic --steps 4 --data /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-prepared/cpu-orchestration-reference --seed 42 --max-seconds 60 --out /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/notebook-attempts/1792800716752607765/config.json
+{"config":"/tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/notebook-attempts/1792800716752607765/config.json","estimate_is_not_measured":true,"estimated_training_bytes":2150325248,"identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","parameters":166720}
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale preflight --config /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/config.json --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference --cpu
+{"version":1,"config_identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","passed":true,"parameters":166720,"hardware":null,"steps":2,"binary_sha256":"38c7a0e621fc292354d6b77d87e474d21e2cb5e88bc858511ff7db8818b3fe8e","seconds":0.025822966,"checkpoint_weights_equal":true,"cuda_runtime_tested":false}
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale train --config /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/config.json --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference --resume --cpu
+{"accumulation":2,"checkpointing":true,"cursor":64,"hardware":null,"identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","parameters":166720,"precision":"f32","source_commit":"55442dab1acf9b8a622123d83b8265ae68250961","stage":"start","step":4}
+{"active_wall_seconds":0.0140126,"checkpoint_time_can_exceed_deadline":true,"complete":true,"completed_steps":4,"config_identity":"90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa","requested_steps":4,"target_bytes_seen":763,"tokens_seen":64,"version":1,"wall_limit_soft_between_microbatches":true}
+$ /workspace/PackTok/experiments/semantic-scale/target/release/packtok-semantic-scale evaluate --config /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference/config.json --output /tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference --cpu
+{
+  "config_identity": "90ae577bebd7bc1ed47a52520f9ffb989b105564e1e815c83936cd3d870d40fa",
+  "generation_or_generalization_improvement_unproven": true,
+  "hardware": null,
+  "progress": {
+    "cursor": 64,
+    "seed": 42,
+    "target_bytes_seen": 763,
+    "tokens_seen": 64
+  },
+  "reports": {
+    "test": {
+      "bits_per_raw_byte": 6.369370106202987,
+      "full_corpus": false,
+      "nll_per_token": 6.208468496799469,
+      "sampled_windows": 8,
+      "target_raw_bytes": 90,
+      "target_tokens": 64
+    },
+    "validation": {
+      "bits_per_raw_byte": 6.626383018668134,
+      "full_corpus": false,
+      "nll_per_token": 6.243689179420471,
+      "sampled_windows": 8,
+      "target_raw_bytes": 87,
+      "target_tokens": 64
+    }
+  },
+  "same_split_required_for_comparison": true,
+  "step": 4,
+  "version": 1
+}
+{
+  "status": "bounded-phases-finished",
+  "source_commit": "55442dab1acf9b8a622123d83b8265ae68250961",
+  "local_run_directory": "/tmp/packtok-orchestration-cpu-hc1f5i1l/content/packtok-runs/cpu-orchestration-reference",
+  "run_directory": "/tmp/packtok-orchestration-cpu-hc1f5i1l/local-drive-fixture/runs/cpu-orchestration-reference",
+  "gpu": {
+    "name": "MOCKED_CPU_REFERENCE_ONLY"
+  },
+  "raw_input_sha256": {
+    "train.txt": "bdd3b9a6a6b1892706ee5649d39c33b0b02ac3d8edc093235efdf7c8d2c50cb0",
+    "validation.txt": "ad6da9a2e964a9d7d633a89f4d842159bb6d3ffc493cf0e9942644e89d47b893",
+    "test.txt": "375c3fc62578d7fd964200d5a4cb122ec34d0e272e5b4cbea838ebd47c5a477f"
+  },
+  "elapsed_including_setup_seconds": 0.09176254100020742,
+  "settings": {
+    "preset": "tiny",
+    "variant": "semantic",
+    "context": 8,
+    "micro_batch": 1,
+    "accumulation": 2,
+    "steps": 4,
+    "train_minutes": 1,
+    "seed": 42,
+    "dtype": "f32",
+    "demo": true,
+    "resume": true,
+    "run_name": "cpu-orchestration-reference"
+  },
+  "gpu_validation": "executed by this notebook runtime, not established by repository CPU tests",
+  "persistence": "verified Drive mirror; diagnostic preflight model images excluded"
+}
+{
+  "result": "PASS",
+  "attempts": 2,
+  "restored_optimizer_step": 4,
+  "canonical_steps": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "cuda_executed": false,
+  "real_drive_tested": false,
+  "installation_mocked": true,
+  "rust_training": "tiny FP32 CPU, explicit --cpu"
+}
