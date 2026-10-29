@@ -8,7 +8,7 @@ round-trips and no implicit normalization.
 
 The project is a research implementation. Current results support narrow,
 corpus-dependent observations; they do not establish general superiority over
-flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence. M5 CUDA overfit diagnostics passed on an NVIDIA L4. The first real A/C Transformer pilot reached all 2,000 A updates and validation, then stopped at a reproducible FP64 domain-aggregation check before C started. The session was released; the single allocation is consumed, and there is no paired comparison. See the [pilot attempt report](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T134013Z/PILOT_ATTEMPT.md).
+flat BPE, Unigram or byte-level modeling. M0–M4 have reproducible CPU evidence. M5 CUDA overfit diagnostics passed on an NVIDIA L4. The paired A/C Transformer pilot (one seed, 2,000 updates each, equal target positions) completed: validation was 2.572964850 bits per raw byte for Flat BPE (A) and 2.597469229 for PackTok (C), so C−A = +0.024504380 and this pilot slightly favors flat BPE. C saw 8.3% fewer raw training bytes at the same number of target positions. One seed does not establish significance. See the [pilot result](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md); earlier failed attempts remain recorded in [M5_GPU_BENCHMARK.md](M5_GPU_BENCHMARK.md).
 
 ## Research motivation
 
@@ -55,7 +55,7 @@ owns tokenizer/model training, runtime and benchmark computation. See
 | [M2](docs/milestones/M2.md) | Independent lexical-v1 pack vocabularies with shared bytes; compression and runtime trade-offs against M1. |
 | [M3](docs/milestones/M3.md) | Tiny CPU RNN comparison changes both tokenizer and output head; a synthetic-corpus signal motivated ablation. |
 | [M4](docs/milestones/M4.md) | A/B/C/D ablation on a fixed sourced mixture. The tokenizer contributed a small tested quality difference. Generic output factorization did not improve same-schedule quality; reduced analytical output work allowed more updates under matched MACs. A strong favorable interaction was not established. |
-| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. CPU preparation and L4 CUDA correctness/overfit diagnostics pass; the A/C quality pilot exited before training, so comparison metrics, pilot throughput and VRAM remain unavailable. |
+| [M5](docs/milestones/M5.md) | Same flat Transformer architecture for M1 versus flattened M2 IDs. CPU preparation and L4 CUDA correctness/overfit diagnostics pass. The one-seed paired A/C pilot completed 2,000 updates per variant: C−A = +0.0245 validation bits per raw byte (favoring flat BPE), with C seeing 8.3% fewer raw training bytes. Exploratory; not a significance result. |
 
 [Research results](docs/research/results.md) explains each hypothesis, experiment,
 measurement, interpretation and limitation, with links to original reports and
@@ -128,15 +128,18 @@ tracks milestones. [IDEA.md](IDEA.md), [STRUCTURE.md](STRUCTURE.md) and
 
 ## Roadmap
 
-A successful, separately authorized M5 correctness preflight and measured budget
-are prerequisites for a larger Transformer comparison. Exact training resume
-also needs optimizer, RNG and cursor state; current safetensors store weights only.
+The M5 CUDA gate passed and the pilot ran on resumable checkpoints that store
+weights, AdamW moments, optimizer step, sampling RNG and data cursor (see
+[FORMAT.md](FORMAT.md)). Any larger Transformer comparison still needs a separately
+approved, measured GPU budget. A five-paired-seed replication of the M5 pilot
+protocol (M6) is recorded on the unmerged `m6-research` branch (draft PR #7) and
+is not part of this branch's evidence until merged.
 
 Future hypotheses include improved pack routing, learned pack allocations,
 adaptive vocabulary, larger model comparisons, and specialized language or
 reasoning packs. These ideas are not implemented or proven by appearing here.
 Any new experiment must keep byte fallback, controlled comparisons and preserved
-negative results. There is no automatic GPU retry or M6 launch.
+negative results. There is no automatic GPU retry.
 
 ## License and contributions
 

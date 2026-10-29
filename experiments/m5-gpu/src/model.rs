@@ -241,15 +241,29 @@ impl Transformer {
     }
     pub fn load(&mut self, path: &std::path::Path) -> candle_core::Result<()> {
         // Safe buffered loading also verifies exact tensor set, dimensions and finite FP32.
+        // Accepts both weights-only preflight safetensors (N tensors) and resumable
+        // pilot checkpoints (3N tensors: model.*, adamw.m.*, adamw.v.*).
         let data = candle_core::safetensors::load(path, &Device::Cpu)?;
         let vars = self.named_vars();
-        if data.len() != vars.len() {
+        let prefix = if data.len() == vars.len() {
+            ""
+        } else if data.len() == vars.len() * 3 {
+            for name in vars.keys() {
+                for p in ["model.", "adamw.m.", "adamw.v."] {
+                    if !data.contains_key(&format!("{p}{name}")) {
+                        candle_core::bail!("missing {p}{name}");
+                    }
+                }
+            }
+            "model."
+        } else {
             candle_core::bail!("checkpoint tensor count");
-        }
+        };
         for (name, var) in &vars {
+            let key = format!("{prefix}{name}");
             let t = data
-                .get(name)
-                .ok_or_else(|| candle_core::Error::Msg(format!("missing {name}")))?;
+                .get(&key)
+                .ok_or_else(|| candle_core::Error::Msg(format!("missing {key}")))?;
             if t.shape() != var.shape() || t.dtype() != DType::F32 {
                 candle_core::bail!("checkpoint tensor layout");
             }
@@ -262,7 +276,8 @@ impl Transformer {
             }
         }
         for (name, var) in vars {
-            var.set(&data[&name].to_device(var.device())?)?;
+            let key = format!("{prefix}{name}");
+            var.set(&data[&key].to_device(var.device())?)?;
         }
         Ok(())
     }

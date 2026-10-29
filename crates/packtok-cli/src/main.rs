@@ -19,7 +19,7 @@ const USAGE: &str = "Usage:
   packtok encode <text>
   packtok encode --artifact <artifact-path> <text>
   packtok decode <pack_id:local_id ...>
-  packtok decode --artifact <artifact-path> <local_id ...>
+  packtok decode --artifact <artifact-path> <local_id | pack:local ...>
   packtok init <artifact-path>
   packtok train-bpe <corpus-file-or-directory> <artifact-path> [--target-vocab N] [--max-merges N] [--min-frequency N]
   packtok train-packs <corpus-file-or-directory> <artifact-path> [--target-vocab N] [--max-merges N] [--min-frequency N]
@@ -373,7 +373,7 @@ fn inspect_command(arguments: &[String]) -> Result<(), String> {
 fn inspect_token_command(arguments: &[String]) -> Result<(), String> {
     if arguments.len() != 2 {
         return Err(format!(
-            "expected an artifact path and local token ID\n{USAGE}"
+            "expected an artifact path and local token ID or pack:local\n{USAGE}"
         ));
     }
     let artifact = read_artifact(Path::new(&arguments[0]))?;
@@ -462,7 +462,7 @@ fn print_token(model: &FlatBpeModel, id: u32) -> Result<(), String> {
 fn inspect_merges_command(arguments: &[String]) -> Result<(), String> {
     if arguments.is_empty() || arguments.len() > 3 {
         return Err(format!(
-            "expected an artifact path and optional merge limit\n{USAGE}"
+            "expected an artifact path, optional pack name or ID, and optional merge limit\n{USAGE}"
         ));
     }
     let artifact = read_artifact(Path::new(&arguments[0]))?;
@@ -552,7 +552,11 @@ fn stats_command(arguments: &[String]) -> Result<(), String> {
     let artifact = read_artifact(&one_path(arguments, "artifact path")?)?;
     println!("PackTok artifact v{} statistics", artifact.format_version());
     for (key, value) in artifact.metadata() {
-        if key.starts_with("m2.") || key.starts_with("corpus.") || key.starts_with("experiment.") {
+        if key.starts_with("bpe.")
+            || key.starts_with("m2.")
+            || key.starts_with("corpus.")
+            || key.starts_with("experiment.")
+        {
             println!("{key}={value}");
         }
     }

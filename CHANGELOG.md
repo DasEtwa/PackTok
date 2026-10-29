@@ -1,5 +1,34 @@
 # Milestone history
 
+## Post-pilot documentation sync and verified audit fixes (2026-10-29)
+
+- Update README, docs/milestones/M5.md and docs/research/results.md, which still
+  described the M5 pilot as stopped or never trained.
+- Correct FORMAT.md and storage-and-recovery.md: pilot checkpoints are resumable
+  (weights, AdamW moments, step, RNG, cursor), while preflight checkpoints are
+  weights-only; `Transformer::load` and `recover_weights` accept both. Record the
+  pilot's Drive backup in `external-artifacts.json` and support its
+  `DRIVE_BACKUP.json` receipt schema in `restore-drive-artifact.py`.
+- Correct the STRUCTURE.md dependency graph (no `packtok-runtime` crate;
+  format and tokenizer depend on packs).
+- Reconcile AGENTS.md §§23–24: §24 (compute resource selection / time-to-result)
+  supersedes §23's earlier GPU conservation and 20-minute preflight cap while
+  retaining WSL isolation and session-cleanup safety rules.
+- Resolve verified audit findings across `packtok-model`, `packtok-tokenizer`,
+  `packtok-cli`, `packtok-bench` and `experiments/m5-gpu` without changing any
+  historical experiment artifacts or outputs.
+
+## M5 paired A/C Transformer pilot (2026-10-09)
+
+- CUDA correctness and 500-step fresh/post-18 L4 overfit diagnostics pass.
+- Two pilot launches failed before training (missing approval variable,
+  pre-created results directory); a third completed A and stopped at an FP64
+  domain-aggregation tolerance before C. All attempts are preserved.
+- A was reloaded from its step-2000 resumable checkpoint and C trained fresh:
+  validation 2.572964850 (A) versus 2.597469229 (C) bits per raw byte,
+  C−A = +0.024504380, one paired seed; C saw 8.3% fewer raw training bytes.
+  [Pilot result](experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md).
+
 ## Repository maintenance and infrastructure hardening (2026-10-08)
 
 - Preserve and publish outstanding M5 recovery evidence before maintenance.

@@ -1462,7 +1462,9 @@ fn softmax_cross_entropy(
     let gradient = probabilities
         .into_iter()
         .enumerate()
-        .map(|(index, probability)| (probability as f32 - f32::from(index == target)) * scale)
+        .map(|(index, probability)| {
+            ((probability - f64::from(u8::from(index == target))) * f64::from(scale)) as f32
+        })
         .collect();
     Ok((loss, gradient))
 }
@@ -2547,6 +2549,11 @@ mod tests {
             assert_eq!(gradient, [-0.5, 0.5]);
             assert_eq!(softmax_loss(&[offset, offset], 0).unwrap(), loss);
         }
+        // When 1.0 - p is below f32's unit roundoff near 1.0 (~6e-8), subtracting
+        // in f64 before casting to f32 preserves the target logit gradient and zero sum.
+        let (_, gradient) = softmax_cross_entropy(&[20.0_f32, 0.0_f32], 0, 1.0).unwrap();
+        assert!(gradient[0] < 0.0);
+        assert_eq!(gradient[0], -gradient[1]);
     }
 
     #[test]

@@ -144,30 +144,31 @@ causal Transformer.
 
 **Prepared experiment.** A/C use the same 14,681,984-parameter FP32 architecture,
 512 global model IDs and frozen corpus-v2 (37,517,499 raw bytes). The isolated Rust
-workspace uses Candle 0.9.1. Primary three-seed schedules remain proposals subject
-to a successful GPU gate and explicit measured-budget approval.
+workspace uses Candle 0.9.1. The pilot is one paired seed of 2,000 updates per
+variant; longer multi-seed schedules remain proposals that need explicit
+measured-budget approval.
 
 **Measured result.** The Rust/CUDA gate and 500-step L4 overfit diagnostics passed;
 see the preserved [L4 diagnostic](../../experiments/m5-gpu/provenance/l4-recovery-b573d896abe948138f0221283f85af75/M5_OVERFIT_DIAGNOSTIC_L4.md).
-One later, explicitly authorized A/C 2,000-update pilot allocation was released
-after remote orchestration exited with code 1 before a Rust training update. Its
-160-byte result archive contains only exit code 1. There are no A/C training
-losses, validation/test scores, checkpoints, pilot step times or VRAM measurements.
-The detailed attempt and source/config/package identities are preserved in the
-[pilot report](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
+The paired A/C pilot completed 2,000 updates per variant with seed 20261008 and
+4,096,000 target positions each. Final validation is 2.572964850 (A) and
+2.597469229 (C) bits per raw byte; C−A = +0.024504380, a small difference favoring
+flat BPE. C saw 7,575,564 − 6,946,291 = 629,273 fewer raw training bytes (8.3%).
+By validation domain, A is lower on English, German and Rust; C is lower on
+synthetic JSON and Unicode. Full numbers are in the
+[pilot record](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md)
+and the chronological entries below.
 
-**Interpretation.** CUDA correctness is verified, but the A/C Transformer quality
-comparison remains incomplete. The likely missing approval environment variable
-is an inference from the submitted command and shell contract; remote stderr was
-not retained, so the exact failure cause is unverified. The single pilot
-allocation authorization was consumed; no retry was made.
+**Interpretation.** On this shared flat Transformer, the small favorable C−A
+signal from M4's tiny RNN did not appear in this one paired seed. The result is
+descriptive, not a significance test or a general tokenizer ranking.
 
-**Limitations.** No result from this attempt supports or rejects the tokenizer
-hypothesis or readiness for a five-seed study. No pilot TEST score was produced.
-The same test examples were included among prepared inputs, so a future revised
-experiment must disclose that exposure. Weights-only safetensors cannot resume
-optimizer/RNG/cursor state. A successful short Drive test does not prove
-multi-day OAuth validity.
+**Limitations.** One paired seed. Target positions were matched; raw-byte exposure,
+FLOPs and wall time were not. TEST was scored once by the frozen runner and was
+included in prepared inputs, so it is not an untouched holdout for a revised
+experiment. Pilot checkpoints are resumable (weights, AdamW moments, step, RNG,
+cursor); weights-only files exist only for the preflight runner. A successful
+short Drive test does not prove multi-day OAuth validity.
 
 **Reproduction reference.** [Frozen Transformer protocol](../../M5_GPU_TRANSFORMER.md),
 [failure/accounting report](../../M5_GPU_BENCHMARK.md),
@@ -175,6 +176,23 @@ multi-day OAuth validity.
 [recovery evidence](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md),
 [maintenance CPU checks](../maintenance/2026-10-08/REPORT.md).
 New GPU work must be a separate explicitly authorized task.
+
+The entries below are kept in chronological order as originally recorded; later
+entries supersede the status statements of earlier ones.
+
+### M5 A/C pilot first attempt — 2026-10-09 (exit before training)
+
+One explicitly authorized A/C 2,000-update pilot allocation was released
+after remote orchestration exited with code 1 before a Rust training update. Its
+160-byte result archive contains only exit code 1. That attempt produced no A/C
+training losses, validation/test scores, checkpoints, pilot step times or VRAM
+measurements. The detailed attempt and source/config/package identities are
+preserved in the
+[pilot report](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T032000Z/PILOT_ATTEMPT.md).
+The likely missing approval environment variable is an inference from the
+submitted command and shell contract; remote stderr was not retained, so the exact
+failure cause is unverified. No result from this attempt supports or rejects the
+tokenizer hypothesis.
 
 
 ### M5 A/C pilot launch recovery — 2026-10-09

@@ -26,6 +26,17 @@ pub fn write_new(path: &std::path::Path, bytes: &[u8]) -> Result<()> {
     f.sync_all()?;
     Ok(())
 }
+pub fn sync_dir(path: &std::path::Path) -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        std::fs::File::open(path)?.sync_all()?;
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = path;
+    }
+    Ok(())
+}
 pub mod overfit;
 pub mod resume;
 pub mod runner;

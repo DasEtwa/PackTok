@@ -482,7 +482,7 @@ fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgr
         file.sync_all()?;
         drop(file);
         fs::rename(&temporary, path)?;
-        fs::File::open(parent)?.sync_all()?;
+        crate::sync_dir(parent)?;
     }
     if checkpoint_step == 0 {
         Ok(saved_progress.unwrap_or_default())
@@ -508,7 +508,7 @@ fn save_report(path: &Path, report: &impl serde::Serialize) -> Result<()> {
     f.sync_all()?;
     drop(f);
     fs::rename(temporary, path)?;
-    fs::File::open(path.parent().ok_or("report parent")?)?.sync_all()?;
+    crate::sync_dir(path.parent().ok_or("report parent")?)?;
     Ok(())
 }
 fn match_input(
@@ -689,6 +689,7 @@ pub fn train(
     let mut pipeline_seconds = progress.pipeline_seconds;
     let mut peak_vram = progress.peak_vram_mib;
     let mut last_checkpoint_step = step;
+    let mut last_validation = None;
     let (mut positions, mut bytes_seen) = if regime == "T" {
         let expected = step
             .checked_mul(plan.target_positions_per_update)
@@ -796,6 +797,7 @@ pub fn train(
             )?;
             optimizer.save_checkpoint(&model, &identity, rng.state(), step, cursor, &checkpoint)?;
             last_checkpoint_step = step;
+            last_validation = Some((step, score));
         }
     }
     if step > last_checkpoint_step {
@@ -808,7 +810,10 @@ pub fn train(
         )?;
         optimizer.save_checkpoint(&model, &identity, rng.state(), step, cursor, &checkpoint)?;
     }
-    let val = runner::evaluate(&model, &validation, plan.batch_size, &device)?;
+    let val = match last_validation {
+        Some((scored_step, score)) if scored_step == step => score,
+        _ => runner::evaluate(&model, &validation, plan.batch_size, &device)?,
+    };
     let final_test = runner::evaluate(&model, &test, plan.batch_size, &device)?;
     let val_spans = domains::spans_from_manifest(
         &root.join("provenance/corpus-v2-manifest.json"),

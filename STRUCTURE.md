@@ -244,6 +244,26 @@ packtok-model ────────────┘
 library crates ───────────→ packtok-cli
 ```
 
+The graph above is the preferred design direction. `packtok-runtime` is a planned
+boundary, not an implemented crate; runtime encode/decode currently lives in
+`packtok-tokenizer`. The implemented root workspace dependencies (from each
+`Cargo.toml`, normal dependencies unless noted) are:
+
+```text
+packtok-core       (no internal dependencies)
+packtok-packs      → core
+packtok-format     → core, packs
+packtok-tokenizer  → core, format, packs
+packtok-train      → core, format, packs   (tokenizer: dev-dependency only)
+packtok-model      → core
+packtok-bench      → core, format, model, packs, tokenizer, train
+packtok-cli        → core, format, packs, tokenizer, train
+```
+
+`format` depends on `packs` for the lexical-v1 router ID and pack names/IDs that
+v3 artifacts validate. Only the orchestration crates `bench` and `cli` depend on
+`train`; `tokenizer` (the runtime path) never does.
+
 Avoid circular dependencies.
 
 In particular:

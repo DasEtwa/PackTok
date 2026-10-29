@@ -16,19 +16,28 @@ spec.loader.exec_module(transport)
 MAX_BYTES = 2 * 1024 * 1024 * 1024
 
 
+NAMESPACE_RE = re.compile(
+    r'[A-Za-z0-9_-]+:PackTok/M5/'
+    r'(?:preflight/m5-[a-z-]+-[0-9a-f]{32}|pilot/m5-[a-z-]+-[0-9]{8}T[0-9]{6}Z)'
+)
+
+
 def restore(manifest, run_id, destination):
-    entries = json.loads(Path(manifest).read_text())['artifacts']
+    entries = json.loads(Path(manifest).read_text(encoding='utf-8'))['artifacts']
     matches = [e for e in entries if e['run_id'] == run_id]
     if len(matches) != 1:
         raise ValueError('One trusted artifact receipt is required')
     entry = matches[0]
     namespace = entry['remote_namespace']
-    if not re.fullmatch(r'[A-Za-z0-9_-]+:PackTok/M5/preflight/m5-[a-z-]+-[0-9a-f]{32}', namespace):
+    if not NAMESPACE_RE.fullmatch(namespace):
         raise ValueError('Invalid scoped remote namespace')
     if namespace.rsplit('/', 1)[1] != run_id:
         raise ValueError('Run identity mismatch')
+    receipt_name = entry.get('completion_artifact', 'completion.json')
+    if receipt_name not in ('completion.json', 'DRIVE_BACKUP.json'):
+        raise ValueError('Unsafe completion manifest filename')
     name = entry['artifact']
-    if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]*', name) or name in ('.', '..', 'completion.json'):
+    if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]*', name) or name in ('.', '..', 'completion.json', 'DRIVE_BACKUP.json'):
         raise ValueError('Unsafe artifact filename')
     if type(entry['bytes']) is not int or not 0 <= entry['bytes'] <= MAX_BYTES:
         raise ValueError('Artifact size exceeds the documented 2 GiB restore bound')
@@ -39,14 +48,27 @@ def restore(manifest, run_id, destination):
     if destination.is_symlink():
         raise ValueError('New regular destination required')
     destination.mkdir(parents=True, exist_ok=False)
-    receipt = destination/'completion.json'
-    transport.run(['copyto', namespace+'/completion.json', str(receipt), '--immutable', '--max-transfer', '1Mi'])
+    receipt = destination/receipt_name
+    transport.run(['copyto', namespace+'/'+receipt_name, str(receipt), '--immutable', '--max-transfer', '1Mi'])
     if transport.sha(receipt) != entry['completion_sha256']:
         raise ValueError('Completion manifest hash mismatch')
-    completion = json.loads(receipt.read_text())
-    for field in ('run_id', 'remote_namespace', 'artifact', 'bytes', 'sha256'):
-        if completion.get(field) != entry[field]:
-            raise ValueError('Completion identity mismatch: '+field)
+    completion = json.loads(receipt.read_text(encoding='utf-8'))
+    if receipt_name == 'DRIVE_BACKUP.json':
+        expected = {
+            'artifact': entry['artifact'],
+            'bytes': entry['bytes'],
+            'sha256': entry['sha256'],
+            'full_readback_sha256': entry['sha256'],
+            'remote': namespace+'/'+name,
+            'completion_manifest_remote': namespace+'/'+receipt_name,
+        }
+        for field, value in expected.items():
+            if completion.get(field) != value:
+                raise ValueError('Completion identity mismatch: '+field)
+    else:
+        for field in ('run_id', 'remote_namespace', 'artifact', 'bytes', 'sha256'):
+            if completion.get(field) != entry[field]:
+                raise ValueError('Completion identity mismatch: '+field)
     if completion.get('status') != 'COMPLETE_VERIFIED':
         raise ValueError('Incomplete artifact cannot be restored')
     artifact = destination/name

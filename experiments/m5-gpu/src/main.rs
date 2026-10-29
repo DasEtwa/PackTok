@@ -73,7 +73,7 @@ fn run() -> Result<()> {
             }
             Ok(())
         }
-        _ => Err("usage: packtok-m5 corpus | prepare | verify-prepared | reference | plan | cuda-components JSON | preflight DATA REFERENCE OUT | diagnose-overfit DATA OUT [COMPARISON_LR] | plan-extended CONFIG DATA OUT | train-extended CONFIG DATA OUT VARIANT REGIME SEED APPROVAL_REFERENCE".into()),
+        _ => Err("usage: packtok-m5 corpus | prepare | verify-prepared | reference | plan | cuda-components JSON | preflight DATA REFERENCE OUT | diagnose-overfit DATA OUT [COMPARISON_LR] | train CONFIG DATA OUT VARIANT REGIME SEED | plan-extended CONFIG DATA OUT | train-extended CONFIG DATA OUT VARIANT REGIME SEED APPROVAL_REFERENCE".into()),
     }
 }
 fn main() {

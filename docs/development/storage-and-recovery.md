@@ -16,8 +16,13 @@ records known completion hashes, sizes and payload hashes. It contains PackTok
 research identity and scoped rclone names, no authenticated Drive links or secrets.
 Historical bundle hashes and locally retained evidence remain in
 [RECOVERY_STORAGE](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md).
-No model weights have yet been recovered from GPU: successful historical and
-maintenance tests cover harmless fixtures and diagnostic archives.
+The 2026-10-09 paired A/C pilot results archive (logs, metrics, checkpoints;
+322,912,151 bytes, SHA-256 `d7da7a90…d1c25b4`) was uploaded to Drive and fully
+read back with a matching hash; its receipt is
+[DRIVE_BACKUP.json](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/DRIVE_BACKUP.json).
+It is listed in the external artifact manifest under
+`m5-a-c-pilot-evidence-20261009T154700Z` and is supported by
+`restore-drive-artifact.py` below.
 
 ## Restore in a fresh authorized environment
 
@@ -39,11 +44,17 @@ The maintenance restore uses a new directory and fresh CLI processes while
 retaining the existing protected account/client; it is not a reinstall/new-account
 authorization test.
 
-For a future actual M5 model checkpoint, additionally verify configuration,
-corpus/tokenizer identity and use the CPU `recover_weights` example described in
-[RECOVERY_STORAGE](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md). Safetensors
-are weights only. They lack AdamW moments, optimizer step, sampling RNG and data
-cursor, so a restored checkpoint cannot resume training exactly.
+For an M5 model checkpoint, additionally verify configuration and
+corpus/tokenizer identity. Two checkpoint kinds exist (see [FORMAT](../../FORMAT.md)).
+Weights-only preflight checkpoints can be checked with the CPU `recover_weights`
+example described in
+[RECOVERY_STORAGE](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md); they
+cannot resume training exactly. Resumable pilot checkpoints
+(`latest.resume.safetensors`) also store AdamW moments, optimizer step, sampling
+RNG and data cursor, and are read by `ResumableAdamW::load_checkpoint`; the
+pilot's A run was reloaded this way from its step-2000 checkpoint for final
+evaluation without retraining. `Transformer::load` and `recover_weights` also
+accept resumable checkpoints for weight-only verification.
 
 ## Protected configuration recovery
 

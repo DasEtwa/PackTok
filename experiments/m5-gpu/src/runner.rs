@@ -167,13 +167,16 @@ fn save_checkpoint(model: &Transformer, path: &Path) -> Result<()> {
     // Retain the last complete image if writing/transfer is interrupted.
     let temporary = path.with_extension("safetensors.tmp");
     model.vars.save(&temporary)?;
-    fs::File::open(&temporary)?.sync_all()?;
+    fs::OpenOptions::new()
+        .write(true)
+        .open(&temporary)?
+        .sync_all()?;
     fs::rename(&temporary, path)?;
     let parent = path
         .parent()
         .filter(|p| !p.as_os_str().is_empty())
         .unwrap_or(Path::new("."));
-    fs::File::open(parent)?.sync_all()?;
+    crate::sync_dir(parent)?;
     Ok(())
 }
 pub fn preflight(data: &Path, reference_path: &Path, out_dir: &Path) -> Result<()> {
@@ -616,7 +619,7 @@ pub fn train(
         save_checkpoint(&m, &latest)?;
     }
     fs::rename(&latest, &path)?;
-    fs::File::open(out)?.sync_all()?;
+    crate::sync_dir(out)?;
     checkpoint_seconds += save_start.elapsed().as_secs_f64();
     let checkpoint_bytes = fs::metadata(&path)?.len();
     emit(
