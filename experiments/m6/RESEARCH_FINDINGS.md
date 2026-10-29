@@ -69,7 +69,21 @@ The CPU analysis parsed 34,632,012 training bytes and verified both complete PTM
 
 The distinction between input compression and model score matters: C had fewer JSON tokens per byte and nevertheless lower JSON validation BPB. A routing benefit, generator artifact, or sample noise could explain that; compression alone cannot.
 
-The C global-ID allocation was 256 BYTE_FALLBACK, 196 FLAT, 56 NUMBER and 4 TEXT IDs. On the training split, observed-ID occupancy was 73.4%, 99.5%, 100% and 100%, respectively; emitted-token shares were 56.1%, 33.8%, 9.7% and 0.3%. A used 444/512 global IDs (86.7% observed). C's larger fallback share is observed in the frozen encoding and may indicate that the local capacity allocation/routing constrains reuse, but occupancy by itself does not prove wasted capacity: rare IDs and frequency skew matter.
+The C global-ID allocation was 256 BYTE_FALLBACK, 196 TEXT, 56 STRUCTURE and 4 NUMBER IDs (corrected labels; see the erratum below). On the training split, observed-ID occupancy was 73.4%, 99.5%, 100% and 100%, respectively; emitted-token shares were 56.1%, 33.8%, 9.7% and 0.3%. A used 444/512 global IDs (86.7% observed). C's larger fallback share is observed in the frozen encoding and may indicate that the local capacity allocation/routing constrains reuse, but occupancy by itself does not prove wasted capacity: rare IDs and frequency skew matter.
+
+The single most frequent C token is BYTE_FALLBACK local 32, the ASCII space byte: 3,123,619 emissions, 15.30% of all C training tokens ([corrected JSON](analysis/m5-tokenizer-efficiency-v2-labels.json), `global_token_frequency_top20`). lexical-v1 routes spaces to STRUCTURE and forbids merges across routed spans, so a space between two words cannot join a word token the way a flat byte-level BPE can. This is a descriptive tokenizer observation consistent with C's higher prose fragmentation; it is not a demonstrated cause of the validation-BPB difference.
+
+### Erratum: C pack labels (revision 1 of the analysis script)
+
+Revision 1 of `analyze_m5_tokenizer_efficiency.py` used one table, `{0: FLAT, 1: TEXT, 2: NUMBER, 3: STRUCTURE}`, for both variants. That is correct for the flat A registry (pack 0) but wrong for C: the frozen C tokenizer (`experiments/m5-gpu/artifacts/corpus-v2/C-0.packtok`, SHA-256 `334b8ce5e8868223e94b7992d2db705f3db09f989319488439fa652fe60cd1cf`, identical to the pilot's C tokenizer) declares lexical-v1 TEXT=0 (196 local IDs), NUMBER=1 (4) and STRUCTURE=2 (56), as stated in FORMAT.md and `packtok-packs`, and as printed by `packtok inspect`. The earlier prose therefore read "196 FLAT, 56 NUMBER and 4 TEXT"; its interpretation that TEXT capacity was tiny was a labeling artifact.
+
+Only names were wrong. Every count in revision 1 is keyed by pack ID and recorded with its `pack_id`, so no number changes. The frozen TRAIN sequences are local ignored data and were not rerun for this correction. Instead:
+
+- [m5-tokenizer-efficiency.json](analysis/m5-tokenizer-efficiency.json) (schema v1) is preserved byte-for-byte as the historical output.
+- [relabel_m5_tokenizer_efficiency.py](scripts/relabel_m5_tokenizer_efficiency.py) derives [m5-tokenizer-efficiency-v2-labels.json](analysis/m5-tokenizer-efficiency-v2-labels.json) (schema v2) by exact key renaming, checks each label against its recorded `pack_id`, and asserts the corrected C allocation equals the frozen artifact's.
+- The analysis script now uses variant-specific names and emits schema v2 on a future rerun.
+- [SHA256SUMS.txt](analysis/SHA256SUMS.txt) still binds the revision-1 script (retrievable with `git show 6138c06:experiments/m6/scripts/analyze_m5_tokenizer_efficiency.py`) to the v1 JSON. [SHA256SUMS-v2.txt](analysis/SHA256SUMS-v2.txt) binds the corrected scripts and the v2-labels JSON.
+- `python3 -m unittest experiments/m6/tests/test_analysis.py` covers the variant naming, its agreement with `packtok-packs`, and the relabeling invariants.
 
 The byte-fallback/single-byte share was 47.21% for A and 56.12% for C. Because the definition differs by scheme (A base-byte IDs versus C BYTE_FALLBACK pack), compare it as a scheme-level descriptive diagnostic. Token-ID entropy was 7.885 bits/token for A and 7.198 for C; this also reflects the uneven C routing and must not be interpreted as model entropy or quality.
 

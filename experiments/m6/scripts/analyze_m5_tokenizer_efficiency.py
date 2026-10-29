@@ -6,7 +6,15 @@ from pathlib import Path
 SEQ_HEADER=bytes.fromhex("50544d3553455101")
 MAP_HEADER=bytes.fromhex("50544d4150340001")
 RECORD=struct.Struct("<II")
-PACK={0:"FLAT",1:"TEXT",2:"NUMBER",3:"STRUCTURE",65535:"BYTE_FALLBACK"}
+# Pack names are variant-specific metadata. A is the M1 flat BPE registry (pack 0).
+# C uses the lexical-v1 contract from FORMAT.md / packtok-packs: TEXT=0, NUMBER=1,
+# STRUCTURE=2, plus the shared BYTE_FALLBACK pack 65535. Revision 1 of this script
+# used one table for both variants and mislabeled C packs 0/1/2 as FLAT/TEXT/NUMBER.
+PACK_NAMES={"A":{0:"FLAT",65535:"BYTE_FALLBACK"},
+            "C":{0:"TEXT",1:"NUMBER",2:"STRUCTURE",65535:"BYTE_FALLBACK"}}
+
+def pack_name(variant,pack):
+    return PACK_NAMES[variant].get(pack,f"PACK_{pack}")
 DOMAIN={"english-drama":"english-literature","english-prose":"english-literature",
         "german-prose":"german-prose","code":"rust-source",
         "synthetic-json":"synthetic-json","synthetic-unicode":"synthetic-unicode",
@@ -142,7 +150,7 @@ def analyze_variant(root,variant,raw,spans):
     if offset!=len(raw): raise ValueError(f"sequence represents {offset} not {len(raw)} raw bytes")
     allocation=collections.Counter(p for p,_ in ids); pack_summary={}
     for p,allocated in sorted(allocation.items()):
-        pack_summary[PACK.get(p,f"PACK_{p}")]={"pack_id":p,"allocated_ids":allocated,
+        pack_summary[pack_name(variant,p)]={"pack_id":p,"allocated_ids":allocated,
             "observed_ids":len(used[p]),"allocated_id_occupancy_percent":100*len(used[p])/allocated,
             "emitted_tokens":packs[p],"token_share_percent":100*packs[p]/n,
             "represented_bytes":pack_bytes[p],"bytes_per_emitted_token":pack_bytes[p]/packs[p]}
@@ -152,10 +160,10 @@ def analyze_variant(root,variant,raw,spans):
             "tokens_per_represented_byte":r["tokens"]/r["bytes"],
             "represented_bytes_per_token":r["bytes"]/r["tokens"],
             "token_length_bytes":quantiles(r["lengths"]),
-            "pack_tokens":{PACK.get(p,f"PACK_{p}"):v for p,v in sorted(r["packs"].items())},
-            "pack_token_shares_percent":{PACK.get(p,f"PACK_{p}"):100*v/r["tokens"] for p,v in sorted(r["packs"].items())}}
+            "pack_tokens":{pack_name(variant,p):v for p,v in sorted(r["packs"].items())},
+            "pack_token_shares_percent":{pack_name(variant,p):100*v/r["tokens"] for p,v in sorted(r["packs"].items())}}
     entropy=-sum((v/n)*math.log2(v/n) for v in hist.values())
-    top=[{"id":t,"count":c,"share_percent":100*c/n,"pack":PACK.get(ids[t][0],f"PACK_{ids[t][0]}"),
+    top=[{"id":t,"count":c,"share_percent":100*c/n,"pack":pack_name(variant,ids[t][0]),
           "local_id":ids[t][1]} for t,c in hist.most_common(20)]
     fallback=sum(c for t,c in hist.items() if (ids[t][1]<256 if variant=="A" else ids[t][0]==65535))
     return {"input_sha256":{"sequence":sha(data),"mapping":file_sha(map_path),
@@ -165,7 +173,7 @@ def analyze_variant(root,variant,raw,spans):
         "single_byte_or_fallback_tokens":fallback,"single_byte_or_fallback_percent":100*fallback/n,
         "vocabulary":{"logical_ids":len(ids),"unique_ids_observed":len(hist),
             "entropy_bits_per_token":entropy,"effective_ids_2_pow_entropy":2**entropy,
-            "allocated_ids_by_pack":{PACK.get(p,f"PACK_{p}"):v for p,v in sorted(allocation.items())},
+            "allocated_ids_by_pack":{pack_name(variant,p):v for p,v in sorted(allocation.items())},
             "pack_utilization":pack_summary},
         "global_token_frequency_top20":top,"domains":domains,
         "mixed_domain_tokens":{"tokens":mixed_n,"represented_bytes":mixed_bytes},
@@ -202,7 +210,7 @@ def main():
         mp=root/"artifacts/corpus-v2"/(v+".mapping")
         if file_sha(mp)!=input_hashes["./artifacts/"+v+".mapping"]: raise ValueError(f"{v} mapping identity mismatch")
         variants[v]=analyze_variant(root,v,raw,spans)
-    result={"schema":"packtok-m6-m5-tokenizer-efficiency-v1",
+    result={"schema":"packtok-m6-m5-tokenizer-efficiency-v2",
       "method":"Read-only analysis of frozen M5 TRAIN bytes and exact PTM5SEQ outputs; no validation/test data or model training.",
       "m5":{"pilot_report_sha256":file_sha(pilot_path),"pilot_source_commit":pilot["source_commit"],
         "pilot_config_sha256":pilot["config_sha256"],"corpus_manifest_sha256":sha(manifest_raw),
