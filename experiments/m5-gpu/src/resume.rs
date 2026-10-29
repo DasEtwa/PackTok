@@ -208,7 +208,7 @@ impl ResumableAdamW {
         let verified = fs::read(&temp)?;
         verify_image(&verified, model, identity, &self.config)?;
         fs::rename(&temp, path)?;
-        fs::File::open(parent)?.sync_all()?;
+        crate::sync_dir(parent)?;
         Ok(())
     }
     pub fn load_checkpoint(
@@ -549,6 +549,27 @@ mod tests {
             crate::runner::init_hash(&custom_model)?,
             crate::runner::init_hash(&candle_model)?
         );
+        Ok(())
+    }
+
+    #[test]
+    fn transformer_load_accepts_resumable_checkpoint() -> Result<()> {
+        let model = Transformer::new(tiny_config(), 19, &Device::Cpu)?;
+        let optimizer = ResumableAdamW::new(&model, AdamWConfig::default())?;
+        let id = fixture_identity();
+        let path = std::env::temp_dir().join(format!(
+            "packtok-m5-load-resumable-{}.safetensors",
+            std::process::id()
+        ));
+        let _ = fs::remove_file(&path);
+        optimizer.save_checkpoint(&model, &id, 77, 0, 0, &path)?;
+        let input = Tensor::new(&[[1_u32, 2, 3, 4]], &Device::Cpu)?;
+        let expected = model.forward(&input)?.flatten_all()?.to_vec1::<f32>()?;
+        let mut loaded = Transformer::new(tiny_config(), 999, &Device::Cpu)?;
+        loaded.load(&path)?;
+        let actual = loaded.forward(&input)?.flatten_all()?.to_vec1::<f32>()?;
+        assert_eq!(actual, expected);
+        let _ = fs::remove_file(path);
         Ok(())
     }
 }

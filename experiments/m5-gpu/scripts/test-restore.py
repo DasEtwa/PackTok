@@ -98,6 +98,32 @@ class Restore(unittest.TestCase):
             self.invoke()
         self.assertFalse(self.calls)
 
+    def test_pilot_evidence_manifest_entry_restores_with_drive_backup_schema(self):
+        repo_root = HERE.parents[2]
+        manifest = repo_root/'docs/maintenance/2026-10-08/external-artifacts.json'
+        receipt_path = repo_root/'experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/DRIVE_BACKUP.json'
+        receipt_bytes = receipt_path.read_bytes().replace(b'\r\n', b'\n')
+        entries = json.loads(manifest.read_text(encoding='utf-8'))['artifacts']
+        pilot = [e for e in entries if e['run_id'] == 'm5-a-c-pilot-evidence-20261009T154700Z'][0]
+        pilot = dict(pilot, bytes=len(self.payload),
+                     sha256=hashlib.sha256(self.payload).hexdigest())
+        completion = json.loads(receipt_bytes.decode('utf-8'))
+        completion['bytes'] = pilot['bytes']
+        completion['sha256'] = pilot['sha256']
+        completion['full_readback_sha256'] = pilot['sha256']
+        self.receipt = json.dumps(completion).encode()
+        pilot['completion_sha256'] = hashlib.sha256(self.receipt).hexdigest()
+        local_manifest = self.base/'pilot-manifest.json'
+        local_manifest.write_text(json.dumps({'artifacts': [pilot]}))
+        def pilot_transport(args):
+            self.calls.append(args)
+            content = self.receipt if args[1].endswith('/DRIVE_BACKUP.json') else self.payload
+            Path(args[2]).write_bytes(content)
+        with patch.object(restore.transport, 'run', pilot_transport):
+            out = restore.restore(local_manifest, pilot['run_id'], self.base/'pilot-restored')
+        self.assertEqual(out['status'], 'RESTORED_VERIFIED')
+        self.assertEqual((self.base/'pilot-restored/results.tar.gz').read_bytes(), self.payload)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

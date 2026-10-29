@@ -119,7 +119,7 @@ pub(super) fn run(corpus_name: &str, label: &str) -> Result<(), Box<dyn Error>> 
         || label.is_empty()
         || !label
             .bytes()
-            .all(|b| b.is_ascii_alphanumeric() || b == b'-')
+            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
     {
         return Err("invalid corpus or run label".into());
     }
@@ -421,7 +421,7 @@ fn train_run(
             updates == 1 || macs >= budget * next_checkpoint / 4 || macs >= budget
         };
         if checkpoint {
-            if regime == "mac" && macs >= budget * next_checkpoint / 4 {
+            while regime == "mac" && next_checkpoint <= 4 && macs >= budget * next_checkpoint / 4 {
                 next_checkpoint += 1;
             }
             let start = Instant::now();

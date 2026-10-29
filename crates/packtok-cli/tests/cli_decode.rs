@@ -71,10 +71,27 @@ fn bpe_stdout_preserves_exact_text_raw_bytes_and_empty_output() {
         "packtok-stdout-test-{}.packtok",
         std::process::id()
     ));
-    let artifact =
-        packtok_train::train_bpe(b"abababab", packtok_train::BpeTrainingConfig::default())
-            .expect("train");
+    let artifact = packtok_train::train_bpe_with_provenance(
+        b"abababab",
+        packtok_train::BpeTrainingConfig::default(),
+        &packtok_train::CorpusProvenance {
+            input: "test".to_owned(),
+            files: vec![],
+            total_bytes: 8,
+            fnv1a64: packtok_train::fnv1a64(b"abababab"),
+        },
+    )
+    .expect("train");
     std::fs::write(&path, artifact.to_bytes().expect("serialize")).expect("write artifact");
+    let stats = Command::new(env!("CARGO_BIN_EXE_packtok"))
+        .args(["stats", path.to_str().expect("Unicode path")])
+        .output()
+        .expect("bpe stats");
+    assert!(stats.status.success());
+    let stats_text = String::from_utf8_lossy(&stats.stdout);
+    assert!(stats_text.contains("bpe.algorithm=flat-byte-level-bpe-v1"));
+    assert!(stats_text.contains("bpe.merge_count="));
+    assert!(stats_text.contains("bpe.vocabulary_size="));
     let options = vec![
         "--artifact".to_owned(),
         path.to_str().expect("Unicode path").to_owned(),

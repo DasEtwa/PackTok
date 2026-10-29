@@ -131,12 +131,24 @@ impl IdMapping {
     }
     /// Validates size, complete contiguous local domains, and bijectivity.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, ModelError> {
-        if bytes.len() < 12 || &bytes[..8] != b"PTMAP4\0\x01" {
-            return Err(ModelError::InvalidVocabulary);
+        if bytes.len() < 12 {
+            return Err(ModelError::MalformedArtifact("truncated mapping header"));
+        }
+        if &bytes[..8] != b"PTMAP4\0\x01" {
+            return Err(ModelError::MalformedArtifact("invalid mapping magic"));
         }
         let count = u32::from_le_bytes(bytes[8..12].try_into().unwrap()) as usize;
-        if count == 0 || count > 1_000_000 || bytes.len() != 12 + count * 6 {
+        if count == 0 || count > 1_000_000 {
             return Err(ModelError::InvalidVocabulary);
+        }
+        let expected_len = count
+            .checked_mul(6)
+            .and_then(|body| body.checked_add(12))
+            .ok_or(ModelError::LengthOverflow)?;
+        if bytes.len() != expected_len {
+            return Err(ModelError::MalformedArtifact(
+                "mapping byte length does not match count",
+            ));
         }
         let ids = bytes[12..]
             .chunks_exact(6)
@@ -193,6 +205,20 @@ mod tests {
         assert!(map.to_global(TokenId::new(0, 171)).is_err());
         assert!(map.to_global(TokenId::new(999, 0)).is_err());
         assert!(IdMapping::from_bytes(&map.to_bytes()[..17]).is_err());
+        assert_eq!(
+            IdMapping::from_bytes(b"short"),
+            Err(ModelError::MalformedArtifact("truncated mapping header"))
+        );
+        assert_eq!(
+            IdMapping::from_bytes(b"WRONGMAG\x01\0\0\0"),
+            Err(ModelError::MalformedArtifact("invalid mapping magic"))
+        );
+        assert_eq!(
+            IdMapping::from_bytes(&map.to_bytes()[..17]),
+            Err(ModelError::MalformedArtifact(
+                "mapping byte length does not match count"
+            ))
+        );
     }
     #[test]
     fn flatten_is_bijective_and_canonical() {

@@ -1,19 +1,22 @@
 # Milestone history
 
-## Documentation sync with the completed M5 pilot (2026-10-29)
+## Post-pilot documentation sync and verified audit fixes (2026-10-29)
 
 - Update README, docs/milestones/M5.md and docs/research/results.md, which still
   described the M5 pilot as stopped or never trained.
 - Correct FORMAT.md and storage-and-recovery.md: pilot checkpoints are resumable
-  (weights, AdamW moments, step, RNG, cursor); only preflight checkpoints are
-  weights-only. Record the pilot's Drive backup and that the restore tool does
-  not yet accept its receipt schema.
+  (weights, AdamW moments, step, RNG, cursor), while preflight checkpoints are
+  weights-only; `Transformer::load` and `recover_weights` accept both. Record the
+  pilot's Drive backup in `external-artifacts.json` and support its
+  `DRIVE_BACKUP.json` receipt schema in `restore-drive-artifact.py`.
 - Correct the STRUCTURE.md dependency graph (no `packtok-runtime` crate;
   format and tokenizer depend on packs).
 - Reconcile AGENTS.md §§23–24: §24 (compute resource selection / time-to-result)
   supersedes §23's earlier GPU conservation and 20-minute preflight cap while
   retaining WSL isolation and session-cleanup safety rules.
-- Documentation only; no code, experiment output or historical record changed.
+- Resolve verified audit findings across `packtok-model`, `packtok-tokenizer`,
+  `packtok-cli`, `packtok-bench` and `experiments/m5-gpu` without changing any
+  historical experiment artifacts or outputs.
 
 ## M5 paired A/C Transformer pilot (2026-10-09)
 

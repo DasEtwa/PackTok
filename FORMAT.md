@@ -227,7 +227,8 @@ with exactly one tensor per model variable; `Transformer::load` and the CPU
 resumable checkpoints through `ResumableAdamW::save_checkpoint` (`resume.rs`):
 3N tensors named `model.*`, `adamw.m.*` and `adamw.v.*`, plus JSON metadata in
 the safetensors header (format, model config, input identity, optimizer/training
-step, sample cursor, RNG state, schedule and a tensor-state SHA-256). Only
-`ResumableAdamW::load_checkpoint` reads resumable checkpoints; `Transformer::load`
-rejects them. See M5_GPU_TRANSFORMER.md and
+step, sample cursor, RNG state, schedule and a tensor-state SHA-256).
+`ResumableAdamW::load_checkpoint` validates the full optimizer/RNG/cursor state,
+while `Transformer::load` and `recover_weights` also accept 3N resumable
+checkpoints for weight-only loading. See M5_GPU_TRANSFORMER.md and
 experiments/m5-gpu/provenance/CPU_PREPARATION.md.

@@ -20,10 +20,9 @@ The 2026-10-09 paired A/C pilot results archive (logs, metrics, checkpoints;
 322,912,151 bytes, SHA-256 `d7da7a90…d1c25b4`) was uploaded to Drive and fully
 read back with a matching hash; its receipt is
 [DRIVE_BACKUP.json](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/DRIVE_BACKUP.json).
-That receipt uses a different schema and the `PackTok/M5/pilot/` namespace and is
-not listed in the external artifact manifest, so `restore-drive-artifact.py`
-below does not accept it yet; restore it manually with rclone and verify the
-recorded SHA-256.
+It is listed in the external artifact manifest under
+`m5-a-c-pilot-evidence-20261009T154700Z` and is supported by
+`restore-drive-artifact.py` below.
 
 ## Restore in a fresh authorized environment
 
@@ -54,7 +53,8 @@ cannot resume training exactly. Resumable pilot checkpoints
 (`latest.resume.safetensors`) also store AdamW moments, optimizer step, sampling
 RNG and data cursor, and are read by `ResumableAdamW::load_checkpoint`; the
 pilot's A run was reloaded this way from its step-2000 checkpoint for final
-evaluation without retraining. `recover_weights` does not accept them.
+evaluation without retraining. `Transformer::load` and `recover_weights` also
+accept resumable checkpoints for weight-only verification.
 
 ## Protected configuration recovery
 

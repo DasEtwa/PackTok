@@ -445,9 +445,7 @@ impl BpeTokenizer {
             )?;
             output_len = output_len
                 .checked_add(length)
-                .ok_or(DecodeError::AllocationFailed {
-                    requested_bytes: usize::MAX,
-                })?;
+                .ok_or(DecodeError::LengthOverflow)?;
         }
 
         let mut output = Vec::new();
