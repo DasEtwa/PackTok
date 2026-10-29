@@ -220,6 +220,14 @@ Complete size is exactly 16+8*N, checked for overflow/truncation. IDs must be be
 least two tokens and a positive batch. Artifact-derived lengths must sum to the
 original raw bytes during CPU preparation. Frozen raw/tokenizer/mapping/sequence
 hashes bind staging files to their provenance. Checkpoints use standard Candle
-FP32 safetensors, externally bound to the frozen M5 config/source hash. They
-contain weights only; no optimizer-resume contract is implied. See
-M5_GPU_TRANSFORMER.md and experiments/m5-gpu/provenance/CPU_PREPARATION.md.
+FP32 safetensors, externally bound to the frozen M5 config/source hash. There are
+two checkpoint kinds. The preflight runner (`runner.rs`) writes weights-only files
+with exactly one tensor per model variable; `Transformer::load` and the CPU
+`recover_weights` example read only this kind. The extended/pilot runner writes
+resumable checkpoints through `ResumableAdamW::save_checkpoint` (`resume.rs`):
+3N tensors named `model.*`, `adamw.m.*` and `adamw.v.*`, plus JSON metadata in
+the safetensors header (format, model config, input identity, optimizer/training
+step, sample cursor, RNG state, schedule and a tensor-state SHA-256). Only
+`ResumableAdamW::load_checkpoint` reads resumable checkpoints; `Transformer::load`
+rejects them. See M5_GPU_TRANSFORMER.md and
+experiments/m5-gpu/provenance/CPU_PREPARATION.md.

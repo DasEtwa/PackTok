@@ -315,14 +315,14 @@ M4_ABLATION_BENCHMARK.md before changing its corpus, mappings, metrics or runs.
 Preserve lexical-v1, historical artifacts and failed/preflight outputs. Do not
 use held-out outcomes to change grouping, allocation, schedule or splits.
 
-## 23. M5 GPU conservation
+## 23. M5 operational safety (resource policy superseded by §24)
 
 Read M5_GPU_TRANSFORMER.md and M5_GPU_BENCHMARK.md before M5 changes/runs. Use only
-local WSL Ubuntu-24.04 for CPU work; do not use Ubuntu/MOOS. Colab allocation is
-only NVIDIA L4, only after CPU readiness. First preflight is capped at 20 minutes.
-Always stop and verify the owned session immediately after GPU work/errors,
-before analysis/edits/replies. Full multi-seed runs require explicit approval of
-the measured runtime/compute-unit budget. Never fall back to another accelerator.
+local WSL Ubuntu-24.04 for CPU work; do not use Ubuntu/MOOS. Always stop and verify
+the owned session immediately after GPU work/errors, before analysis/edits/replies.
+Never fall back silently to another accelerator. The earlier M5 conservation rule
+and fixed 20-minute preflight cap are superseded by Section 24 below.
+
 ## 24. Compute Resource Selection Policy
 
 ### Primary principle
