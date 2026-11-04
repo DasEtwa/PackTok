@@ -510,7 +510,7 @@ fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgr
         file.sync_all()?;
         drop(file);
         fs::rename(&temporary, path)?;
-        fs::File::open(parent)?.sync_all()?;
+        crate::sync_directory(parent)?;
     }
     Ok(progress)
 }
@@ -540,7 +540,7 @@ fn save_report(path: &Path, report: &impl serde::Serialize) -> Result<()> {
     f.sync_all()?;
     drop(f);
     fs::rename(temporary, path)?;
-    fs::File::open(path.parent().ok_or("report parent")?)?.sync_all()?;
+    crate::sync_directory(path.parent().ok_or("report parent")?)?;
     Ok(())
 }
 fn match_input(
@@ -1081,8 +1081,12 @@ mod tests {
         Ok(())
     }
     #[test]
+    #[ignore = "requires the six frozen prepared-v2 sequences; see docs/development/testing.md"]
     fn frozen_configs_recheck_scientific_inputs_and_schedules() -> Result<()> {
-        let data = Path::new("data/prepared-v2");
+        let data_dir = std::env::var_os("PACKTOK_M5_PREPARED_DIR")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| "data/prepared-v2".into());
+        let data = data_dir.as_path();
         let pilot = ExtendedPlan::load(Path::new("configs/pilot-2k-v1.json"), data)?;
         assert_eq!(pilot.updates_per_model, 2000);
         assert_eq!(pilot.paired_seeds, vec![20261008]);

@@ -1,3 +1,5 @@
+# Executable shell scripts must work in Unix environments after a Windows checkout.
+*.sh text eol=lf
 # Benchmark split bytes are corpus data, including their exact line endings.
 fixtures/benchmark/** -text
 fixtures/m3-model/** -text
@@ -19,5 +21,11 @@ experiments/pre-gpu-fix-20261007/precommit-whitespace-failure.txt whitespace=cr-
 experiments/m5-gpu/artifacts/** -text
 experiments/m5-gpu/provenance/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
 experiments/m5-gpu/verification/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
+# Frozen experiment configurations are verified by their exact SHA-256 bytes.
+experiments/m5-gpu/configs/*.json -text
+# M6 analysis evidence and the current scripts bound by SHA256SUMS-v2 retain exact bytes.
+experiments/m6/analysis/** -text
+experiments/m6/scripts/analyze_m5_tokenizer_efficiency.py -text
+experiments/m6/scripts/relabel_m5_tokenizer_efficiency.py -text
 # Maintenance raw evidence retains captured Windows/Linux bytes.
 docs/maintenance/** -text whitespace=-trailing-space,-blank-at-eof,-space-before-tab
