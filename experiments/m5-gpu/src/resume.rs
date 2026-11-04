@@ -228,7 +228,7 @@ impl ResumableAdamW {
         let verified = fs::read(&temp)?;
         verify_image(&verified, model, identity, &self.config)?;
         fs::rename(&temp, path)?;
-        fs::File::open(parent)?.sync_all()?;
+        crate::sync_directory(parent)?;
         Ok(())
     }
     pub fn load_checkpoint(
