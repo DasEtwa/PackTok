@@ -37,7 +37,7 @@
       "65535": "BYTE_FALLBACK"
     },
     "method": "exact rename of C pack-name keys using recorded pack IDs; numeric values unchanged",
-    "source_revision1_sha256": "ab79e8deb95182756d3709d3591ae45a7d8f3bf64806e8f3c6f596a5cb198b37"
+    "source_revision1_sha256": "f1e39867b7929e0d14d04cb2a9ac90a9ef3e08edf0202099a90e5347eb5bad41"
   },
   "schema": "packtok-m6-m5-tokenizer-efficiency-v2",
   "variants": {

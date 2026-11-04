@@ -1,5 +1,8 @@
 import importlib.util
 import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -96,6 +99,16 @@ class RelabelTest(unittest.TestCase):
     def test_rejects_wrong_schema(self):
         with self.assertRaises(ValueError):
             RELABEL.relabel(self.v2)
+
+    def test_committed_output_is_reproducible_from_exact_source_bytes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "output.json"
+            subprocess.run(
+                [sys.executable, str(RELABEL_SCRIPT), "--input", str(V1_JSON), "--output", str(output)],
+                check=True, capture_output=True,
+            )
+            expected = V1_JSON.with_name("m5-tokenizer-efficiency-v2-labels.json")
+            self.assertEqual(output.read_bytes(), expected.read_bytes())
 
 
 if __name__ == "__main__":
