@@ -1,0 +1,79 @@
+name: Cross-platform verification
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Root MSRV toolchain
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+        with:
+          toolchain: 1.85.0
+          components: rustfmt, clippy
+      - name: M5 toolchain
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+        with:
+          toolchain: 1.99.0
+          components: rustfmt, clippy
+      - name: Cache Cargo dependencies and build outputs
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          workspaces: |
+            .
+            experiments/m5-gpu
+          save-if: ${{ github.event_name == 'push' }}
+      - name: Check research bytes and checkout line endings
+        run: |
+          python tools/ci/test_verify_research.py
+          python tools/ci/verify_research.py --check-checkout
+      - name: M6 analysis tests
+        run: |
+          python -m unittest discover -s experiments/m6/tests -v
+          python experiments/m6/scripts/test_m6_multiseed_analysis.py
+      - name: Root formatting
+        run: cargo +1.85.0 fmt --all -- --check
+      - name: Root Clippy
+        run: cargo +1.85.0 clippy --locked --workspace --all-targets --all-features -- -D warnings
+      - name: Root debug tests
+        run: cargo +1.85.0 test --locked --workspace
+      - name: Root release tests
+        run: cargo +1.85.0 test --locked --workspace --release
+      - name: Root release build
+        run: cargo +1.85.0 build --locked --release --workspace
+      - name: M5 formatting
+        run: cargo +1.99.0 fmt --manifest-path experiments/m5-gpu/Cargo.toml --all -- --check
+      - name: M5 Clippy (CPU)
+        run: cargo +1.99.0 clippy --locked --manifest-path experiments/m5-gpu/Cargo.toml --all-targets -- -D warnings
+      - name: M5 regular tests (CPU)
+        run: cargo +1.99.0 test --locked --manifest-path experiments/m5-gpu/Cargo.toml
+      - name: Historical M5 test status
+        if: ${{ always() }}
+        run: |
+          echo 'NOT EXECUTED: M5 historical sequence integration requires the six original frozen sequences; see docs/development/testing.md.'
+          echo '### M5 historical sequence integration' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Not executed: the six original frozen sequence files are not supplied to this job. See docs/development/testing.md.' >> "$GITHUB_STEP_SUMMARY"

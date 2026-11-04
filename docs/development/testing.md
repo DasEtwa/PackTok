@@ -1,5 +1,31 @@
 # Verification gates
 
+## GitHub Actions
+
+`.github/workflows/ci.yml` runs on pull requests, pushes to `main`, and manual
+dispatch on Ubuntu and Windows. It checks the root workspace with Rust 1.85.0
+(format, Clippy with warnings denied, debug and release tests, release build),
+and the separate M5 workspace with Rust 1.99.0 (format, CPU Clippy and regular
+debug tests). The two platforms execute the same commands. Python 3.12 runs
+the 15 M6 tests and `tools/ci/verify_research.py --check-checkout`, which checks
+the four SHA-256 manifest entries, pinned historical and M5 configuration hashes,
+the M6 source and original-output provenance, shell LF endings, and protected
+checkout bytes against the Git index. Three verifier tests check rejection of
+changed artifacts, changed source data and a missing manifest entry. A mismatch
+fails the job. CI does not
+rewrite expected hashes, upload datasets, allocate a GPU, or launch a research
+training run. The normal unit tests include small CPU model correctness fixtures.
+
+The historical M5 integration test is ignored in the ordinary suite: the CI
+summary explicitly reports it as **not executed**. The external original
+sequences and separate invocation are described below. A green CI run does not
+establish that historical test passed in the runner. To reproduce the commands,
+use the exact toolchains and invocations in the workflow, plus `python
+tools/ci/verify_research.py`; add `--check-checkout` in a clean checkout where
+the protected changes are present in the index.
+
+Hosted runner results remain unverified until the workflow runs.
+
 Root CPU workspace, from repository root:
 
 ```sh
