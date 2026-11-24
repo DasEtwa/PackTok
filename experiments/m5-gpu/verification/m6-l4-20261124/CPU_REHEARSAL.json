@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "checks": {
+    "restore_exact": true,
+    "trace_equal": true,
+    "metadata_equal": true,
+    "finite_within_tolerance": true
+  },
+  "checkpoint_bitwise_equal": true,
+  "loss_bits_equal": true,
+  "metrics": {
+    "loss": {
+      "count": 4,
+      "max_abs": 0.0,
+      "outside": 0
+    },
+    "parameters": {
+      "count": 9360,
+      "max_abs": 0.0,
+      "outside": 0
+    },
+    "first_moments": {
+      "count": 9360,
+      "max_abs": 0.0,
+      "outside": 0
+    },
+    "second_moments": {
+      "count": 9360,
+      "max_abs": 0.0,
+      "outside": 0
+    }
+  },
+  "checkpoint_sha256": [
+    "01b9f53a3a66a550abfe85b70f7069ed0471f2892c3928314152ee17508e30e6",
+    "01b9f53a3a66a550abfe85b70f7069ed0471f2892c3928314152ee17508e30e6"
+  ],
+  "processes": [
+    {
+      "label": "control",
+      "pid": 4282,
+      "exit": 0,
+      "killed": false,
+      "seconds": 3.2976277520000394,
+      "sampled_vm_hwm_kib": 122348
+    },
+    {
+      "label": "interrupt",
+      "pid": 4285,
+      "exit": -9,
+      "killed": true,
+      "seconds": 0.15191644800000859,
+      "sampled_vm_hwm_kib": 109348
+    },
+    {
+      "label": "resume",
+      "pid": 4288,
+      "exit": 0,
+      "killed": false,
+      "seconds": 0.20488625600000887,
+      "sampled_vm_hwm_kib": 109492
+    }
+  ],
+  "publish_us_bytes": {
+    "control": [
+      [
+        52166,
+        114055
+      ]
+    ],
+    "interrupt": [
+      [
+        59274,
+        114054
+      ]
+    ],
+    "resume": [
+      [
+        45854,
+        114055
+      ]
+    ]
+  },
+  "restore_us": 1289
+}

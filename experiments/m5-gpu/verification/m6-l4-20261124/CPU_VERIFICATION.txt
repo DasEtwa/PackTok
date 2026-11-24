@@ -1,0 +1,33 @@
+Parent M6 00966ec2d51eb2a52c485782a306b70cb2f8a1f8 | Probe eb5c4e6c677b8724e1cd4027ee230815889d28d9
+Linux 6.18.58.1-microsoft-standard-WSL2 x86_64 GNU/Linux
+rustc 1.100.0 (0ef1bc386 2026-11-09)
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+CPU compilation, --release --locked --offline --features cuda --test recovery --no-run, compute capability 89, two build jobs
+Runtime files from previously preserved M5 bundle-v5, no CUDA driver shipped
+c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da  runtime/ld-linux-x86-64.so.2
+3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf  runtime/libc.so.6
+d3c95b56fa33e28b57860580f0baf4e4f4de2a268a2b80f1d031a5191bade265  runtime/libc6.copyright
+e2c71babfd18a8e69542dd7e9ca018f9caa438094001a58e6bc4d8c999bf0d07  runtime/libcublas.LICENSE
+4cc45526449a95d3985389785e985b7832460ea3db178bc9e9963be2111fbee8  runtime/libcublas.so.12
+44a813aa2da08830f9083f81d0eb73f1ae4052a4d9b0b0de480a8f6cd9eb3078  runtime/libcublasLt.so.12
+e2c71babfd18a8e69542dd7e9ca018f9caa438094001a58e6bc4d8c999bf0d07  runtime/libcurand.LICENSE
+dab8074b610b82a863a42eceda788e9b08364b545bab948509306b48c46018cf  runtime/libcurand.so.10
+c2994527172cc23b7fb0f7d611b71e00a37da27af12c2e5e9e0dc1a742886c96  runtime/libdl.so.2
+20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79  runtime/libgcc-s1.copyright
+d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb  runtime/libgcc_s.so.1
+fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0  runtime/libm.so.6
+90491a21ce44efcf3bd4b65ec82501c091d7ebe7f8d9b341dd01d721001d9ecd  runtime/libpthread.so.0
+6d072187d88e092e81561a44c03a4a41397319022c6d43519757cc051c576d82  runtime/librt.so.1
+1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11  runtime/libstdc++.so.6
+20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79  runtime/libstdc++6.copyright
+87655cf6d4711a60dddc2016dfd7ffca67d0ca8bd0db89ce21ee8c0e6a6992e9  worker
+test historical_pilot_images_restore_on_cpu ... ignored, requires the locally archived M5 pilot result directory
+test training_worker ... ok
+test rejects_corruption_mismatch_and_interrupted_publication ... ok
+test interrupted_writer_leaves_only_previous_generation_visible ... ok
+test fresh_process_replays_each_update_and_all_checkpoint_bytes ... ok
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.88s
+    Checking packtok-m5 v0.1.0 (/home/dasetwa/tmp/m6-l4-dQs1pves/src/experiments/m5-gpu)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.43s
+Native WSL supervisor CLI mocks: success released; excessive four-CU/hour rate released; execute error released; each requested L4 once.
