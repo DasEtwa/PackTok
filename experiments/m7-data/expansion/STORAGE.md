@@ -37,6 +37,8 @@ The median RAM run was 2.97% faster than the warm HDD run. GNU time's filesystem
 
 The only local SSD was below the required 20 GB free before the work began. The pilot used RAM for the index-offload diagnostic and leaves the storage default and tokenstream format as measured. [Disk placement](README.md#local-disk-bottleneck).
 
+The authorized follow-up lowered the reserve to 10 GB. The matched physical comparison used 296,724,588 historical text bytes and the same ext4 configuration on temporary HDD and SSD images. HDD completed in 166.06 s and SSD in 173.55 s. The two verified datasets matched. [SSD follow-up](SSD.md).
+
 ## Block-compressed token stream
 
 `compact-stream.rs` implements the standalone `LIVZST01` experiment. It reads the unchanged `LIVWIN02` windows. It uses a 24-byte header and a 12-byte offset and compressed-length index entry per block. Each independent Zstandard level-3 frame carries a Zstandard content checksum. The reader bounds compressed and expanded sizes by the configured limit of 4,096 rows per block. It keeps one decoded block for random reads. The full comparison checks the entire seek table for contiguous blocks, rejects trailing bytes and compares every reconstructed 73-byte row. [Zstandard frame specification](https://www.rfc-editor.org/rfc/rfc8878), [Zstandard seekable format precedent](https://github.com/meta/zstd/blob/dev/contrib/seekable_format/zstd_seekable_compression_format.md).

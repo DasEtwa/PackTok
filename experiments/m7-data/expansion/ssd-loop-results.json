@@ -1,0 +1,42 @@
+{
+  "base_manifest_sha256": "2f696cab94e7c70809a7b3beec078c9d964cab2196ab88faa5940c3878914113",
+  "input_catalog_sha256": "960b9d065b18bba35d5a242d29ecc649241d7cd9a987cf3ef0677e1dfff69e6b",
+  "sample": "Approved whole sources sorted by ID and greedily bounded per split/language cell.",
+  "text_bytes": 296724588,
+  "documents": 1030,
+  "cell_bytes": {
+    "test/de": 20963780,
+    "test/en": 9434685,
+    "train/de": 115343161,
+    "train/en": 115343238,
+    "validation/de": 23057155,
+    "validation/en": 12582569
+  },
+  "reserve_bytes": 10000000000,
+  "runs": [
+    {
+      "placement": "hdd-1",
+      "min_ssd_free_bytes": 18140651520,
+      "sampled_peak_index_bytes": 269488128,
+      "manifest_sha256": "f12ad6ec4df707a5962c465d11f2d826c70f30f06db7a72e88948930e7c226cd",
+      "wall_s": 166.06,
+      "user_s": 140.19,
+      "system_s": 20.23,
+      "max_rss_kib": 70840,
+      "fs_inputs": 17360,
+      "fs_outputs": 2933880
+    },
+    {
+      "placement": "ssd-1",
+      "min_ssd_free_bytes": 18139807744,
+      "sampled_peak_index_bytes": 269488128,
+      "manifest_sha256": "f12ad6ec4df707a5962c465d11f2d826c70f30f06db7a72e88948930e7c226cd",
+      "wall_s": 173.55,
+      "user_s": 143.68,
+      "system_s": 19.85,
+      "max_rss_kib": 70648,
+      "fs_inputs": 0,
+      "fs_outputs": 3531264
+    }
+  ]
+}

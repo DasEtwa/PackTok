@@ -1,0 +1,9 @@
+hdd-1.log:verified 6 shards, 1030 documents, 296724588 text bytes
+ssd-1.log:verified 6 shards, 1030 documents, 296724588 text bytes
+Matched dataset.json and sources.json bytes
+C:\            119395831808 99650043904 19745787904  84% /mnt/c
+Transient benchmark loop mounts released
+306708480	loop-placements/hdd-1
+306708480	loop-placements/ssd-1
+298901504	placements/cache
+116613120	placements/ssd-1.pending-517-1795556693073746428

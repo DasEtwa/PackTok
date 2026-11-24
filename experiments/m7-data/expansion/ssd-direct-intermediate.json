@@ -1,0 +1,11 @@
+{
+  "observed_utc": "2026-11-24T21:56:02Z",
+  "placement": "SSD, direct WSL DrvFS NTFS",
+  "elapsed_seconds": 649,
+  "pending_shard_file_bytes": 115422726,
+  "pending_shard_files": 2,
+  "sampled_index_bytes": [
+    134746112
+  ],
+  "reason": "Probe stopped before completion to perform a matched ext4/loopback HDD and SSD comparison."
+}
