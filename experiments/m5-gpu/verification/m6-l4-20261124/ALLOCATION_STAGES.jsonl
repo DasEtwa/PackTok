@@ -1,0 +1,6 @@
+{"stage": "sessions-before", "seconds": 4.742455774000003, "exit": 0}
+{"stage": "usage-before", "seconds": 1.0180727329999968, "exit": 0}
+{"stage": "allocation", "seconds": 31.196051421000007, "exit": 1}
+{"stage": "before-stop-0", "seconds": 1.1170032750000018, "exit": 0}
+{"stage": "sessions-after", "seconds": 1.0680723110000088, "exit": 0}
+{"stage": "usage-after", "seconds": 1.067771804000003, "exit": 0}

@@ -1,0 +1,24 @@
+request_utc=2026-11-24T13:33:15.148217+00:00
+cap_seconds=900 cap_cu=0.45 accelerator=L4
+command=colab new -s <unique run alias> --gpu L4
+allocation.exit=1
+backend_error=ColabRequestError: Failed to issue request POST [request URL omitted]: Service Unavailable
+remote_worker_started=false
+remote_result_archive=false
+new_allocation_retries=0
+Original CLI output is retained privately in WSL. The published excerpt omits the request URL and identifiers.
+allocation.txt sha256=884bdf24c6a90589c76cb2493deaf3061917db706d7109f136b8c2999c221637
+sessions-before.txt sha256=9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73
+[colab] No active sessions found on server.
+usage-before.txt sha256=3a0195358ef19b53138a76afa5a6b140dacf91ff703706c4cd33d8995353fd0a
+Current balance: 235.56 compute units
+Usage rate: 0.00/hr
+Active assignments: 0
+before-stop-0.txt sha256=9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73
+[colab] No active sessions found on server.
+sessions-after.txt sha256=9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73
+[colab] No active sessions found on server.
+usage-after.txt sha256=3a0195358ef19b53138a76afa5a6b140dacf91ff703706c4cd33d8995353fd0a
+Current balance: 235.56 compute units
+Usage rate: 0.00/hr
+Active assignments: 0
