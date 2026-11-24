@@ -1,0 +1,210 @@
+[
+  {
+    "split": "test",
+    "language": "all",
+    "category": "all",
+    "documents": 225,
+    "bytes": 71397630,
+    "groups": 123
+  },
+  {
+    "split": "test",
+    "language": "de",
+    "category": "Belletristik",
+    "documents": 35,
+    "bytes": 19580418,
+    "groups": 23
+  },
+  {
+    "split": "test",
+    "language": "de",
+    "category": "Fachtext",
+    "documents": 50,
+    "bytes": 37990154,
+    "groups": 31
+  },
+  {
+    "split": "test",
+    "language": "de",
+    "category": "Gebrauchsliteratur",
+    "documents": 2,
+    "bytes": 954133,
+    "groups": 2
+  },
+  {
+    "split": "test",
+    "language": "de",
+    "category": "all",
+    "documents": 88,
+    "bytes": 58583138,
+    "groups": 55
+  },
+  {
+    "split": "test",
+    "language": "de",
+    "category": "dta-historical-print",
+    "documents": 1,
+    "bytes": 58433,
+    "groups": 1
+  },
+  {
+    "split": "test",
+    "language": "en",
+    "category": "all",
+    "documents": 137,
+    "bytes": 12814492,
+    "groups": 68
+  },
+  {
+    "split": "test",
+    "language": "en",
+    "category": "eebo-historical-print",
+    "documents": 137,
+    "bytes": 12814492,
+    "groups": 68
+  },
+  {
+    "split": "train",
+    "language": "all",
+    "category": "all",
+    "documents": 3743,
+    "bytes": 1319820159,
+    "groups": 1641
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "Belletristik",
+    "documents": 443,
+    "bytes": 174264208,
+    "groups": 176
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "Fachtext",
+    "documents": 554,
+    "bytes": 422170085,
+    "groups": 313
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "Gebrauchsliteratur",
+    "documents": 141,
+    "bytes": 88514183,
+    "groups": 91
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "Gelegenheitsschrift",
+    "documents": 2,
+    "bytes": 135014,
+    "groups": 1
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "Journalismus",
+    "documents": 5,
+    "bytes": 399417,
+    "groups": 4
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "all",
+    "documents": 1173,
+    "bytes": 701362965,
+    "groups": 566
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "category": "dta-historical-print",
+    "documents": 28,
+    "bytes": 15880058,
+    "groups": 24
+  },
+  {
+    "split": "train",
+    "language": "en",
+    "category": "all",
+    "documents": 2570,
+    "bytes": 618457194,
+    "groups": 1075
+  },
+  {
+    "split": "train",
+    "language": "en",
+    "category": "eebo-historical-print",
+    "documents": 2570,
+    "bytes": 618457194,
+    "groups": 1075
+  },
+  {
+    "split": "validation",
+    "language": "all",
+    "category": "all",
+    "documents": 269,
+    "bytes": 59568609,
+    "groups": 136
+  },
+  {
+    "split": "validation",
+    "language": "de",
+    "category": "Belletristik",
+    "documents": 36,
+    "bytes": 11546478,
+    "groups": 24
+  },
+  {
+    "split": "validation",
+    "language": "de",
+    "category": "Fachtext",
+    "documents": 58,
+    "bytes": 24630464,
+    "groups": 34
+  },
+  {
+    "split": "validation",
+    "language": "de",
+    "category": "Gebrauchsliteratur",
+    "documents": 14,
+    "bytes": 2724050,
+    "groups": 7
+  },
+  {
+    "split": "validation",
+    "language": "de",
+    "category": "all",
+    "documents": 109,
+    "bytes": 39119266,
+    "groups": 62
+  },
+  {
+    "split": "validation",
+    "language": "de",
+    "category": "dta-historical-print",
+    "documents": 1,
+    "bytes": 218274,
+    "groups": 1
+  },
+  {
+    "split": "validation",
+    "language": "en",
+    "category": "all",
+    "documents": 160,
+    "bytes": 20449343,
+    "groups": 74
+  },
+  {
+    "split": "validation",
+    "language": "en",
+    "category": "eebo-historical-print",
+    "documents": 160,
+    "bytes": 20449343,
+    "groups": 74
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "dta.zip": {
+    "members_scanned": 1472,
+    "missing_or_over_limit_headers": [],
+    "text_markers_inside_headers": []
+  },
+  "eebo-2003.zip": {
+    "members_scanned": 3119,
+    "missing_or_over_limit_headers": [],
+    "text_markers_inside_headers": []
+  }
+}

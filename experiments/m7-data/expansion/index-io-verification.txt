@@ -1,0 +1,6 @@
+2026-11-24T21:35:40+00:00
+ad21412a107cd79695438efdcf1af91c3dc972a52b07db3071cf8dc794ea3b9e  hdd-1/dataset.json
+ad21412a107cd79695438efdcf1af91c3dc972a52b07db3071cf8dc794ea3b9e  hdd-2/dataset.json
+ad21412a107cd79695438efdcf1af91c3dc972a52b07db3071cf8dc794ea3b9e  ram-1/dataset.json
+ad21412a107cd79695438efdcf1af91c3dc972a52b07db3071cf8dc794ea3b9e  ram-2/dataset.json
+verified 24 shards, 4235 documents, 1449719862 text bytes

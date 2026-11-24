@@ -17,7 +17,12 @@ use zip::ZipArchive;
 const MAX_XML: usize = 32 << 20;
 const DTA_URL: &str =
     "https://registry.text-plus.org/doc/collection/c582ca78-26b4-4e5a-b817-e2d7c04f0a9d";
+const DTA_DOWNLOAD: &str = "https://media.dwds.de/dta/download/dta_kernkorpus_2020-07-20.zip";
 const EEBO_URL: &str = "https://ora.ox.ac.uk/objects/uuid:ad7da8fc-cd8e-4637-8b7c-99498436dbaa";
+const EEBO_DOWNLOAD: &str = concat!(
+    "https://ora.ox.ac.uk/objects/uuid:ad7da8fc-cd8e-4637-8b7c-99498436dbaa",
+    "/files/me82c6a4e55b579471a1cf4385735f074"
+);
 
 #[derive(Clone, Copy, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -55,6 +60,7 @@ fn decode(input: &[u8], family: Family) -> Result<Text> {
     reader.config_mut().expand_empty_elements = true;
     let mut out = Text::default();
     let mut depth = 0_usize;
+    let mut header = None;
     let mut body = None;
     let mut ignored = None;
     let mut capture = None;
@@ -77,7 +83,13 @@ fn decode(input: &[u8], family: Family) -> Result<Text> {
                     }
                     Ok(None)
                 };
-                if name.eq_ignore_ascii_case(b"text") && body.is_none() {
+                if header.is_none()
+                    && body.is_none()
+                    && (name.eq_ignore_ascii_case(b"teiheader")
+                        || name.eq_ignore_ascii_case(b"header"))
+                {
+                    header = Some(depth);
+                } else if name.eq_ignore_ascii_case(b"text") && header.is_none() && body.is_none() {
                     if let Family::Eebo = family
                         && let Some(lang) = attr(b"lang")?
                     {
@@ -151,6 +163,9 @@ fn decode(input: &[u8], family: Family) -> Result<Text> {
                 }
             }
             Event::End(el) => {
+                if header == Some(depth) {
+                    header = None;
+                }
                 if capture.is_some_and(|(d, _)| d == depth) {
                     capture = None;
                 }
@@ -238,14 +253,8 @@ pub fn import(plan: &Path, out: &Path) -> Result<()> {
     let mut ids = BTreeSet::new();
     for input in &inputs {
         let approved_url = match input.family {
-            Family::Dta => {
-                input.url == "https://media.dwds.de/dta/download/dta_kernkorpus_2020-07-20.zip"
-            }
-            Family::Eebo => input
-                .url
-                .strip_prefix(EEBO_URL)
-                .and_then(|tail| tail.strip_prefix("/files/m"))
-                .is_some_and(|id| id.len() == 32 && id.bytes().all(|x| x.is_ascii_hexdigit())),
+            Family::Dta => input.url == DTA_DOWNLOAD,
+            Family::Eebo => input.url == EEBO_DOWNLOAD,
         };
         if !approved_url || input.version.trim().is_empty() || input.acquired.trim().is_empty() {
             return Err("archive source is outside the reviewed publisher release".into());
@@ -254,13 +263,10 @@ pub fn import(plan: &Path, out: &Path) -> Result<()> {
             return Err("archive size/hash mismatch".into());
         }
         let mut zip = ZipArchive::new(File::open(&input.path)?)?;
-        let mut order: Vec<_> = (0..zip.len())
-            .filter_map(|idx| {
-                zip.by_index_raw(idx)
-                    .ok()
-                    .map(|f| (f.name().to_owned(), idx))
-            })
-            .collect();
+        let mut order = Vec::with_capacity(zip.len());
+        for idx in 0..zip.len() {
+            order.push((zip.by_index_raw(idx)?.name().to_owned(), idx));
+        }
         order.sort_unstable();
         for (member, idx) in order {
             if !member.to_ascii_lowercase().ends_with(".xml") {
@@ -329,16 +335,39 @@ pub fn import(plan: &Path, out: &Path) -> Result<()> {
                         row["split"] = split.name().into();
                         row["processed_sha256"] = hash(body.as_bytes()).into();
                         row["processed_bytes"] = body.len().into();
-                        sources.push(Source {id,group,split,language:lang.into(),category,format:Format::Text,
-                            author:if author.is_empty(){"Unattributed in source".into()}else{author},
-                            publisher:publisher.into(),version:input.version.clone(),url:input.url.clone(),download_url:None,
-                            acquired:input.acquired.clone(),rights:rights.into(),rights_decision:RightsDecision::RedistributionCleared,
-                            evidence:format!("{origin} ; {}",if matches!(input.family,Family::Dta) {
-                                "individual TEI licence target recorded as CC BY-SA 4.0"
-                            } else {"https://www.textpartnership.net/pages/faq.html"}),
-                            attribution:format!("Credit {publisher}, original author and archive member. Extracted, markup removed. Preserve applicable source license and credit."),
-                            jurisdiction:"Local German research. Downstream distribution follows the source rights and license.".into(),
-                            bytes:body.len() as u64,sha256:hash(body.as_bytes())});
+                        let source_evidence = match input.family {
+                            Family::Dta => "individual TEI licence target recorded as CC BY-SA 4.0",
+                            Family::Eebo => "https://www.textpartnership.net/pages/faq.html",
+                        };
+                        let credit = format!(
+                            "Credit {publisher}, original author and archive member. Extracted, markup removed. Preserve applicable source license and credit."
+                        );
+                        sources.push(Source {
+                            id,
+                            group,
+                            split,
+                            language: lang.into(),
+                            category,
+                            format: Format::Text,
+                            author: if author.is_empty() {
+                                "Unattributed in source".into()
+                            } else {
+                                author
+                            },
+                            publisher: publisher.into(),
+                            version: input.version.clone(),
+                            url: input.url.clone(),
+                            download_url: None,
+                            acquired: input.acquired.clone(),
+                            rights: rights.into(),
+                            rights_decision: RightsDecision::RedistributionCleared,
+                            evidence: format!("{origin} ; {source_evidence}"),
+                            attribution: credit,
+                            jurisdiction: "Local German research. Downstream distribution follows the source rights and license."
+                                .into(),
+                            bytes: body.len() as u64,
+                            sha256: hash(body.as_bytes()),
+                        });
                     }
                     Ok(_) => {
                         row["decision"] = "rejected-rights-language-or-empty".into();
@@ -353,6 +382,9 @@ pub fn import(plan: &Path, out: &Path) -> Result<()> {
             }
             serde_json::to_writer(&mut ledger, &row)?;
             ledger.write_all(b"\n")?;
+        }
+        if source::digest(&input.path)? != (input.bytes, input.sha256.clone()) {
+            return Err("archive size/hash changed during import".into());
         }
     }
     if sources.is_empty() {
@@ -376,12 +408,78 @@ pub fn import(plan: &Path, out: &Path) -> Result<()> {
 #[cfg(test)]
 #[test]
 fn extracts_body_and_retains_historical_rights_notice() -> Result<()> {
-    let xml=br#"<TEI><teiHeader><author><persName ref="gnd">A Author</persName></author><title>Book</title><licence target="https://creativecommons.org/licenses/by-sa/4.0/"/><language ident="deu">Deutsch</language></teiHeader><text><body><p>Eins &amp; zwei<note>editor</note><lb/>drei</p><p>vier</p></body></text></TEI>"#;
+    let xml = br#"<TEI>
+        <teiHeader>
+            <desc><text>Header-only text</text></desc>
+            <author><persName ref="gnd">A Author</persName></author>
+            <title>Book</title>
+            <licence target="https://creativecommons.org/licenses/by-sa/4.0/"/>
+            <language ident="lat">Latinum</language>
+            <language ident="deu">Deutsch</language>
+        </teiHeader>
+        <text><body><p>Eins &amp; zwei<note>editor</note><lb/>drei</p><p>vier</p></body></text>
+    </TEI>"#;
     let text = decode(xml, Family::Dta)?;
     assert!(text.license);
     assert_eq!(text.language, Some(true));
     assert_eq!(text.author, "A Author");
     assert_eq!(text.authority, "gnd");
     assert_eq!(text.body.trim(), "Eins & zwei\ndrei\nvier");
+    Ok(())
+}
+
+#[cfg(test)]
+#[test]
+fn corrupt_archive_entry_cannot_be_silently_omitted() -> Result<()> {
+    use std::io::Cursor;
+    use zip::{ZipWriter, write::SimpleFileOptions};
+
+    let mut zip = ZipWriter::new(Cursor::new(Vec::new()));
+    zip.start_file("README.txt", SimpleFileOptions::default())?;
+    zip.write_all(b"Fixture archive")?;
+    zip.start_file("document.xml", SimpleFileOptions::default())?;
+    zip.write_all(
+        br#"<TEI><teiHeader><licence target="https://creativecommons.org/licenses/by-sa/4.0/"/></teiHeader><text><p>Deutsch</p></text></TEI>"#,
+    )?;
+    let mut content = zip.finish()?.into_inner();
+    let root = crate::tests::temp()?;
+    let path = root.join("archive.zip");
+    fs::write(&path, &content)?;
+    let plan = root.join("acquisition.json");
+    let mut input = Input {
+        family: Family::Dta,
+        path,
+        url: DTA_DOWNLOAD.into(),
+        version: "fixture".into(),
+        acquired: "2026-11-24".into(),
+        bytes: content.len() as u64,
+        sha256: hash(&content),
+    };
+    corpus::write_json(&plan, &[&input])?;
+    let out = root.join("publish");
+    import(&plan, &out)?;
+    let catalog = source::load(&out.join("catalog.json"))?;
+    assert_eq!(catalog.sources.len(), 1);
+    assert_eq!(
+        catalog.sources[0].attribution,
+        "Credit BBAW Deutsches Textarchiv, original author and archive member. Extracted, markup removed. Preserve applicable source license and credit."
+    );
+    assert_eq!(
+        catalog.sources[0].jurisdiction,
+        "Local German research. Downstream distribution follows the source rights and license."
+    );
+
+    content[0] = 0;
+    let mut corrupt = ZipArchive::new(Cursor::new(&content))?;
+    assert!(corrupt.by_index_raw(0).is_err());
+    assert!(corrupt.by_index_raw(1).is_ok());
+    fs::write(&input.path, &content)?;
+    input.sha256 = hash(&content);
+    let corrupt_plan = root.join("corrupt.json");
+    corpus::write_json(&corrupt_plan, &[input])?;
+    let rejected = root.join("rejected");
+    assert!(import(&corrupt_plan, &rejected).is_err());
+    assert!(!rejected.exists());
+    fs::remove_dir_all(root)?;
     Ok(())
 }

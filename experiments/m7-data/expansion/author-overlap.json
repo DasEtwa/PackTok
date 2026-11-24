@@ -1,0 +1,50 @@
+[
+  {
+    "normalized_name": "martínez marcos fl 1598 1601 aut",
+    "split_count_after_filter": 2,
+    "sources": [
+      {
+        "author": "Martínez, Marcos, fl. 1598-1601, aut",
+        "source": "eebo-3579e5c73fe1c8836d764329",
+        "split": "validation",
+        "group": "8a8fd55a0294d85d1161ae0709cd6bd1d8bc05630b2c33575fca4db46f7eac89",
+        "admitted_documents": 1,
+        "admitted_bytes": 662012,
+        "rejected": {}
+      },
+      {
+        "author": "Martínez, Marcos, fl. 1598-1601. aut",
+        "source": "eebo-a547086c902285e95d6f7e62",
+        "split": "train",
+        "group": "b5e2c490ce7a6c10b0b729300344ae776fb912931ff185bfc564351455fc8929",
+        "admitted_documents": 1,
+        "admitted_bytes": 534893,
+        "rejected": {}
+      }
+    ]
+  },
+  {
+    "normalized_name": "poppe johann friedrich",
+    "split_count_after_filter": 2,
+    "sources": [
+      {
+        "author": "Poppe Johann Friedrich",
+        "source": "dta-3d11ca217d77f36474931620",
+        "split": "validation",
+        "group": "f51cc5b602766cd8fe361c9c13687e0d675cf035d39f2d2401b5c3a87e2fe7d7",
+        "admitted_documents": 1,
+        "admitted_bytes": 404524,
+        "rejected": {}
+      },
+      {
+        "author": "Poppe Johann Friedrich",
+        "source": "dta-d0e874c98038f16b5c3e3160",
+        "split": "test",
+        "group": "4584d69726dd4507af131052b9fd641506d3a3e8e5ac3625f41380b8b6453ff6",
+        "admitted_documents": 1,
+        "admitted_bytes": 639799,
+        "rejected": {}
+      }
+    ]
+  }
+]

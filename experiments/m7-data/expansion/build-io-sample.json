@@ -1,0 +1,32 @@
+{
+  "observed_utc": "2026-11-24T16:26:51.381339+00:00",
+  "phase": "validation",
+  "shard_files": {
+    "train": {
+      "parts": 21,
+      "bytes": 1355932089
+    },
+    "validation": {
+      "parts": 1,
+      "bytes": 19854915
+    },
+    "test": {
+      "parts": 0,
+      "bytes": 0
+    }
+  },
+  "process_io": {
+    "rchar": 206663304607,
+    "wchar": 159763416453,
+    "syscr": 55449337,
+    "syscw": 38671230,
+    "read_bytes": 132300800,
+    "write_bytes": 24348430336,
+    "cancelled_write_bytes": 0
+  },
+  "temporary_index_bytes": 1077940224,
+  "wsl_io_pressure": [
+    "some avg10=96.78 avg60=90.54 avg300=83.13 total=963271546",
+    "full avg10=96.53 avg60=90.13 avg300=82.75 total=954901791"
+  ]
+}

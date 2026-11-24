@@ -10,3 +10,18 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 Pinned M7 bridge mock verified one request, packtok-m7 alias and release.
 Initial compiler error: ambiguous integer type at XML depth checked_sub, resolved with usize.
 WSL crates index DNS and initial offline dependency resolution were unavailable. Official crates.io packages were fetched on Windows; lock hashes checked by offline WSL Cargo.
+The full corpus run used the licensed extraction from 8bcd83c. The follow-up
+importer propagates corrupt ZIP-entry errors and rechecks source lengths and
+digests after extraction. The initial scratch re-import was stopped during I/O
+contention and produced no published catalog. Formatting and Clippy passed
+again after correcting the attribution strings in the scratch revision. All
+eight focused M7 tests passed, including a valid ZIP import with exact rights
+metadata and rejection of an invalid ZIP member even with a matching archive
+digest. The 100 MB fixture remains opt-in and its earlier run is preserved.
+The checked-in I/O pilot ran the same 405-document input four times. Its
+manifest and directory comparisons matched across HDD and RAM. The Gemini
+Hydrogen Medium review found a disposable-index leak on handled failures.
+The final regression also checks a failed incomplete split, verifies cleanup
+of the owned index and confirms preservation of unrelated scratch files.
+Both historical corpus views passed independent CLI verification after
+staging. Cleanup followed the raw archive hash checks and corpus verification.

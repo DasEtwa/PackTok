@@ -74,6 +74,10 @@ pub fn stage(output: &Path) -> Result<PathBuf> {
     if output.try_exists()? {
         return Err("output exists".into());
     }
+    work_directory(output)
+}
+
+fn work_directory(output: &Path) -> Result<PathBuf> {
     let name = output.file_name().ok_or("output directory name missing")?;
     let mut pending = name.to_os_string();
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
@@ -294,7 +298,35 @@ impl Writer {
     }
 }
 
-pub fn build(catalog: &Path, cache: &Path, output: &Path) -> Result<()> {
+struct IndexFiles {
+    database: PathBuf,
+    scratch: Option<PathBuf>,
+    removed: bool,
+}
+
+impl IndexFiles {
+    fn remove(&mut self) -> Result<()> {
+        fs::remove_file(&self.database)?;
+        if let Some(dir) = &self.scratch {
+            fs::remove_dir(dir)?;
+        }
+        self.removed = true;
+        Ok(())
+    }
+}
+
+impl Drop for IndexFiles {
+    fn drop(&mut self) {
+        if !self.removed {
+            let _ = fs::remove_file(&self.database);
+            if let Some(dir) = &self.scratch {
+                let _ = fs::remove_dir(dir);
+            }
+        }
+    }
+}
+
+pub fn build(catalog: &Path, cache: &Path, output: &Path, temp_root: Option<&Path>) -> Result<()> {
     let dir = stage(output)?;
     fs::copy(catalog, dir.join("sources.json"))?;
     File::open(dir.join("sources.json"))?.sync_all()?;
@@ -303,8 +335,15 @@ pub fn build(catalog: &Path, cache: &Path, output: &Path) -> Result<()> {
         .sources
         .sort_by(|a, b| (a.split, &a.id).cmp(&(b.split, &b.id)));
     let (_, catalog_sha256) = source::digest(&dir.join("sources.json"))?;
-    let db = dir.join("dedup.redb");
-    let index = Index::open(&db)?;
+    let scratch = temp_root
+        .map(|root| work_directory(&root.join("packtok-m7-dedup")))
+        .transpose()?;
+    let mut index_files = IndexFiles {
+        database: scratch.as_deref().unwrap_or(&dir).join("dedup.redb"),
+        scratch,
+        removed: false,
+    };
+    let index = Index::open(&index_files.database)?;
     let filters = Filters::new()?;
     let mut manifest = Manifest {
         version: 1,
@@ -375,7 +414,6 @@ pub fn build(catalog: &Path, cache: &Path, output: &Path) -> Result<()> {
         manifest.shards.push(w.finish(&dir)?);
     }
     drop(index);
-    fs::remove_file(db)?;
     for split in Split::ALL {
         if !manifest.shards.iter().any(|s| s.split == split) {
             return Err(format!("empty {} split after filtering", split.name()).into());
@@ -383,6 +421,7 @@ pub fn build(catalog: &Path, cache: &Path, output: &Path) -> Result<()> {
     }
     write_json(&dir.join(MANIFEST), &manifest)?;
     verify(&dir)?;
+    index_files.remove()?;
     publish(&dir, output)
 }
 

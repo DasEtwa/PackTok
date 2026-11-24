@@ -25,7 +25,9 @@ fn run() -> Result<()> {
         ["fetch", catalog, cache, id, budget] =>
             source::fetch(Path::new(catalog), Path::new(cache), id, budget.parse()?),
         ["build", catalog, cache, output] =>
-            corpus::build(Path::new(catalog), Path::new(cache), Path::new(output)),
+            corpus::build(Path::new(catalog), Path::new(cache), Path::new(output), None),
+        ["build", catalog, cache, output, "--temp-dir", scratch] =>
+            corpus::build(Path::new(catalog), Path::new(cache), Path::new(output), Some(Path::new(scratch))),
         ["verify", dataset] => { corpus::verify(Path::new(dataset))?; Ok(()) }
         ["tokenize", dataset, output, sample_bytes] =>
             tokens::prepare(Path::new(dataset), Path::new(output), sample_bytes.parse()?),
@@ -43,7 +45,7 @@ fn run() -> Result<()> {
             packtok_m5::runner::require_l4()?;
             train::run(Path::new(dataset), Path::new(tokenized), Path::new(run), variant, stop.parse()?, &packtok_m5::runner::cuda()?)
         }
-        _ => Err("usage: packtok-m7 import-archives PLAN NEW_IMPORT | fetch CATALOG CACHE SOURCE_ID MAX_BYTES | build CATALOG CACHE NEW_DATASET | verify DATASET | tokenize DATASET NEW_TOKENIZED TRAIN_SAMPLE_BYTES | verify-tokens DATASET TOKENIZED | train-cpu DATASET TOKENIZED RUN A_OR_C STOP_STEP | train-l4 DATASET TOKENIZED RUN A_OR_C STOP_STEP APPROVAL".into())
+        _ => Err("usage: packtok-m7 import-archives PLAN NEW_IMPORT | fetch CATALOG CACHE SOURCE_ID MAX_BYTES | build CATALOG CACHE NEW_DATASET [--temp-dir DIR] | verify DATASET | tokenize DATASET NEW_TOKENIZED TRAIN_SAMPLE_BYTES | verify-tokens DATASET TOKENIZED | train-cpu DATASET TOKENIZED RUN A_OR_C STOP_STEP | train-l4 DATASET TOKENIZED RUN A_OR_C STOP_STEP APPROVAL".into())
     }
 }
 

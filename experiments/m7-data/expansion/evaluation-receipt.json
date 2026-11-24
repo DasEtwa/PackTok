@@ -1,0 +1,23 @@
+{
+  "policy_version": 1,
+  "rule": "Omit admitted validation records whose normalized author name also occurs in train or test.",
+  "base_manifest_sha256": "9fcaab0e4743603a7117dd078f27811d9ec673548165c6c6bef01ba3a4182196",
+  "derived_manifest_sha256": "2f696cab94e7c70809a7b3beec078c9d964cab2196ab88faa5940c3878914113",
+  "author_overlap_receipt_sha256": "ec8a4e4a095cf0b045782981ed6ae1cc6f18e176caf9ea92d6cd4c364678a40f",
+  "excluded_source_ids": [
+    "dta-3d11ca217d77f36474931620",
+    "eebo-3579e5c73fe1c8836d764329"
+  ],
+  "validation_documents": 267,
+  "validation_text_bytes": 58502073,
+  "validation_shards": [
+    {
+      "split": "validation",
+      "name": "validation-000021.jsonl",
+      "bytes": 60612796,
+      "sha256": "aaadd65c4bb55a322fcd37e0e2c7dbf734e4ebe18006095e6ee703309ea09636",
+      "rows": 267,
+      "text_bytes": 58502073
+    }
+  ]
+}

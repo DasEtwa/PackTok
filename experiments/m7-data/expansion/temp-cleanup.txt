@@ -1,0 +1,6 @@
+1624195072	catalogs/imported/cache
+1025568768	catalogs/reimported.pending-3913-1795536634353819162
+70766592	index-io-pilot/hdd-1
+70766592	index-io-pilot/hdd-2
+70766592	index-io-pilot/ram-1
+70766592	index-io-pilot/ram-2

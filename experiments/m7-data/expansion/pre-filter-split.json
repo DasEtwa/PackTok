@@ -1,0 +1,44 @@
+[
+  {
+    "split": "test",
+    "language": "de",
+    "documents": 137,
+    "bytes": 96644186,
+    "groups": 72
+  },
+  {
+    "split": "test",
+    "language": "en",
+    "documents": 236,
+    "bytes": 48845270,
+    "groups": 110
+  },
+  {
+    "split": "train",
+    "language": "de",
+    "documents": 1177,
+    "bytes": 704966256,
+    "groups": 567
+  },
+  {
+    "split": "train",
+    "language": "en",
+    "documents": 2575,
+    "bytes": 622421163,
+    "groups": 1076
+  },
+  {
+    "split": "validation",
+    "language": "de",
+    "documents": 140,
+    "bytes": 68711342,
+    "groups": 75
+  },
+  {
+    "split": "validation",
+    "language": "en",
+    "documents": 304,
+    "bytes": 73018595,
+    "groups": 117
+  }
+]

@@ -70,7 +70,7 @@ fn scale_100_mb() -> Result<()> {
         },
     )?;
     let start = std::time::Instant::now();
-    corpus::build(&catalog, dir, &dir.join("dataset"))?;
+    corpus::build(&catalog, dir, &dir.join("dataset"), None)?;
     println!("synthetic build seconds={}", start.elapsed().as_secs_f64());
     let start = std::time::Instant::now();
     tokens::prepare(&dir.join("dataset"), &dir.join("tokenized"), 262144)?;
@@ -187,7 +187,35 @@ fn train_artifacts_ignore_held_out_text_and_corruption_is_rejected() -> Result<(
             },
         )?;
         let out = d.join(format!("d{i}"));
-        corpus::build(&cat, &d, &out)?;
+        corpus::build(&cat, &d, &out, None)?;
+        if i == 0 {
+            let scratch = d.join("scratch");
+            fs::create_dir(&scratch)?;
+            fs::write(scratch.join("unrelated"), "keep")?;
+            let other = d.join("offloaded");
+            corpus::build(&cat, &d, &other, Some(&scratch))?;
+            for file in fs::read_dir(&out)? {
+                let file = file?;
+                assert_eq!(
+                    fs::read(file.path())?,
+                    fs::read(other.join(file.file_name()))?
+                );
+            }
+            let mut incomplete = source::load(&cat)?;
+            incomplete.sources.retain(|s| s.split != Split::Validation);
+            let incomplete_catalog = d.join("incomplete.json");
+            corpus::write_json(&incomplete_catalog, &incomplete)?;
+            let rejected = d.join("rejected");
+            assert_eq!(
+                corpus::build(&incomplete_catalog, &d, &rejected, Some(&scratch))
+                    .unwrap_err()
+                    .to_string(),
+                "empty validation split after filtering"
+            );
+            assert!(!rejected.exists());
+            assert_eq!(fs::read_dir(&scratch)?.count(), 1);
+            assert_eq!(fs::read(scratch.join("unrelated"))?, b"keep");
+        }
         tokens::prepare(&out, &d.join(format!("t{i}")), 1024)?;
     }
     for key in ["A", "C"] {
