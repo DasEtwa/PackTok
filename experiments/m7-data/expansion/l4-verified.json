@@ -1,0 +1,158 @@
+{
+  "bitwise_recovery": true,
+  "accounting": {
+    "allocation_requests": 1,
+    "release_verified": true,
+    "seconds": 433.95933207100006,
+    "cu_before": 235.37,
+    "cu_after": 235.24,
+    "active_rate": 2.33,
+    "transport_exit": 0
+  },
+  "hardware": "NVIDIA L4, 580.82.07, 23034 MiB",
+  "results_archive_sha256": "cf1eb98a20d27abf38b9aef8281f0f65f12e1119a0136ed124084be041ee9002",
+  "final_checkpoint_sha256": "1909b7eb4efd1c33d535ceb0edc90bd13a09c061855503449b982e62230d0ff8",
+  "metrics_sha256": "5dc75474e3a1a5cc0bcd55fb0d6a548a251c4af528adff8c0b8fd9e9dc3461fa",
+  "reports": {
+    "control-96": {
+      "backend": "cuda",
+      "dataset_sha256": "2e5a7f7cd4cbdf6cec1808c44f5c530f0f21b342f2c37490c7fd4bdafade3083",
+      "generated": " w w w w w w w w w w w w w w w w w w w w w w w w",
+      "generated_hex": "207720772077207720772077207720772077207720772077207720772077207720772077207720772077207720772077",
+      "parameters": 9360,
+      "step": 96,
+      "tokenizer_sha256": "a9936ead79836ef11b9864ebe47d09ded7fc7e09675a9aa411f02fc928476bc7",
+      "train_final": {
+        "bits_per_byte": 2.2152920417842608,
+        "bytes": 1018,
+        "nll": 1563.1628546714783,
+        "tokens": 283
+      },
+      "train_initial": {
+        "bits_per_byte": 2.5022253447883296,
+        "bytes": 1018,
+        "nll": 1765.6298308372498,
+        "tokens": 283
+      },
+      "train_sequence_sha256": "61326ed1056f6086ed1f9fbac3b42b0050c0cff11f37d69c28bca951c91ff0bb",
+      "validation_final": {
+        "bits_per_byte": 6.165240442761665,
+        "bytes": 717,
+        "nll": 3064.0414447784424,
+        "tokens": 434
+      },
+      "validation_initial": {
+        "bits_per_byte": 5.4463218296973555,
+        "bytes": 717,
+        "nll": 2706.7485790252686,
+        "tokens": 434
+      },
+      "variant": "A"
+    },
+    "packed-96": {
+      "backend": "cuda",
+      "dataset_sha256": "2e5a7f7cd4cbdf6cec1808c44f5c530f0f21b342f2c37490c7fd4bdafade3083",
+      "generated": "                        ",
+      "generated_hex": "202020202020202020202020202020202020202020202020",
+      "parameters": 9360,
+      "step": 96,
+      "tokenizer_sha256": "0d7f54a23e7870510b218bf9916460b7b844c2a029ed348067eb2ad44558adb6",
+      "train_final": {
+        "bits_per_byte": 2.1621342620529074,
+        "bytes": 1021,
+        "nll": 1530.1494903564453,
+        "tokens": 403
+      },
+      "train_initial": {
+        "bits_per_byte": 3.5530315951062583,
+        "bytes": 1021,
+        "nll": 2514.4920830726624,
+        "tokens": 403
+      },
+      "train_sequence_sha256": "39b8947051f70ac3401010aa1e1c39a51aafc2fc6f04b1bda52f3d4f4efa80af",
+      "validation_final": {
+        "bits_per_byte": 5.487837354965027,
+        "bytes": 716,
+        "nll": 2723.577356815338,
+        "tokens": 489
+      },
+      "validation_initial": {
+        "bits_per_byte": 6.147393713022664,
+        "bytes": 716,
+        "nll": 3050.9108119010925,
+        "tokens": 489
+      },
+      "variant": "C"
+    },
+    "restart-40": {
+      "backend": "cuda",
+      "dataset_sha256": "2e5a7f7cd4cbdf6cec1808c44f5c530f0f21b342f2c37490c7fd4bdafade3083",
+      "generated": " w w w w w w w w w w w w w w w w w w w w w w w w",
+      "generated_hex": "207720772077207720772077207720772077207720772077207720772077207720772077207720772077207720772077",
+      "parameters": 9360,
+      "step": 40,
+      "tokenizer_sha256": "a9936ead79836ef11b9864ebe47d09ded7fc7e09675a9aa411f02fc928476bc7",
+      "train_final": {
+        "bits_per_byte": 2.302326824139274,
+        "bytes": 1018,
+        "nll": 1624.5766711235046,
+        "tokens": 283
+      },
+      "train_initial": {
+        "bits_per_byte": 2.5022253447883296,
+        "bytes": 1018,
+        "nll": 1765.6298308372498,
+        "tokens": 283
+      },
+      "train_sequence_sha256": "61326ed1056f6086ed1f9fbac3b42b0050c0cff11f37d69c28bca951c91ff0bb",
+      "validation_final": {
+        "bits_per_byte": 5.909192148293643,
+        "bytes": 717,
+        "nll": 2936.7888917922974,
+        "tokens": 434
+      },
+      "validation_initial": {
+        "bits_per_byte": 5.4463218296973555,
+        "bytes": 717,
+        "nll": 2706.7485790252686,
+        "tokens": 434
+      },
+      "variant": "A"
+    },
+    "restart-96": {
+      "backend": "cuda",
+      "dataset_sha256": "2e5a7f7cd4cbdf6cec1808c44f5c530f0f21b342f2c37490c7fd4bdafade3083",
+      "generated": " w w w w w w w w w w w w w w w w w w w w w w w w",
+      "generated_hex": "207720772077207720772077207720772077207720772077207720772077207720772077207720772077207720772077",
+      "parameters": 9360,
+      "step": 96,
+      "tokenizer_sha256": "a9936ead79836ef11b9864ebe47d09ded7fc7e09675a9aa411f02fc928476bc7",
+      "train_final": {
+        "bits_per_byte": 2.2152920417842608,
+        "bytes": 1018,
+        "nll": 1563.1628546714783,
+        "tokens": 283
+      },
+      "train_initial": {
+        "bits_per_byte": 2.5022253447883296,
+        "bytes": 1018,
+        "nll": 1765.6298308372498,
+        "tokens": 283
+      },
+      "train_sequence_sha256": "61326ed1056f6086ed1f9fbac3b42b0050c0cff11f37d69c28bca951c91ff0bb",
+      "validation_final": {
+        "bits_per_byte": 6.165240442761665,
+        "bytes": 717,
+        "nll": 3064.0414447784424,
+        "tokens": 434
+      },
+      "validation_initial": {
+        "bits_per_byte": 5.4463218296973555,
+        "bytes": 717,
+        "nll": 2706.7485790252686,
+        "tokens": 434
+      },
+      "variant": "A"
+    }
+  }
+}
