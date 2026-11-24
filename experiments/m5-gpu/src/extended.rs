@@ -3,6 +3,7 @@ use crate::{
     data::Sequence,
     domains, hash,
     model::{ModelConfig, Rng, Transformer, finite_gradients, loss},
+    resume::v2::{self, JournalPrefix, Position, Timing as MetricsProgress, TrainingSpec},
     resume::{AdamWConfig, Identity, ResumableAdamW},
     runner,
 };
@@ -12,7 +13,7 @@ use serde_json::Value;
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
-    io::Write,
+    io::{Read, Seek, Write},
     path::Path,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
@@ -118,7 +119,7 @@ impl ExtendedPlan {
             for split in ["train", "validation", "test"] {
                 let path = data.join(format!("{variant}-{split}.seq"));
                 let key = format!("{variant}_{split}_sequence_sha256");
-                if hash(&fs::read(path)?)
+                if sha_file(&path)?
                     != plan.scientific_inputs["prepared_sequence_sha256"][key]
                         .as_str()
                         .ok_or("prepared sequence identity")?
@@ -246,14 +247,10 @@ pub fn matched_byte_interval(a: &Sequence, c: &Sequence, limit: u64) -> Result<B
     })
 }
 fn sha_file(path: &Path) -> Result<String> {
-    Ok(hash(&fs::read(path)?))
-}
-fn tokenizer_identity(root: &Path, variant: &str) -> Result<String> {
-    let mut bytes = fs::read(root.join(format!("artifacts/corpus-v2/{variant}-0.packtok")))?;
-    bytes.extend(fs::read(
-        root.join(format!("artifacts/corpus-v2/{variant}.mapping")),
-    )?);
-    Ok(hash(&bytes))
+    use sha2::{Digest, Sha256};
+    let mut digest = Sha256::new();
+    std::io::copy(&mut fs::File::open(path)?, &mut digest)?;
+    Ok(format!("{:x}", digest.finalize()))
 }
 fn nvidia_snapshot() -> Result<(String, u64)> {
     let out = std::process::Command::new("nvidia-smi")
@@ -273,7 +270,7 @@ fn nvidia_snapshot() -> Result<(String, u64)> {
     Ok((name, memory))
 }
 
-enum BatchData {
+pub enum BatchData {
     Full {
         x: Tensor,
         y: Tensor,
@@ -299,7 +296,7 @@ impl BatchData {
             Self::Full { bytes, .. } | Self::Variable { bytes, .. } => *bytes,
         }
     }
-    fn loss(&self, model: &Transformer) -> Result<Tensor> {
+    pub fn loss(&self, model: &Transformer) -> Result<Tensor> {
         match self {
             Self::Full { x, y, .. } => Ok(loss(&model.forward(x)?, y)?),
             Self::Variable {
@@ -331,6 +328,43 @@ struct BatchSpec<'a> {
     target_limit: usize,
     batch_size: usize,
     context: usize,
+}
+impl TrainingSpec {
+    pub fn next_batch(
+        &self,
+        seq: &Sequence,
+        rng: &mut Rng,
+        cursor: &mut u64,
+        device: &Device,
+    ) -> Result<Option<BatchData>> {
+        if seq.tokens.len() != self.train_tokens
+            || seq.bytes.len() != self.train_tokens
+            || self.batch_size == 0
+            || self.model.context == 0
+            || self.model.context >= self.train_tokens
+            || self.batch_size.checked_mul(self.model.context).is_none()
+            || (self.identity.regime == "B"
+                && (self.first_target == 0
+                    || *cursor < self.first_target
+                    || *cursor > self.target_limit
+                    || self.target_limit > self.train_tokens as u64))
+            || !["B", "T"].contains(&self.identity.regime.as_str())
+        {
+            return Err("invalid training batch configuration or cursor".into());
+        }
+        training_batch(
+            seq,
+            rng,
+            cursor,
+            device,
+            BatchSpec {
+                regime: &self.identity.regime,
+                target_limit: usize::try_from(self.target_limit)?,
+                batch_size: self.batch_size,
+                context: self.model.context,
+            },
+        )
+    }
 }
 fn training_batch(
     seq: &Sequence,
@@ -408,13 +442,6 @@ fn emit(log: &mut fs::File, row: Value) -> Result<()> {
     println!("{}", serde_json::to_string(&row)?);
     Ok(())
 }
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-struct MetricsProgress {
-    training_seconds: f64,
-    pipeline_seconds: f64,
-    wall_seconds: f64,
-    peak_vram_mib: u64,
-}
 fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgress> {
     if !path.exists() {
         return if checkpoint_step == 0 {
@@ -438,8 +465,13 @@ fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgr
             .get("step")
             .and_then(Value::as_u64)
             .or_else(|| row.get("checkpoint_step").and_then(Value::as_u64))
+            .or_else(|| {
+                (row["stage"] == "final")
+                    .then(|| row["updates"].as_u64())
+                    .flatten()
+            })
             .ok_or("metrics row has no step cursor")?;
-        if step <= checkpoint_step {
+        if step <= checkpoint_step && row["stage"] != "final" {
             retained.extend_from_slice(line);
             if row.get("stage").and_then(Value::as_str) == Some("checkpoint")
                 && step == checkpoint_step
@@ -467,33 +499,72 @@ fn reconcile_metrics(path: &Path, checkpoint_step: usize) -> Result<MetricsProgr
     if bytes.last().is_some_and(|b| *b != b'\n') {
         changed = true;
     }
+    let progress = match saved_progress {
+        Some(p) => p,
+        None if checkpoint_step == 0 => MetricsProgress::default(),
+        None => return Err("metrics log has no progress record for checkpoint".into()),
+    };
     if changed {
-        let parent = path
-            .parent()
-            .filter(|p| !p.as_os_str().is_empty())
-            .unwrap_or(Path::new("."));
-        let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
-        let temporary = path.with_extension(format!("jsonl.tmp-{}-{nonce}", std::process::id()));
-        let mut file = fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&temporary)?;
-        file.write_all(&retained)?;
-        file.sync_all()?;
-        drop(file);
-        fs::rename(&temporary, path)?;
-        fs::File::open(parent)?.sync_all()?;
+        rewind_log(path, |f| Ok(f.write_all(&retained)?))?;
     }
-    if checkpoint_step == 0 {
-        Ok(saved_progress.unwrap_or_default())
-    } else {
-        saved_progress.ok_or_else(|| "metrics log has no progress record for checkpoint".into())
-    }
+    Ok(progress)
 }
-fn save_report(path: &Path, report: &impl serde::Serialize) -> Result<()> {
+
+fn rewind_log(path: &Path, write: impl FnOnce(&mut fs::File) -> Result<()>) -> Result<()> {
+    let parent = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let temporary = path.with_extension(format!("jsonl.tmp-{}-{nonce}", std::process::id()));
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&temporary)?;
+    write(&mut file)?;
+    file.sync_all()?;
+    drop(file);
+    fs::hard_link(
+        path,
+        path.with_extension(format!("jsonl.before-recovery-{nonce}")),
+    )?;
+    fs::rename(&temporary, path)?;
+    fs::File::open(parent)?.sync_all()?;
+    Ok(())
+}
+
+fn recover_journal(path: &Path, pos: Position) -> Result<MetricsProgress> {
+    let Some(prefix) = pos.journal else {
+        if pos.step != 0 {
+            return Err("training run checkpoint lacks metrics journal identity".into());
+        }
+        if path.try_exists()? {
+            rewind_log(path, |_| Ok(()))?;
+        }
+        return Ok(pos.timing);
+    };
+    let mut journal = fs::File::open(path)?;
+    if JournalPrefix::read(&mut journal, prefix.bytes)? != prefix {
+        return Err("metrics journal differs from checkpoint".into());
+    }
+    if journal.metadata()?.len() > prefix.bytes {
+        journal.rewind()?;
+        rewind_log(path, |f| {
+            if std::io::copy(&mut journal.take(prefix.bytes), f)? != prefix.bytes {
+                return Err("journal prefix changed during recovery".into());
+            }
+            Ok(())
+        })?;
+    }
+    Ok(pos.timing)
+}
+fn save_report(path: &Path, report: &domains::Report) -> Result<()> {
     let bytes = serde_json::to_vec_pretty(report)?;
     if path.exists() {
-        if fs::read(path)? == bytes {
+        let mut saved: domains::Report = serde_json::from_slice(&fs::read(path)?)?;
+        // A retry remeasures elapsed time. Preserve the original observation.
+        saved.seconds = report.seconds;
+        if &saved == report {
             return Ok(());
         }
         return Err(format!("refusing to replace existing report {}", path.display()).into());
@@ -513,35 +584,32 @@ fn save_report(path: &Path, report: &impl serde::Serialize) -> Result<()> {
 }
 fn match_input(
     plan: &ExtendedPlan,
-    data: &Path,
+    config_path: &Path,
     variant: &str,
     regime: &str,
     seed: u64,
 ) -> Result<Identity> {
-    let root = plan_root_from_data(data)?;
-    let config_path = root.join("configs").join(match plan.revision.as_str() {
-        "m5-paired-pilot-2k-v1" => "pilot-2k-v1.json",
-        "m5-extended-20k-v1" => "extended-20k-v1.json",
-        "m5-extended-30k-v1" => "extended-30k-extension-v1.json",
-        _ => return Err("unknown frozen extended revision".into()),
-    });
+    // ExtendedPlan::load already verified these identities against the actual input files.
+    let inputs = &plan.scientific_inputs;
     Ok(Identity {
-        config_sha256: sha_file(&config_path)?,
-        corpus_sha256: sha_file(&root.join("provenance/corpus-v2-manifest.json"))?,
-        tokenizer_sha256: tokenizer_identity(&root, variant)?,
-        train_sequence_sha256: sha_file(&data.join(format!("{variant}-train.seq")))?,
+        config_sha256: sha_file(config_path)?,
+        corpus_sha256: inputs["corpus_manifest_sha256"]
+            .as_str()
+            .ok_or("manifest identity")?
+            .into(),
+        tokenizer_sha256: inputs["tokenizer_sha256"][variant]
+            .as_str()
+            .ok_or("tokenizer identity")?
+            .into(),
+        train_sequence_sha256: inputs["prepared_sequence_sha256"]
+            [format!("{variant}_train_sequence_sha256")]
+        .as_str()
+        .ok_or("TRAIN identity")?
+        .into(),
         variant: variant.into(),
         regime: regime.into(),
         seed,
     })
-}
-fn plan_root_from_data(data: &Path) -> Result<std::path::PathBuf> {
-    Ok(data
-        .parent()
-        .ok_or("prepared data parent")?
-        .parent()
-        .ok_or("experiment root")?
-        .to_path_buf())
 }
 pub fn plan(config_path: &Path, data: &Path, output: &Path) -> Result<()> {
     let config = ExtendedPlan::load(config_path, data)?;
@@ -585,14 +653,14 @@ pub fn plan(config_path: &Path, data: &Path, output: &Path) -> Result<()> {
     Ok(())
 }
 pub fn train(
-    config_path: &Path,
-    data: &Path,
-    out: &Path,
+    paths: (&Path, &Path, &Path),
     variant: &str,
     regime: &str,
     seed: u64,
     approval: &str,
+    recoverable: bool,
 ) -> Result<()> {
+    let (config_path, data, _) = paths;
     if approval.is_empty()
         || std::env::var("PACKTOK_M5_GPU_APPROVAL").ok().as_deref() != Some(approval)
     {
@@ -602,13 +670,56 @@ pub fn train(
     }
     let started = Instant::now();
     let plan = ExtendedPlan::load(config_path, data)?;
+    run_job(
+        paths,
+        Job {
+            variant,
+            regime,
+            seed,
+            approval,
+            recoverable,
+            started,
+        },
+        plan,
+        || Ok((runner::require_l4()?, runner::cuda()?)),
+        nvidia_snapshot,
+    )
+}
+
+struct Job<'a> {
+    variant: &'a str,
+    regime: &'a str,
+    seed: u64,
+    approval: &'a str,
+    recoverable: bool,
+    started: Instant,
+}
+fn run_job(
+    paths: (&Path, &Path, &Path),
+    job: Job<'_>,
+    plan: ExtendedPlan,
+    open_device: impl FnOnce() -> Result<(String, Device)>,
+    snapshot: fn() -> Result<(String, u64)>,
+) -> Result<()> {
+    let (config_path, data, out) = paths;
+    let Job {
+        variant,
+        regime,
+        seed,
+        approval,
+        recoverable,
+        started,
+    } = job;
     if !plan.variants.contains(&variant.to_string())
         || !plan.regimes.contains(&regime.to_string())
         || !plan.paired_seeds.contains(&seed)
     {
         return Err("job is not declared in frozen extended config".into());
     }
-    let root = plan_root_from_data(data)?;
+    let root = config_path
+        .parent()
+        .and_then(Path::parent)
+        .ok_or("experiment root")?;
     let train = Sequence::load(&data.join(format!("{variant}-train.seq")))?;
     let validation = Sequence::load(&data.join(format!("{variant}-validation.seq")))?;
     let test = Sequence::load(&data.join(format!("{variant}-test.seq")))?;
@@ -648,24 +759,73 @@ pub fn train(
         })
         .unwrap_or(usize::MAX);
     let total_scheduler = plan.adamw()?;
-    let gpu = runner::require_l4()?;
-    let device = runner::cuda()?;
-    let mut model = Transformer::new(plan.architecture.clone(), seed, &device)?;
-    let identity = match_input(&plan, data, variant, regime, seed)?;
+    let (gpu, device) = open_device()?;
+    let mut model;
+    let identity = match_input(&plan, config_path, variant, regime, seed)?;
     let checkpoint = out.join("latest.resume.safetensors");
     let metrics = out.join("metrics.jsonl");
     fs::create_dir_all(out)?;
-    if metrics.exists() && !checkpoint.exists() {
+    let writer = fs::OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .write(true)
+        .open(out.join(".training-writer"))?;
+    writer
+        .try_lock()
+        .map_err(|e| format!("training output writer lock: {e}"))?;
+    let store = out.join("training-v2");
+    let generation = if recoverable {
+        if checkpoint.exists() {
+            return Err("legacy checkpoint in v2 output directory".into());
+        }
+        fs::create_dir_all(&store)?;
+        fs::File::open(out)?.sync_all()?;
+        v2::clear_abandoned_writes(&store)?;
+        v2::latest(&store)?
+    } else {
+        if store.exists() {
+            return Err("v2 run requires train-recoverable".into());
+        }
+        None
+    };
+    let had_checkpoint = checkpoint.exists() || generation.is_some();
+    if metrics.exists() && !had_checkpoint {
         return Err(
             "metrics exist without a resumable checkpoint; refusing an ambiguous resume".into(),
         );
     }
-    let had_checkpoint = checkpoint.exists();
-    let (mut optimizer, mut step, mut cursor, mut rng) = if had_checkpoint {
+    let spec = TrainingSpec {
+        identity: identity.clone(),
+        tokenizer_artifact_sha256: sha_file(
+            &root.join(format!("artifacts/corpus-v2/{variant}-0.packtok")),
+        )?,
+        tokenizer_mapping_sha256: sha_file(
+            &root.join(format!("artifacts/corpus-v2/{variant}.mapping")),
+        )?,
+        model: plan.architecture.clone(),
+        schedule: total_scheduler.clone(),
+        batch_size: plan.batch_size,
+        train_tokens: train.tokens.len(),
+        first_target: target_start as u64,
+        target_limit: target_limit.min(train.tokens.len()) as u64,
+        backend: if device.is_cpu() { "cpu" } else { "cuda" }.into(),
+    };
+    let mut embedded = None;
+    let (mut optimizer, mut step, mut cursor, mut rng) = if let Some((step, path)) = generation {
+        let (restored, opt, pos) = ResumableAdamW::restore(&path, &spec, &device, step)?;
+        model = restored;
+        embedded = Some(pos);
+        (opt, step, pos.cursor, Rng::from_state(pos.rng_state)?)
+    } else if had_checkpoint {
+        model = Transformer::new(plan.architecture.clone(), seed, &device)?;
         let (optimizer, step, cursor, rng_state) =
             ResumableAdamW::load_checkpoint(&mut model, &identity, &checkpoint)?;
+        if optimizer.config() != &total_scheduler {
+            return Err("legacy schedule mismatch".into());
+        }
         (optimizer, step, cursor, Rng::from_state(rng_state)?)
     } else {
+        model = Transformer::new(plan.architecture.clone(), seed, &device)?;
         (
             ResumableAdamW::new(&model, total_scheduler)?,
             0,
@@ -677,13 +837,42 @@ pub fn train(
             Rng::new(seed ^ 0xa341316c9e3779b9),
         )
     };
+    let save = |optimizer: &ResumableAdamW, mut position: Position| -> Result<()> {
+        if recoverable {
+            if position.step > 0 {
+                let mut journal = fs::File::open(&metrics)?;
+                let size = journal.metadata()?.len();
+                position.journal = Some(JournalPrefix::read(&mut journal, size)?);
+            }
+            optimizer.publish(&model, &spec, position, &store)?;
+        } else {
+            optimizer.save_checkpoint(
+                &model,
+                &identity,
+                position.rng_state,
+                position.step,
+                position.cursor,
+                &checkpoint,
+            )?;
+        }
+        Ok(())
+    };
+    let progress = match embedded {
+        Some(pos) => recover_journal(&metrics, pos)?,
+        None => reconcile_metrics(&metrics, step)?,
+    };
     if !had_checkpoint {
-        optimizer.save_checkpoint(&model, &identity, rng.state(), step, cursor, &checkpoint)?;
+        save(
+            &optimizer,
+            Position {
+                step,
+                cursor,
+                rng_state: rng.state(),
+                timing: progress,
+                journal: None,
+            },
+        )?;
     }
-    if step > 0 && !metrics.exists() {
-        return Err("resuming from a nonzero checkpoint requires its metrics log".into());
-    }
-    let progress = reconcile_metrics(&metrics, step)?;
     let wall_base = progress.wall_seconds;
     let mut train_seconds = progress.training_seconds;
     let mut pipeline_seconds = progress.pipeline_seconds;
@@ -710,13 +899,21 @@ pub fn train(
         (cursor, counted_bytes)
     } else {
         let start = target_start;
-        let done = usize::try_from(cursor)?.saturating_sub(start);
+        spec.validate(Position {
+            step,
+            cursor,
+            rng_state: rng.state(),
+            timing: progress,
+            journal: None,
+        })?;
+        let done = usize::try_from(cursor)? - start;
         (done as u64, train.target_bytes(start, done)?)
     };
     let mut log = fs::OpenOptions::new()
         .create(true)
         .append(true)
         .open(&metrics)?;
+    fs::File::open(out)?.sync_all()?;
     emit(
         &mut log,
         serde_json::json!({"stage":"resume","variant":variant,"regime":regime,"seed":seed,
@@ -731,19 +928,9 @@ pub fn train(
         let pipeline = Instant::now();
         device.synchronize()?;
         let now = Instant::now();
-        let batch = training_batch(
-            &train,
-            &mut rng,
-            &mut cursor,
-            &device,
-            BatchSpec {
-                regime,
-                target_limit,
-                batch_size: plan.batch_size,
-                context: plan.context,
-            },
-        )?
-        .ok_or("empty extended training batch")?;
+        let batch = spec
+            .next_batch(&train, &mut rng, &mut cursor, &device)?
+            .ok_or("empty extended training batch")?;
         let step_loss = batch.loss(&model)?;
         let value = step_loss.to_scalar::<f32>()?;
         if !value.is_finite() {
@@ -763,7 +950,7 @@ pub fn train(
         bytes_seen += batch.bytes();
 
         if step == 1 || step % 100 == 0 {
-            let (_, memory) = nvidia_snapshot()?;
+            let (_, memory) = snapshot()?;
             peak_vram = peak_vram.max(memory);
         }
         emit(
@@ -794,7 +981,22 @@ pub fn train(
                     "training_seconds":train_seconds,"pipeline_seconds":pipeline_seconds,
                     "wall_seconds":wall_seconds,"peak_vram_mib":peak_vram}),
             )?;
-            optimizer.save_checkpoint(&model, &identity, rng.state(), step, cursor, &checkpoint)?;
+            log.sync_all()?;
+            save(
+                &optimizer,
+                Position {
+                    step,
+                    cursor,
+                    rng_state: rng.state(),
+                    journal: None,
+                    timing: MetricsProgress {
+                        training_seconds: train_seconds,
+                        pipeline_seconds,
+                        wall_seconds,
+                        peak_vram_mib: peak_vram,
+                    },
+                },
+            )?;
             last_checkpoint_step = step;
         }
     }
@@ -806,7 +1008,22 @@ pub fn train(
                 "training_seconds":train_seconds,"pipeline_seconds":pipeline_seconds,
                 "wall_seconds":wall_seconds,"peak_vram_mib":peak_vram}),
         )?;
-        optimizer.save_checkpoint(&model, &identity, rng.state(), step, cursor, &checkpoint)?;
+        log.sync_all()?;
+        save(
+            &optimizer,
+            Position {
+                step,
+                cursor,
+                rng_state: rng.state(),
+                journal: None,
+                timing: MetricsProgress {
+                    training_seconds: train_seconds,
+                    pipeline_seconds,
+                    wall_seconds,
+                    peak_vram_mib: peak_vram,
+                },
+            },
+        )?;
     }
     let val = runner::evaluate(&model, &validation, plan.batch_size, &device)?;
     let final_test = runner::evaluate(&model, &test, plan.batch_size, &device)?;
@@ -820,7 +1037,15 @@ pub fn train(
     let test_domains = domains::evaluate(&model, &test, &test_spans, "test", &device)?;
     let val_delta = (val_domains.global_bits_per_byte - val.bits_per_byte).abs();
     let test_delta = (test_domains.global_bits_per_byte - final_test.bits_per_byte).abs();
-    if val_delta > 1e-4 || test_delta > 1e-4 {
+    if !val_delta.is_finite()
+        || !test_delta.is_finite()
+        || val_delta > 1e-4
+        || test_delta > 1e-4
+        || val_domains.global_tokens != val.targets
+        || val_domains.global_target_bytes != val.raw_target_bytes
+        || test_domains.global_tokens != final_test.targets
+        || test_domains.global_target_bytes != final_test.raw_target_bytes
+    {
         return Err(format!(
             "per-domain/global byte scoring mismatch val={val_delta} test={test_delta}"
         )
@@ -828,7 +1053,7 @@ pub fn train(
     }
     save_report(&out.join("domains-validation.json"), &val_domains)?;
     save_report(&out.join("domains-test.json"), &test_domains)?;
-    let (_, memory) = nvidia_snapshot()?;
+    let (_, memory) = snapshot()?;
     peak_vram = peak_vram.max(memory);
     emit(
         &mut log,
@@ -864,6 +1089,135 @@ fn deterministic_token_bytes(
 mod tests {
     use super::*;
     use crate::runner::tiny_config;
+
+    #[test]
+    fn tiny_runner_recovers_committed_journal_and_finishes() -> Result<()> {
+        let dir = std::env::temp_dir().join(format!(
+            "packtok-m6-runner-{}-{}",
+            std::process::id(),
+            SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos()
+        ));
+        for sub in ["configs", "data", "provenance", "artifacts/corpus-v2"] {
+            fs::create_dir_all(dir.join(sub))?;
+        }
+        let cfg = dir.join("configs/fixture.json");
+        fs::write(dir.join("artifacts/corpus-v2/A-0.packtok"), b"integer-")?;
+        fs::write(dir.join("artifacts/corpus-v2/A.mapping"), b"fixture")?;
+        let data = dir.join("data");
+        let mut plan: ExtendedPlan =
+            serde_json::from_slice(include_bytes!("../configs/pilot-2k-v1.json"))?;
+        plan.architecture = tiny_config();
+        plan.batch_size = 2;
+        plan.context = plan.architecture.context;
+        plan.target_positions_per_update = plan.batch_size * plan.context;
+        plan.updates_per_model = 4;
+        plan.schedule["total_updates"] = 4.into();
+        plan.evaluation["validation_every_updates"] = 2.into();
+        let seq = Sequence {
+            tokens: (1..54).collect(),
+            bytes: vec![1; 53],
+        };
+        for split in ["train", "validation", "test"] {
+            seq.save(&data.join(format!("A-{split}.seq")))?;
+        }
+        let manifest = serde_json::json!({"sources":[{"name":"fixture","category":"english-prose"}],
+            "units":(["validation","test"].map(|s|serde_json::json!({"proposed":s,"kept":true,"source":"fixture","start":0,"end":53}))),
+            "splits":(["validation","test"].map(|s|serde_json::json!({"split":s,"bytes":53})))});
+        let manifest_path = dir.join("provenance/corpus-v2-manifest.json");
+        fs::write(&manifest_path, serde_json::to_vec(&manifest)?)?;
+        fs::write(&cfg, b"m6-tiny-runner-v1")?;
+        plan.scientific_inputs["corpus_manifest_sha256"] = sha_file(&manifest_path)?.into();
+        plan.scientific_inputs["prepared_sequence_sha256"]["A_train_sequence_sha256"] =
+            sha_file(&data.join("A-train.seq"))?.into();
+        plan.scientific_inputs["tokenizer_sha256"]["A"] = hash(b"integer-fixture").into();
+        let run = |out: &Path, recoverable: bool| {
+            run_job(
+                (&cfg, &data, out),
+                Job {
+                    variant: "A",
+                    regime: "T",
+                    seed: 20261008,
+                    approval: "fixture",
+                    recoverable,
+                    started: Instant::now(),
+                },
+                plan.clone(),
+                || Ok(("CPU fixture".into(), Device::Cpu)),
+                || Ok(("CPU fixture".into(), 0)),
+            )
+        };
+        let full = dir.join("full");
+        run(&full, true)?;
+        assert!(run(&full, false).is_err());
+        let recovery = dir.join("restart");
+        let store = recovery.join("training-v2");
+        fs::create_dir_all(&store)?;
+        let name = "step-00000000000000000002.ptc";
+        fs::copy(full.join("training-v2").join(name), store.join(name))?;
+        let journal = recovery.join("metrics.jsonl");
+        assert!(run(&recovery, true).is_err());
+        let original = fs::read(full.join("metrics.jsonl"))?;
+        fs::write(&journal, &original[..10])?;
+        assert!(run(&recovery, true).is_err());
+        let mut changed = original.clone();
+        changed[0] ^= 1;
+        fs::write(&journal, &changed)?;
+        assert!(run(&recovery, true).is_err());
+        assert_eq!(fs::read(&journal)?, changed);
+        fs::write(&journal, &original)?;
+        fs::write(store.join(".pending-12-123"), b"partial")?;
+        let lock = fs::OpenOptions::new()
+            .write(true)
+            .open(recovery.join(".training-writer"))?;
+        lock.try_lock()?;
+        assert!(run(&recovery, true).is_err());
+        drop(lock);
+        run(&recovery, true)?;
+        assert!(!store.join(".pending-12-123").exists());
+        assert_eq!(v2::latest(&store)?.unwrap().0, 4);
+        let rows = |path: &Path| -> Result<Vec<Value>> {
+            fs::read_to_string(path)?
+                .lines()
+                .map(|line| Ok(serde_json::from_str(line)?))
+                .collect()
+        };
+        let trajectory = |path: &Path| -> Result<Vec<Value>> {
+            Ok(rows(path)?
+                .iter()
+                .filter(|r| r["stage"] == "train")
+                .map(|r| {
+                    serde_json::json!([
+                        &r["step"],
+                        &r["targets"],
+                        &r["raw_target_bytes"],
+                        &r["loss_per_token"],
+                        &r["learning_rate"]
+                    ])
+                })
+                .collect())
+        };
+        assert_eq!(
+            trajectory(&journal)?,
+            trajectory(&full.join("metrics.jsonl"))?
+        );
+        // Reentry after both final reports exist preserves their original timing and one final row.
+        let report = fs::read(recovery.join("domains-test.json"))?;
+        run(&recovery, true)?;
+        assert_eq!(report, fs::read(recovery.join("domains-test.json"))?);
+        assert_eq!(
+            rows(&journal)?
+                .iter()
+                .filter(|r| r["stage"] == "final")
+                .count(),
+            1
+        );
+        let legacy = dir.join("legacy");
+        fs::create_dir(&legacy)?;
+        fs::write(legacy.join("latest.resume.safetensors"), b"fixture marker")?;
+        assert!(run(&legacy, true).is_err());
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
 
     #[test]
     fn resume_metrics_rewind_to_atomic_checkpoint_and_restore_timing() -> Result<()> {
@@ -927,6 +1281,32 @@ mod tests {
                 .sum::<u64>(),
             4
         );
+    }
+
+    #[test]
+    fn report_retry_keeps_original_time_and_rejects_changed_science() -> Result<()> {
+        let dir = std::env::temp_dir().join(format!("packtok-report-retry-{}", std::process::id()));
+        fs::create_dir(&dir)?;
+        let path = dir.join("domains.json");
+        let mut report = domains::Report {
+            split: "test".into(),
+            global_bits_per_byte: 1.25,
+            global_target_bytes: 2,
+            global_tokens: 1,
+            seconds: 0.1,
+            metrics: vec![],
+            aggregation_matches_global: true,
+        };
+        save_report(&path, &report)?;
+        let original = fs::read(&path)?;
+        report.seconds = 1.0;
+        save_report(&path, &report)?;
+        report.global_tokens += 1;
+        assert!(save_report(&path, &report).is_err());
+        assert_eq!(fs::read(&path)?, original);
+        assert!(reconcile_metrics(&dir.join("absent"), 10).is_err());
+        fs::remove_dir_all(dir)?;
+        Ok(())
     }
     #[test]
     fn variable_b_batch_masks_padding_and_preserves_all_real_targets() -> Result<()> {
@@ -992,13 +1372,12 @@ mod tests {
             std::env::temp_dir().join(format!("packtok-m5-no-approval-{}", std::process::id()));
         assert!(!out.exists());
         let result = train(
-            Path::new("does-not-exist"),
-            Path::new("missing"),
-            &out,
+            (Path::new("does-not-exist"), Path::new("missing"), &out),
             "A",
             "T",
             20261008,
             "",
+            true,
         );
         assert!(result.is_err());
         assert!(!out.exists());

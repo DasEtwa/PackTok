@@ -1,0 +1,121 @@
+PackTok M6 | 2026-11-24 | CPU verification
+Base 0ff55235dd802678c785e194c7cb9adf8481a530. Local Ubuntu-24.04 WSL, native ext4 checkout exported from Git; copied implementation, locked offline dependencies, reused local prepared-v2. No training on the historical pilot models.
+Linux 6.18.58.1-microsoft-standard-WSL2 x86_64 GNU/Linux
+Model name:                              Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz
+rustc 1.85.0 (4d91de4e4 2025-02-17)
+rustc 1.100.0 (0ef1bc386 2026-11-09)
+Normalized LF SHA-256 of tested implementation and pinned dependencies:
+b478b4341b06aeea91525cccb715e9c7a9b95b40a3f519f6b31a548196bf1dd2  experiments/m5-gpu/Cargo.toml
+686ba601a88b85fdeccca42a4f2415a629cdca8243b0282fd22ffd1e576f252f  experiments/m5-gpu/Cargo.lock
+fcfe79dbb6c91d3749bf75902ff7ad824f161065c2fac6c7a4fa7f048a81bfe0  experiments/m5-gpu/src/domains.rs
+2e1ebf67af28a59797458dbaa7a091b07bb72ab0d20cac8a2a13741924474e38  experiments/m5-gpu/src/extended.rs
+94a8f8200273085592b250f7b64fc2af3d25e485ea8302c94c68ed3901ccacbf  experiments/m5-gpu/src/main.rs
+eca41633e64e02b7a7218bc3ddb9e7c8ead12dec81c930ff256ea5f006c5b5d1  experiments/m5-gpu/src/resume.rs
+f3d70dfa5726514336785148d809c39644f7524156052e03e6f528e1aa002436  experiments/m5-gpu/src/resume/v2.rs
+45c052631e5476a82fe596d4c811dae19b2f2f81e6a50e19dc509ea3693b3c7f  experiments/m5-gpu/tests/recovery.rs
+Root fmt --all --check, Clippy --workspace --all-targets -- -D warnings, test --workspace. Toolchain 1.85.0. Cargo build and tests used --locked --offline.
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.36s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.12s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.42s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.28s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.74s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Isolated fmt --all --check and Clippy --all-targets -- -D warnings, 1.100.0.
+    Checking packtok-m5 v0.1.0 (/home/dasetwa/tmp/packtok-m6-verify-0ff55235/experiments/m5-gpu)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.49s
+Isolated test --all-targets -- --nocapture, RAYON_NUM_THREADS=1. Selected raw results (concurrent test stdout can interleave).
+test corpus::tests::rolling_matches_direct_windows ... ok
+test corpus::tests::gutenberg_extraction_keeps_body_bytes ... ok
+test corpus::tests::leakage_checks_exact_and_near ... ok
+test corpus::tests::short_source_files_share_one_split_counter ... ok
+test data::tests::normalization_excludes_unscored_bytes ... ok
+test domains::tests::domain_aggregation_rejects_real_nll_and_counter_mismatches ... ok
+test domains::tests::finite_tolerance_at_zero_and_large_scales ... ok
+test domains::tests::stratified_category_aggregation_reconciles_exactly ... ok
+test domains::tests::tokens_crossing_units_keep_domain_and_crossing_categories_are_mixed ... ok
+test extended::tests::extended_gpu_runner_refuses_execution_without_explicit_approval ... ok
+test extended::tests::paired_byte_prefix_selects_equal_actual_exposure ... ok
+test data::tests::adapters_exact_mapping_and_prompt_preservation ... ok
+test domains::tests::per_domain_forward_scoring_matches_global_byte_score ... ok
+test extended::tests::variable_b_batch_masks_padding_and_preserves_all_real_targets ... ok
+test model::tests::all_parameter_families_get_gradients_and_adam_updates ... ok
+test model::tests::causal_mask_and_initialization ... ok
+test domains::tests::heldout_manifest_reports_structured_as_unavailable_and_covers_bytes ... ok
+test model::tests::gradient_gate_rejects_one_missing_projection_even_when_family_is_active ... ok
+test model::tests::gradients_match_finite_differences ... ok
+test model::tests::model_safetensors_save_load_roundtrip_is_independent_cpu ... ok
+test model::tests::primary_parameters_and_layout ... ok
+test overfit::tests::diagnostic_threshold_keeps_the_historical_value_and_detects_divergence ... ok
+800000 targets: global=4990660.100032396 grouped=4990660.100032379 difference=1.6763806343078613e-8
+test data::tests::sequence_format_roundtrip_rejects_invalid ... ok
+test model::tests::checkpoint_roundtrip_and_tiny_overfit ... ok
+test resume::tests::resumable_adamw_matches_pinned_candle_adamw_update ... ok
+test extended::tests::report_retry_keeps_original_time_and_rejects_changed_science ... ok
+test runner::tests::evaluation_rejects_empty_single_token_and_zero_batch ... ok
+test runner::tests::evaluation_scores_every_target_and_no_unrepresented_bytes ... ok
+test runner::tests::final_job_rejects_undeclared_seed_before_allocating_or_writing ... ok
+test extended::tests::resume_metrics_rewind_to_atomic_checkpoint_and_restore_timing ... ok
+test resume::tests::checkpoint_rejects_wrong_identity_without_mutating_model ... ok
+test runner::tests::paired_seed_training_is_reproducible ... ok
+test runner::tests::checkpoint_retains_complete_image_with_an_interrupted_temporary ... ok
+test resume::tests::checkpoint_resume_matches_uninterrupted_cpu_updates_exactly ... ok
+test extended::tests::tiny_runner_recovers_committed_journal_and_finishes ... ok
+test overfit::tests::fixed_batch_diagnostic_reports_all_required_steps_and_learns ... ok
+test extended::tests::frozen_configs_recheck_scientific_inputs_and_schedules ... ok
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.10s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test historical_pilot_images_restore_on_cpu ... ignored, requires the locally archived M5 pilot result directory
+test training_worker ... ok
+test rejects_corruption_mismatch_and_interrupted_publication ... ok
+test interrupted_writer_leaves_only_previous_generation_visible ... ok
+regime=T updates=4 trace_sha256=1c12fa14daa08f28f8dfccdce2c9500d2210e734a0d90dc69ac1e5abb2715f71 checkpoint_sha256=01b9f53a3a66a550abfe85b70f7069ed0471f2892c3928314152ee17508e30e6
+regime=B updates=4 trace_sha256=8eb6ded2eb5e6c0fdab86a6ce271ff058657e4045ea3f1efde0fae0f9d08b4b4 checkpoint_sha256=3bae32fb73487add5267df90a89a62f885ffa38c544de8ff07fa3317d1521bf7
+test fresh_process_replays_each_update_and_all_checkpoint_bytes ... ok
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.36s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Isolated doctests: 0 tests, success.
+Historical v1 pilot A/C readback, original published SHA-256s, identity, moments, step, cursor, RNG. test --test recovery historical_pilot_images_restore_on_cpu -- --ignored --exact
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running tests/recovery.rs (/home/dasetwa/projects/PackTok/experiments/m5-gpu/target/debug/build/packtok-m5/fe63c21bf0c62f1f/out/recovery-fe63c21bf0c62f1f)
+
+running 1 test
+test historical_pilot_images_restore_on_cpu ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 57.90s
+
+Recovery rerun, outer RAYON_NUM_THREADS unset, --test-threads=1, child fixture threads fixed to one.
+test fresh_process_replays_each_update_and_all_checkpoint_bytes ... regime=T updates=4 trace_sha256=1c12fa14daa08f28f8dfccdce2c9500d2210e734a0d90dc69ac1e5abb2715f71 checkpoint_sha256=01b9f53a3a66a550abfe85b70f7069ed0471f2892c3928314152ee17508e30e6
+regime=B updates=4 trace_sha256=8eb6ded2eb5e6c0fdab86a6ce271ff058657e4045ea3f1efde0fae0f9d08b4b4 checkpoint_sha256=3bae32fb73487add5267df90a89a62f885ffa38c544de8ff07fa3317d1521bf7
+test historical_pilot_images_restore_on_cpu ... ignored, requires the locally archived M5 pilot result directory
+test interrupted_writer_leaves_only_previous_generation_visible ... ok
+test rejects_corruption_mismatch_and_interrupted_publication ... ok
+test training_worker ... ok
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.88s
+Preserved development gate failures corrected before the gates above:
+error: using `chunks_exact` with a constant chunk size
+   --> src/resume/v2.rs:319:47
+    |
+319 |                     for raw in bytes[..4 * n].chunks_exact(4) {
+    |                                               ^^^^^^^^^^^^^^^ help: consider using `as_chunks` instead: `as_chunks::<4>().0`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#chunks_exact_to_as_chunks
+    = note: `-D clippy::chunks-exact-to-as-chunks` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::chunks_exact_to_as_chunks)]`
+error: no rules expected `.`
+    --> src/extended.rs:1120:42
+     |
+1120 | ...   "units":["validation","test"].map(|s|serde_json::json!({"proposed":s,"kept":true,"source":"fixture","sta...
+     |                                    ^ no rules expected this token in macro call
+     |
+     = note: while trying to match end of macro

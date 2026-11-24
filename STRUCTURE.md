@@ -436,6 +436,12 @@ workspace does not acquire CUDA dependencies. Existing tokenizer/model mapping
 libraries are consumed by path; no frozen crate responsibilities change.
 Protocol and resource conservation are in M5_GPU_TRANSFORMER.md.
 
+The same isolated workspace owns M6 Transformer recovery. Its existing AdamW
+implementation owns named optimizer moments. The `resume::v2` module owns
+versioned training images and `extended` binds them to verified experiment
+inputs, the actual sampler and metrics journal. The root tokenizer format and
+runtime remain independent. See the [M6 record](docs/milestones/M6.md).
+
 ## Documentation navigation (repository maintenance, 2026-10-08)
 
 `docs/README.md` now indexes architecture, milestone, research and development

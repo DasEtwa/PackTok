@@ -16,7 +16,7 @@ commands, Git history, line endings and hashes.
 | [OAuth longevity](development/oauth.md) | Actual configuration, publishing decision and token limits |
 
 Milestones: [M0](milestones/M0.md) · [M1](milestones/M1.md) · [M2](milestones/M2.md) ·
-[M3](milestones/M3.md) · [M4](milestones/M4.md) · [M5](milestones/M5.md).
+[M3](milestones/M3.md) · [M4](milestones/M4.md) · [M5](milestones/M5.md) · [M6](milestones/M6.md).
 
 Architecture details: [tokenization](architecture/tokenization.md),
 [packs](architecture/packs.md), [formats](architecture/formats.md).

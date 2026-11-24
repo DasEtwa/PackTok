@@ -13,6 +13,9 @@
 **/.oauth/
 *.safetensors
 *.safetensors.tmp
+*.ptc
+**/training-v2/.pending-*
+**/.training-writer
 /colab-session*.json
 /transfer-bundles/
 

@@ -97,12 +97,15 @@ pub fn spans_from_manifest(path: &Path, split: &str) -> Result<Vec<Span>> {
             return Err("empty manifest domain unit".into());
         }
         let len = end - start;
+        let next_offset = offset
+            .checked_add(len)
+            .ok_or("domain manifest byte count overflow")?;
         spans.push(Span {
             start: offset,
-            end: offset + len,
+            end: next_offset,
             domain,
         });
-        offset += len;
+        offset = next_offset;
     }
     let split_row = root["splits"]
         .as_array()
@@ -156,33 +159,36 @@ fn add(t: &mut Totals, domain: &str, block: u64, nll: f64, bytes: u64) {
 fn bits(cell: Cell) -> Option<f64> {
     (cell.bytes > 0 && cell.nll.is_finite())
         .then(|| cell.nll / cell.bytes as f64 / std::f64::consts::LN_2)
+        .filter(|bpb| bpb.is_finite())
 }
-fn bootstrap_ci(blocks: &[(u64, Cell)], seed: u64) -> Option<[f64; 2]> {
+fn bootstrap_ci(blocks: &[(u64, Cell)], seed: u64) -> Result<Option<[f64; 2]>> {
     if blocks.len() < 2 {
-        return None;
+        return Ok(None);
     }
     let mut state = if seed == 0 { 0x9e3779b97f4a7c15 } else { seed };
     let mut values = Vec::with_capacity(BOOTSTRAPS);
     for _ in 0..BOOTSTRAPS {
         let mut nll = 0.0;
-        let mut bytes = 0_u64;
+        let mut bytes = 0_u128;
         for _ in 0..blocks.len() {
             state ^= state << 13;
             state ^= state >> 7;
             state ^= state << 17;
             let c = blocks[(state as usize) % blocks.len()].1;
             nll += c.nll;
-            bytes += c.bytes;
+            bytes += u128::from(c.bytes);
         }
-        if bytes > 0 {
-            values.push(nll / bytes as f64 / std::f64::consts::LN_2);
+        let bpb = nll / bytes as f64 / std::f64::consts::LN_2;
+        if !bpb.is_finite() {
+            return Err("nonfinite bootstrap domain score".into());
         }
+        values.push(bpb);
     }
     values.sort_by(f64::total_cmp);
-    Some([
+    Ok(Some([
         values[(values.len() * 25) / 1000],
         values[((values.len() * 975) / 1000).min(values.len() - 1)],
-    ])
+    ]))
 }
 fn report(split: &str, totals: Totals, seconds: f64) -> Result<Report> {
     let global = totals.global;
@@ -190,6 +196,22 @@ fn report(split: &str, totals: Totals, seconds: f64) -> Result<Report> {
         return Err("empty domain score".into());
     }
     let mut metrics = Vec::new();
+    let mut cat = Cell::default();
+    // Retain M5's sorted reduction order. Every contributing cell must appear in the report.
+    for (name, cell) in &totals.domains {
+        if !DOMAIN_NAMES.contains(&name.as_str()) && name != "mixed-domain" {
+            return Err("unreported score domain".into());
+        }
+        cat.nll += cell.nll;
+        cat.bytes = cat
+            .bytes
+            .checked_add(cell.bytes)
+            .ok_or("domain byte count overflow")?;
+        cat.tokens = cat
+            .tokens
+            .checked_add(cell.tokens)
+            .ok_or("domain token count overflow")?;
+    }
     for domain in DOMAIN_NAMES.into_iter().chain(["mixed-domain"]) {
         let Some(cell) = totals.domains.get(domain).copied() else {
             metrics.push(DomainMetric {
@@ -216,21 +238,17 @@ fn report(split: &str, totals: Totals, seconds: f64) -> Result<Report> {
             nll: cell.nll,
             bits_per_byte: bits(cell).ok_or("domain has no bytes")?,
             blocks: buckets.len(),
-            ci95_bits_per_byte: bootstrap_ci(&buckets, seed),
+            ci95_bits_per_byte: bootstrap_ci(&buckets, seed)?,
         });
     }
-    let cat = totals.domains.values().fold(Cell::default(), |mut a, c| {
-        a.nll += c.nll;
-        a.bytes += c.bytes;
-        a.tokens += c.tokens;
-        a
-    });
     // The global and per-domain NLL sums visit the same token losses in a
     // different order. Allow a tight relative FP64 accumulation tolerance;
     // byte and token accounting must still reconcile exactly.
     let nll_tolerance = 1e-12 * global.nll.abs().max(cat.nll.abs()).max(1.0);
     let consistent = cat.bytes == global.bytes
         && cat.tokens == global.tokens
+        && cat.nll.is_finite()
+        && global.nll.is_finite()
         && (cat.nll - global.nll).abs() <= nll_tolerance;
     if !consistent {
         return Err("domain/category aggregation does not reconcile to global score".into());
@@ -256,17 +274,20 @@ pub fn evaluate(
         return Err("domain evaluation is held-out only".into());
     }
     seq.validate()?;
-    let raw_bytes: u64 = seq.bytes.iter().map(|&b| u64::from(b)).sum();
+    let mut offsets = Vec::with_capacity(seq.bytes.len() + 1);
+    let mut raw_bytes = 0_u64;
+    offsets.push(raw_bytes);
+    for &n in &seq.bytes {
+        raw_bytes = raw_bytes
+            .checked_add(u64::from(n))
+            .ok_or("split byte count overflow")?;
+        offsets.push(raw_bytes);
+    }
     if spans.first().map(|s| s.start) != Some(0)
         || spans.last().map(|s| s.end) != Some(raw_bytes)
         || spans.windows(2).any(|w| w[0].end != w[1].start)
     {
         return Err("manifest spans do not exactly cover encoded split".into());
-    }
-    let mut offsets = Vec::with_capacity(seq.bytes.len() + 1);
-    offsets.push(0_u64);
-    for &n in &seq.bytes {
-        offsets.push(offsets.last().copied().unwrap() + u64::from(n));
     }
     let start_time = Instant::now();
     let mut totals = Totals::default();
@@ -398,6 +419,34 @@ mod tests {
     }
 
     #[test]
+    fn finite_tolerance_at_zero_and_large_scales() {
+        let valid = |global, category| {
+            let mut totals = Totals::default();
+            add(&mut totals, "german-prose", 0, category, 1);
+            totals.global.nll = global;
+            report("validation", totals, 0.0).is_ok()
+        };
+        assert!(valid(0.0, 0.0));
+        assert!(valid(0.0, 1e-12));
+        assert!(!valid(0.0, 1.01e-12));
+        assert!(valid(1e12, 1e12 + 0.99));
+        assert!(!valid(1e12, 1e12 + 1.01));
+        for invalid in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            assert!(!valid(invalid, 1.0));
+            assert!(!valid(1.0, invalid));
+        }
+        let mut totals = Totals::default();
+        add(&mut totals, "unreported", 0, 0.0, 1);
+        assert!(report("test", totals, 0.0).is_err());
+        let mut totals = Totals::default();
+        for domain in ["english-literature", "german-prose"] {
+            add(&mut totals, domain, 0, f64::MAX, 2);
+        }
+        totals.global.nll = f64::MAX;
+        assert!(report("test", totals, 0.0).is_err());
+    }
+
+    #[test]
     fn large_domain_aggregation_allows_only_fp64_ordering_error() -> Result<()> {
         let mut totals = Totals::default();
         for i in 0_u64..800_000 {
@@ -410,6 +459,14 @@ mod tests {
             };
             add(&mut totals, domain, i / BLOCK_BYTES, nll, 1);
         }
+        let grouped: f64 = totals.domains.values().map(|c| c.nll).sum();
+        let difference = (totals.global.nll - grouped).abs();
+        assert!(difference > 1e-9);
+        assert!(difference <= grouped.max(totals.global.nll) * 1e-12);
+        eprintln!(
+            "800000 targets: global={} grouped={grouped} difference={difference:e}",
+            totals.global.nll
+        );
         let result = report("validation", totals, 0.0)?;
         assert!(result.aggregation_matches_global);
         Ok(())

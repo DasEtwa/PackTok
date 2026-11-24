@@ -1,7 +1,7 @@
 # Bounded WSL supervision and Colab boundary
 
-Maintenance does not authorize a GPU. M5 remains preflight-incomplete, and its
-v4 one-attempt marker is already consumed. A later allocation needs a separate
+Maintenance does not authorize a GPU. M5 completed the L4 correctness gate
+and one paired pilot. Historical one-attempt markers remain consumed. A later allocation needs a separate
 explicitly authorized task; full runs also need a measured runtime/CU budget.
 The frozen model/loader package is not rebuilt or reinterpreted here.
 

@@ -219,7 +219,12 @@ Complete size is exactly 16+8*N, checked for overflow/truncation. IDs must be be
 512 and byte lengths positive. Empty encoding is allowed; scoring requires at
 least two tokens and a positive batch. Artifact-derived lengths must sum to the
 original raw bytes during CPU preparation. Frozen raw/tokenizer/mapping/sequence
-hashes bind staging files to their provenance. Checkpoints use standard Candle
+hashes bind staging files to their provenance. Original weights-only checkpoints use standard Candle
 FP32 safetensors, externally bound to the frozen M5 config/source hash. They
 contain weights only; no optimizer-resume contract is implied. See
 M5_GPU_TRANSFORMER.md and experiments/m5-gpu/provenance/CPU_PREPARATION.md.
+
+The later M5 extended runner introduced v1 full resume safetensors. The M6
+training image uses the separate `PKTRN002` magic and a SHA-256 trailer. Its
+byte layout, compatibility checks, journal binding and publication protocol
+are specified in [M6](docs/milestones/M6.md).

@@ -16,8 +16,9 @@ records known completion hashes, sizes and payload hashes. It contains PackTok
 research identity and scoped rclone names, no authenticated Drive links or secrets.
 Historical bundle hashes and locally retained evidence remain in
 [RECOVERY_STORAGE](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md).
-No model weights have yet been recovered from GPU: successful historical and
-maintenance tests cover harmless fixtures and diagnostic archives.
+The later [paired pilot](../../experiments/m5-gpu/provenance/m5-a-c-pilot-20261009T154700Z/PILOT_RESULT.md)
+recovered A's full training checkpoint and verified the final A/C results archive
+by complete Drive readback.
 
 ## Restore in a fresh authorized environment
 
@@ -41,9 +42,10 @@ authorization test.
 
 For a future actual M5 model checkpoint, additionally verify configuration,
 corpus/tokenizer identity and use the CPU `recover_weights` example described in
-[RECOVERY_STORAGE](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md). Safetensors
-are weights only. They lack AdamW moments, optimizer step, sampling RNG and data
-cursor, so a restored checkpoint cannot resume training exactly.
+[RECOVERY_STORAGE](../../experiments/m5-gpu/provenance/RECOVERY_STORAGE.md).
+Use that example for weights-only initialization. The M5 extended runner's
+`latest.resume.safetensors` contains AdamW and sampler state. New M6 runs use
+immutable `.ptc` generations. See [checkpoint formats and recovery](../milestones/M6.md).
 
 ## Protected configuration recovery
 

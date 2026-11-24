@@ -1,3 +1,5 @@
+pub mod v2;
+
 use crate::{
     Result, hash,
     model::{ModelConfig, Transformer},
@@ -96,6 +98,8 @@ struct CheckpointMeta {
     state_sha256: String,
 }
 pub struct ResumableAdamW {
+    // Device errors can leave a partially applied update. Only a complete boundary may be saved.
+    ready: bool,
     config: AdamWConfig,
     step: usize,
     first: BTreeMap<String, Tensor>,
@@ -114,6 +118,7 @@ impl ResumableAdamW {
             second.insert(name, Tensor::zeros(var.shape(), var.dtype(), var.device())?);
         }
         Ok(Self {
+            ready: true,
             config,
             step: 0,
             first,
@@ -127,6 +132,9 @@ impl ResumableAdamW {
         &self.config
     }
     pub fn apply(&mut self, model: &Transformer, grads: &GradStore) -> Result<()> {
+        if !self.ready {
+            return Err("optimizer needs recovery after partial update".into());
+        }
         let next_step = self.step.checked_add(1).ok_or("optimizer step overflow")?;
         if next_step > self.config.total_steps {
             return Err("optimizer exceeds frozen schedule length".into());
@@ -134,6 +142,7 @@ impl ResumableAdamW {
         let lr = self.config.learning_rate_at(next_step);
         let bc1 = 1.0 / (1.0 - self.config.beta1.powi(i32::try_from(next_step)?));
         let bc2 = 1.0 / (1.0 - self.config.beta2.powi(i32::try_from(next_step)?));
+        self.ready = false;
         for (name, var) in model.named_vars() {
             let grad = grads.get(&var).ok_or("resumable AdamW missing gradient")?;
             let m = self.first.get(&name).ok_or("missing first moment")?;
@@ -145,11 +154,12 @@ impl ResumableAdamW {
             let decayed = var.as_tensor() * (1.0 - lr * self.config.weight_decay);
             let update = (m_hat / (v_hat?.sqrt()? + self.config.epsilon)?)? * lr;
             let next_weight = (decayed? - update?)?;
-            self.first.insert(name.clone(), next_m);
-            self.second.insert(name.clone(), next_v);
+            self.first.insert(name.clone(), next_m.detach());
+            self.second.insert(name.clone(), next_v.detach());
             var.set(&next_weight)?;
         }
         self.step = next_step;
+        self.ready = true;
         Ok(())
     }
 
@@ -162,7 +172,7 @@ impl ResumableAdamW {
         sample_cursor: u64,
         path: &Path,
     ) -> Result<()> {
-        if training_step != self.step || rng_state == 0 {
+        if !self.ready || training_step != self.step || rng_state == 0 {
             return Err("checkpoint cursor/optimizer state mismatch".into());
         }
         let model_vars = model.named_vars();
@@ -288,6 +298,7 @@ impl ResumableAdamW {
             var.set(&loaded[&format!("model.{name}")])?;
         }
         let opt = Self {
+            ready: true,
             config: meta.schedule,
             step: meta.optimizer_step,
             first,

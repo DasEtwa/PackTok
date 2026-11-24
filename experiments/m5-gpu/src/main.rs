@@ -24,9 +24,9 @@ fn run() -> Result<()> {
         ),
         Some("plan-extended") if args.len() == 4 => extended::plan(
             Path::new(&args[1]),Path::new(&args[2]),Path::new(&args[3])),
-        Some("train-extended") if args.len() == 8 => extended::train(
-            Path::new(&args[1]),Path::new(&args[2]),Path::new(&args[3]),&args[4],&args[5],
-            args[6].parse()?,&args[7]),
+        Some("train-extended" | "train-recoverable") if args.len() == 8 => extended::train(
+            (Path::new(&args[1]),Path::new(&args[2]),Path::new(&args[3])),&args[4],&args[5],
+            args[6].parse()?,&args[7],args[0]=="train-recoverable"),
         Some("diagnose-overfit") if (args.len() == 3 || args.len() == 4) => {
             let comparison_lr = args.get(3).map(|v| v.parse()).transpose()?;
             let outcomes = overfit::diagnose_cpu(
@@ -73,7 +73,7 @@ fn run() -> Result<()> {
             }
             Ok(())
         }
-        _ => Err("usage: packtok-m5 corpus | prepare | verify-prepared | reference | plan | cuda-components JSON | preflight DATA REFERENCE OUT | diagnose-overfit DATA OUT [COMPARISON_LR] | plan-extended CONFIG DATA OUT | train-extended CONFIG DATA OUT VARIANT REGIME SEED APPROVAL_REFERENCE".into()),
+        _ => Err("usage: packtok-m5 corpus | prepare | verify-prepared | reference | plan | cuda-components JSON | preflight DATA REFERENCE OUT | diagnose-overfit DATA OUT [COMPARISON_LR] | plan-extended CONFIG DATA OUT | {train-extended|train-recoverable} CONFIG DATA OUT VARIANT REGIME SEED APPROVAL_REFERENCE".into()),
     }
 }
 fn main() {

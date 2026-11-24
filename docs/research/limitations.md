@@ -12,9 +12,10 @@ traffic; matching it is not equal measured FLOPs or wall time. Factorized gold-p
 scoring costs differ from full joint generation. Timing and process peak scopes
 must be read in each original report.
 
-M5 has CPU preparation and failed GPU lifecycle evidence, but no passing CUDA
-correctness gate, synchronized model timings, measured peak VRAM or completed
-quality comparison. Weights-only safetensors do not support exact training resume.
+M5 passed its L4 correctness gate and completed one paired pilot with measured
+timings and sampled peak VRAM. One seed and unequal represented training bytes
+limit the inference. M6 verifies CPU continuation on a small deterministic
+fixture. CUDA trajectory equivalence and larger-scale recovery remain unmeasured.
 A short Drive test verifies bytes at that moment, not token longevity.
 
 Full qualifications: [M1 review](../../M1_REVIEW_FIXES.md),

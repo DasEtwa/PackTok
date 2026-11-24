@@ -137,7 +137,12 @@ one of tiny or large). [Protocol](../../M4_ABLATION.md),
 [raw summary](../../experiments/m4-ablation/runs/large-final-20261007/run-summary.txt).
 Do not regenerate or overwrite historical outputs.
 
-## M5 — GPU Transformer status
+## M5 — GPU Transformer
+
+The [completed single-seed comparison](#m5-paired-ac-transformer-pilot--2026-10-09-complete-exploratory)
+follows the chronological attempt records below.
+
+### Initial launch attempt
 
 **Hypothesis.** M4's small C−A tokenizer-sequence signal may survive a shared flat
 causal Transformer.
