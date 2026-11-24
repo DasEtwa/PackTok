@@ -17,7 +17,7 @@ use std::{
     io::{BufRead, BufReader, Write},
     path::{Path, PathBuf},
     process::{Command, Stdio},
-    time::{SystemTime, UNIX_EPOCH},
+    time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
 fn directory() -> Result<PathBuf> {
@@ -68,10 +68,11 @@ fn update(
     spec: &TrainingSpec,
     seq: &Sequence,
     pos: &mut Position,
+    device: &Device,
 ) -> Result<String> {
     let mut rng = Rng::from_state(pos.rng_state)?;
     let batch = spec
-        .next_batch(seq, &mut rng, &mut pos.cursor, &Device::Cpu)?
+        .next_batch(seq, &mut rng, &mut pos.cursor, device)?
         .ok_or("fixture exhausted")?;
     let samples = match &batch {
         BatchData::Full { x, y, .. } => (x.to_vec2::<u32>()?, y.to_vec2::<u32>()?),
@@ -101,12 +102,37 @@ fn training_worker() -> Result<()> {
         std::process::exit(124);
     });
     let stop: usize = env::var("PACKTOK_M6_STOP")?.parse()?;
-    let (seq, spec) = fixture(&env::var("PACKTOK_M6_REGIME")?);
+    let (seq, mut spec) = fixture(&env::var("PACKTOK_M6_REGIME")?);
+    let device = match env::var("PACKTOK_M6_PROBE_DEVICE").as_deref() {
+        Ok("L4") => {
+            let gpu = packtok_m5::runner::require_l4()?;
+            println!("GPU {gpu}");
+            spec.backend = "cuda".into();
+            packtok_m5::runner::cuda()?
+        }
+        Err(env::VarError::NotPresent) => Device::Cpu,
+        _ => return Err("unsupported probe device".into()),
+    };
     let image = latest(dir)?;
     let (model, mut opt, mut pos) = if let Some((step, path)) = image {
-        ResumableAdamW::restore(&path, &spec, &Device::Cpu, step)?
+        let start = Instant::now();
+        let restored = ResumableAdamW::restore(&path, &spec, &device, step)?;
+        device.synchronize()?;
+        println!("RESTORE_US {}", start.elapsed().as_micros());
+        if let Some(audit) = env::var_os("PACKTOK_M6_RESTORE_AUDIT") {
+            let copy = restored
+                .1
+                .publish(&restored.0, &spec, restored.2, Path::new(&audit))?;
+            assert_eq!(
+                fs::read(copy)?,
+                fs::read(path)?,
+                "immediate restore/re-save"
+            );
+            println!("RESTORE_BYTES_EXACT");
+        }
+        restored
     } else {
-        let model = Transformer::new(spec.model.clone(), spec.identity.seed, &Device::Cpu)?;
+        let model = Transformer::new(spec.model.clone(), spec.identity.seed, &device)?;
         let opt = ResumableAdamW::new(&model, spec.schedule.clone())?;
         (
             model,
@@ -121,12 +147,24 @@ fn training_worker() -> Result<()> {
         )
     };
     while pos.step < stop {
-        println!("{}", update(&model, &mut opt, &spec, &seq, &mut pos)?);
+        println!(
+            "{}",
+            update(&model, &mut opt, &spec, &seq, &mut pos, &device)?
+        );
     }
-    opt.publish(&model, &spec, pos, dir)?;
+    device.synchronize()?;
+    let start = Instant::now();
+    let published = opt.publish(&model, &spec, pos, dir)?;
+    device.synchronize()?;
+    println!(
+        "PUBLISH_US {} BYTES {}",
+        start.elapsed().as_micros(),
+        published.metadata()?.len()
+    );
     if stop < 4 {
         // Lose a real, uncommitted update when the parent kills this process.
-        update(&model, &mut opt, &spec, &seq, &mut pos)?;
+        update(&model, &mut opt, &spec, &seq, &mut pos, &device)?;
+        device.synchronize()?;
         println!("KILL_HERE");
         std::io::stdout().flush()?;
         std::thread::park();
