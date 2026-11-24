@@ -1,0 +1,12 @@
+rustc 1.100.0 (0ef1bc386 2026-11-09)
+Linux 6.18.58.1-microsoft-standard-WSL2 x86_64 GNU/Linux
+Model name:                              Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz
+Locked offline fmt, Clippy -D warnings and isolated workspace tests passed.
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 51.64s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.71s
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.64s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Pinned M7 bridge mock verified one request, packtok-m7 alias and release.
+Initial compiler error: ambiguous integer type at XML depth checked_sub, resolved with usize.
+WSL crates index DNS and initial offline dependency resolution were unavailable. Official crates.io packages were fetched on Windows; lock hashes checked by offline WSL Cargo.

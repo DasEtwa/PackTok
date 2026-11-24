@@ -1,0 +1,16 @@
+{
+  "request_utc": "2026-11-24T15:55:33.186532+00:00",
+  "time_cap_seconds": 1200,
+  "cap_cu": 0.6,
+  "hardware_requested": "NVIDIA L4",
+  "error": "Service Unavailable during allocation",
+  "ready": false,
+  "remote_worker_started": false,
+  "evidence": {
+    "allocation.txt": "738bd742e8f2c4a68b24aaed495ee4eea2cd93927685e4cb7dbf4f500e7bb91f",
+    "sessions-before.txt": "9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73",
+    "sessions-after.txt": "9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73",
+    "usage-before.txt": "0ec1f1cd6ee308a856e473f814600dfb4df20be2fa994c0c83685539e6301355",
+    "usage-after.txt": "0ec1f1cd6ee308a856e473f814600dfb4df20be2fa994c0c83685539e6301355"
+  }
+}

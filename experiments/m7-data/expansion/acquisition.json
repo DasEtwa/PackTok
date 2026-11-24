@@ -1,0 +1,20 @@
+[
+  {
+    "family": "dta",
+    "path": "dta.zip",
+    "url": "https://media.dwds.de/dta/download/dta_kernkorpus_2020-07-20.zip",
+    "version": "DTA Kernkorpus 2020-07-20",
+    "acquired": "2026-11-24",
+    "bytes": 376206131,
+    "sha256": "9949e549f97a272c2d2b3520a98dd1ae0a80a013404c8b072072fc8b6901d283"
+  },
+  {
+    "family": "eebo",
+    "path": "eebo-2003.zip",
+    "url": "https://ora.ox.ac.uk/objects/uuid:ad7da8fc-cd8e-4637-8b7c-99498436dbaa/files/me82c6a4e55b579471a1cf4385735f074",
+    "version": "EEBO-TCP Phase I TEI P3, 2003 tranche, Version 1",
+    "acquired": "2026-11-24",
+    "bytes": 321132665,
+    "sha256": "5baa50de563be04a46c9f3dac075d8f4b6891e07747bd2ee2bab2c517b1a80c2"
+  }
+]

@@ -1,0 +1,242 @@
+[
+  {
+    "corpus": "literature",
+    "variant": "A",
+    "split": "test",
+    "stored_bytes": 14382979,
+    "text_bytes": 3083692,
+    "tokens": 1576080,
+    "maximum_token_byte_length": 8,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 197027,
+      "padding": 1472,
+      "token_overlap": 1575832,
+      "logical_ids": 6304320,
+      "logical_lengths": 6304320
+    },
+    "u16_id_u8_length_payload_bytes": 4728240,
+    "u16_id_only_payload_bytes": 3152160
+  },
+  {
+    "corpus": "literature",
+    "variant": "A",
+    "split": "train",
+    "stored_bytes": 10725971,
+    "text_bytes": 2381908,
+    "tokens": 1175355,
+    "maximum_token_byte_length": 8,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 146931,
+      "padding": 1048,
+      "token_overlap": 1175144,
+      "logical_ids": 4701420,
+      "logical_lengths": 4701420
+    },
+    "u16_id_u8_length_payload_bytes": 3526065,
+    "u16_id_only_payload_bytes": 2350710
+  },
+  {
+    "corpus": "literature",
+    "variant": "A",
+    "split": "validation",
+    "stored_bytes": 2886647,
+    "text_bytes": 613903,
+    "tokens": 316307,
+    "maximum_token_byte_length": 7,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 39543,
+      "padding": 376,
+      "token_overlap": 316264,
+      "logical_ids": 1265228,
+      "logical_lengths": 1265228
+    },
+    "u16_id_u8_length_payload_bytes": 948921,
+    "u16_id_only_payload_bytes": 632614
+  },
+  {
+    "corpus": "literature",
+    "variant": "C",
+    "split": "test",
+    "stored_bytes": 16752997,
+    "text_bytes": 3083692,
+    "tokens": 1835812,
+    "maximum_token_byte_length": 8,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 229493,
+      "padding": 1440,
+      "token_overlap": 1835560,
+      "logical_ids": 7343248,
+      "logical_lengths": 7343248
+    },
+    "u16_id_u8_length_payload_bytes": 5507436,
+    "u16_id_only_payload_bytes": 3671624
+  },
+  {
+    "corpus": "literature",
+    "variant": "C",
+    "split": "train",
+    "stored_bytes": 12648134,
+    "text_bytes": 2381908,
+    "tokens": 1386014,
+    "maximum_token_byte_length": 8,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 173262,
+      "padding": 960,
+      "token_overlap": 1385792,
+      "logical_ids": 5544056,
+      "logical_lengths": 5544056
+    },
+    "u16_id_u8_length_payload_bytes": 4158042,
+    "u16_id_only_payload_bytes": 2772028
+  },
+  {
+    "corpus": "literature",
+    "variant": "C",
+    "split": "validation",
+    "stored_bytes": 3229966,
+    "text_bytes": 613903,
+    "tokens": 353939,
+    "maximum_token_byte_length": 7,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 44246,
+      "padding": 312,
+      "token_overlap": 353888,
+      "logical_ids": 1415756,
+      "logical_lengths": 1415756
+    },
+    "u16_id_u8_length_payload_bytes": 1061817,
+    "u16_id_only_payload_bytes": 707878
+  },
+  {
+    "corpus": "synthetic100MB",
+    "variant": "A",
+    "split": "test",
+    "stored_bytes": 62420045,
+    "text_bytes": 9998800,
+    "tokens": 6840001,
+    "maximum_token_byte_length": 2,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 855069,
+      "padding": 6008,
+      "token_overlap": 6838952,
+      "logical_ids": 27360004,
+      "logical_lengths": 27360004
+    },
+    "u16_id_u8_length_payload_bytes": 20520003,
+    "u16_id_only_payload_bytes": 13680002
+  },
+  {
+    "corpus": "synthetic100MB",
+    "variant": "A",
+    "split": "train",
+    "stored_bytes": 342733110,
+    "text_bytes": 79990400,
+    "tokens": 37555897,
+    "maximum_token_byte_length": 6,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 4694974,
+      "padding": 43960,
+      "token_overlap": 37546992,
+      "logical_ids": 150223588,
+      "logical_lengths": 150223588
+    },
+    "u16_id_u8_length_payload_bytes": 112667691,
+    "u16_id_only_payload_bytes": 75111794
+  },
+  {
+    "corpus": "synthetic100MB",
+    "variant": "A",
+    "split": "validation",
+    "stored_bytes": 42846993,
+    "text_bytes": 9998800,
+    "tokens": 4695076,
+    "maximum_token_byte_length": 6,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 586945,
+      "padding": 5472,
+      "token_overlap": 4693960,
+      "logical_ids": 18780304,
+      "logical_lengths": 18780304
+    },
+    "u16_id_u8_length_payload_bytes": 14085228,
+    "u16_id_only_payload_bytes": 9390152
+  },
+  {
+    "corpus": "synthetic100MB",
+    "variant": "C",
+    "split": "test",
+    "stored_bytes": 68647675,
+    "text_bytes": 9998800,
+    "tokens": 7522584,
+    "maximum_token_byte_length": 3,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 940379,
+      "padding": 5184,
+      "token_overlap": 7521432,
+      "logical_ids": 30090336,
+      "logical_lengths": 30090336
+    },
+    "u16_id_u8_length_payload_bytes": 22567752,
+    "u16_id_only_payload_bytes": 15045168
+  },
+  {
+    "corpus": "synthetic100MB",
+    "variant": "C",
+    "split": "train",
+    "stored_bytes": 479646070,
+    "text_bytes": 79990400,
+    "tokens": 52560087,
+    "maximum_token_byte_length": 3,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 6570494,
+      "padding": 43720,
+      "token_overlap": 52551152,
+      "logical_ids": 210240348,
+      "logical_lengths": 210240348
+    },
+    "u16_id_u8_length_payload_bytes": 157680261,
+    "u16_id_only_payload_bytes": 105120174
+  },
+  {
+    "corpus": "synthetic100MB",
+    "variant": "C",
+    "split": "validation",
+    "stored_bytes": 59967464,
+    "text_bytes": 9998800,
+    "tokens": 6571264,
+    "maximum_token_byte_length": 3,
+    "logical_lengths_above_u8": 0,
+    "breakdown": {
+      "file_magic": 8,
+      "frame_count_and_flags": 821472,
+      "padding": 5696,
+      "token_overlap": 6570176,
+      "logical_ids": 26285056,
+      "logical_lengths": 26285056
+    },
+    "u16_id_u8_length_payload_bytes": 19713792,
+    "u16_id_only_payload_bytes": 13142528
+  }
+]

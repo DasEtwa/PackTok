@@ -1,6 +1,9 @@
 use packtok_m5::Result;
 use std::path::Path;
 
+#[path = "m7/archive.rs"]
+mod archive;
+
 #[path = "m7/corpus.rs"]
 mod corpus;
 #[path = "m7/dedup.rs"]
@@ -18,6 +21,7 @@ mod train;
 fn run() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     match args.iter().map(String::as_str).collect::<Vec<_>>().as_slice() {
+        ["import-archives", plan, output] => archive::import(Path::new(plan),Path::new(output)),
         ["fetch", catalog, cache, id, budget] =>
             source::fetch(Path::new(catalog), Path::new(cache), id, budget.parse()?),
         ["build", catalog, cache, output] =>
@@ -39,7 +43,7 @@ fn run() -> Result<()> {
             packtok_m5::runner::require_l4()?;
             train::run(Path::new(dataset), Path::new(tokenized), Path::new(run), variant, stop.parse()?, &packtok_m5::runner::cuda()?)
         }
-        _ => Err("usage: packtok-m7 fetch CATALOG CACHE SOURCE_ID MAX_BYTES | build CATALOG CACHE NEW_DATASET | verify DATASET | tokenize DATASET NEW_TOKENIZED TRAIN_SAMPLE_BYTES | verify-tokens DATASET TOKENIZED | train-cpu DATASET TOKENIZED RUN A_OR_C STOP_STEP | train-l4 DATASET TOKENIZED RUN A_OR_C STOP_STEP APPROVAL".into())
+        _ => Err("usage: packtok-m7 import-archives PLAN NEW_IMPORT | fetch CATALOG CACHE SOURCE_ID MAX_BYTES | build CATALOG CACHE NEW_DATASET | verify DATASET | tokenize DATASET NEW_TOKENIZED TRAIN_SAMPLE_BYTES | verify-tokens DATASET TOKENIZED | train-cpu DATASET TOKENIZED RUN A_OR_C STOP_STEP | train-l4 DATASET TOKENIZED RUN A_OR_C STOP_STEP APPROVAL".into())
     }
 }
 

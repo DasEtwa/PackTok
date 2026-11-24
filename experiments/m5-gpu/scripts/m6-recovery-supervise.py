@@ -33,12 +33,13 @@ def main():
     p.add_argument("--cu", type=float, required=True)
     p.add_argument("--adapt-to-rate", action="store_true",
                    help="shorten the work window to keep the quoted rate inside the CU envelope")
+    p.add_argument("--bridge", type=Path, help="use a separately prepared bridge pinned in ready.json")
     a = p.parse_args()
     if not 180 < a.seconds <= (1800 if a.adapt_to_rate else 1200) or not 0 < a.cu <= 0.60:
         p.error("outside single-probe budget")
     package = a.package.resolve()
     ready = json.loads((package / "ready.json").read_text())
-    bridge = Path(__file__).with_name("m6-recovery-remote.py")
+    bridge = a.bridge.resolve() if a.bridge else Path(__file__).with_name("m6-recovery-remote.py")
     def sha(path):
         with path.open("rb") as f:
             return hashlib.file_digest(f, "sha256").hexdigest()
@@ -49,7 +50,7 @@ def main():
         raise ValueError("unverified transfer parts or CPU rehearsal")
     run = package / "allocation"
     run.mkdir(mode=0o700)  # durable single-attempt marker, cannot be reused
-    alias = "packtok-m6-" + uuid.uuid4().hex[:12]
+    alias = "packtok-" + ("m7" if a.bridge else "m6") + "-" + uuid.uuid4().hex[:12]
     deadline = None
     def call(label, args, seconds):
         limit = seconds if deadline is None else min(seconds, deadline - time.monotonic())

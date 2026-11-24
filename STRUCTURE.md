@@ -441,7 +441,9 @@ It owns acquisition, corpus selection, split/shard manifests and streaming
 model input. The isolated workspace already owns SHA-256, tokenizer-to-model
 ID mapping, the Transformer and its checkpoint writer. M7 reuses those
 components and adds an embedded disk index for corpus-wide deduplication.
-The root tokenizer crates retain their existing interfaces.
+Its local intake adapter reads pinned publisher ZIP archives and TEI metadata.
+XML and ZIP parsing stay in this isolated workspace. The root tokenizer crates
+retain their existing interfaces.
 
 The same isolated workspace owns M6 Transformer recovery. Its existing AdamW
 implementation owns named optimizer moments. The `resume::v2` module owns

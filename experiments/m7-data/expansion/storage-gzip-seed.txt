@@ -1,0 +1,6 @@
+A-train 2632836
+A-validation 690663
+A-test 3445769
+C-train 2746015
+C-validation 716631
+C-test 3584485

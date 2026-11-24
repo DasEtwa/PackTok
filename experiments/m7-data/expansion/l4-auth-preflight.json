@@ -1,0 +1,7 @@
+{
+  "allocation_requests": 0,
+  "stage": "sessions-before",
+  "exit": 1,
+  "reason": "Colab CLI requested OAuth authorization",
+  "redacted_stdout_sha256": "344a0b53a9d2e198f844b77a8f581d647b06bf16d38b2d98862bfe8b0eaa4310"
+}

@@ -1,0 +1,24 @@
+{
+  "families": {
+    "dta": {
+      "decisions": {
+        "imported": 1454,
+        "rejected-rights-language-or-empty": 18
+      },
+      "processed_bytes": 870321784,
+      "member_bytes": 1232335548,
+      "xml_rejections": {}
+    },
+    "eebo": {
+      "decisions": {
+        "imported": 3115,
+        "rejected-rights-language-or-empty": 4
+      },
+      "processed_bytes": 744285028,
+      "member_bytes": 1011921807,
+      "xml_rejections": {}
+    }
+  },
+  "catalog.json_sha256": "5055c90d4c6012bb1328c807cd18549d721c44c1b0ff877b0c567f831217d8c7",
+  "members.jsonl_sha256": "b101ce5eeff32fb7a39c83039400dc2a460c28790ba45a968fab295137545761"
+}
