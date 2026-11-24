@@ -16,6 +16,7 @@
 *.ptc
 **/training-v2/.pending-*
 **/.training-writer
+/experiments/m7-data/local/
 /colab-session*.json
 /transfer-bundles/
 

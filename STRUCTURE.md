@@ -436,6 +436,13 @@ workspace does not acquire CUDA dependencies. Existing tokenizer/model mapping
 libraries are consumed by path; no frozen crate responsibilities change.
 Protocol and resource conservation are in M5_GPU_TRANSFORMER.md.
 
+M7 uses a separate `packtok-m7` binary in the existing Transformer workspace.
+It owns acquisition, corpus selection, split/shard manifests and streaming
+model input. The isolated workspace already owns SHA-256, tokenizer-to-model
+ID mapping, the Transformer and its checkpoint writer. M7 reuses those
+components and adds an embedded disk index for corpus-wide deduplication.
+The root tokenizer crates retain their existing interfaces.
+
 The same isolated workspace owns M6 Transformer recovery. Its existing AdamW
 implementation owns named optimizer moments. The `resume::v2` module owns
 versioned training images and `extended` binds them to verified experiment

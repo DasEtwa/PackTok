@@ -1,0 +1,39 @@
+Linux 6.18.58.1-microsoft-standard-WSL2 x86_64 GNU/Linux
+rustc 1.100.0 (0ef1bc386 2026-11-09)
+Model name:                              Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz
+No external dataset download or accelerator invocation during M7.
+Root workspace, Rust 1.85.0: fmt, clippy -D warnings and locked offline test.
+135 tests passed
+Transformer + M7 workspace, Rust 1.100.0: fmt, clippy -D warnings and locked offline all-targets test.
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.19s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 6 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.77s
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.37s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Doctests passed (0 examples). The M6 real archive test remains opt-in and prior results are retained.
+Early faults: Clippy rejected the first verbose contact regex, an unused import and fixed-size chunk parsing. The temporary isolated checkout initially lacked the historic prepared-v2 fixture paths.
+---- extended::tests::frozen_configs_recheck_scientific_inputs_and_schedules stdout ----
+Error: Os { code: 2, kind: NotFound, message: "No such file or directory" }
+
+
+failures:
+    extended::tests::frozen_configs_recheck_scientific_inputs_and_schedules
+Native fixture symlink restored the historical gate. No historical corpus bytes changed.
+Control and resumed A metrics.jsonl match byte for byte. Checkpoint digests follow.
+e2fcb89ad7bf9fc4511ca3db3716a9e1330ebe5c2f0a95ba68220419aa3fdc61  /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/run-A/training-v2/step-00000000000000000096.ptc
+e2fcb89ad7bf9fc4511ca3db3716a9e1330ebe5c2f0a95ba68220419aa3fdc61  /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/recovered-A/training-v2/step-00000000000000000096.ptc
+Final native source identities (normalized LF):
+e1ed43dac6ad25aa03318b4d60d9aa43f97489418a27abe05d7e10937cad028a  Cargo.lock
+0e31cb0a60c0600df0bc4589095e89a65545667919c43975a15867886c61bcbf  Cargo.toml
+e48005d9cfe50d276c8357d58f682acc3f7642ac76a330299946a954bf1ffd4a  src/bin/packtok-m7.rs
+179fd1a7483351baaccf645ba3558ecad650dc17419ba8e0e50a8ef2c1f81779  src/bin/m7/corpus.rs
+f1858717fb2bf49f7531935fe4a478404f62026f9a49a74c43ac82faa6372229  src/bin/m7/dedup.rs
+541e06930397ef5ed92938c176054a677b4e6f25b0a06ab3c965f71fe29a02f7  src/bin/m7/source.rs
+dab75338b0f0051638afbf74e649aef8b6a0ef887bee5fe6b67a7ae303ed6470  src/bin/m7/tests.rs
+59ace2d2b94d85284da8134eb57a750f2acb95222aabdfaf1f400aefb19c6558  src/bin/m7/tokens.rs
+0a8bbf7db57bba213bf06628f024e611fb6b2743911524a844937834a2ccfcb0  src/bin/m7/train.rs
+Measured output sizes in bytes (including directory entries in du apparent size).
+6310772	/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/dataset
+60644166	/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/tokens
+100037139	/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/scale-verified/dataset
+1056278863	/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/scale-verified/tokenized

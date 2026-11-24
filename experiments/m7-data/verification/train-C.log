@@ -1,0 +1,25 @@
+verified 3 shards, 5 documents, 6079503 text bytes
+{"report":{"backend":"cpu","dataset_sha256":"0b3bb25451cdddc94be963879e4e8000b0d2c5834b9618192d926a9f491709a4","generated":"                        ","generated_hex":"202020202020202020202020202020202020202020202020","parameters":9360,"step":96,"tokenizer_sha256":"04943291551fd9359fcd2d0182b9b260b6674c82b6f9d2ee43a94b73f870c29a","train_final":{"bits_per_byte":5.594361960958212,"bytes":1016,"nll":3939.7596797943115,"tokens":694},"train_initial":{"bits_per_byte":6.146329716188407,"bytes":1016,"nll":4328.476091384888,"tokens":694},"train_sequence_sha256":"bbf7be01b3f4b4150ddbefcafaa14f99c7a1cbe8f0e4224e6f4ab88907b03ece","validation_final":{"bits_per_byte":4.671230837684336,"bytes":508,"nll":1644.828046321869,"tokens":309},"validation_initial":{"bits_per_byte":5.474034693352532,"bytes":508,"nll":1927.5103507041931,"tokens":309},"variant":"C"},"segment_seconds":0.289905739,"targets_per_second":2649.136932056388,"trained_targets":768}
+	Command being timed: "/home/dasetwa/projects/PackTok/experiments/m5-gpu/target/release/packtok-m7 train-cpu /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/dataset /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/tokens /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/run-C C 96"
+	User time (seconds): 0.32
+	System time (seconds): 0.03
+	Percent of CPU this job got: 56%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.63
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 11132
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 4120
+	Voluntary context switches: 25
+	Involuntary context switches: 1
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 960
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

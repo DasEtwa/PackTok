@@ -1,0 +1,13 @@
+   Compiling packtok-core v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/crates/packtok-core)
+   Compiling aho-corasick v1.1.5
+   Compiling packtok-packs v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/crates/packtok-packs)
+   Compiling packtok-format v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/crates/packtok-format)
+   Compiling redb v3.1.0
+   Compiling regex-syntax v0.8.12
+   Compiling regex-automata v0.4.19
+   Compiling regex v1.12.3
+   Compiling packtok-tokenizer v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/crates/packtok-tokenizer)
+   Compiling packtok-train v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/crates/packtok-train)
+   Compiling packtok-model v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/crates/packtok-model)
+   Compiling packtok-m5 v0.1.0 (/home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/experiments/m5-gpu)
+    Finished `release` profile [optimized] target(s) in 1m 21s

@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "dataset_sha256": "9792ff9b8725031a57b4dddf556a61b6f5e4613da788152ba2cf1939c4e4b038",
+  "train_sample_sha256": "b25f330a25859b4c2df8644b46480704c0b4d0a6418d90cfec6bc75455e4d907",
+  "sample_bytes": 262144,
+  "sample_budget": 262144,
+  "variants": {
+    "A": {
+      "artifact_sha256": "d347b2876716dcf7e366bae058ef058a313df3eda547cd2926bf17c4b5c26d4c",
+      "mapping_sha256": "d2801ed4c0a0b29c4480a068cf01f5ee810d891b4a368a92a41cac873fe0a96f",
+      "artifact_and_mapping_sha256": "971e87027abafea02786afae2428c64ab17aaf9410c9064b375a41152dcfd132",
+      "vocabulary": 512,
+      "streams": {
+        "test": {
+          "bytes": 62420045,
+          "sha256": "8d136f5311f50db46b65e4652082d8c4f7c68c37d39e061ca525b685423e9a8b",
+          "frames": 855069,
+          "full_frames": 854889,
+          "tokens": 6840001,
+          "text_bytes": 9998800,
+          "scored_tokens": 6839801,
+          "scored_bytes": 9998544
+        },
+        "train": {
+          "bytes": 342733110,
+          "sha256": "85afe509195812dfcc66d3a50f83749f56f047d82b032cef318550d81d390ae2",
+          "frames": 4694974,
+          "full_frames": 4693573,
+          "tokens": 37555897,
+          "text_bytes": 79990400,
+          "scored_tokens": 37554297,
+          "scored_bytes": 79985939
+        },
+        "validation": {
+          "bytes": 42846993,
+          "sha256": "cc7617da096ba67e40f2379afd162ec8a177039df820fa156a3d2391ab907d22",
+          "frames": 586945,
+          "full_frames": 586778,
+          "tokens": 4695076,
+          "text_bytes": 9998800,
+          "scored_tokens": 4694876,
+          "scored_bytes": 9998245
+        }
+      }
+    },
+    "C": {
+      "artifact_sha256": "b3c192e24f24b1b4c87045a28d8c3d2b53ccbb9d60d10e166d7a1973040c34eb",
+      "mapping_sha256": "d1fd9b3695ccad19882c5bb5ef6617efc55ca1c617adcee32027f7614a63b5bf",
+      "artifact_and_mapping_sha256": "4ceccd43603910a931027d2e23b3cf70bb9b52522c8bd0cd6be21c2bc576c33c",
+      "vocabulary": 512,
+      "streams": {
+        "test": {
+          "bytes": 68647675,
+          "sha256": "5757acb5c6476599d6e8843f7a1a6446e54929cbc1f3b4daeababb35e7563936",
+          "frames": 940379,
+          "full_frames": 940212,
+          "tokens": 7522584,
+          "text_bytes": 9998800,
+          "scored_tokens": 7522384,
+          "scored_bytes": 9998548
+        },
+        "train": {
+          "bytes": 479646070,
+          "sha256": "b47551190cd2c0f1de8b4e67569fe39ddfd2842a0bf67ba207f60b6d22ddb493",
+          "frames": 6570494,
+          "full_frames": 6569122,
+          "tokens": 52560087,
+          "text_bytes": 79990400,
+          "scored_tokens": 52558487,
+          "scored_bytes": 79986842
+        },
+        "validation": {
+          "bytes": 59967464,
+          "sha256": "cab276b2d1a963ef0932022a76fa116d8abab4ace9688e4bc289b31aae034837",
+          "frames": 821472,
+          "full_frames": 821294,
+          "tokens": 6571264,
+          "text_bytes": 9998800,
+          "scored_tokens": 6571064,
+          "scored_bytes": 9998355
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+verified 3 shards, 5 documents, 6079503 text bytes
+A train: 2381908 bytes 1175355 tokens 2.0265 bytes/token
+A validation: 613903 bytes 316307 tokens 1.9408 bytes/token
+A test: 3083692 bytes 1576080 tokens 1.9566 bytes/token
+C train: 2381908 bytes 1386014 tokens 1.7185 bytes/token
+C validation: 613903 bytes 353939 tokens 1.7345 bytes/token
+C test: 3083692 bytes 1835812 tokens 1.6797 bytes/token
+	Command being timed: "/home/dasetwa/projects/PackTok/experiments/m5-gpu/target/release/packtok-m7 tokenize /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/dataset /home/dasetwa/tmp/packtok-m7-Iyu1X0Wh/verified/tokens 262144"
+	User time (seconds): 12.14
+	System time (seconds): 1.56
+	Percent of CPU this job got: 95%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.39
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 17088
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 6771
+	Voluntary context switches: 285
+	Involuntary context switches: 65
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 118488
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

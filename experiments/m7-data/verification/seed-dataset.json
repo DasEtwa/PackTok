@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "catalog_sha256": "24ad3be76763e98368eed36b8188286f4213f62cec230d98f968163e52cb8fdc",
+  "shards": [
+    {
+      "split": "train",
+      "name": "train-000000.jsonl",
+      "bytes": 2466857,
+      "sha256": "77d455809b0938a1f0236aecdb617aeb1c0158f11ab1af74e3ed37c19fc09419",
+      "rows": 2,
+      "text_bytes": 2381908
+    },
+    {
+      "split": "validation",
+      "name": "validation-000001.jsonl",
+      "bytes": 636859,
+      "sha256": "63b159cb47e6bd8c4eb0c02feb6e76b5b8ad77a772be0b53923f026a421a77b0",
+      "rows": 1,
+      "text_bytes": 613903
+    },
+    {
+      "split": "test",
+      "name": "test-000002.jsonl",
+      "bytes": 3196106,
+      "sha256": "a75de16f14552801447cd1ba2deec7b313cde09bd930762a0e973c73bb5826c3",
+      "rows": 2,
+      "text_bytes": 3083692
+    }
+  ],
+  "sources": {
+    "pg100": {
+      "documents": 1,
+      "processed_bytes": 5618649,
+      "processed_sha256": "2f52be2f72bea0ab5a56f1edc18fbbdaab8162c395f4b9e6ece2c4bf0a9a0cfb",
+      "admitted_documents": 0,
+      "admitted_bytes": 0,
+      "rejected": {
+        "cross-split-passage": 1
+      },
+      "rejected_bytes": {
+        "cross-split-passage": 5618649
+      }
+    },
+    "pg145": {
+      "documents": 1,
+      "processed_bytes": 1845984,
+      "processed_sha256": "40dba9af104bacafd3ad211e9fe45f01a6b99af5d1d2ff447aa8047f6e44ba40",
+      "admitted_documents": 1,
+      "admitted_bytes": 1845984,
+      "rejected": {},
+      "rejected_bytes": {}
+    },
+    "pg2403": {
+      "documents": 1,
+      "processed_bytes": 535924,
+      "processed_sha256": "8227fa56d2fe4f64939e0152965614f05029873913746694c47ab23477f3d9f5",
+      "admitted_documents": 1,
+      "admitted_bytes": 535924,
+      "rejected": {},
+      "rejected_bytes": {}
+    },
+    "pg24782": {
+      "documents": 1,
+      "processed_bytes": 1070183,
+      "processed_sha256": "1867056d7f6e7ccfa4a9e2c4633181753ba44bc5dfcc868f0004407b2e749f39",
+      "admitted_documents": 1,
+      "admitted_bytes": 1070183,
+      "rejected": {},
+      "rejected_bytes": {}
+    },
+    "pg5323": {
+      "documents": 1,
+      "processed_bytes": 613903,
+      "processed_sha256": "3b0a203462a51444088bed651a9610dd304a311d007fe94050545e65ab4c5338",
+      "admitted_documents": 1,
+      "admitted_bytes": 613903,
+      "rejected": {},
+      "rejected_bytes": {}
+    },
+    "pg766": {
+      "documents": 1,
+      "processed_bytes": 2013509,
+      "processed_sha256": "66f707fddb0238b309ac66abc126f7d759a09e9cf5714f518994edf571f4309e",
+      "admitted_documents": 1,
+      "admitted_bytes": 2013509,
+      "rejected": {},
+      "rejected_bytes": {}
+    }
+  }
+}

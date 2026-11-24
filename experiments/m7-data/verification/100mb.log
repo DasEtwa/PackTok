@@ -1,0 +1,40 @@
+
+running 1 test
+verified 4 shards, 1000 documents, 99988000 text bytes
+synthetic build seconds=30.12194642
+verified 4 shards, 1000 documents, 99988000 text bytes
+test tests::scale_100_mb has been running for over 60 seconds
+A train: 79990400 bytes 37555897 tokens 2.1299 bytes/token
+A validation: 9998800 bytes 4695076 tokens 2.1296 bytes/token
+A test: 9998800 bytes 6840001 tokens 1.4618 bytes/token
+C train: 79990400 bytes 52560087 tokens 1.5219 bytes/token
+C validation: 9998800 bytes 6571264 tokens 1.5216 bytes/token
+C test: 9998800 bytes 7522584 tokens 1.3292 bytes/token
+synthetic tokenize seconds=110.012941238
+test tests::scale_100_mb ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 141.42s
+
+	Command being timed: "/home/dasetwa/projects/PackTok/experiments/m5-gpu/target/release/build/packtok-m5/72bb0455aa19735c/out/packtok_m7-72bb0455aa19735c tests::scale_100_mb --exact --ignored --nocapture"
+	User time (seconds): 105.59
+	System time (seconds): 27.16
+	Percent of CPU this job got: 91%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:24.81
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 31000
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 17124
+	Voluntary context switches: 4504
+	Involuntary context switches: 1226
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 2508128
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
