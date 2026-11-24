@@ -60,7 +60,7 @@ owns tokenizer/model training, runtime and benchmark computation. See
 | [M3](docs/milestones/M3.md) | Tiny CPU RNN comparison changes both tokenizer and output head; a synthetic-corpus signal motivated ablation. |
 | [M4](docs/milestones/M4.md) | A/B/C/D ablation on a fixed sourced mixture. The tokenizer contributed a small tested quality difference. Generic output factorization did not improve same-schedule quality; reduced analytical output work allowed more updates under matched MACs. A strong favorable interaction was not established. |
 | [M5](docs/milestones/M5.md) | Same flat Transformer for M1 versus flattened M2 IDs. One completed paired pilot. Target positions matched, raw-byte exposure differed. |
-| [M6](docs/milestones/M6.md) | Full training-state checkpoints and fresh-process recovery on small CPU fixtures. |
+| [M6](docs/milestones/M6.md) | Full training-state checkpoints and fresh-process recovery on small CPU fixtures. A four-step L4 recovery probe reproduced the final checkpoint and losses bit-for-bit. |
 
 [Research results](docs/research/results.md) explains each hypothesis, experiment,
 measurement, interpretation and limitation, with links to original reports and
@@ -134,8 +134,8 @@ tracks milestones. [IDEA.md](IDEA.md), [STRUCTURE.md](STRUCTURE.md) and
 ## Roadmap
 
 A larger Transformer comparison requires an approved compute budget. M6 adds
-versioned training-state recovery. GPU replay and billion-parameter checkpoint
-I/O still require measurement. See the [M6 verification record](docs/milestones/M6.md).
+versioned training-state recovery. A small L4 probe passed. Longer GPU trajectories
+and billion-parameter checkpoint I/O still require measurement. See the [M6 verification record](docs/milestones/M6.md).
 
 Future hypotheses include improved pack routing, learned pack allocations,
 adaptive vocabulary, larger model comparisons, and specialized language or

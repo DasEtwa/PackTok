@@ -1,0 +1,3 @@
+{"label": "control", "pid": 2053, "exit": 0, "killed": false, "seconds": 15.026593449000018, "sampled_vm_hwm_kib": 423764}
+{"label": "interrupt", "pid": 2124, "exit": -9, "killed": true, "seconds": 0.49981155700004365, "sampled_vm_hwm_kib": 330208}
+{"label": "resume", "pid": 2131, "exit": 0, "killed": false, "seconds": 0.46688623300008203, "sampled_vm_hwm_kib": 337056}

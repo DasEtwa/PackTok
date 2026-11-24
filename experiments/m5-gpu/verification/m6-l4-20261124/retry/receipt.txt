@@ -1,0 +1,37 @@
+request_utc=2026-11-24T13:42:26.481230+00:00
+cap_seconds=1800 cap_cu=0.45 accelerator=L4
+package_identity=../CPU_READY.json
+allocation_requests=1
+remote_exit=0
+allocation.txt sha256=70c8215dab3b3f219c636749cd5788a06ac675decf3674825efcdf32057e43f4
+[colab] Session READY.
+sessions-before.txt sha256=9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73
+[colab] No active sessions found on server.
+usage-before.txt sha256=3a0195358ef19b53138a76afa5a6b140dacf91ff703706c4cd33d8995353fd0a
+Current balance: 235.56 compute units
+Usage rate: 0.00/hr
+Active assignments: 0
+usage-active.txt sha256=ade69c55ce04885ee20f64c671118e2a78f29d7e142be88f479e420191d7879a
+Current balance: 235.56 compute units
+Usage rate: 1.94/hr
+Active assignments: 1
+stop-0.txt sha256=3e028b712e95d1a5a2b0b2f2d1ac15d0ee00d7ae57daf920acab41b24a890c74
+[colab] Session terminated.
+sessions-after.txt sha256=9d224e9b0619108c23861a3672319364e8ddbff28f805c652076403c9d55de73
+[colab] No active sessions found on server.
+usage-after.txt sha256=0ec1f1cd6ee308a856e473f814600dfb4df20be2fa994c0c83685539e6301355
+Current balance: 235.37 compute units
+Usage rate: 0.00/hr
+Active assignments: 0
+result_archive_bytes=309534 sha256=d6adcd3b93dda5cd73f4564fcc7bd367fd42858efa2183649dd53d4ae9752ca9
+m6-result/audit/step-00000000000000000002.ptc sha256=c4c1c2edfaafead3b8d3a3698e2dc6e8ff7fff7bcca8aa45be5ca60feee6a8cc
+m6-result/control.log sha256=1f8fd5c5332769c581d7f36395ba1861184c6b7ca27408a2251fec5fe1975717
+m6-result/exit-code.txt sha256=9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa
+m6-result/full/step-00000000000000000004.ptc sha256=f9dd39a1381abc7e4fb784fc5ca0342ef9f847b2690e578260a9a6a7037031d9
+m6-result/hardware.txt sha256=ed00beef5b6e5f76bbd8c7ad39e62890e392f8e14708ae28bfa12a111210efa9
+m6-result/interrupt.log sha256=2826f9dd029d68be017a58d5aeed94705577fb6c2c020b8bfd4c826ae5cda83a
+m6-result/processes.jsonl sha256=083191c1e3e5ec7ffa41dc7c2a0a227c95af0a2248d8a99c57b2dbb817f54337
+m6-result/resume.log sha256=837d620cc7f226eb562b9df97556195fb908fbe1e0827cbdf566a73d6907dc61
+m6-result/split/step-00000000000000000002.ptc sha256=c4c1c2edfaafead3b8d3a3698e2dc6e8ff7fff7bcca8aa45be5ca60feee6a8cc
+m6-result/split/step-00000000000000000004.ptc sha256=f9dd39a1381abc7e4fb784fc5ca0342ef9f847b2690e578260a9a6a7037031d9
+m6-result/vram.csv sha256=4980a87f7d2485c15b322fff23c3450423d33c5a600d598574d214d827e65190

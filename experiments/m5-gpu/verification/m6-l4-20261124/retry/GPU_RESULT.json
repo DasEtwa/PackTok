@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "checks": {
+    "restore_exact": true,
+    "trace_equal": true,
+    "metadata_equal": true,
+    "finite_within_tolerance": true
+  },
+  "checkpoint_bitwise_equal": true,
+  "loss_bits_equal": true,
+  "metrics": {
+    "loss": {
+      "count": 4,
+      "max_abs": 0.0,
+      "outside": 0
+    },
+    "parameters": {
+      "count": 9360,
+      "max_abs": 0.0,
+      "outside": 0
+    },
+    "first_moments": {
+      "count": 9360,
+      "max_abs": 0.0,
+      "outside": 0
+    },
+    "second_moments": {
+      "count": 9360,
+      "max_abs": 0.0,
+      "outside": 0
+    }
+  },
+  "checkpoint_sha256": [
+    "f9dd39a1381abc7e4fb784fc5ca0342ef9f847b2690e578260a9a6a7037031d9",
+    "f9dd39a1381abc7e4fb784fc5ca0342ef9f847b2690e578260a9a6a7037031d9"
+  ],
+  "processes": [
+    {
+      "label": "control",
+      "pid": 2053,
+      "exit": 0,
+      "killed": false,
+      "seconds": 15.026593449000018,
+      "sampled_vm_hwm_kib": 423764
+    },
+    {
+      "label": "interrupt",
+      "pid": 2124,
+      "exit": -9,
+      "killed": true,
+      "seconds": 0.49981155700004365,
+      "sampled_vm_hwm_kib": 330208
+    },
+    {
+      "label": "resume",
+      "pid": 2131,
+      "exit": 0,
+      "killed": false,
+      "seconds": 0.46688623300008203,
+      "sampled_vm_hwm_kib": 337056
+    }
+  ],
+  "publish_us_bytes": {
+    "control": [
+      [
+        9081,
+        114066
+      ]
+    ],
+    "interrupt": [
+      [
+        9891,
+        114065
+      ]
+    ],
+    "resume": [
+      [
+        8648,
+        114066
+      ]
+    ]
+  },
+  "restore_us": 10884,
+  "hardware": "NVIDIA L4, 580.82.07, 23034 MiB",
+  "vram_samples": 159,
+  "peak_sampled_device_mib": 266
+}

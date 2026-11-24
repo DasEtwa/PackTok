@@ -31,8 +31,10 @@ def main():
     p.add_argument("package", type=Path)
     p.add_argument("--seconds", type=int, required=True)
     p.add_argument("--cu", type=float, required=True)
+    p.add_argument("--adapt-to-rate", action="store_true",
+                   help="shorten the work window to keep the quoted rate inside the CU envelope")
     a = p.parse_args()
-    if not 180 < a.seconds <= 1200 or not 0 < a.cu <= 0.60:
+    if not 180 < a.seconds <= (1800 if a.adapt_to_rate else 1200) or not 0 < a.cu <= 0.60:
         p.error("outside single-probe budget")
     package = a.package.resolve()
     ready = json.loads((package / "ready.json").read_text())
@@ -93,13 +95,19 @@ def main():
         if hardware != "L4":
             raise RuntimeError("wrong accelerator")
         _, active_rate, count = usage(call("usage-active", ["usage"], 25))
-        if count != 1 or active_rate <= 0 or active_rate*a.seconds/3600 > a.cu:
+        if count != 1 or active_rate <= 0 or (not a.adapt_to_rate and active_rate*a.seconds/3600 > a.cu):
             raise RuntimeError("active rate outside budget")
+        lifecycle_seconds = min(a.seconds, int(3600 * a.cu / active_rate))
+        deadline = start + lifecycle_seconds - 130
+        (run/"budget.json").write_text(json.dumps(dict(active_rate=active_rate,
+            effective_cap_seconds=lifecycle_seconds,release_reserve_seconds=130))+"\n")
         for i, part in enumerate(parts):
             call(f"upload-{i:03d}", ["upload","-s",alias,str(part),"content/"+part.name],100)
-        call("execute", ["exec","-s",alias,"-f",str(bridge),"--timeout","270","--env",
-                         "PACKTOK_M6_SHA256="+ready["bundle_sha256"]],285)
-        call("download", ["download","-s",alias,"content/m6-result.tar.gz",str(run/"results.tar.gz")],40)
+        try:
+            call("execute", ["exec","-s",alias,"-f",str(bridge),"--timeout","270","--env",
+                             "PACKTOK_M6_SHA256="+ready["bundle_sha256"]],285)
+        finally:
+            call("download", ["download","-s",alias,"content/m6-result.tar.gz",str(run/"results.tar.gz")],40)
         rc = 0
     except BaseException as e:
         (run/"failure.txt").write_text(str(e)+"\n")
